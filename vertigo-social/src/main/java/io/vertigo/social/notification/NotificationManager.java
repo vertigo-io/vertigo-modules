@@ -22,13 +22,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.vertigo.account.account.Account;
-import io.vertigo.core.node.component.Component;
+import io.vertigo.core.node.component.Manager;
 import io.vertigo.datamodel.structure.model.UID;
 
 /**
  * @author pchretien, npiedeloup, btounkara
  */
-public interface NotificationManager extends Component {
+public interface NotificationManager extends Manager {
 	/**
 	 * Sends a notification to a set of users
 	 * @param notification Notification
