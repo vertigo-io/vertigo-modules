@@ -2,15 +2,13 @@ let context = document.currentScript.dataset.context ;
 
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
-    hasErreurFormulaire : function(uiMessageStack, champ) {
-	if (uiMessageStack.objectFieldErrors.reservation == null)
-uiMessageStack.objectFieldErrors.reservation = {formulaire_prenom:["err"]};
-    	  return (uiMessageStack.objectFieldErrors.reservation != null && uiMessageStack.objectFieldErrors.reservation['formulaire_'+ champ] != null)
+    hasErreurFormulaire : function(uiMessageStack, object, champ) {
+    	return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['formulaire_'+ champ] != null)
     },
 	
-    getErreurFormulaire : function(uiMessageStack, champ) {
-    	  return (uiMessageStack.objectFieldErrors.reservation != null && uiMessageStack.objectFieldErrors.reservation['formulaire_'+ champ] != null &&
-    	  			 uiMessageStack.objectFieldErrors.reservation['formulaire_'+ champ].join(', '));
+    getErreurFormulaire : function(uiMessageStack, object, champ) {
+    	  return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['formulaire_'+ champ] != null &&
+    	  			 uiMessageStack.objectFieldErrors[object]['formulaire_'+ champ].join(', '));
     },
 
     addItem : function() {
