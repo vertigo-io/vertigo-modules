@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.vertigo.easyforms.metaformulaire.domain.ControleDeChampDefinitionProvider.ControleDeChampEnum;
-
 public class ModeleFormulaire implements Serializable {
 
 	private List<Champ> champs = new ArrayList<>();
@@ -38,6 +36,7 @@ public class ModeleFormulaire implements Serializable {
 		private Integer ordre;
 		private boolean isDefault;
 		private boolean isDisplay;
+		private boolean isMandatory;
 		private List<String> controleDeChamps;
 
 		public String getCodeChamp() {
@@ -108,16 +107,20 @@ public class ModeleFormulaire implements Serializable {
 			this.isDisplay = isDisplay;
 		}
 
+		public boolean isMandatory() {
+			return isMandatory;
+		}
+
+		public void setMandatory(final boolean isMandatory) {
+			this.isMandatory = isMandatory;
+		}
+
 		public List<String> getControleDeChamps() {
 			return controleDeChamps;
 		}
 
 		public void setControleDeChamps(final List<String> controleDeChamps) {
 			this.controleDeChamps = controleDeChamps;
-		}
-
-		public boolean isOptionel() {
-			return controleDeChamps.contains(ControleDeChampEnum.Optionel.name());
 		}
 
 	}

@@ -22,6 +22,7 @@ public final class ChampUi implements DtObject {
 	private String infobulle;
 	private Boolean isDefault;
 	private Boolean isDisplay;
+	private Boolean isMandatory;
 	private java.util.List<String> controleDeChamps = new java.util.ArrayList<>();
 	
 	/**
@@ -193,6 +194,25 @@ public final class ChampUi implements DtObject {
 	 */
 	public void setIsDisplay(final Boolean isDisplay) {
 		this.isDisplay = isDisplay;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Information obligatoire'.
+	 * @return Boolean isMandatory <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyEfBooleen", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Information obligatoire")
+	public Boolean getIsMandatory() {
+		return isMandatory;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Information obligatoire'.
+	 * @param isMandatory Boolean <b>Obligatoire</b>
+	 */
+	public void setIsMandatory(final Boolean isMandatory) {
+		this.isMandatory = isMandatory;
 	}
 	
 	/**

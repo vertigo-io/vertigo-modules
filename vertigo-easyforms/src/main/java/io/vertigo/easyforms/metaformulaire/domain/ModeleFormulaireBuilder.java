@@ -18,6 +18,7 @@ public class ModeleFormulaireBuilder implements Builder<ModeleFormulaire> {
 			final String infobulle,
 			final boolean isDefault,
 			final boolean isDisplay,
+			final boolean isMandatory,
 			final List<String> controleDeChamps) {
 		final var champ = new Champ();
 		champ.setCodeChamp(codeChamp);
@@ -30,6 +31,7 @@ public class ModeleFormulaireBuilder implements Builder<ModeleFormulaire> {
 		champ.setOrdre(champs.size() + 1);
 		champ.setDefault(isDefault);
 		champ.setDisplay(isDisplay);
+		champ.setMandatory(isMandatory);
 		champ.setControleDeChamps(controleDeChamps);
 		//-- ajouter à la list
 		champs.add(champ);

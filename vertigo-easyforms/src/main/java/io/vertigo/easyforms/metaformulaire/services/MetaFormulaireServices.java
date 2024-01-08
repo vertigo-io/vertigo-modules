@@ -19,7 +19,6 @@ import io.vertigo.easyforms.domain.DtDefinitions.ChampUiFields;
 import io.vertigo.easyforms.metaformulaire.dao.MetaFormulaireDAO;
 import io.vertigo.easyforms.metaformulaire.domain.ChampUi;
 import io.vertigo.easyforms.metaformulaire.domain.ControleDeChamp;
-import io.vertigo.easyforms.metaformulaire.domain.ControleDeChampDefinitionProvider.ControleDeChampEnum;
 import io.vertigo.easyforms.metaformulaire.domain.ControleDeChampUi;
 import io.vertigo.easyforms.metaformulaire.domain.MetaFormulaire;
 import io.vertigo.easyforms.metaformulaire.domain.ModeleFormulaireBuilder;
@@ -90,6 +89,7 @@ public class MetaFormulaireServices implements Component {
 					champUi.setInfobulle(champ.getInfobulle());
 					champUi.setIsDefault(champ.isDefault());
 					champUi.setIsDisplay(champ.isDisplay());
+					champUi.setIsMandatory(champ.isMandatory());
 					champUi.setControleDeChamps(champ.getControleDeChamps() != null ? champ.getControleDeChamps() : Collections.emptyList()); //TODO normalement pas util
 					return champUi;
 				})
@@ -105,9 +105,9 @@ public class MetaFormulaireServices implements Component {
 			}
 		}
 
-		if (champEdit.getIsDisplay() && champEdit.getControleDeChamps().contains(ControleDeChampEnum.Optionel.name())) {
+		if (champEdit.getIsDisplay() && !Boolean.TRUE.equals(champEdit.getIsMandatory())) {
 			//si il est marqué display, il ne peut pas être optionnel
-			throw new ValidationUserException(LocaleMessageText.of("Le champ ne peut pas être à la fois optionnel et inclus dans la recherche des réservations "),
+			throw new ValidationUserException(LocaleMessageText.of("Le champ ne peut pas être à la fois optionnel et inclus dans la recherche "),
 					champEdit, ChampUiFields.isDisplay);
 		}
 
@@ -117,7 +117,7 @@ public class MetaFormulaireServices implements Component {
 				final var champUi = champs.get(champIndex);
 				if (champIndex != editIndex && champUi.getIsDisplay() && !champUi.getIsDefault()) {
 					champUi.setIsDisplay(false);
-					uiMessageStack.warning("Il ne peut y avoir qu'un seul champ complémentaire affiché dans les réservations.\nLe champ \"" + champUi.getCodeChamp() + "\" n'est plus inclus");
+					uiMessageStack.warning("Il ne peut y avoir qu'un seul champ complémentaire affiché dans le formulaire.\nLe champ \"" + champUi.getCodeChamp() + "\" n'est plus inclus");
 				}
 			}
 		}
@@ -134,8 +134,9 @@ public class MetaFormulaireServices implements Component {
 					champUi.getListId(),
 					champUi.getLibelle(),
 					champUi.getInfobulle(),
-					champUi.getIsDefault(),
-					champUi.getIsDisplay(),
+					Boolean.TRUE.equals(champUi.getIsDefault()),
+					Boolean.TRUE.equals(champUi.getIsDisplay()),
+					Boolean.TRUE.equals(champUi.getIsMandatory()),
 					champUi.getControleDeChamps());
 		}
 		metaFormulaire.setModele(modeleFormulaireBuilder.build());

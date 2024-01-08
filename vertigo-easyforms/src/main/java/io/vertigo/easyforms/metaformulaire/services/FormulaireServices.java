@@ -18,6 +18,7 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
+import io.vertigo.datamodel.smarttype.SmarttypeResources;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datamodel.structure.definitions.ConstraintException;
 import io.vertigo.datamodel.structure.definitions.FormatterException;
@@ -96,8 +97,8 @@ public class FormulaireServices implements Component {
 		final var smartTypeDefinition = getSmartTypeByNom(typeChamp.getSmartType());
 		final var inputValue = formulaire.get(champ.getCodeChamp());
 		if (inputValue == null || inputValue.isBlank()) {
-			if (!champ.getControleDeChamps().contains(ControleDeChampEnum.Optionel.name())) {
-				uiMessageStack.error("Le champ doit être renseigné", formulaireOwner, FORMULAIRE_PREFIX + champ.getCodeChamp());
+			if (champ.isMandatory()) {
+				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + champ.getCodeChamp());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 						.incMeasure(ERREUR_CONTROLE_FORMULAIRE_MEASURE, 1)
 						.setTag("controle", "Obligatoire")
@@ -170,10 +171,6 @@ public class FormulaireServices implements Component {
 				case TelephoneMobileSms:
 					controlePasse = checkTelephoneMobileSms((String) typedValue, uiMessageStack,
 							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_TELEPHONE_MOBILE_SMS_ERROR, formulaireOwner, champ.getCodeChamp());
-					break;
-
-				case Optionel:
-					controlePasse = true;
 					break;
 				default:
 					throw new IllegalArgumentException("Contrôle de champ inconnu " + controlesDeChamp);

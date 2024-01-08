@@ -67,6 +67,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isDefault,
 		/** Propriété 'Information affichée sur la réservation'. */
 		isDisplay,
+		/** Propriété 'Information obligatoire'. */
+		isMandatory,
 		/** Propriété 'Contrôles appliqués'. */
 		controleDeChamps	}
 

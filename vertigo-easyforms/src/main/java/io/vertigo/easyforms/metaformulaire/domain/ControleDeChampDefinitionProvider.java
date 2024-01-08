@@ -11,14 +11,12 @@ public class ControleDeChampDefinitionProvider implements SimpleDefinitionProvid
 	private static final String DEFINITION_PREFIX = "EfCoc";
 
 	public enum ControleDeChampEnum {
-		Optionel, Unique, EmailNotInBlackList, GTE13ans, LT16ans, GTE16ans, LT18ans, LTE18ans, GTE18ans, TelephoneFr, TelephoneMobileSms
+		Unique, EmailNotInBlackList, GTE13ans, LT16ans, GTE16ans, LT18ans, LTE18ans, GTE18ans, TelephoneFr, TelephoneMobileSms
 	}
 
 	@Override
 	public List<? extends Definition> provideDefinitions(final DefinitionSpace definitionSpace) {
 		return List.of(
-				ControleDeChamp.of(DEFINITION_PREFIX + ControleDeChampEnum.Optionel.name(), "Optionnel", 1, "EfNom", "EfPrenom", "EfEmail", "EfTelephone", "EfPermisNeph"),
-
 				ControleDeChamp.of(DEFINITION_PREFIX + ControleDeChampEnum.Unique.name(), "Unique pour cette démarche", 5, "EfEmail", "EfTelephone", "EfVisa", "EfAgdref",
 						"EfPermisNeph"),
 

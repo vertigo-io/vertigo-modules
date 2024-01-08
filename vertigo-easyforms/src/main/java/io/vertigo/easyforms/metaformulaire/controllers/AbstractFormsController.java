@@ -34,7 +34,6 @@ import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.easyforms.domain.DtDefinitions.ControleDeChampUiFields;
 import io.vertigo.easyforms.metaformulaire.domain.ChampUi;
-import io.vertigo.easyforms.metaformulaire.domain.ControleDeChampDefinitionProvider.ControleDeChampEnum;
 import io.vertigo.easyforms.metaformulaire.domain.ControleDeChampUi;
 import io.vertigo.easyforms.metaformulaire.domain.MetaFormulaire;
 import io.vertigo.easyforms.metaformulaire.domain.TaxonomyType;
@@ -84,6 +83,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 		final var champUi = new ChampUi();
 		champUi.setIsDefault(false);
 		champUi.setIsDisplay(false);
+		champUi.setIsMandatory(false);
 		return champUi;
 	}
 
@@ -168,10 +168,8 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 	protected static void loadControlesByType(final ViewContext viewContext,
 			final DtList<ControleDeChampUi> controleDeChamps,
 			final ChampUi champEdit) {
-		final var isMandatory = champEdit.getIsDefault() || champEdit.getIsDisplay();
 		final DtList<ControleDeChampUi> controleDeChampsByType = controleDeChamps.stream()
-				.filter(c -> c.getTypeDeChamps().contains(MetaFormulaireServices.PREFIX_CODE_TYPE_CHAMP + champEdit.getTypeDeChamp())
-						&& !(ControleDeChampEnum.Optionel.name().equals(c.getCode()) && isMandatory))
+				.filter(c -> c.getTypeDeChamps().contains(MetaFormulaireServices.PREFIX_CODE_TYPE_CHAMP + champEdit.getTypeDeChamp()))
 				.collect(VCollectors.toDtList(ControleDeChampUi.class));
 
 		viewContext.publishDtList(controleDeChampsEditKey, controleDeChampsByType);
