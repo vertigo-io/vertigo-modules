@@ -464,7 +464,7 @@ create Task TkGetFirstLocalDatesFreeOfPlageHorairePerDayOfWeek {
                         FROM plage_horaire 
                         WHERE age_id = #ageId#
                         AND date_locale between #dateLocaleFromDebut# AND #dateLocaleFromFin#) as plhFrom
-                    left join (SELECT distinct age_id, date_locale, extract(isodow from date_locale) dow, floor(extract(JULIAN from date_locale)/7) woe --on ne garde que les DayOfWeek de la semaine source
+                    join (SELECT distinct age_id, date_locale, extract(isodow from date_locale) dow, floor(extract(JULIAN from date_locale)/7) woe --on ne garde que les DayOfWeek de la semaine source
                             FROM plage_horaire plh
                             WHERE age_id = #ageId#
                               AND date_locale between #dateLocaleToDebut# AND #dateLocaleToFin#) as plhTo 

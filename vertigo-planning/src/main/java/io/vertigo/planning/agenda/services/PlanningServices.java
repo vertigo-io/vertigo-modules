@@ -488,9 +488,8 @@ public class PlanningServices implements Component {
 				.isNotNull(creneaux);
 		//---
 		try (final VTransactionWritable tx = transactionManager.createAutonomousTransaction()) {
-			final DtList<ReservationCreneau> reservationsCreneau = new DtList<>(ReservationCreneau.class);
 			final var trancheHoraire = trancheHoraireDAO.get(trhUid);
-			creneaux.stream()
+			final DtList<ReservationCreneau> reservationsCreneau = creneaux.stream()
 					// First we ensure that all creneaux are associated with the provided tranche
 					.peek(creneau -> {
 						if (!trhUid.equals(creneau.trancheHoraire().getUID())) {
