@@ -23,9 +23,9 @@ import io.vertigo.core.impl.analytics.trace.TraceAspect;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.easyforms.domain.DtDefinitions;
-import io.vertigo.easyforms.metaformulaire.domain.ControleDeChampDefinitionProvider;
-import io.vertigo.easyforms.metaformulaire.domain.MetaFormulaireSmartTypes;
-import io.vertigo.easyforms.metaformulaire.domain.TypeDeChampDefinitionProvider;
+import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldConstraintDefinitionProvider;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider;
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
 public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures> {
@@ -45,16 +45,18 @@ public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures
 		getModuleConfigBuilder()
 				.addAspect(TraceAspect.class)
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
-						.addDefinitionResource("smarttypes", MetaFormulaireSmartTypes.class.getName())
+						.addDefinitionResource("smarttypes", EasyFormsSmartTypes.class.getName())
 						.addDefinitionResource("dtobjects", DtDefinitions.class.getName())
 						.build())
-				.addDefinitionProvider(TypeDeChampDefinitionProvider.class)
-				.addDefinitionProvider(ControleDeChampDefinitionProvider.class);
+				.addDefinitionProvider(FieldTypeDefinitionProvider.class)
+				.addDefinitionProvider(FieldConstraintDefinitionProvider.class);
+		//.addComponent(EasyFormsDesignerManager.class, EasyFormsDesignerManagerImpl.class)
+		//.addComponent(EasyFormsRunnerManager.class, EasyFormsRunnerManagerImpl.class);
 	}
 
 	@Override
 	protected List<String> getControllerPackages() {
-		return List.of(".metaformulaire.controllers");
+		return List.of(".impl.easyformsdesigner.controllers");
 	}
 
 }

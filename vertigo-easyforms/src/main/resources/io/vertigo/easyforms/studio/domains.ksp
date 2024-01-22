@@ -45,15 +45,15 @@ create Domain DoEfText {
     storeType : "TEXT"
 }
 
-create Domain DoEfFormulaire {
+create Domain DoEfFormData {
     dataType : ValueObject
-    type : "io.vertigo.easyforms.smarttypes.Formulaire"
+    type : "io.vertigo.easyforms.easyformsrunner.model.EasyFormsData"
     storeType : "JSONB"
 }
 
-create Domain DoEfModeleFormulaire {
+create Domain DoEfFormTemplate {
     dataType : ValueObject
-    type : "io.vertigo.easyforms.metaformulaire.domain.ModeleFormulaire"
+    type : "io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate"
     storeType : "JSONB"
 }
 

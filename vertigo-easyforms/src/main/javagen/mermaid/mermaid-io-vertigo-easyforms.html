@@ -230,13 +230,13 @@
 			<div class="main-content row">
 				<section class="columns fullheigth">
 					<aside class="menu column is-2 is-narrow-mobile section fullheigth">
-											  <p class="menu-label">
-						Modules
+											  <ul class="menu-list">
+					  </ul>
+					  <p class="menu-label">
+						Packages
 					  </p>
 					  <ul class="menu-list">
-							<li><a @click="changeActivePanel('metaformulaire')">metaformulaire</a></li>
-					  </ul>
-					  <ul class="menu-list">
+							<li><a @click="changeActivePanel('io.vertigo.easyforms.domain')">io.vertigo.easyforms.domain</a></li>
 					  </ul>
 					</aside>
 					<div class="column is-10 is-marginless fullheigth">
@@ -247,27 +247,13 @@
 		</div>
 		<script>
 			var graphData = {};
-			graphData.metaformulaire = `classDiagram
-class MetaFormulaire:::entity {
-		+Long mfoId
-		+io.vertigo.easyforms.metaformulaire.domain.ModeleFormulaire modele
+			graphData.io.vertigo.easyforms.domain = `classDiagram
+					direction BT
+class EasyForm:::entity {
+		+Long efoId
+		+io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate template
 }
-class Taxonomy:::entity {
-		+Long taxId
-		+String value
-		+Integer sort
-		+Boolean active
-		+String code
-		+Long tatId
-}
-Taxonomy "*" --> "1" TaxonomyType : TaxonomyType
-class TaxonomyType:::entity {
-		+Long tatId
-		+String code
-		+String label
-		+Boolean active
-}
-				`
+			 	`
 		</script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.2.0/d3.min.js"></script>
 		<script>

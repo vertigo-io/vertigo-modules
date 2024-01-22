@@ -1,0 +1,35 @@
+package io.vertigo.easyforms.domain
+
+
+create DtDefinition DtEasyForm {
+    id efoId 		{domain: DoEfId 			label:"Id"}
+    field template 	{domain: DoEfFormTemplate 	label:"Template" }
+}
+
+create DtDefinition DtEasyFormsFieldTypeUi {
+    field name 		{domain: DoEfLabel 		label:"Field type" }
+    field label 	{domain: DoEfLabel 		label:"Label" }
+    sortField: "name"
+    displayField: "label"
+}
+
+create DtDefinition DtEasyFormsFieldConstraintUi {
+    field code 			{domain: DoEfCode 	label:"Constraint" }
+    field label 		{domain: DoEfLabel 	label:"Constraint" }
+    field description 	{domain: DoEfText 	label:"Description" }
+    field fieldTypes 	{domain: DoEfText 	label:"Attached to fields" cardinality:"*" }
+    sortField: "code"
+    displayField: "label"
+}
+
+create DtDefinition DtEasyFormsFieldUi {
+    field fieldCode 		{domain: DoEfCode 		label:"Field code" 				}
+    field fieldType 		{domain: DoEfLabel 		label:"Field type" 				}
+    field fieldTypeLabel 	{domain: DoEfLabel 		label:"Field type" 				}
+    field label 			{domain: DoEfLabel 		label:"Label" 					}
+    field tooltip 			{domain: DoEfLabel 		label:"Tooltip" 				}
+    field isDefault 		{domain: DoEfBooleen 	label:"System field" 			}
+    field isMandatory 		{domain: DoEfBooleen 	label:"Mandatory field" 		}
+    field fieldConstraints 	{domain: DoEfText 		label:"Constraints" 			cardinality:"*" }
+}
+

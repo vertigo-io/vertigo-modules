@@ -12,7 +12,7 @@ VUiExtensions.methods = {
     },
 
     addItem : function() {
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_addItem', {}, {
+        this.httpPostAjax(context + 'easyforms/designer/_addItem', {}, {
             onSuccess: function(response) {
                 this.$data.componentStates.itemModal.editIndex = -1;
                 this.$data.componentStates.itemModal.opened = true
@@ -22,7 +22,7 @@ VUiExtensions.methods = {
 
     editItem : function(editIndex) {
         this.$data.componentStates.itemModal.editIndex = editIndex;
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_editItem', { editIndex: editIndex }, {
+        this.httpPostAjax(context + 'easyforms/designer/_editItem', { editIndex: editIndex }, {
             onSuccess: function(response) {
                 this.$data.componentStates.itemModal.opened = true
             }.bind(this)
@@ -30,18 +30,18 @@ VUiExtensions.methods = {
     },
     
     refreshItem : function() {
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_refreshItem',{'typeDeChamp':this.vueData.champEdit.typeDeChamp});
+        this.httpPostAjax(context + 'easyforms/designer/_refreshItem',{'fieldType':this.vueData.editField.fieldType});
     },
 
 
     saveEditItem : function() {
-        let formData = this.vueDataParams(['champEdit']);
-        formData.delete('vContext[champEdit][isDefault]')//champ non modifiable
-        if (!formData.has('vContext[champEdit][controleDeChamps]')) {
-            formData.append('vContext[champEdit][controleDeChamps]', '')
+        let formData = this.vueDataParams(['editField']);
+        formData.delete('vContext[editField][isDefault]')//champ non modifiable
+        if (!formData.has('vContext[editField][fieldConstraints]')) {
+            formData.append('vContext[editField][fieldConstraints]', '')
         }
         formData.append('editIndex', this.$data.componentStates.itemModal.editIndex)
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_saveItem', formData, {
+        this.httpPostAjax(context + 'easyforms/designer/_saveItem', formData, {
             onSuccess: function(response) {
                 this.$q.notify({ message: 'Element validé', type: 'positive' });
                 this.$data.componentStates.itemModal.opened = false
@@ -51,7 +51,7 @@ VUiExtensions.methods = {
 
     deleteItem : function(editIndex) {
         this.$data.componentStates.itemModal.editIndex = editIndex;
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_deleteItem', { editIndex: editIndex }, {
+        this.httpPostAjax(context + 'easyforms/designer/_deleteItem', { editIndex: editIndex }, {
             onSuccess: function(response) {
                 this.$q.notify({ message: 'Element supprimé', type: 'positive' });
             }.bind(this)
@@ -59,7 +59,7 @@ VUiExtensions.methods = {
     },
 
     moveItem : function(editIndex, offset) {
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_moveItem', { editIndex: editIndex, offset: offset }, {
+        this.httpPostAjax(context + 'easyforms/designer/_moveItem', { editIndex: editIndex, offset: offset }, {
             onSuccess: function(response) {
                 this.$q.notify({ message: 'Element déplacé', type: 'positive' });
             }.bind(this)
@@ -68,12 +68,12 @@ VUiExtensions.methods = {
     
     /** When used without itemModal */
     addItemNoModal: function(listName) {
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_addItem', this.vueDataParams([listName]), { });
+        this.httpPostAjax(context + 'easyforms/designer/_addItem', this.vueDataParams([listName]), { });
     },
     deleteItemNoModal: function(listName, editIndex) {
         let formData = this.vueDataParams([listName]);
         formData.append('editIndex', editIndex);
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_deleteItem', formData, {
+        this.httpPostAjax(context + 'easyforms/designer/_deleteItem', formData, {
             onSuccess: function(response) {
                 this.$q.notify({ message: 'Element supprimé', type: 'positive' });
             }.bind(this)
@@ -83,7 +83,7 @@ VUiExtensions.methods = {
         let formData = this.vueDataParams([listName]);
         formData.append('editIndex', editIndex);
         formData.append('offset', offset);
-        this.httpPostAjax(context + 'easyforms/metaformulaire/_moveItem', formData, {            
+        this.httpPostAjax(context + 'easyforms/designer/_moveItem', formData, {            
         });
     },
     

@@ -1,0 +1,142 @@
+package io.vertigo.easyforms.impl.easyformsdesigner.services;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+import javax.inject.Inject;
+
+import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.LocaleMessageText;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.easyforms.dao.EasyFormDAO;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
+import io.vertigo.easyforms.domain.EasyForm;
+import io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi;
+import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
+import io.vertigo.easyforms.domain.EasyFormsFieldUi;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldConstraint;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplateBuilder;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
+import io.vertigo.vega.webservice.validation.ValidationUserException;
+
+@Transactional
+public class EasyFormsDesignerServices implements Component {
+	public static final String RESOURCES_PREFIX = "EASYFORMS_FORMULAIRE_CONTROLE_";
+	public static final String RESOURCES_SUFFIX_LABEL = "_LABEL";
+	public static final String RESOURCES_SUFFIX_DESCRIPTION = "_DESCRIPTION";
+	public static final String RESOURCES_SUFFIX_ERROR = "_ERROR";
+
+	@Inject
+	private EasyFormDAO easyFormDAO;
+
+	public EasyForm getEasyFormById(final UID<EasyForm> efoUid) {
+		Assertion.check().isNotNull(efoUid);
+		//---
+		return easyFormDAO.get(efoUid);
+	}
+
+	public DtList<EasyFormsFieldTypeUi> getFieldTypeUiList() {
+		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldType.class)
+				.stream()
+				.map(fieldType -> {
+					final var fieldTypeUi = new EasyFormsFieldTypeUi();
+					fieldTypeUi.setName(fieldType.id().shortName());
+					fieldTypeUi.setLabel(fieldType.getLabel());
+					return fieldTypeUi;
+				})
+				.collect(VCollectors.toDtList(EasyFormsFieldTypeUi.class));
+	}
+
+	public DtList<EasyFormsFieldConstraintUi> getFieldConstraintUiList() {
+		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldConstraint.class)
+				.stream()
+				.sorted(Comparator.comparingInt(EasyFormsFieldConstraint::getPriority))
+				.map(fieldConstraint -> {
+					final var fieldConstraintUi = new EasyFormsFieldConstraintUi();
+					final var localName = fieldConstraint.id().shortName();
+					final var resourcePrefix = RESOURCES_PREFIX + StringUtil.camelToConstCase(localName);
+
+					fieldConstraintUi.setCode(fieldConstraint.id().shortName());
+					fieldConstraintUi.setLabel(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_LABEL).getDisplay());
+					fieldConstraintUi.setDescription(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_DESCRIPTION).getDisplay());
+					fieldConstraintUi.setFieldTypes(fieldConstraint.getFieldTypes().stream().map(EasyFormsFieldType::getName).toList());
+					return fieldConstraintUi;
+				})
+				.collect(VCollectors.toDtList(EasyFormsFieldConstraintUi.class));
+	}
+
+	public DtList<EasyFormsFieldUi> getFieldUiListByEasyFormId(final UID<EasyForm> efoUid) {
+		final var easyForm = getEasyFormById(efoUid);
+		return easyForm.getTemplate().getFields().stream()
+				.map(field -> {
+					final var fieldType = EasyFormsFieldType.resolve(field.getFieldType());
+					final var fieldUi = new EasyFormsFieldUi();
+					fieldUi.setFieldCode(field.getFieldCode());
+					fieldUi.setFieldType(fieldType.id().shortName());
+					fieldUi.setFieldTypeLabel(fieldType.getLabel());
+					fieldUi.setLabel(field.getLabel());
+					fieldUi.setTooltip(field.getTooltip());
+					fieldUi.setIsDefault(field.isDefault());
+					fieldUi.setIsMandatory(field.isMandatory());
+					fieldUi.setFieldConstraints(field.getFieldConstraints() != null ? field.getFieldConstraints() : Collections.emptyList()); //TODO normalement pas util
+					return fieldUi;
+				})
+				.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
+	}
+
+	public void checkUpdateField(final DtList<EasyFormsFieldUi> fieldss, final Integer editIndex, final EasyFormsFieldUi fieldEdit, final UiMessageStack uiMessageStack) {
+		for (int i = 0; i < fieldss.size(); i++) {
+			if (i != editIndex && fieldss.get(i).getFieldCode().equals(fieldEdit.getFieldCode())) {
+				//si le code n'est pas unique ce n'est pas bon.
+				throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans le formulaire."), // TODO i18n
+						fieldEdit, EasyFormsFieldUiFields.fieldCode);
+			}
+		}
+
+		/*
+				if (!editField.getIsDefault() && editField.getIsDisplay()) {
+					//on retire tous les autres qui auraient isDisplay (sauf les defaults)
+					for (var champIndex = 0; champIndex < champs.size(); ++champIndex) {
+						final var champUi = champs.get(champIndex);
+						if (champIndex != editIndex && champUi.getIsDisplay() && !champUi.getIsDefault()) {
+							champUi.setIsDisplay(false);
+							uiMessageStack.warning("Il ne peut y avoir qu'un seul champ complémentaire affiché dans le formulaire.\nLe champ \"" + champUi.getFieldCode() + "\" n'est plus inclus");
+						}
+					}
+				}
+				*/
+	}
+
+	public Long saveNewForm(final EasyForm easyForm, final DtList<EasyFormsFieldUi> fields) {
+		final var easyFormsTemplateBuilder = new EasyFormsTemplateBuilder();
+		for (final EasyFormsFieldUi fieldUi : fields) {
+			final EasyFormsFieldType fieldType = EasyFormsFieldType.resolve(fieldUi.getFieldType());
+			Assertion.check().isNotNull(fieldType, "Field type can't be null");
+			easyFormsTemplateBuilder.addField(
+					fieldUi.getFieldCode(),
+					fieldType,
+					fieldUi.getLabel(),
+					fieldUi.getTooltip(),
+					Boolean.TRUE.equals(fieldUi.getIsDefault()),
+					Boolean.TRUE.equals(fieldUi.getIsMandatory()),
+					fieldUi.getFieldConstraints());
+		}
+		easyForm.setTemplate(easyFormsTemplateBuilder.build());
+		easyFormDAO.save(easyForm);
+		return easyForm.getEfoId();
+	}
+
+	public EasyForm createEasyForm(final EasyForm easyForm) {
+		Assertion.check().isNotNull(easyForm);
+		//---
+		return easyFormDAO.create(easyForm);
+	}
+
+}

@@ -17,18 +17,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
-		/** Objet de données ChampUi. */
-		ChampUi(io.vertigo.easyforms.metaformulaire.domain.ChampUi.class),
-		/** Objet de données ControleDeChampUi. */
-		ControleDeChampUi(io.vertigo.easyforms.metaformulaire.domain.ControleDeChampUi.class),
-		/** Objet de données MetaFormulaire. */
-		MetaFormulaire(io.vertigo.easyforms.metaformulaire.domain.MetaFormulaire.class),
-		/** Objet de données Taxonomy. */
-		Taxonomy(io.vertigo.easyforms.metaformulaire.domain.Taxonomy.class),
-		/** Objet de données TaxonomyType. */
-		TaxonomyType(io.vertigo.easyforms.metaformulaire.domain.TaxonomyType.class),
-		/** Objet de données TypeDeChampUi. */
-		TypeDeChampUi(io.vertigo.easyforms.metaformulaire.domain.TypeDeChampUi.class)		;
+		/** Objet de données EasyForm. */
+		EasyForm(io.vertigo.easyforms.domain.EasyForm.class),
+		/** Objet de données EasyFormsFieldConstraintUi. */
+		EasyFormsFieldConstraintUi(io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi.class),
+		/** Objet de données EasyFormsFieldTypeUi. */
+		EasyFormsFieldTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldTypeUi.class),
+		/** Objet de données EasyFormsFieldUi. */
+		EasyFormsFieldUi(io.vertigo.easyforms.domain.EasyFormsFieldUi.class)		;
 
 		private final Class<?> clazz;
 
@@ -46,92 +42,56 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	}
 
 	/**
-	 * Enumération des champs de ChampUi.
+	 * Enumération des champs de EasyForm.
 	 */
-	public enum ChampUiFields implements DtFieldName<io.vertigo.easyforms.metaformulaire.domain.ChampUi> {
-		/** Propriété 'Code du champ'. */
-		codeChamp,
-		/** Propriété 'Type de champ'. */
-		typeDeChamp,
-		/** Propriété 'Type de champ'. */
-		typeDeChampLabel,
-		/** Propriété 'Id liste de valeurs'. */
-		listId,
-		/** Propriété 'Id valeur dans la liste'. */
-		listValue,
-		/** Propriété 'Libellé'. */
-		libelle,
-		/** Propriété 'Infobulle'. */
-		infobulle,
-		/** Propriété 'Champs par défaut (non supprimable)'. */
-		isDefault,
-		/** Propriété 'Information affichée sur la réservation'. */
-		isDisplay,
-		/** Propriété 'Information obligatoire'. */
-		isMandatory,
-		/** Propriété 'Contrôles appliqués'. */
-		controleDeChamps	}
+	public enum EasyFormFields implements DtFieldName<io.vertigo.easyforms.domain.EasyForm> {
+		/** Propriété 'Id'. */
+		efoId,
+		/** Propriété 'Template'. */
+		template	}
 
 	/**
-	 * Enumération des champs de ControleDeChampUi.
+	 * Enumération des champs de EasyFormsFieldConstraintUi.
 	 */
-	public enum ControleDeChampUiFields implements DtFieldName<io.vertigo.easyforms.metaformulaire.domain.ControleDeChampUi> {
-		/** Propriété 'Contrôle'. */
+	public enum EasyFormsFieldConstraintUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi> {
+		/** Propriété 'Constraint'. */
 		code,
-		/** Propriété 'Contrôle'. */
+		/** Propriété 'Constraint'. */
 		label,
 		/** Propriété 'Description'. */
 		description,
-		/** Propriété 'Compatible avec les types'. */
-		typeDeChamps	}
+		/** Propriété 'Attached to fields'. */
+		fieldTypes	}
 
 	/**
-	 * Enumération des champs de MetaFormulaire.
+	 * Enumération des champs de EasyFormsFieldTypeUi.
 	 */
-	public enum MetaFormulaireFields implements DtFieldName<io.vertigo.easyforms.metaformulaire.domain.MetaFormulaire> {
-		/** Propriété 'Id'. */
-		mfoId,
-		/** Propriété 'Modèle'. */
-		modele	}
-
-	/**
-	 * Enumération des champs de Taxonomy.
-	 */
-	public enum TaxonomyFields implements DtFieldName<io.vertigo.easyforms.metaformulaire.domain.Taxonomy> {
-		/** Propriété 'Id'. */
-		taxId,
-		/** Propriété 'Valeur'. */
-		value,
-		/** Propriété 'Ordre'. */
-		sort,
-		/** Propriété 'Actif'. */
-		active,
-		/** Propriété 'Code'. */
-		code,
-		/** Propriété 'Taxonomy type'. */
-		tatId	}
-
-	/**
-	 * Enumération des champs de TaxonomyType.
-	 */
-	public enum TaxonomyTypeFields implements DtFieldName<io.vertigo.easyforms.metaformulaire.domain.TaxonomyType> {
-		/** Propriété 'Id'. */
-		tatId,
-		/** Propriété 'Code liste'. */
-		code,
-		/** Propriété 'Libelle'. */
-		label,
-		/** Propriété 'Actif'. */
-		active	}
-
-	/**
-	 * Enumération des champs de TypeDeChampUi.
-	 */
-	public enum TypeDeChampUiFields implements DtFieldName<io.vertigo.easyforms.metaformulaire.domain.TypeDeChampUi> {
-		/** Propriété 'Type de champ'. */
-		nom,
+	public enum EasyFormsFieldTypeUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldTypeUi> {
+		/** Propriété 'Field type'. */
+		name,
 		/** Propriété 'Label'. */
 		label	}
+
+	/**
+	 * Enumération des champs de EasyFormsFieldUi.
+	 */
+	public enum EasyFormsFieldUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldUi> {
+		/** Propriété 'Field code'. */
+		fieldCode,
+		/** Propriété 'Field type'. */
+		fieldType,
+		/** Propriété 'Field type'. */
+		fieldTypeLabel,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Tooltip'. */
+		tooltip,
+		/** Propriété 'System field'. */
+		isDefault,
+		/** Propriété 'Mandatory field'. */
+		isMandatory,
+		/** Propriété 'Constraints'. */
+		fieldConstraints	}
 
 	/** {@inheritDoc} */
 	@Override
