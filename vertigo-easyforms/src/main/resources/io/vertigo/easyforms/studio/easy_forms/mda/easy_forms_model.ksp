@@ -13,7 +13,7 @@ create DtDefinition DtEasyFormsFieldTypeUi {
     displayField: "label"
 }
 
-create DtDefinition DtEasyFormsFieldConstraintUi {
+create DtDefinition DtEasyFormsFieldValidatorUi {
     field code 			{domain: DoEfCode 	label:"Constraint" }
     field label 		{domain: DoEfLabel 	label:"Constraint" }
     field description 	{domain: DoEfText 	label:"Description" }
@@ -30,6 +30,6 @@ create DtDefinition DtEasyFormsFieldUi {
     field tooltip 			{domain: DoEfLabel 		label:"Tooltip" 				}
     field isDefault 		{domain: DoEfBooleen 	label:"System field" 			}
     field isMandatory 		{domain: DoEfBooleen 	label:"Mandatory field" 		}
-    field fieldConstraints 	{domain: DoEfText 		label:"Constraints" 			cardinality:"*" }
+    field fieldValidators 	{domain: DoEfText 		label:"Constraints" 			cardinality:"*" }
 }
 

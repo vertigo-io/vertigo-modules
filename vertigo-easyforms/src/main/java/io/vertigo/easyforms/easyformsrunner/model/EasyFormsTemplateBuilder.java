@@ -17,7 +17,7 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 			final String tooltip,
 			final boolean isDefault,
 			final boolean isMandatory,
-			final List<String> fieldConstraints) {
+			final List<String> fieldValidators) {
 		final var champ = new Field();
 		champ.setFieldCode(fieldCode);
 		champ.setFieldType(fieldType.getName());
@@ -26,7 +26,7 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 		champ.setOrder(fields.size() + 1);
 		champ.setDefault(isDefault);
 		champ.setMandatory(isMandatory);
-		champ.setFieldConstraints(fieldConstraints);
+		champ.setFieldValidators(fieldValidators);
 		//-- ajouter à la list
 		fields.add(champ);
 		return this;

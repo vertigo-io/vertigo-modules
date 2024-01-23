@@ -24,7 +24,7 @@ import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.easyforms.domain.DtDefinitions;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldConstraintDefinitionProvider;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider;
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
@@ -49,7 +49,7 @@ public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures
 						.addDefinitionResource("dtobjects", DtDefinitions.class.getName())
 						.build())
 				.addDefinitionProvider(FieldTypeDefinitionProvider.class)
-				.addDefinitionProvider(FieldConstraintDefinitionProvider.class);
+				.addDefinitionProvider(FieldValidatorDefinitionProvider.class);
 		//.addComponent(EasyFormsDesignerManager.class, EasyFormsDesignerManagerImpl.class)
 		//.addComponent(EasyFormsRunnerManager.class, EasyFormsRunnerManagerImpl.class);
 	}

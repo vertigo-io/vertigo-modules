@@ -20,7 +20,7 @@ public final class EasyFormsFieldUi implements DtObject {
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
-	private java.util.List<String> fieldConstraints = new java.util.ArrayList<>();
+	private java.util.List<String> fieldValidators = new java.util.ArrayList<>();
 	
 	/**
 	 * Champ : DATA.
@@ -158,22 +158,22 @@ public final class EasyFormsFieldUi implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Constraints'.
-	 * @return List de String fieldConstraints
+	 * @return List de String fieldValidators
 	 */
 	@Field(smartType = "STyEfText", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Constraints")
-	public java.util.List<String> getFieldConstraints() {
-		return fieldConstraints;
+	public java.util.List<String> getFieldValidators() {
+		return fieldValidators;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Constraints'.
-	 * @param fieldConstraints List de String
+	 * @param fieldValidators List de String
 	 */
-	public void setFieldConstraints(final java.util.List<String> fieldConstraints) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(fieldConstraints);
+	public void setFieldValidators(final java.util.List<String> fieldValidators) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(fieldValidators);
 		//---
-		this.fieldConstraints = fieldConstraints;
+		this.fieldValidators = fieldValidators;
 	}
 	
 	/** {@inheritDoc} */

@@ -30,7 +30,7 @@ public class EasyFormsTemplate implements Serializable {
 		private Integer order;
 		private boolean isDefault;
 		private boolean isMandatory;
-		private List<String> fieldConstraints;
+		private List<String> fieldValidators;
 
 		public String getFieldCode() {
 			return fieldCode;
@@ -88,12 +88,12 @@ public class EasyFormsTemplate implements Serializable {
 			this.isMandatory = isMandatory;
 		}
 
-		public List<String> getFieldConstraints() {
-			return fieldConstraints;
+		public List<String> getFieldValidators() {
+			return fieldValidators;
 		}
 
-		public void setFieldConstraints(final List<String> fieldConstraints) {
-			this.fieldConstraints = fieldConstraints;
+		public void setFieldValidators(final List<String> fieldValidators) {
+			this.fieldValidators = fieldValidators;
 		}
 
 	}

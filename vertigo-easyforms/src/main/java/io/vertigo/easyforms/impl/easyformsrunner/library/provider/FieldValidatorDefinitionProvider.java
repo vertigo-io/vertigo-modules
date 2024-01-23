@@ -5,14 +5,13 @@ import java.util.stream.Collectors;
 
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
-import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldConstraint;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldValidator;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 
-public class FieldConstraintDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldConstraint> {
+public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidator> {
 
-	public enum FieldConstraintEnum implements EnumDefinition<EasyFormsFieldConstraint, FieldConstraintEnum> {
+	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidator, FieldValidatorEnum> {
 
 		UNIQUE("Unique pour cette démarche", 5, FieldTypeEnum.EMAIL, FieldTypeEnum.TELEPHONE, FieldTypeEnum.VISA),
 		EMAIL_NOT_IN_BLACKLIST("Email non jetable", 20, FieldTypeEnum.EMAIL),
@@ -31,7 +30,7 @@ public class FieldConstraintDefinitionProvider implements SimpleEnumDefinitionPr
 		private final int priorite;
 		private final FieldTypeEnum[] fieldTypes;
 
-		private FieldConstraintEnum(final String label, final int priorite, final FieldTypeEnum... fieldTypes) {
+		private FieldValidatorEnum(final String label, final int priorite, final FieldTypeEnum... fieldTypes) {
 			code = StringUtil.constToUpperCamelCase(name());
 			this.label = label;
 			this.priorite = priorite;
@@ -39,20 +38,20 @@ public class FieldConstraintDefinitionProvider implements SimpleEnumDefinitionPr
 		}
 
 		@Override
-		public EasyFormsFieldConstraint buildDefinition(final DefinitionSpace definitionSpace) {
+		public EasyFormsFieldValidator buildDefinition(final DefinitionSpace definitionSpace) {
 			final var types = Arrays.stream(fieldTypes).map(FieldTypeEnum::get).collect(Collectors.toUnmodifiableSet());
-			return EasyFormsFieldConstraint.of(code, label, priorite, types);
+			return EasyFormsFieldValidator.of(code, label, priorite, types);
 		}
 
 		@Override
-		public EasyFormsFieldConstraint get() {
-			return EasyFormsFieldConstraint.resolve(code);
+		public EasyFormsFieldValidator get() {
+			return EasyFormsFieldValidator.resolve(code);
 		}
 	}
 
 	@Override
-	public Class<FieldConstraintEnum> getEnumClass() {
-		return FieldConstraintEnum.class;
+	public Class<FieldValidatorEnum> getEnumClass() {
+		return FieldValidatorEnum.class;
 	}
 
 }

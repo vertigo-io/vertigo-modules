@@ -6,11 +6,11 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldConstraintDefinitionProvider.FieldConstraintEnum;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider.FieldValidatorEnum;
 
 public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldType> {
 
-	public enum FieldTypeEnum implements EnumDefinition<EasyFormsFieldType, FieldConstraintEnum> {
+	public enum FieldTypeEnum implements EnumDefinition<EasyFormsFieldType, FieldValidatorEnum> {
 		LABEL("Label", EasyFormsSmartTypes.EfLabel, "textfield", null),
 		NOM("Nom", EasyFormsSmartTypes.EfNom, "textfield", "family-name"),
 		PRENOM("Prénom", EasyFormsSmartTypes.EfPrenom, "textfield", "given-name"),

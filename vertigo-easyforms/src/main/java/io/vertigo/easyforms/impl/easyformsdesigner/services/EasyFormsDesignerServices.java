@@ -17,10 +17,10 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
-import io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi;
+import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldConstraint;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldValidator;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplateBuilder;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -54,22 +54,22 @@ public class EasyFormsDesignerServices implements Component {
 				.collect(VCollectors.toDtList(EasyFormsFieldTypeUi.class));
 	}
 
-	public DtList<EasyFormsFieldConstraintUi> getFieldConstraintUiList() {
-		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldConstraint.class)
+	public DtList<EasyFormsFieldValidatorUi> getFieldValidatorUiList() {
+		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldValidator.class)
 				.stream()
-				.sorted(Comparator.comparingInt(EasyFormsFieldConstraint::getPriority))
-				.map(fieldConstraint -> {
-					final var fieldConstraintUi = new EasyFormsFieldConstraintUi();
-					final var localName = fieldConstraint.id().shortName();
+				.sorted(Comparator.comparingInt(EasyFormsFieldValidator::getPriority))
+				.map(fieldValidator -> {
+					final var fieldValidatorUi = new EasyFormsFieldValidatorUi();
+					final var localName = fieldValidator.id().shortName();
 					final var resourcePrefix = RESOURCES_PREFIX + StringUtil.camelToConstCase(localName);
 
-					fieldConstraintUi.setCode(fieldConstraint.id().shortName());
-					fieldConstraintUi.setLabel(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_LABEL).getDisplay());
-					fieldConstraintUi.setDescription(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_DESCRIPTION).getDisplay());
-					fieldConstraintUi.setFieldTypes(fieldConstraint.getFieldTypes().stream().map(EasyFormsFieldType::getName).toList());
-					return fieldConstraintUi;
+					fieldValidatorUi.setCode(fieldValidator.id().shortName());
+					fieldValidatorUi.setLabel(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_LABEL).getDisplay());
+					fieldValidatorUi.setDescription(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_DESCRIPTION).getDisplay());
+					fieldValidatorUi.setFieldTypes(fieldValidator.getFieldTypes().stream().map(EasyFormsFieldType::getName).toList());
+					return fieldValidatorUi;
 				})
-				.collect(VCollectors.toDtList(EasyFormsFieldConstraintUi.class));
+				.collect(VCollectors.toDtList(EasyFormsFieldValidatorUi.class));
 	}
 
 	public DtList<EasyFormsFieldUi> getFieldUiListByEasyFormId(final UID<EasyForm> efoUid) {
@@ -85,7 +85,7 @@ public class EasyFormsDesignerServices implements Component {
 					fieldUi.setTooltip(field.getTooltip());
 					fieldUi.setIsDefault(field.isDefault());
 					fieldUi.setIsMandatory(field.isMandatory());
-					fieldUi.setFieldConstraints(field.getFieldConstraints() != null ? field.getFieldConstraints() : Collections.emptyList()); //TODO normalement pas util
+					fieldUi.setFieldValidators(field.getFieldValidators() != null ? field.getFieldValidators() : Collections.emptyList()); //TODO normalement pas util
 					return fieldUi;
 				})
 				.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
@@ -126,7 +126,7 @@ public class EasyFormsDesignerServices implements Component {
 					fieldUi.getTooltip(),
 					Boolean.TRUE.equals(fieldUi.getIsDefault()),
 					Boolean.TRUE.equals(fieldUi.getIsMandatory()),
-					fieldUi.getFieldConstraints());
+					fieldUi.getFieldValidators());
 		}
 		easyForm.setTemplate(easyFormsTemplateBuilder.build());
 		easyFormDAO.save(easyForm);

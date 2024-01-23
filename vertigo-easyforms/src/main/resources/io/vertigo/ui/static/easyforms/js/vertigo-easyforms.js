@@ -37,8 +37,8 @@ VUiExtensions.methods = {
     saveEditItem : function() {
         let formData = this.vueDataParams(['editField']);
         formData.delete('vContext[editField][isDefault]')//champ non modifiable
-        if (!formData.has('vContext[editField][fieldConstraints]')) {
-            formData.append('vContext[editField][fieldConstraints]', '')
+        if (!formData.has('vContext[editField][fieldValidators]')) {
+            formData.append('vContext[editField][fieldValidators]', '')
         }
         formData.append('editIndex', this.$data.componentStates.itemModal.editIndex)
         this.httpPostAjax(context + 'easyforms/designer/_saveItem', formData, {

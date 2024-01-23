@@ -19,12 +19,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum Definitions {
 		/** Objet de données EasyForm. */
 		EasyForm(io.vertigo.easyforms.domain.EasyForm.class),
-		/** Objet de données EasyFormsFieldConstraintUi. */
-		EasyFormsFieldConstraintUi(io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi.class),
 		/** Objet de données EasyFormsFieldTypeUi. */
 		EasyFormsFieldTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldTypeUi.class),
 		/** Objet de données EasyFormsFieldUi. */
-		EasyFormsFieldUi(io.vertigo.easyforms.domain.EasyFormsFieldUi.class)		;
+		EasyFormsFieldUi(io.vertigo.easyforms.domain.EasyFormsFieldUi.class),
+		/** Objet de données EasyFormsFieldValidatorUi. */
+		EasyFormsFieldValidatorUi(io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi.class)		;
 
 		private final Class<?> clazz;
 
@@ -49,19 +49,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		efoId,
 		/** Propriété 'Template'. */
 		template	}
-
-	/**
-	 * Enumération des champs de EasyFormsFieldConstraintUi.
-	 */
-	public enum EasyFormsFieldConstraintUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi> {
-		/** Propriété 'Constraint'. */
-		code,
-		/** Propriété 'Constraint'. */
-		label,
-		/** Propriété 'Description'. */
-		description,
-		/** Propriété 'Attached to fields'. */
-		fieldTypes	}
 
 	/**
 	 * Enumération des champs de EasyFormsFieldTypeUi.
@@ -91,7 +78,20 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Mandatory field'. */
 		isMandatory,
 		/** Propriété 'Constraints'. */
-		fieldConstraints	}
+		fieldValidators	}
+
+	/**
+	 * Enumération des champs de EasyFormsFieldValidatorUi.
+	 */
+	public enum EasyFormsFieldValidatorUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi> {
+		/** Propriété 'Constraint'. */
+		code,
+		/** Propriété 'Constraint'. */
+		label,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Attached to fields'. */
+		fieldTypes	}
 
 	/** {@inheritDoc} */
 	@Override

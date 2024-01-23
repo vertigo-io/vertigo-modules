@@ -32,9 +32,9 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.VCollectors;
-import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldConstraintUiFields;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
-import io.vertigo.easyforms.domain.EasyFormsFieldConstraintUi;
+import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
@@ -51,9 +51,9 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<EasyForm> efoKey = ViewContextKey.of("efo");
 	private static final ViewContextKey<EasyFormsFieldTypeUi> fieldTypesKey = ViewContextKey.of("fieldTypes");
-	private static final ViewContextKey<EasyFormsFieldConstraintUi> fieldConstraintsKey = ViewContextKey.of("fieldConstraints");
+	private static final ViewContextKey<EasyFormsFieldValidatorUi> fieldValidatorsKey = ViewContextKey.of("fieldValidators");
 	private static final ViewContextKey<EasyFormsFieldUi> fieldsKey = ViewContextKey.of("fields");
-	private static final ViewContextKey<EasyFormsFieldConstraintUi> editFieldConstraintsKey = ViewContextKey.of("editFieldConstraints");
+	private static final ViewContextKey<EasyFormsFieldValidatorUi> editFieldValidatorsKey = ViewContextKey.of("editFieldValidators");
 	private static final ViewContextKey<EasyFormsFieldUi> editFieldKey = ViewContextKey.of("editField");
 
 	@Inject
@@ -61,8 +61,8 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt) {
 		viewContext.publishDtList(fieldTypesKey, easyFormsAdminServices.getFieldTypeUiList());
-		viewContext.publishDtList(fieldConstraintsKey, EasyFormsFieldConstraintUiFields.code, easyFormsAdminServices.getFieldConstraintUiList());
-		viewContext.publishDtList(editFieldConstraintsKey, new DtList<>(EasyFormsFieldConstraintUi.class));
+		viewContext.publishDtList(fieldValidatorsKey, EasyFormsFieldValidatorUiFields.code, easyFormsAdminServices.getFieldValidatorUiList());
+		viewContext.publishDtList(editFieldValidatorsKey, new DtList<>(EasyFormsFieldValidatorUi.class));
 		//---
 		viewContext.publishDto(efoKey, efoIdOpt
 				.map(easyFormsAdminServices::getEasyFormById)
@@ -93,7 +93,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 	@PostMapping("/_addItem")
 	public ViewContext addNewItem(final ViewContext viewContext) {
 		viewContext.publishDto(editFieldKey, buildChampUi());
-		viewContext.publishDtList(editFieldConstraintsKey, new DtList<>(EasyFormsFieldConstraintUi.class));
+		viewContext.publishDtList(editFieldValidatorsKey, new DtList<>(EasyFormsFieldValidatorUi.class));
 		return viewContext;
 	}
 
@@ -103,7 +103,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
 		final var editedChamp = fields.get(editIndex);
 		viewContext.publishDto(editFieldKey, editedChamp);
-		loadControlesByType(viewContext, easyFormsAdminServices.getFieldConstraintUiList(), editedChamp);
+		loadControlesByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editedChamp);
 		return viewContext;
 	}
 
@@ -114,7 +114,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
 
 		editField.setFieldType(fieldType);
-		loadControlesByType(viewContext, easyFormsAdminServices.getFieldConstraintUiList(), editField);
+		loadControlesByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editField);
 		editField.setFieldCode(computeDefaultFieldCode(fields, editField));
 		viewContext.publishDto(editFieldKey, editField);
 		return viewContext;
@@ -159,13 +159,13 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 	}
 
 	protected static void loadControlesByType(final ViewContext viewContext,
-			final DtList<EasyFormsFieldConstraintUi> fieldConstraints,
+			final DtList<EasyFormsFieldValidatorUi> fieldValidators,
 			final EasyFormsFieldUi editField) {
-		final DtList<EasyFormsFieldConstraintUi> fieldConstraintsByType = fieldConstraints.stream()
+		final DtList<EasyFormsFieldValidatorUi> fieldValidatorsByType = fieldValidators.stream()
 				.filter(c -> c.getFieldTypes().contains(EasyFormsFieldType.PREFIX + editField.getFieldType()))
-				.collect(VCollectors.toDtList(EasyFormsFieldConstraintUi.class));
+				.collect(VCollectors.toDtList(EasyFormsFieldValidatorUi.class));
 
-		viewContext.publishDtList(editFieldConstraintsKey, fieldConstraintsByType);
+		viewContext.publishDtList(editFieldValidatorsKey, fieldValidatorsByType);
 	}
 
 	protected static String computeDefaultFieldCode(final DtList<EasyFormsFieldUi> fields, final EasyFormsFieldUi editedField) {

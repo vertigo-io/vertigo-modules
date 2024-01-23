@@ -29,7 +29,7 @@ import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
 import io.vertigo.easyforms.impl.easyformsrunner.library.i18n.MetaFormulaireResources;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldConstraintDefinitionProvider.FieldConstraintEnum;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
@@ -113,7 +113,7 @@ public class EasyFormsRunnerServices implements Component {
 				formulaire.put(champ.getFieldCode(), formatedValue);
 
 				smartTypeManager.validate(smartTypeDefinition, Cardinality.OPTIONAL_OR_NULLABLE, typedValue);
-				checkFieldConstraints(champ, typedValue, formulaireOwner, uiMessageStack);
+				checkFieldValidators(champ, typedValue, formulaireOwner, uiMessageStack);
 			} catch (final FormatterException e) {
 				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + champ.getFieldCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
@@ -132,11 +132,11 @@ public class EasyFormsRunnerServices implements Component {
 		}
 	}
 
-	private void checkFieldConstraints(final Field champ, final Object typedValue, final Entity formulaireOwner, final UiMessageStack uiMessageStack) {
-		for (final String fieldConstraint : champ.getFieldConstraints()) {
+	private void checkFieldValidators(final Field champ, final Object typedValue, final Entity formulaireOwner, final UiMessageStack uiMessageStack) {
+		for (final String fieldValidator : champ.getFieldValidators()) {
 			//on tente le valueOf de l'enum malgres l'exception car il ne faut pas manquer de contrôles, et le code doit être maitrisée
 			var controlePasse = false;
-			switch (FieldConstraintEnum.valueOf(StringUtil.camelToConstCase(fieldConstraint))) {
+			switch (FieldValidatorEnum.valueOf(StringUtil.camelToConstCase(fieldValidator))) {
 				case EMAIL_NOT_IN_BLACKLIST:
 					controlePasse = checkEmailNotInBlackList((String) typedValue, uiMessageStack,
 							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_EMAIL_NOT_IN_BLACK_LIST_ERROR, formulaireOwner, champ.getFieldCode());
@@ -174,12 +174,12 @@ public class EasyFormsRunnerServices implements Component {
 							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_TELEPHONE_MOBILE_SMS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				default:
-					throw new IllegalArgumentException("Contrôle de champ inconnu " + fieldConstraint);
+					throw new IllegalArgumentException("Contrôle de champ inconnu " + fieldValidator);
 			}
 			if (!controlePasse) {
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 						.incMeasure(ERREUR_CONTROLE_FORMULAIRE_MEASURE, 1)
-						.setTag("controle", fieldConstraint)
+						.setTag("controle", fieldValidator)
 						.setTag("champ", champ.getLabel()));
 
 				break; //si un contrôle ne passe pas sur un champ, on passe au champ suivant
