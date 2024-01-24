@@ -18,17 +18,17 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 			final boolean isDefault,
 			final boolean isMandatory,
 			final List<String> fieldValidators) {
-		final var champ = new Field();
-		champ.setFieldCode(fieldCode);
-		champ.setFieldType(fieldType.getName());
-		champ.setLabel(label);
-		champ.setTooltip(tooltip);
-		champ.setOrder(fields.size() + 1);
-		champ.setDefault(isDefault);
-		champ.setMandatory(isMandatory);
-		champ.setFieldValidators(fieldValidators);
+		final var field = new Field();
+		field.setFieldCode(fieldCode);
+		field.setFieldType(fieldType.getName());
+		field.setLabel(label);
+		field.setTooltip(tooltip);
+		field.setOrder(fields.size() + 1);
+		field.setDefault(isDefault);
+		field.setMandatory(isMandatory);
+		field.setFieldValidators(fieldValidators);
 		//-- ajouter à la list
-		fields.add(champ);
+		fields.add(field);
 		return this;
 	}
 

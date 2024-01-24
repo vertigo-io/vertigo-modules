@@ -14,18 +14,18 @@ import io.vertigo.core.node.definition.DefinitionPrefix;
 @DefinitionPrefix(EasyFormsFieldValidator.PREFIX)
 public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsFieldValidator> {
 
-	public static final String PREFIX = "EfFco";
+	public static final String PREFIX = "EfFva";
 
 	private final String label;
 	private final int priority;
 	private final Set<EasyFormsFieldType> fieldTypes;
 
-	private EasyFormsFieldValidator(final String code, final String label, final int priority, final Collection<EasyFormsFieldType> fieldTypes) {
+	private EasyFormsFieldValidator(final String code, final String label, final int priority, final Set<EasyFormsFieldType> fieldTypes) {
 		super(PREFIX + code);
 		//---
 		this.label = label;
 		this.priority = priority;
-		this.fieldTypes = Collections.unmodifiableSet(new HashSet<>(fieldTypes));
+		this.fieldTypes = fieldTypes;
 	}
 
 	public static EasyFormsFieldValidator of(final String code, final String label, final int priority, final EasyFormsFieldType... fieldTypes) {
@@ -35,7 +35,7 @@ public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsF
 	public static EasyFormsFieldValidator of(final String code, final String label, final int priority, final Collection<EasyFormsFieldType> fieldTypes) {
 		Assertion.check().isNotNull(fieldTypes);
 
-		return new EasyFormsFieldValidator(code, label, priority, fieldTypes);
+		return new EasyFormsFieldValidator(code, label, priority, Collections.unmodifiableSet(new HashSet<>(fieldTypes)));
 	}
 
 	public static EasyFormsFieldValidator resolve(final String name) {

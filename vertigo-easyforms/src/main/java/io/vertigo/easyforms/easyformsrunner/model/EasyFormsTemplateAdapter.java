@@ -10,17 +10,17 @@ public class EasyFormsTemplateAdapter implements BasicTypeAdapter<EasyFormsTempl
 	private static final Gson GSON = new Gson();
 
 	@Override
-	public EasyFormsTemplate toJava(final String modeleAsString, final Class<EasyFormsTemplate> type) {
+	public EasyFormsTemplate toJava(final String modelAsString, final Class<EasyFormsTemplate> type) {
 		// H2 wraps json in a String by default (http://www.h2database.com/html/datatypes.html#json_type)
 		// temporary fix to unescape json, it should have been inserted as json value not json string
-		if (modeleAsString.startsWith("\"")) {
-			final var resolvedJson = modeleAsString
-					.substring(1, modeleAsString.length() - 1)
+		if (modelAsString.startsWith("\"")) {
+			final var resolvedJson = modelAsString
+					.substring(1, modelAsString.length() - 1)
 					.replace("\\\"", "\"")
 					.replace("\\\\", "\\");
 			return GSON.fromJson(resolvedJson, EasyFormsTemplate.class);
 		}
-		return GSON.fromJson(modeleAsString, EasyFormsTemplate.class);
+		return GSON.fromJson(modelAsString, EasyFormsTemplate.class);
 	}
 
 	@Override

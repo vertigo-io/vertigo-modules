@@ -70,14 +70,14 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 		viewContext.publishDtList(fieldsKey, efoIdOpt
 				.map(easyFormsAdminServices::getFieldUiListByEasyFormId)
 				.orElseGet(() -> new DtList<>(EasyFormsFieldUi.class)));
-		viewContext.publishDto(editFieldKey, buildChampUi());
+		viewContext.publishDto(editFieldKey, buildFieldUi());
 	}
 
-	private static EasyFormsFieldUi buildChampUi() {
-		final var champUi = new EasyFormsFieldUi();
-		champUi.setIsDefault(false);
-		champUi.setIsMandatory(false);
-		return champUi;
+	private static EasyFormsFieldUi buildFieldUi() {
+		final var fieldUi = new EasyFormsFieldUi();
+		fieldUi.setIsDefault(false);
+		fieldUi.setIsMandatory(false);
+		return fieldUi;
 	}
 
 	@PostMapping("/_deleteItem")
@@ -92,7 +92,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_addItem")
 	public ViewContext addNewItem(final ViewContext viewContext) {
-		viewContext.publishDto(editFieldKey, buildChampUi());
+		viewContext.publishDto(editFieldKey, buildFieldUi());
 		viewContext.publishDtList(editFieldValidatorsKey, new DtList<>(EasyFormsFieldValidatorUi.class));
 		return viewContext;
 	}
@@ -101,9 +101,9 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 	public ViewContext editItem(final ViewContext viewContext,
 			@RequestParam("editIndex") final Integer editIndex,
 			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
-		final var editedChamp = fields.get(editIndex);
-		viewContext.publishDto(editFieldKey, editedChamp);
-		loadControlesByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editedChamp);
+		final var editedField = fields.get(editIndex);
+		viewContext.publishDto(editFieldKey, editedField);
+		loadControlsByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editedField);
 		return viewContext;
 	}
 
@@ -114,7 +114,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
 
 		editField.setFieldType(fieldType);
-		loadControlesByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editField);
+		loadControlsByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editField);
 		editField.setFieldCode(computeDefaultFieldCode(fields, editField));
 		viewContext.publishDto(editFieldKey, editField);
 		return viewContext;
@@ -148,17 +148,17 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 		}
 
 		viewContext.publishDtList(fieldsKey, fields);
-		viewContext.publishDto(editFieldKey, buildChampUi());
+		viewContext.publishDto(editFieldKey, buildFieldUi());
 		return viewContext;
 	}
 
 	public Long save(final ViewContext viewContext) {
-		final var mfo = viewContext.readDto(efoKey, getUiMessageStack());
+		final var efo = viewContext.readDto(efoKey, getUiMessageStack());
 		final var fields = viewContext.readDtList(fieldsKey, getUiMessageStack());
-		return easyFormsAdminServices.saveNewForm(mfo, fields);
+		return easyFormsAdminServices.saveNewForm(efo, fields);
 	}
 
-	protected static void loadControlesByType(final ViewContext viewContext,
+	protected static void loadControlsByType(final ViewContext viewContext,
 			final DtList<EasyFormsFieldValidatorUi> fieldValidators,
 			final EasyFormsFieldUi editField) {
 		final DtList<EasyFormsFieldValidatorUi> fieldValidatorsByType = fieldValidators.stream()
@@ -172,12 +172,12 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType());
 		final var pattern = Pattern.compile("^" + prefixFieldCode + "[0-9]*$");
 		final Optional<Integer> lastMatchingOpt = fields.stream()
-				.filter(champ -> pattern.matcher(champ.getFieldCode()).matches())
-				.map(champ -> {
-					if (prefixFieldCode.length() == champ.getFieldCode().length()) {
+				.filter(f -> pattern.matcher(f.getFieldCode()).matches())
+				.map(f -> {
+					if (prefixFieldCode.length() == f.getFieldCode().length()) {
 						return 1;
 					}
-					return Integer.valueOf(champ.getFieldCode().substring(prefixFieldCode.length()));
+					return Integer.valueOf(f.getFieldCode().substring(prefixFieldCode.length()));
 				})
 				.sorted(Comparator.reverseOrder())
 				.findFirst();

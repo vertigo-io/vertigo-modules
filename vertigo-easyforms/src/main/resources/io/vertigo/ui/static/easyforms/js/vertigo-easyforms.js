@@ -2,16 +2,16 @@ let context = document.currentScript.dataset.context ;
 
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
-    hasErreurFormulaire : function(uiMessageStack, object, champ) {
-    	return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['formulaire_'+ champ] != null)
+    efHasFormError : function(uiMessageStack, object, champ) {
+    	return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['form_'+ champ] != null)
     },
 	
-    getErreurFormulaire : function(uiMessageStack, object, champ) {
-    	  return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['formulaire_'+ champ] != null &&
-    	  			 uiMessageStack.objectFieldErrors[object]['formulaire_'+ champ].join(', '));
+    efGetFormError : function(uiMessageStack, object, champ) {
+    	  return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['form_'+ champ] != null &&
+    	  			 uiMessageStack.objectFieldErrors[object]['form_'+ champ].join(', '));
     },
 
-    addItem : function() {
+    efAddItem : function() {
         this.httpPostAjax(context + 'easyforms/designer/_addItem', {}, {
             onSuccess: function(response) {
                 this.$data.componentStates.itemModal.editIndex = -1;
@@ -20,7 +20,7 @@ VUiExtensions.methods = {
         });
     },
 
-    editItem : function(editIndex) {
+    efEditItem : function(editIndex) {
         this.$data.componentStates.itemModal.editIndex = editIndex;
         this.httpPostAjax(context + 'easyforms/designer/_editItem', { editIndex: editIndex }, {
             onSuccess: function(response) {
@@ -29,12 +29,12 @@ VUiExtensions.methods = {
         });
     },
     
-    refreshItem : function() {
+    efRefreshItem : function() {
         this.httpPostAjax(context + 'easyforms/designer/_refreshItem',{'fieldType':this.vueData.editField.fieldType});
     },
 
 
-    saveEditItem : function() {
+    efSaveEditItem : function() {
         let formData = this.vueDataParams(['editField']);
         formData.delete('vContext[editField][isDefault]')//champ non modifiable
         if (!formData.has('vContext[editField][fieldValidators]')) {
@@ -49,7 +49,7 @@ VUiExtensions.methods = {
         });
     },
 
-    deleteItem : function(editIndex) {
+    efDeleteItem : function(editIndex) {
         this.$data.componentStates.itemModal.editIndex = editIndex;
         this.httpPostAjax(context + 'easyforms/designer/_deleteItem', { editIndex: editIndex }, {
             onSuccess: function(response) {
@@ -58,7 +58,7 @@ VUiExtensions.methods = {
         });
     },
 
-    moveItem : function(editIndex, offset) {
+    efMoveItem : function(editIndex, offset) {
         this.httpPostAjax(context + 'easyforms/designer/_moveItem', { editIndex: editIndex, offset: offset }, {
             onSuccess: function(response) {
                 this.$q.notify({ message: 'Element déplacé', type: 'positive' });
@@ -67,10 +67,10 @@ VUiExtensions.methods = {
     },
     
     /** When used without itemModal */
-    addItemNoModal: function(listName) {
+    efAddItemNoModal: function(listName) {
         this.httpPostAjax(context + 'easyforms/designer/_addItem', this.vueDataParams([listName]), { });
     },
-    deleteItemNoModal: function(listName, editIndex) {
+    efDeleteItemNoModal: function(listName, editIndex) {
         let formData = this.vueDataParams([listName]);
         formData.append('editIndex', editIndex);
         this.httpPostAjax(context + 'easyforms/designer/_deleteItem', formData, {
@@ -79,7 +79,7 @@ VUiExtensions.methods = {
             }.bind(this)
          });
     },
-    moveItemNoModal: function(listName, editIndex, offset) {
+    efMoveItemNoModal: function(listName, editIndex, offset) {
         let formData = this.vueDataParams([listName]);
         formData.append('editIndex', editIndex);
         formData.append('offset', offset);
@@ -88,16 +88,16 @@ VUiExtensions.methods = {
     },
     
     /** When used inner vueData */
-    addItemVueData: function() {
+    efAddItemVueData: function() {
         this.$data.vueData.motifValues.push({label:''});
     },
-    deleteItemVueData: function(editIndex) {
+    efDeleteItemVueData: function(editIndex) {
         this.$data.vueData.motifValues.splice(editIndex, 1);
     },
-    moveItemVueData: function(editIndex, offset) {
-	let element = this.$data.vueData.motifValues[editIndex];
-	this.$data.vueData.motifValues.splice(editIndex, 1);
-	this.$data.vueData.motifValues.splice(editIndex + offset, 0, element);
+    efMoveItemVueData: function(editIndex, offset) {
+	    let element = this.$data.vueData.motifValues[editIndex];
+	    this.$data.vueData.motifValues.splice(editIndex, 1);
+	    this.$data.vueData.motifValues.splice(editIndex + offset, 0, element);
     }
 }
 

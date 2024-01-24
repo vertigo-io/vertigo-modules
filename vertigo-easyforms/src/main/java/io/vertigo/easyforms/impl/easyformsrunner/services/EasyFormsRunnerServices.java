@@ -36,8 +36,8 @@ import io.vertigo.vega.webservice.validation.ValidationUserException;
 @Transactional
 public class EasyFormsRunnerServices implements Component {
 
-	private static final String FORMULAIRE_PREFIX = "formulaire_";
-	private static final String ERREUR_CONTROLE_FORMULAIRE_MEASURE = "erreurControleFormulaire";
+	private static final String FORM_PREFIX = "form_";
+	private static final String ERROR_CONTROL_FORM_MEASURE = "errorControlForm";
 
 	private static final int AGE_13_ANS = 13;
 	private static final int AGE_16_ANS = 16;
@@ -79,7 +79,7 @@ public class EasyFormsRunnerServices implements Component {
 		final Set<String> champsAutorises = modeleFormulaire.getFields().stream().map(Field::getFieldCode).collect(Collectors.toSet());
 		for (final String champFormulaire : formulaire.keySet()) {
 			if (!champsAutorises.contains(champFormulaire)) {
-				uiMessageStack.error("Champ non autorisé ", formulaireOwner, FORMULAIRE_PREFIX + champFormulaire);
+				uiMessageStack.error("Champ non autorisé ", formulaireOwner, FORM_PREFIX + champFormulaire);
 			}
 		}
 		//---
@@ -100,9 +100,9 @@ public class EasyFormsRunnerServices implements Component {
 		if (inputValue == null || inputValue.isBlank()) {
 			// when null, the only check is for mandatory
 			if (champ.isMandatory()) {
-				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + champ.getFieldCode());
+				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formulaireOwner, FORM_PREFIX + champ.getFieldCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
-						.incMeasure(ERREUR_CONTROLE_FORMULAIRE_MEASURE, 1)
+						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Obligatoire")
 						.setTag("champ", champ.getLabel()));
 			}
@@ -115,16 +115,16 @@ public class EasyFormsRunnerServices implements Component {
 				smartTypeManager.validate(smartTypeDefinition, Cardinality.OPTIONAL_OR_NULLABLE, typedValue);
 				checkFieldValidators(champ, typedValue, formulaireOwner, uiMessageStack);
 			} catch (final FormatterException e) {
-				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + champ.getFieldCode());
+				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getFieldCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
-						.incMeasure(ERREUR_CONTROLE_FORMULAIRE_MEASURE, 1)
+						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Formatter")
 						.setTag("smartType", smartTypeDefinition.id().shortName())
 						.setTag("champ", champ.getLabel()));
 			} catch (final ConstraintException e) {
-				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + champ.getFieldCode());
+				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getFieldCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
-						.incMeasure(ERREUR_CONTROLE_FORMULAIRE_MEASURE, 1)
+						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Constraints")
 						.setTag("smartType", smartTypeDefinition.id().shortName())
 						.setTag("champ", champ.getLabel()));
@@ -139,46 +139,46 @@ public class EasyFormsRunnerServices implements Component {
 			switch (FieldValidatorEnum.valueOf(StringUtil.camelToConstCase(fieldValidator))) {
 				case EMAIL_NOT_IN_BLACKLIST:
 					controlePasse = checkEmailNotInBlackList((String) typedValue, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_EMAIL_NOT_IN_BLACK_LIST_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_EMAIL_NOT_IN_BLACK_LIST_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case GTE_13_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age >= AGE_13_ANS, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_G_T_E_13ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_13ANS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case GTE_16_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age >= AGE_16_ANS, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_G_T_E_16ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_16ANS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case LT_16_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age < AGE_16_ANS, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_L_T_16ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_L_T_16ANS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case GTE_18_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age >= AGE_MAJORITE, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_G_T_E_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case LT_18_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age < AGE_MAJORITE, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_L_T_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_L_T_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case LTE_18_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age <= AGE_MAJORITE, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_L_T_E_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_L_T_E_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case TELEPHONE_FR:
 					controlePasse = checkTelephoneFr((String) typedValue, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_TELEPHONE_FR_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_TELEPHONE_FR_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				case TELEPHONE_MOBILE_SMS:
 					controlePasse = checkTelephoneMobileSms((String) typedValue, uiMessageStack,
-							MetaFormulaireResources.EF_FORMULAIRE_CONTROLE_TELEPHONE_MOBILE_SMS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_TELEPHONE_MOBILE_SMS_ERROR, formulaireOwner, champ.getFieldCode());
 					break;
 				default:
 					throw new IllegalArgumentException("Contrôle de champ inconnu " + fieldValidator);
 			}
 			if (!controlePasse) {
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
-						.incMeasure(ERREUR_CONTROLE_FORMULAIRE_MEASURE, 1)
+						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", fieldValidator)
 						.setTag("champ", champ.getLabel()));
 
@@ -195,7 +195,7 @@ public class EasyFormsRunnerServices implements Component {
 		if (PREDICATE_TELEPHONE_FR.test(telephone)) {
 			return true;
 		}
-		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + fieldCode);
+		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORM_PREFIX + fieldCode);
 		return false;
 	}
 
@@ -207,7 +207,7 @@ public class EasyFormsRunnerServices implements Component {
 		if (PREDICATE_TELEPHONE_SMS.test(telephone)) {
 			return true;
 		}
-		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + fieldCode);
+		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORM_PREFIX + fieldCode);
 		return false;
 	}
 
@@ -223,7 +223,7 @@ public class EasyFormsRunnerServices implements Component {
 		if (ageValidator.test(age)) {
 			return true;
 		}
-		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + fieldCode);
+		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORM_PREFIX + fieldCode);
 		return false;
 	}
 
@@ -238,7 +238,7 @@ public class EasyFormsRunnerServices implements Component {
 		if (!EMAIL_DOMAIN_BLACK_LIST.contains(emailDomain)) {
 			return true;
 		}
-		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORMULAIRE_PREFIX + fieldCode);
+		uiMessageStack.error(LocaleMessageText.of(metaFormulaireResource).getDisplay(), formulaireOwner, FORM_PREFIX + fieldCode);
 		return false;
 	}
 

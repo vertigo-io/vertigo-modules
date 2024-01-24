@@ -17,18 +17,18 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
-import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldValidator;
+import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldValidator;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplateBuilder;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Transactional
 public class EasyFormsDesignerServices implements Component {
-	public static final String RESOURCES_PREFIX = "EASYFORMS_FORMULAIRE_CONTROLE_";
+	public static final String RESOURCES_PREFIX = "EF_FORM_CONTROL_";
 	public static final String RESOURCES_SUFFIX_LABEL = "_LABEL";
 	public static final String RESOURCES_SUFFIX_DESCRIPTION = "_DESCRIPTION";
 	public static final String RESOURCES_SUFFIX_ERROR = "_ERROR";
@@ -91,9 +91,9 @@ public class EasyFormsDesignerServices implements Component {
 				.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
 	}
 
-	public void checkUpdateField(final DtList<EasyFormsFieldUi> fieldss, final Integer editIndex, final EasyFormsFieldUi fieldEdit, final UiMessageStack uiMessageStack) {
-		for (int i = 0; i < fieldss.size(); i++) {
-			if (i != editIndex && fieldss.get(i).getFieldCode().equals(fieldEdit.getFieldCode())) {
+	public void checkUpdateField(final DtList<EasyFormsFieldUi> fields, final Integer editIndex, final EasyFormsFieldUi fieldEdit, final UiMessageStack uiMessageStack) {
+		for (int i = 0; i < fields.size(); i++) {
+			if (i != editIndex && fields.get(i).getFieldCode().equals(fieldEdit.getFieldCode())) {
 				//si le code n'est pas unique ce n'est pas bon.
 				throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans le formulaire."), // TODO i18n
 						fieldEdit, EasyFormsFieldUiFields.fieldCode);

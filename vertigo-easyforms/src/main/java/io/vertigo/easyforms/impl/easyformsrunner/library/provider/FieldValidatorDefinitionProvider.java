@@ -1,7 +1,6 @@
 package io.vertigo.easyforms.impl.easyformsrunner.library.provider;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
@@ -39,7 +38,7 @@ public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionPro
 
 		@Override
 		public EasyFormsFieldValidator buildDefinition(final DefinitionSpace definitionSpace) {
-			final var types = Arrays.stream(fieldTypes).map(FieldTypeEnum::get).collect(Collectors.toUnmodifiableSet());
+			final var types = Arrays.stream(fieldTypes).map(FieldTypeEnum::get).toList();
 			return EasyFormsFieldValidator.of(code, label, priorite, types);
 		}
 

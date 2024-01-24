@@ -23,7 +23,7 @@ public class EasyFormsUiUtil implements Serializable {
 	}
 
 	/**
-	 * @param fieldPath Chemin du champ
+	 * @param fieldTypeName Name of the field type
 	 * @return maxLength of the field
 	 */
 	public Integer smartTypeMaxLength(final String fieldTypeName) {
