@@ -17,7 +17,6 @@ import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.SmarttypeResources;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
@@ -29,7 +28,6 @@ import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
 import io.vertigo.easyforms.impl.easyformsrunner.library.i18n.MetaFormulaireResources;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
@@ -76,7 +74,7 @@ public class EasyFormsRunnerServices implements Component {
 	private AnalyticsManager analyticsManager;
 
 	public void checkFormulaire(final Entity formulaireOwner, final EasyFormsData formulaire, final EasyFormsTemplate modeleFormulaire, final UiMessageStack uiMessageStack) {
-		final Set<String> champsAutorises = modeleFormulaire.getFields().stream().map(Field::getFieldCode).collect(Collectors.toSet());
+		final Set<String> champsAutorises = modeleFormulaire.getFields().stream().map(Field::getCode).collect(Collectors.toSet());
 		for (final String champFormulaire : formulaire.keySet()) {
 			if (!champsAutorises.contains(champFormulaire)) {
 				uiMessageStack.error("Champ non autorisé ", formulaireOwner, FORM_PREFIX + champFormulaire);
@@ -94,13 +92,13 @@ public class EasyFormsRunnerServices implements Component {
 	}
 
 	private void checkChampFormulaire(final Field champ, final EasyFormsData formulaire, final Entity formulaireOwner, final UiMessageStack uiMessageStack) {
-		final var typeChamp = EasyFormsFieldType.resolve(champ.getFieldType());
-		final var smartTypeDefinition = getSmartTypeByNom(typeChamp.getSmartType());
-		final var inputValue = formulaire.get(champ.getFieldCode());
+		final var typeChamp = EasyFormsFieldType.resolve(champ.getFieldTypeName());
+		final var smartTypeDefinition = getSmartTypeByNom(typeChamp.getSmartTypeName());
+		final var inputValue = formulaire.get(champ.getCode());
 		if (inputValue == null || inputValue.isBlank()) {
 			// when null, the only check is for mandatory
 			if (champ.isMandatory()) {
-				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formulaireOwner, FORM_PREFIX + champ.getFieldCode());
+				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Obligatoire")
@@ -110,19 +108,19 @@ public class EasyFormsRunnerServices implements Component {
 			try {
 				final var typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputValue);
 				final var formatedValue = smartTypeManager.valueToString(smartTypeDefinition, typedValue);
-				formulaire.put(champ.getFieldCode(), formatedValue);
+				formulaire.put(champ.getCode(), formatedValue);
 
 				smartTypeManager.validate(smartTypeDefinition, Cardinality.OPTIONAL_OR_NULLABLE, typedValue);
 				checkFieldValidators(champ, typedValue, formulaireOwner, uiMessageStack);
 			} catch (final FormatterException e) {
-				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getFieldCode());
+				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Formatter")
 						.setTag("smartType", smartTypeDefinition.id().shortName())
 						.setTag("champ", champ.getLabel()));
 			} catch (final ConstraintException e) {
-				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getFieldCode());
+				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Constraints")
@@ -133,45 +131,42 @@ public class EasyFormsRunnerServices implements Component {
 	}
 
 	private void checkFieldValidators(final Field champ, final Object typedValue, final Entity formulaireOwner, final UiMessageStack uiMessageStack) {
+		/*
 		for (final String fieldValidator : champ.getFieldValidators()) {
 			//on tente le valueOf de l'enum malgres l'exception car il ne faut pas manquer de contrôles, et le code doit être maitrisée
 			var controlePasse = false;
 			switch (FieldValidatorEnum.valueOf(StringUtil.camelToConstCase(fieldValidator))) {
 				case EMAIL_NOT_IN_BLACKLIST:
 					controlePasse = checkEmailNotInBlackList((String) typedValue, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_EMAIL_NOT_IN_BLACK_LIST_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_EMAIL_NOT_IN_BLACK_LIST_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case GTE_13_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age >= AGE_13_ANS, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_13ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_13ANS_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case GTE_16_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age >= AGE_16_ANS, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_16ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_16ANS_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case LT_16_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age < AGE_16_ANS, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_L_T_16ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_L_T_16ANS_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case GTE_18_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age >= AGE_MAJORITE, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_G_T_E_18ANS_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case LT_18_ANS:
 					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age < AGE_MAJORITE, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_L_T_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
-					break;
-				case LTE_18_ANS:
-					controlePasse = checkAgeRevolu((LocalDate) typedValue, LocalDate.now(), age -> age <= AGE_MAJORITE, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_L_T_E_18ANS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_L_T_18ANS_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case TELEPHONE_FR:
 					controlePasse = checkTelephoneFr((String) typedValue, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_TELEPHONE_FR_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_TELEPHONE_FR_ERROR, formulaireOwner, champ.getCode());
 					break;
 				case TELEPHONE_MOBILE_SMS:
 					controlePasse = checkTelephoneMobileSms((String) typedValue, uiMessageStack,
-							MetaFormulaireResources.EF_FORM_CONTROL_TELEPHONE_MOBILE_SMS_ERROR, formulaireOwner, champ.getFieldCode());
+							MetaFormulaireResources.EF_FORM_CONTROL_TELEPHONE_MOBILE_SMS_ERROR, formulaireOwner, champ.getCode());
 					break;
 				default:
 					throw new IllegalArgumentException("Contrôle de champ inconnu " + fieldValidator);
@@ -181,10 +176,11 @@ public class EasyFormsRunnerServices implements Component {
 						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", fieldValidator)
 						.setTag("champ", champ.getLabel()));
-
+		
 				break; //si un contrôle ne passe pas sur un champ, on passe au champ suivant
 			}
 		}
+		*/
 	}
 
 	private static boolean checkTelephoneFr(

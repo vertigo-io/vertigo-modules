@@ -1,6 +1,5 @@
 package io.vertigo.easyforms.impl.easyformsdesigner.services;
 
-import java.util.Collections;
 import java.util.Comparator;
 
 import javax.inject.Inject;
@@ -47,7 +46,7 @@ public class EasyFormsDesignerServices implements Component {
 				.stream()
 				.map(fieldType -> {
 					final var fieldTypeUi = new EasyFormsFieldTypeUi();
-					fieldTypeUi.setName(fieldType.id().shortName());
+					fieldTypeUi.setName(fieldType.id().fullName());
 					fieldTypeUi.setLabel(fieldType.getLabel());
 					return fieldTypeUi;
 				})
@@ -63,7 +62,7 @@ public class EasyFormsDesignerServices implements Component {
 					final var localName = fieldValidator.id().shortName();
 					final var resourcePrefix = RESOURCES_PREFIX + StringUtil.camelToConstCase(localName);
 
-					fieldValidatorUi.setCode(fieldValidator.id().shortName());
+					fieldValidatorUi.setCode(fieldValidator.id().fullName());
 					fieldValidatorUi.setLabel(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_LABEL).getDisplay());
 					fieldValidatorUi.setDescription(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_DESCRIPTION).getDisplay());
 					fieldValidatorUi.setFieldTypes(fieldValidator.getFieldTypes().stream().map(EasyFormsFieldType::getName).toList());
@@ -76,16 +75,16 @@ public class EasyFormsDesignerServices implements Component {
 		final var easyForm = getEasyFormById(efoUid);
 		return easyForm.getTemplate().getFields().stream()
 				.map(field -> {
-					final var fieldType = EasyFormsFieldType.resolve(field.getFieldType());
+					final var fieldType = EasyFormsFieldType.resolve(field.getFieldTypeName());
 					final var fieldUi = new EasyFormsFieldUi();
-					fieldUi.setFieldCode(field.getFieldCode());
-					fieldUi.setFieldType(fieldType.id().shortName());
+					fieldUi.setFieldCode(field.getCode());
+					fieldUi.setFieldType(fieldType.id().fullName());
 					fieldUi.setFieldTypeLabel(fieldType.getLabel());
 					fieldUi.setLabel(field.getLabel());
 					fieldUi.setTooltip(field.getTooltip());
 					fieldUi.setIsDefault(field.isDefault());
 					fieldUi.setIsMandatory(field.isMandatory());
-					fieldUi.setFieldValidators(field.getFieldValidators() != null ? field.getFieldValidators() : Collections.emptyList()); //TODO normalement pas util
+					// TODO fieldUi.setFieldValidators(field.getFieldValidators() != null ? field.getFieldValidators() : Collections.emptyList()); //TODO normalement pas util
 					return fieldUi;
 				})
 				.collect(VCollectors.toDtList(EasyFormsFieldUi.class));

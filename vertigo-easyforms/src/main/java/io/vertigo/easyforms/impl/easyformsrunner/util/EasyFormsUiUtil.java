@@ -28,7 +28,7 @@ public class EasyFormsUiUtil implements Serializable {
 	 */
 	public Integer smartTypeMaxLength(final String fieldTypeName) {
 		if (fieldTypeName != null) {
-			return Node.getNode().getDefinitionSpace().resolve(getFieldTypeByName(fieldTypeName).getSmartType(), SmartTypeDefinition.class)
+			return Node.getNode().getDefinitionSpace().resolve(getFieldTypeByName(fieldTypeName).getSmartTypeName(), SmartTypeDefinition.class)
 					.getProperties().getValue(DtProperty.MAX_LENGTH);
 		}
 		return null;
@@ -39,7 +39,7 @@ public class EasyFormsUiUtil implements Serializable {
 		final Map<String, String> outOfEasyFormTemplate = new HashMap<>(easyForm);
 
 		for (final Field field : easyFormsTemplate.getFields()) { // order is important
-			final var fieldCode = field.getFieldCode();
+			final var fieldCode = field.getCode();
 			easyFormDisplay.put(field.getLabel(), outOfEasyFormTemplate.get(fieldCode));
 			outOfEasyFormTemplate.remove(fieldCode);
 		}
@@ -47,6 +47,10 @@ public class EasyFormsUiUtil implements Serializable {
 			easyFormDisplay.put(champ.getKey() + " (old)", champ.getValue());
 		}
 		return easyFormDisplay;
+	}
+
+	public Map<String, String> getDynamicList(final EasyFormsTemplate easyFormsTemplate, final String fieldCode) {
+		return Map.of("TODO", "Todo"); // TODO, gérer les cas de list supplier built in (Map en dur "customList", liste de ref prefix "ref:" ?, liste du contexte prefixe "ctx:" ?)
 	}
 
 }

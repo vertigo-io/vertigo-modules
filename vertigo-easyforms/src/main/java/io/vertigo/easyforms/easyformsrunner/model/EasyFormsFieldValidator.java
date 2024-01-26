@@ -10,39 +10,45 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
+import io.vertigo.core.util.StringUtil;
 
 @DefinitionPrefix(EasyFormsFieldValidator.PREFIX)
 public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsFieldValidator> {
 
 	public static final String PREFIX = "EfFva";
 
-	private final String label;
 	private final int priority;
+	private final EasyFormsTemplate paramTemplate;
 	private final Set<EasyFormsFieldType> fieldTypes;
 
-	private EasyFormsFieldValidator(final String code, final String label, final int priority, final Set<EasyFormsFieldType> fieldTypes) {
-		super(PREFIX + code);
+	private EasyFormsFieldValidator(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldType> fieldTypes) {
+		super(name);
 		//---
-		this.label = label;
 		this.priority = priority;
+		this.paramTemplate = paramTemplate;
 		this.fieldTypes = fieldTypes;
 	}
 
-	public static EasyFormsFieldValidator of(final String code, final String label, final int priority, final EasyFormsFieldType... fieldTypes) {
-		return new EasyFormsFieldValidator(code, label, priority, Set.of(fieldTypes));
+	public static EasyFormsFieldValidator of(final String name, final int priority, final EasyFormsFieldType... fieldTypes) {
+		return new EasyFormsFieldValidator(name, priority, null, Set.of(fieldTypes));
 	}
 
-	public static EasyFormsFieldValidator of(final String code, final String label, final int priority, final Collection<EasyFormsFieldType> fieldTypes) {
-		Assertion.check().isNotNull(fieldTypes);
+	public static EasyFormsFieldValidator of(final String name, final int priority, final EasyFormsTemplate paramTemplate, final EasyFormsFieldType... fieldTypes) {
+		return new EasyFormsFieldValidator(name, priority, paramTemplate, Set.of(fieldTypes));
+	}
 
-		return new EasyFormsFieldValidator(code, label, priority, Collections.unmodifiableSet(new HashSet<>(fieldTypes)));
+	public static EasyFormsFieldValidator of(final String name, final int priority, final Collection<EasyFormsFieldType> fieldTypes) {
+		Assertion.check().isNotNull(fieldTypes);
+		return new EasyFormsFieldValidator(name, priority, null, Collections.unmodifiableSet(new HashSet<>(fieldTypes)));
+	}
+
+	public static EasyFormsFieldValidator of(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Collection<EasyFormsFieldType> fieldTypes) {
+		Assertion.check().isNotNull(fieldTypes);
+		return new EasyFormsFieldValidator(name, priority, paramTemplate, Collections.unmodifiableSet(new HashSet<>(fieldTypes)));
 	}
 
 	public static EasyFormsFieldValidator resolve(final String name) {
-		if (name.startsWith(PREFIX)) {
-			return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldValidator.class);
-		}
-		return Node.getNode().getDefinitionSpace().resolve(PREFIX + name, EasyFormsFieldValidator.class);
+		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldValidator.class);
 	}
 
 	public static List<EasyFormsFieldValidator> getConstraintForType(final EasyFormsFieldType type) {
@@ -53,16 +59,19 @@ public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsF
 				.toList();
 	}
 
-	public String getLabel() {
-		return label;
-	}
-
 	public int getPriority() {
 		return priority;
+	}
+
+	public EasyFormsTemplate getParamTemplate() {
+		return paramTemplate;
 	}
 
 	public Set<EasyFormsFieldType> getFieldTypes() {
 		return fieldTypes;
 	}
 
+	public String getLabel() {
+		return StringUtil.camelToConstCase(getName()) + "_LABEL";
+	}
 }

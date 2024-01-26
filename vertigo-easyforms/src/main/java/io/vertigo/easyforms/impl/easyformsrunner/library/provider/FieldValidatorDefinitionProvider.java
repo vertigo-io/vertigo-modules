@@ -12,26 +12,22 @@ public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionPro
 
 	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidator, FieldValidatorEnum> {
 
-		UNIQUE("Unique pour cette démarche", 5, FieldTypeEnum.EMAIL, FieldTypeEnum.TELEPHONE, FieldTypeEnum.VISA),
-		EMAIL_NOT_IN_BLACKLIST("Email non jetable", 20, FieldTypeEnum.EMAIL),
-		GTE_13_ANS(">= 13 ans révolus", 10, FieldTypeEnum.DATE_NAISSANCE),
-		LT_16_ANS("< 16 ans révolus", 20, FieldTypeEnum.DATE_NAISSANCE),
-		GTE_16_ANS(">= 16 ans révolus", 30, FieldTypeEnum.DATE_NAISSANCE),
-		LT_18_ANS("< 18 ans révolus", 40, FieldTypeEnum.DATE_NAISSANCE),
-		LTE_18_ANS("<= 18 ans révolus", 50, FieldTypeEnum.DATE_NAISSANCE),
-		GTE_18_ANS(">= 18 ans révolus", 60, FieldTypeEnum.DATE_NAISSANCE),
-		TELEPHONE_FR("Numéro en france", 10, FieldTypeEnum.TELEPHONE),
-		TELEPHONE_MOBILE_SMS("Numéro mobile en france ou en outre-mer", 20, FieldTypeEnum.TELEPHONE),
+		EMAIL_NOT_IN_BLACKLIST(20, FieldTypeEnum.EMAIL),
+		GTE_13_ANS(10, FieldTypeEnum.DATE_NAISSANCE),
+		LT_16_ANS(20, FieldTypeEnum.DATE_NAISSANCE),
+		GTE_16_ANS(30, FieldTypeEnum.DATE_NAISSANCE),
+		LT_18_ANS(40, FieldTypeEnum.DATE_NAISSANCE),
+		GTE_18_ANS(60, FieldTypeEnum.DATE_NAISSANCE),
+		TELEPHONE_FR(10, FieldTypeEnum.TELEPHONE),
+		TELEPHONE_MOBILE_SMS(20, FieldTypeEnum.TELEPHONE),
 		;
 
-		private final String code;
-		private final String label;
+		private final String definitionName;
 		private final int priorite;
 		private final FieldTypeEnum[] fieldTypes;
 
-		private FieldValidatorEnum(final String label, final int priorite, final FieldTypeEnum... fieldTypes) {
-			code = StringUtil.constToUpperCamelCase(name());
-			this.label = label;
+		private FieldValidatorEnum(final int priorite, final FieldTypeEnum... fieldTypes) {
+			definitionName = EasyFormsFieldValidator.PREFIX + StringUtil.constToUpperCamelCase(name());
 			this.priorite = priorite;
 			this.fieldTypes = fieldTypes;
 		}
@@ -39,12 +35,17 @@ public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionPro
 		@Override
 		public EasyFormsFieldValidator buildDefinition(final DefinitionSpace definitionSpace) {
 			final var types = Arrays.stream(fieldTypes).map(FieldTypeEnum::get).toList();
-			return EasyFormsFieldValidator.of(code, label, priorite, types);
+			return EasyFormsFieldValidator.of(definitionName, priorite, types);
 		}
 
 		@Override
 		public EasyFormsFieldValidator get() {
-			return EasyFormsFieldValidator.resolve(code);
+			return EasyFormsFieldValidator.resolve(definitionName);
+		}
+
+		@Override
+		public String getDefinitionName() {
+			return definitionName;
 		}
 	}
 
