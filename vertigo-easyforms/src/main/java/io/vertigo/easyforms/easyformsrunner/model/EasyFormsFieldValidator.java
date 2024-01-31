@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
@@ -72,6 +73,10 @@ public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsF
 	}
 
 	public String getLabel() {
-		return StringUtil.camelToConstCase(getName()) + "_LABEL";
+		return LocaleMessageText.of(() -> StringUtil.camelToConstCase(getName()) + "_LABEL").getDisplay();
+	}
+
+	public String getDescription() {
+		return LocaleMessageText.of(() -> StringUtil.camelToConstCase(getName()) + "_DESCRIPTION").getDisplay();
 	}
 }

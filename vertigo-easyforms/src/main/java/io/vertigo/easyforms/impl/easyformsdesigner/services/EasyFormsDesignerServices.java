@@ -9,7 +9,6 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.VCollectors;
@@ -27,10 +26,6 @@ import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Transactional
 public class EasyFormsDesignerServices implements Component {
-	public static final String RESOURCES_PREFIX = "EF_FORM_CONTROL_";
-	public static final String RESOURCES_SUFFIX_LABEL = "_LABEL";
-	public static final String RESOURCES_SUFFIX_DESCRIPTION = "_DESCRIPTION";
-	public static final String RESOURCES_SUFFIX_ERROR = "_ERROR";
 
 	@Inject
 	private EasyFormDAO easyFormDAO;
@@ -47,7 +42,10 @@ public class EasyFormsDesignerServices implements Component {
 				.map(fieldType -> {
 					final var fieldTypeUi = new EasyFormsFieldTypeUi();
 					fieldTypeUi.setName(fieldType.id().fullName());
+					fieldTypeUi.setUiComponentName(fieldType.getUiComponentName());
 					fieldTypeUi.setLabel(fieldType.getLabel());
+					fieldTypeUi.setUiParameters(fieldType.getUiParameters());
+					fieldTypeUi.setParamTemplate(fieldType.getParamTemplate());
 					return fieldTypeUi;
 				})
 				.collect(VCollectors.toDtList(EasyFormsFieldTypeUi.class));
@@ -59,12 +57,10 @@ public class EasyFormsDesignerServices implements Component {
 				.sorted(Comparator.comparingInt(EasyFormsFieldValidator::getPriority))
 				.map(fieldValidator -> {
 					final var fieldValidatorUi = new EasyFormsFieldValidatorUi();
-					final var localName = fieldValidator.id().shortName();
-					final var resourcePrefix = RESOURCES_PREFIX + StringUtil.camelToConstCase(localName);
 
 					fieldValidatorUi.setCode(fieldValidator.id().fullName());
-					fieldValidatorUi.setLabel(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_LABEL).getDisplay());
-					fieldValidatorUi.setDescription(LocaleMessageText.of(() -> resourcePrefix + RESOURCES_SUFFIX_DESCRIPTION).getDisplay());
+					fieldValidatorUi.setLabel(fieldValidator.getLabel());
+					fieldValidatorUi.setDescription(fieldValidator.getDescription());
 					fieldValidatorUi.setFieldTypes(fieldValidator.getFieldTypes().stream().map(EasyFormsFieldType::getName).toList());
 					return fieldValidatorUi;
 				})
@@ -83,6 +79,7 @@ public class EasyFormsDesignerServices implements Component {
 					fieldUi.setLabel(field.getLabel());
 					fieldUi.setTooltip(field.getTooltip());
 					fieldUi.setIsDefault(field.isDefault());
+					fieldUi.setParameters(field.getParameters());
 					fieldUi.setIsMandatory(field.isMandatory());
 					// TODO fieldUi.setFieldValidators(field.getFieldValidators() != null ? field.getFieldValidators() : Collections.emptyList()); //TODO normalement pas util
 					return fieldUi;
@@ -125,6 +122,7 @@ public class EasyFormsDesignerServices implements Component {
 					fieldUi.getTooltip(),
 					Boolean.TRUE.equals(fieldUi.getIsDefault()),
 					Boolean.TRUE.equals(fieldUi.getIsMandatory()),
+					fieldUi.getParameters(),
 					fieldUi.getFieldValidators());
 		}
 		easyForm.setTemplate(easyFormsTemplateBuilder.build());

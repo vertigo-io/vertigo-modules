@@ -15,6 +15,9 @@ public final class EasyFormsFieldTypeUi implements DtObject {
 
 	private String name;
 	private String label;
+	private String uiComponentName;
+	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData uiParameters;
+	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate paramTemplate;
 	
 	/**
 	 * Champ : DATA.
@@ -54,6 +57,73 @@ public final class EasyFormsFieldTypeUi implements DtObject {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Ui component name'.
+	 * @return String uiComponentName
+	 */
+	@Field(smartType = "STyEfLabel", label = "Ui component name")
+	public String getUiComponentName() {
+		return uiComponentName;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Ui component name'.
+	 * @param uiComponentName String
+	 */
+	public void setUiComponentName(final String uiComponentName) {
+		this.uiComponentName = uiComponentName;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'UI parameters'.
+	 * @return EasyFormsParameterData uiParameters
+	 */
+	@Field(smartType = "STyEfFormParameterData", label = "UI parameters")
+	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData getUiParameters() {
+		return uiParameters;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'UI parameters'.
+	 * @param uiParameters EasyFormsParameterData
+	 */
+	public void setUiParameters(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData uiParameters) {
+		this.uiParameters = uiParameters;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'UI configuration template'.
+	 * @return EasyFormsTemplate paramTemplate
+	 */
+	@Field(smartType = "STyEfFormTemplate", label = "UI configuration template")
+	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate getParamTemplate() {
+		return paramTemplate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'UI configuration template'.
+	 * @param paramTemplate EasyFormsTemplate
+	 */
+	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate paramTemplate) {
+		this.paramTemplate = paramTemplate;
+	}
+	
+	/**
+	 * Champ : COMPUTED.
+	 * Récupère la valeur de la propriété calculée 'Have configuration'.
+	 * @return Boolean hasTemplate
+	 */
+	@Field(smartType = "STyEfBooleen", type = "COMPUTED", persistent = false, label = "Have configuration")
+	public Boolean getHasTemplate() {
+		return getParamTemplate() != null && !getParamTemplate().getFields().isEmpty();
 	}
 	
 	/** {@inheritDoc} */

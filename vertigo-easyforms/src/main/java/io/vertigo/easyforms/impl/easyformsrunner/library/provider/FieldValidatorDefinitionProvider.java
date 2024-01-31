@@ -13,13 +13,13 @@ public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionPro
 	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidator, FieldValidatorEnum> {
 
 		EMAIL_NOT_IN_BLACKLIST(20, FieldTypeEnum.EMAIL),
-		GTE_13_ANS(10, FieldTypeEnum.DATE_NAISSANCE),
-		LT_16_ANS(20, FieldTypeEnum.DATE_NAISSANCE),
-		GTE_16_ANS(30, FieldTypeEnum.DATE_NAISSANCE),
-		LT_18_ANS(40, FieldTypeEnum.DATE_NAISSANCE),
-		GTE_18_ANS(60, FieldTypeEnum.DATE_NAISSANCE),
-		TELEPHONE_FR(10, FieldTypeEnum.TELEPHONE),
-		TELEPHONE_MOBILE_SMS(20, FieldTypeEnum.TELEPHONE),
+		GTE_13_ANS(10, FieldTypeEnum.BIRTH_DATE),
+		LT_16_ANS(20, FieldTypeEnum.BIRTH_DATE),
+		GTE_16_ANS(30, FieldTypeEnum.BIRTH_DATE),
+		LT_18_ANS(40, FieldTypeEnum.BIRTH_DATE),
+		GTE_18_ANS(60, FieldTypeEnum.BIRTH_DATE),
+		TELEPHONE_FR(10, FieldTypeEnum.PHONE),
+		TELEPHONE_MOBILE_SMS(20, FieldTypeEnum.PHONE),
 		;
 
 		private final String definitionName;

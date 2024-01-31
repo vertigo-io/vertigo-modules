@@ -2,6 +2,7 @@ package io.vertigo.easyforms.easyformsrunner.model;
 
 import java.util.List;
 
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent.UiComponentParam;
 
 @FunctionalInterface
@@ -25,11 +26,11 @@ public interface IEasyFormsUiComponentSupplier {
 			easyFormsTemplateBuilder.addField(
 					uiComponentParam.fieldCode(),
 					uiComponentParam.fieldTypeEnum(),
-					uiComponentParam.fieldCode(),
+					StringUtil.camelToConstCase(definitionName) + '_' + StringUtil.camelToConstCase(uiComponentParam.fieldCode()) + "_LABEL",
 					uiComponentParam.tooltip(),
 					true,
 					uiComponentParam.isMandatory(),
-					uiComponentParam.fieldValidators());
+					null, uiComponentParam.fieldValidators());
 		}
 
 		return EasyFormsUiComponent.of(definitionName, easyFormsTemplateBuilder.build());

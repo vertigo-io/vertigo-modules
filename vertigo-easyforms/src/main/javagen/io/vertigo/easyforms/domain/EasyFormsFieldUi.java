@@ -20,6 +20,7 @@ public final class EasyFormsFieldUi implements DtObject {
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
+	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData parameters;
 	private java.util.List<String> fieldValidators = new java.util.ArrayList<>();
 	
 	/**
@@ -153,6 +154,25 @@ public final class EasyFormsFieldUi implements DtObject {
 	 */
 	public void setIsMandatory(final Boolean isMandatory) {
 		this.isMandatory = isMandatory;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Parameters JSON'.
+	 * @return EasyFormsParameterData parameters
+	 */
+	@Field(smartType = "STyEfFormParameterData", label = "Parameters JSON")
+	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Parameters JSON'.
+	 * @param parameters EasyFormsParameterData
+	 */
+	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData parameters) {
+		this.parameters = parameters;
 	}
 	
 	/**

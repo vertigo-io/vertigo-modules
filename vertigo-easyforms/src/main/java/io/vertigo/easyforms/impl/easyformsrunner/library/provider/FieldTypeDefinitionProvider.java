@@ -8,6 +8,7 @@ import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsListItem;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent.UiComponentParam;
 import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsFieldTypeSupplier;
@@ -31,17 +32,17 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		DATE(EasyFormsSmartTypes.EfDate, UiComponentEnum.DATE),
 
-		DATE_NAISSANCE(EasyFormsSmartTypes.EfDatePassee, UiComponentEnum.DATE
+		BIRTH_DATE(EasyFormsSmartTypes.EfDatePassee, UiComponentEnum.DATE
 		// , Map.of(TextFieldUiComponent.AUTOCOMPLETE, "bday") // TODO check on input if it is used
 		),
 
-		TELEPHONE(new AutocompleteFieldType(EasyFormsSmartTypes.EfTelephone, "tel")),
+		PHONE(new AutocompleteFieldType(EasyFormsSmartTypes.EfTelephone, "tel")),
 
 		VISA(EasyFormsSmartTypes.EfVisa, UiComponentEnum.TEXT_FIELD),
 
 		NATIONALITE(EasyFormsSmartTypes.EfNationalite, UiComponentEnum.TEXT_FIELD),
 
-		CODE_POSTAL(new AutocompleteFieldType(EasyFormsSmartTypes.EfCodePostal, "postal-code")),
+		POSTAL_CODE(new AutocompleteFieldType(EasyFormsSmartTypes.EfCodePostal, "postal-code")),
 
 		YES_NO(new YesNoFieldType()),
 
@@ -140,10 +141,12 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		@Override
 		public Map<String, Serializable> getUiParams() {
-			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER,
-					(Serializable) Map.of(
-							true, "#{TRUE}",
-							false, "#{FALSE}"));
+			return Map.of(
+					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+					(Serializable) List.of(
+							new EasyFormsListItem("true", "#{TRUE}"),
+							new EasyFormsListItem("false", "#{FALSE}")));
 		}
 	}
 
@@ -160,11 +163,20 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		@Override
 		public Map<String, Serializable> getUiParams() {
-			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER,
-					(Serializable) Map.of(
-							"Horizontal", "",
-							"Vertical", "vertical"));
+			return Map.of(
+					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+					(Serializable) List.of(
+							new EasyFormsListItem("", "Horizontal"),
+							Map.of("vertical", "Vertical")));
+			//new EasyFormsListItem("vertical", "Vertical")));
 		}
+
+		@Override
+		public String getDefaultValue() {
+			return ""; // Horizontal
+		}
+
 	}
 
 	public static class CustomListFieldType implements IEasyFormsFieldTypeSupplier {
@@ -195,7 +207,11 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public List<UiComponentParam> getUiComponentParams() {
+		public List<UiComponentParam> getExposedComponentParams() {
+			if (uiComponent == UiComponentEnum.RADIO) {
+				return List.of(new UiComponentParam(RadioUiComponent.LAYOUT, FieldTypeEnum.I_RADIO_LAYOUT, null, false),
+						new UiComponentParam(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.I_MAP, null, true));
+			}
 			return List.of(new UiComponentParam(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.I_MAP, null, true));
 		}
 

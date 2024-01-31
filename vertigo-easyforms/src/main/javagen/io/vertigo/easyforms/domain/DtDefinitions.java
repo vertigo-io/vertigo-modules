@@ -57,7 +57,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Field type'. */
 		name,
 		/** Propriété 'Label'. */
-		label	}
+		label,
+		/** Propriété 'Ui component name'. */
+		uiComponentName,
+		/** Propriété 'UI parameters'. */
+		uiParameters,
+		/** Propriété 'UI configuration template'. */
+		paramTemplate,
+		/** Propriété 'Have configuration'. */
+		hasTemplate	}
 
 	/**
 	 * Enumération des champs de EasyFormsFieldUi.
@@ -77,6 +85,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isDefault,
 		/** Propriété 'Mandatory field'. */
 		isMandatory,
+		/** Propriété 'Parameters JSON'. */
+		parameters,
 		/** Propriété 'Constraints'. */
 		fieldValidators	}
 

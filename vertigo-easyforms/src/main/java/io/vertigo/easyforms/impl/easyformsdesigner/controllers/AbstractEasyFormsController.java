@@ -17,9 +17,11 @@
  */
 package io.vertigo.easyforms.impl.easyformsdesigner.controllers;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -28,17 +30,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
-import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
+import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData;
 import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
+import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -47,20 +52,30 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/easyforms/designer")
-public class AbstractFormsController extends AbstractVSpringMvcController {
+public class AbstractEasyFormsController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<EasyForm> efoKey = ViewContextKey.of("efo");
 	private static final ViewContextKey<EasyFormsFieldTypeUi> fieldTypesKey = ViewContextKey.of("fieldTypes");
+	private static final ViewContextKey<Serializable> fieldTypesTemplateKey = ViewContextKey.of("fieldTypesTemplate");
 	private static final ViewContextKey<EasyFormsFieldValidatorUi> fieldValidatorsKey = ViewContextKey.of("fieldValidators");
 	private static final ViewContextKey<EasyFormsFieldUi> fieldsKey = ViewContextKey.of("fields");
 	private static final ViewContextKey<EasyFormsFieldValidatorUi> editFieldValidatorsKey = ViewContextKey.of("editFieldValidators");
 	private static final ViewContextKey<EasyFormsFieldUi> editFieldKey = ViewContextKey.of("editField");
 
+	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
+
 	@Inject
 	private EasyFormsDesignerServices easyFormsAdminServices;
 
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt) {
-		viewContext.publishDtList(fieldTypesKey, easyFormsAdminServices.getFieldTypeUiList());
+		final var fieldTypeUiList = easyFormsAdminServices.getFieldTypeUiList();
+		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
+
+		viewContext.publishDtList(fieldTypesKey, fieldTypeUiList);
+		viewContext.publishRef(fieldTypesTemplateKey,
+				(Serializable) fieldTypeUiList.stream()
+						.filter(EasyFormsFieldTypeUi::getHasTemplate)
+						.collect(Collectors.toMap(EasyFormsFieldTypeUi::getName, EasyFormsFieldTypeUi::getParamTemplate)));
 		viewContext.publishDtList(fieldValidatorsKey, EasyFormsFieldValidatorUiFields.code, easyFormsAdminServices.getFieldValidatorUiList());
 		viewContext.publishDtList(editFieldValidatorsKey, new DtList<>(EasyFormsFieldValidatorUi.class));
 		//---
@@ -71,6 +86,8 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 				.map(easyFormsAdminServices::getFieldUiListByEasyFormId)
 				.orElseGet(() -> new DtList<>(EasyFormsFieldUi.class)));
 		viewContext.publishDto(editFieldKey, buildFieldUi());
+
+		viewContext.publishRef(efoUiUtilKey, new EasyFormsUiUtil());
 	}
 
 	private static EasyFormsFieldUi buildFieldUi() {
@@ -114,6 +131,20 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
 
 		editField.setFieldType(fieldType);
+
+		// add default values for field type parameters
+		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(fieldType, EasyFormsFieldType.class);
+		if (fieldTypeDefinition.getParamTemplate() != null) {
+			final var fieldTypeParameters = new EasyFormsParameterData();
+			for (final var paramField : fieldTypeDefinition.getParamTemplate().getFields()) {
+				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldType.class);
+				if (paramFieldTypeDefinition.getDefaultValue() != null) {
+					fieldTypeParameters.put(paramField.getCode(), paramFieldTypeDefinition.getDefaultValue());
+				}
+			}
+			editField.setParameters(fieldTypeParameters);
+		}
+
 		loadControlsByType(viewContext, easyFormsAdminServices.getFieldValidatorUiList(), editField);
 		editField.setFieldCode(computeDefaultFieldCode(fields, editField));
 		viewContext.publishDto(editFieldKey, editField);
@@ -169,7 +200,7 @@ public class AbstractFormsController extends AbstractVSpringMvcController {
 	}
 
 	protected static String computeDefaultFieldCode(final DtList<EasyFormsFieldUi> fields, final EasyFormsFieldUi editedField) {
-		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType());
+		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType().substring(5));
 		final var pattern = Pattern.compile("^" + prefixFieldCode + "[0-9]*$");
 		final Optional<Integer> lastMatchingOpt = fields.stream()
 				.filter(f -> pattern.matcher(f.getFieldCode()).matches())

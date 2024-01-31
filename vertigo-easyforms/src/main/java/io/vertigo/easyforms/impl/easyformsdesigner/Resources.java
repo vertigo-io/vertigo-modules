@@ -25,5 +25,5 @@ import io.vertigo.core.locale.LocaleMessageKey;
  * @author npiedeloup
  */
 public enum Resources implements LocaleMessageKey {
-
+	EF_DESIGNER_MANDATORY
 }

@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent.UiComponentParam;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 
 public interface IEasyFormsFieldTypeSupplier {
 
 	public default EasyFormsFieldType get(final String definitionName) {
-		final var uiComponentParams = getUiComponentParams();
+		final var uiComponentParams = getExposedComponentParams();
 
 		final EasyFormsTemplate template;
 		if (uiComponentParams == null || uiComponentParams.isEmpty()) {
@@ -22,16 +23,16 @@ public interface IEasyFormsFieldTypeSupplier {
 				easyFormsTemplateBuilder.addField(
 						uiComponentParam.fieldCode(),
 						uiComponentParam.fieldTypeEnum(),
-						uiComponentParam.fieldCode(),
+						StringUtil.camelToConstCase(definitionName) + '_' + StringUtil.camelToConstCase(uiComponentParam.fieldCode()) + "_LABEL",
 						uiComponentParam.tooltip(),
 						true,
 						uiComponentParam.isMandatory(),
-						uiComponentParam.fieldValidators());
+						null, uiComponentParam.fieldValidators());
 			}
 			template = easyFormsTemplateBuilder.build();
 		}
 
-		return EasyFormsFieldType.of(definitionName, getSmartType().name(), getUiComponent().getDefinitionName(), getUiParams(), template);
+		return EasyFormsFieldType.of(definitionName, getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template);
 	}
 
 	public abstract EasyFormsSmartTypes getSmartType();
@@ -42,8 +43,16 @@ public interface IEasyFormsFieldTypeSupplier {
 		return Map.of();
 	}
 
-	public default List<UiComponentParam> getUiComponentParams() {
+	public default List<UiComponentParam> getExposedComponentParams() {
 		return List.of();
+	}
+
+	public default void setDefaultValue(final EasyFormsParameterData parameters) {
+		// no default values
+	}
+
+	public default String getDefaultValue() {
+		return null;
 	}
 
 }

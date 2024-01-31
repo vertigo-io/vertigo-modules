@@ -19,15 +19,22 @@ package io.vertigo.easyforms;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+
+import io.vertigo.connectors.spring.EnableVertigoSpringBridge;
 import io.vertigo.core.impl.analytics.trace.TraceAspect;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.easyforms.domain.DtDefinitions;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider;
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
+@Configuration
+@EnableVertigoSpringBridge
 public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures> {
 
 	public EasyFormsFeatures() {
@@ -59,4 +66,15 @@ public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures
 		return List.of(".impl.easyformsdesigner.controllers");
 	}
 
+	@Bean
+	public SpringResourceTemplateResolver templateResolver() {
+		final SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+		//templateResolver.setApplicationContext(applicationContext);
+		templateResolver.setPrefix("/WEB-INF/views/");
+		templateResolver.setSuffix(".html");
+		templateResolver.setCharacterEncoding("UTF-8");
+		// for dev purpose
+		//templateResolver.setCacheable(!isDevMode());
+		return templateResolver;
+	}
 }

@@ -7,8 +7,14 @@ create DtDefinition DtEasyForm {
 }
 
 create DtDefinition DtEasyFormsFieldTypeUi {
-    field name 		{domain: DoEfLabel 		label:"Field type" }
-    field label 	{domain: DoEfLabel 		label:"Label" }
+    field name 				{domain: DoEfLabel 				label:"Field type" }
+    field label 			{domain: DoEfLabel 				label:"Label" }
+    field uiComponentName 	{domain: DoEfLabel 				label:"Ui component name" }
+    field uiParameters 		{domain: DoEfFormParameterData	label:"UI parameters" }
+    field paramTemplate 	{domain: DoEfFormTemplate 		label:"UI configuration template" }
+    computed hasTemplate	{domain: DoEfBooleen			label:"Have configuration"
+    						 expression: "return getParamTemplate() != null && !getParamTemplate().getFields().isEmpty();"
+    }
     sortField: "name"
     displayField: "label"
 }
@@ -23,13 +29,14 @@ create DtDefinition DtEasyFormsFieldValidatorUi {
 }
 
 create DtDefinition DtEasyFormsFieldUi {
-    field fieldCode 		{domain: DoEfCode 		label:"Field code" 				}
-    field fieldType 		{domain: DoEfLabel 		label:"Field type" 				}
-    field fieldTypeLabel 	{domain: DoEfLabel 		label:"Field type" 				}
-    field label 			{domain: DoEfLabel 		label:"Label" 					}
-    field tooltip 			{domain: DoEfLabel 		label:"Tooltip" 				}
-    field isDefault 		{domain: DoEfBooleen 	label:"System field" 			}
-    field isMandatory 		{domain: DoEfBooleen 	label:"Mandatory field" 		}
-    field fieldValidators 	{domain: DoEfText 		label:"Constraints" 			cardinality:"*" }
+    field fieldCode 		{domain: DoEfCode 				label:"Field code" 				}
+    field fieldType 		{domain: DoEfLabel 				label:"Field type" 				}
+    field fieldTypeLabel 	{domain: DoEfLabel 				label:"Field type" 				}
+    field label 			{domain: DoEfLabel 				label:"Label" 					}
+    field tooltip 			{domain: DoEfLabel 				label:"Tooltip" 				}
+    field isDefault 		{domain: DoEfBooleen 			label:"System field" 			}
+    field isMandatory 		{domain: DoEfBooleen 			label:"Mandatory field" 		}
+    field parameters 		{domain: DoEfFormParameterData	label:"Parameters JSON" 		}
+    field fieldValidators 	{domain: DoEfText 				label:"Constraints" 			cardinality:"*" }
 }
 

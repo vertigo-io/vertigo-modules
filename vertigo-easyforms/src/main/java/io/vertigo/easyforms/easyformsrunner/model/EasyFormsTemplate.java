@@ -1,7 +1,6 @@
 package io.vertigo.easyforms.easyformsrunner.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Map;
 
 public class EasyFormsTemplate implements Serializable {
 
-	private List<Field> fields = new ArrayList<>();
+	private final List<Field> fields;
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,7 +30,7 @@ public class EasyFormsTemplate implements Serializable {
 		private Integer order;
 		private boolean isDefault;
 		private boolean isMandatory;
-		private Map<String, Serializable> parameters;
+		private EasyFormsParameterData parameters;
 		private List<FieldValidator> validators;
 
 		public String getCode() {
@@ -90,11 +89,11 @@ public class EasyFormsTemplate implements Serializable {
 			this.isMandatory = isMandatory;
 		}
 
-		public Map<String, Serializable> getParameters() {
+		public EasyFormsParameterData getParameters() {
 			return parameters;
 		}
 
-		public void setParameters(final Map<String, Serializable> parameters) {
+		public void setParameters(final EasyFormsParameterData parameters) {
 			this.parameters = parameters;
 		}
 

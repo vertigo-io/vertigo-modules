@@ -2,11 +2,11 @@ let context = document.currentScript.dataset.context ;
 
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
-    efHasFormError : function(uiMessageStack, object, champ) {
+    efHasFormError : function(uiMessageStack, object, champ) { // TODO no uiMessageStack, add rowIndex and possibly converge with hasFieldsError from methods.js
     	return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['form_'+ champ] != null)
     },
 	
-    efGetFormError : function(uiMessageStack, object, champ) {
+    efGetFormError : function(uiMessageStack, object, champ) { // TODO no uiMessageStack, add rowIndex and possibly converge with getErrorMessage from methods.js
     	  return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['form_'+ champ] != null &&
     	  			 uiMessageStack.objectFieldErrors[object]['form_'+ champ].join(', '));
     },
@@ -37,6 +37,8 @@ VUiExtensions.methods = {
     efSaveEditItem : function() {
         let formData = this.vueDataParams(['editField']);
         formData.delete('vContext[editField][isDefault]')//champ non modifiable
+        formData.delete('vContext[editField][parameters]')// specific field, need to be in json format
+        formData.append('vContext[editField][parameters]', JSON.stringify(this.vueData.editField.parameters));
         if (!formData.has('vContext[editField][fieldValidators]')) {
             formData.append('vContext[editField][fieldValidators]', '')
         }
@@ -103,18 +105,22 @@ VUiExtensions.methods = {
 
 window.addEventListener('vui-before-plugins', function(event) {
 	
+	// ****
+	// * main component to handle JSON serialization
+	// ****
+	
 	let vuiEasyForms = Vue.defineComponent({
 		props: {
 			modelValue: { type: Object, required: true },
 		},
 		data: function() {
 			return {
-				formulaire :  {}
+				formData :  {}
 			}
 		},
 		template: `
 			<div>
-				<slot v-bind:formulaire="formulaire" >
+				<slot v-bind:formData="formData" >
 				</slot>
 			</div>
 		`
@@ -122,23 +128,98 @@ window.addEventListener('vui-before-plugins', function(event) {
 		emits: ["update:modelValue"],
 		created: function() {
 			if(this.$props.modelValue) {
-				this.$data.formulaire = this.$props.modelValue
+				this.$data.formData = this.$props.modelValue
 			} else {
-				this.$data.formulaire = {}
+				this.$data.formData = {}
 			}
 		},
 		watch: {
 			modelValue: function(newVal) {
-				this.$data.formulaire = newVal;
+				this.$data.formData = newVal;
 			},
-			formulaire: {
+			formData: {
 				handler: function(newVal) {
-					this.$emit('update:modelValue', this.$data.formulaire);
+					this.$emit('update:modelValue', this.$data.formData);
 				},
 				deep: true
 			},
 		}
-	})
-	event.detail.vuiAppInstance.component('vui-easy-forms',vuiEasyForms)
+	});
+	event.detail.vuiAppInstance.component('vui-easy-forms',vuiEasyForms);
+	
+	// ****
+	// * Map type input. Eg : Configure custom lists
+	// ****
+	
+	// Function to test if last element is empty
+	let isLastEmpty = o => {
+		if (o == null) {
+			return false;
+		}
+		const lastElem = o.slice(-1)[0];
+		return !(lastElem.label?.length > 0 || lastElem.value?.length > 0);
+	};
+	
+	let vuiEasyFormsMap = Vue.defineComponent({
+		props: {
+			modelValue: { type: Object, required: true },
+			valueLabel: { type: String, default: 'Value'},
+			labelLabel: { type: String, default: 'Label'},
+		},
+		data: function() {
+			return {
+				internalModel :  {}
+			}
+		},
+		template: `
+			<div>
+				<div v-for="param in modelValue" class="row q-col-gutter-md">
+					<q-input label-slot stack-label orientation="vertical" class="col-5"
+							:label="valueLabel"
+							v-model="param.value"
+						></q-input>
+					<q-input label-slot stack-label orientation="vertical" class="col-7"
+							:label="labelLabel"
+							v-model="param.label"
+						></q-input>
+				</div>
+			</div>
+		`
+		,
+		emits: ["update:modelValue"],
+		created: function() {
+			if(this.$props.modelValue) {
+				this.$data.internalModel = this.$props.modelValue;
+				if (!isLastEmpty(this.$props.modelValue)) {
+					this.$data.internalModel.push({});
+				}
+			} else {
+				this.$data.internalModel = [{}];
+			}
+		},
+		watch: {
+			modelValue: function(newVal) {
+				if(this.$props.modelValue) {
+					this.$data.internalModel = this.$props.modelValue;
+					if (!isLastEmpty(this.$props.modelValue)) {
+						this.$data.internalModel.push({});
+					}
+				} else {
+					this.$data.internalModel = [{}];
+				}
+			},
+			internalModel: {
+				handler: function(newVal) {
+					if (!isLastEmpty(this.$data.internalModel)) {
+						this.$data.internalModel.push({});
+					}
+					this.$emit('update:modelValue', this.$data.internalModel);
+				},
+				deep: true
+			},
+		}
+	});
+	
+	event.detail.vuiAppInstance.component('vui-ef-map',vuiEasyFormsMap);
 });
 
