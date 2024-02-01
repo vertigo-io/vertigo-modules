@@ -18,7 +18,7 @@
 package io.vertigo.geo.impl.geosearch;
 
 import io.vertigo.core.node.component.Plugin;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
+import io.vertigo.datamodel.structure.definitions.DataFieldName;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.geo.geocoder.GeoLocation;
@@ -30,6 +30,6 @@ public interface GeoSearchPlugin extends Plugin {
 			final GeoLocation bottomRight,
 			final String indexName,
 			final Class<D> dtIndexClass,
-			final DtFieldName<D> fieldName,
+			final DataFieldName<D> fieldName,
 			final Integer maxRows);
 }

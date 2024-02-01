@@ -20,7 +20,7 @@ package io.vertigo.quarto.exporter.data;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
+import io.vertigo.datamodel.structure.definitions.DataFieldName;
 import io.vertigo.quarto.exporter.data.domain.Continent;
 import io.vertigo.quarto.exporter.data.domain.Country;
 
@@ -36,11 +36,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de Famille.
 	 */
-	public enum CountryFields implements DtFieldName {
+	public enum CountryFields implements DataFieldName {
 		id, conId, name, active, localDate, instant
 	}
 
-	public enum ContinentFields implements DtFieldName {
+	public enum ContinentFields implements DataFieldName {
 		id, name,
 	}
 }

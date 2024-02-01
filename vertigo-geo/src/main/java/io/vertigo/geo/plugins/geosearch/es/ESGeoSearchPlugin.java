@@ -47,7 +47,7 @@ import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
+import io.vertigo.datamodel.structure.definitions.DataFieldName;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.VCollectors;
@@ -111,7 +111,7 @@ public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 			final GeoLocation bottomRight,
 			final String indexName,
 			final Class<D> dtIndexClass,
-			final DtFieldName<D> fieldName,
+			final DataFieldName<D> fieldName,
 			final Integer maxRows) {
 		final GeoBoundingBoxQueryBuilder geoBoundingBoxQueryBuilder = QueryBuilders.geoBoundingBoxQuery(fieldName.name())
 				.setCorners(new GeoPoint(topLeft.getLatitude(), topLeft.getLongitude()), new GeoPoint(bottomRight.getLatitude(), bottomRight.getLongitude()));

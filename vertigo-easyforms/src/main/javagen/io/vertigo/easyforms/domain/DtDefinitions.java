@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
+import io.vertigo.datamodel.structure.definitions.DataFieldName;
 
 /**
  * This class is automatically generated.
@@ -44,7 +44,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de EasyForm.
 	 */
-	public enum EasyFormFields implements DtFieldName<io.vertigo.easyforms.domain.EasyForm> {
+	public enum EasyFormFields implements DataFieldName<io.vertigo.easyforms.domain.EasyForm> {
 		/** Propriété 'Id'. */
 		efoId,
 		/** Propriété 'Template'. */
@@ -53,7 +53,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de EasyFormsFieldTypeUi.
 	 */
-	public enum EasyFormsFieldTypeUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldTypeUi> {
+	public enum EasyFormsFieldTypeUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldTypeUi> {
 		/** Propriété 'Field type'. */
 		name,
 		/** Propriété 'Label'. */
@@ -70,7 +70,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de EasyFormsFieldUi.
 	 */
-	public enum EasyFormsFieldUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldUi> {
+	public enum EasyFormsFieldUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldUi> {
 		/** Propriété 'Field code'. */
 		fieldCode,
 		/** Propriété 'Field type'. */
@@ -93,7 +93,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de EasyFormsFieldValidatorUi.
 	 */
-	public enum EasyFormsFieldValidatorUiFields implements DtFieldName<io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi> {
+	public enum EasyFormsFieldValidatorUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi> {
 		/** Propriété 'Constraint'. */
 		code,
 		/** Propriété 'Constraint'. */
