@@ -50,6 +50,8 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
+		BUSINESS_LIST(new BusinessType()),
+
 		// internals
 		I_RADIO_LAYOUT(new RadioLayoutFieldType()),
 		I_MAP(EasyFormsSmartTypes.EfFormData, UiComponentEnum.I_MAP),
@@ -167,9 +169,8 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
-							new EasyFormsListItem("", "Horizontal"),
-							Map.of("vertical", "Vertical")));
-			//new EasyFormsListItem("vertical", "Vertical")));
+							new EasyFormsListItem("", "Vertical"),
+							new EasyFormsListItem("horizontal", "Horizontal")));
 		}
 
 		@Override
@@ -201,7 +202,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		public Map<String, Serializable> getUiParams() {
 			if (uiComponent == UiComponentEnum.RADIO) {
 				return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
-						RadioUiComponent.LAYOUT, "vertical");
+						RadioUiComponent.LAYOUT, "horizontal");
 			}
 			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME);
 		}
@@ -215,5 +216,23 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 			return List.of(new UiComponentParam(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.I_MAP, null, true));
 		}
 
+	}
+
+	public static class BusinessType implements IEasyFormsFieldTypeSupplier {
+		@Override
+		public EasyFormsSmartTypes getSmartType() {
+			return EasyFormsSmartTypes.EfId;
+		}
+
+		@Override
+		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+			return UiComponentEnum.RADIO;
+		}
+
+		@Override
+		public Map<String, Serializable> getUiParams() {
+			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, "ref:Business");
+//			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, "ctx:persons");
+		}
 	}
 }
