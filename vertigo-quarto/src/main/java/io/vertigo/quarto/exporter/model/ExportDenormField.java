@@ -18,8 +18,8 @@
 package io.vertigo.quarto.exporter.model;
 
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * Définition d'une colonne de type dénormalisation à exporter. On précise la

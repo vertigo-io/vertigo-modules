@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.AgendaPAO;
 import io.vertigo.planning.agenda.dao.TrancheHoraireDAO;
 import io.vertigo.planning.agenda.domain.Agenda;

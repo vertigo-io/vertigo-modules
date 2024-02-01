@@ -32,9 +32,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;

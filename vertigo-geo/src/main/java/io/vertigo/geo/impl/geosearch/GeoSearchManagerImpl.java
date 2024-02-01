@@ -22,9 +22,9 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.definitions.DataFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.geo.geocoder.GeoLocation;
 import io.vertigo.geo.geosearch.GeoSearchManager;
 

@@ -22,8 +22,8 @@ import java.util.List;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.quarto.exporter.model.Export.Orientation;
 
 /**

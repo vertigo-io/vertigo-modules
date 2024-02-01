@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.KeyConcept;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.comment.Comment;
 import io.vertigo.social.impl.comment.CommentPlugin;
 

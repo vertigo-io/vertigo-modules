@@ -23,11 +23,11 @@ import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
+import io.vertigo.datafactory.task.TaskManager;
+import io.vertigo.datafactory.task.definitions.TaskDefinition;
+import io.vertigo.datafactory.task.model.Task;
+import io.vertigo.datafactory.task.model.TaskBuilder;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.task.TaskManager;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
@@ -67,7 +67,7 @@ public final class OProcessDAO extends DAO<OProcess, java.lang.Long> implements 
 	 * @param name String
 	 * @return Option de OProcess dtProcess
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetActiveProcessByName",
 			request = "select \n" + 
@@ -76,8 +76,8 @@ public final class OProcessDAO extends DAO<OProcess, java.lang.Long> implements 
  "         	where pro.NAME = #name#\n" + 
  " 	        	and pro.ACTIVE_VERSION is true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcess", name = "dtProcess")
-	public Optional<io.vertigo.orchestra.domain.definition.OProcess> getActiveProcessByName(@io.vertigo.datamodel.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOProcess", name = "dtProcess")
+	public Optional<io.vertigo.orchestra.domain.definition.OProcess> getActiveProcessByName(@io.vertigo.datafactory.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
 		final Task task = createTaskBuilder("TkGetActiveProcessByName")
 				.addValue("name", name)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -91,7 +91,7 @@ public final class OProcessDAO extends DAO<OProcess, java.lang.Long> implements 
 	 * Execute la tache TkGetAllActiveProcesses.
 	 * @return DtList de OProcess dtcProcesses
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetAllActiveProcesses",
 			request = "select \n" + 
@@ -99,8 +99,8 @@ public final class OProcessDAO extends DAO<OProcess, java.lang.Long> implements 
  "         	from o_process pro\n" + 
  "         	where pro.ACTIVE_VERSION is true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcess", name = "dtcProcesses")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.orchestra.domain.definition.OProcess> getAllActiveProcesses() {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOProcess", name = "dtcProcesses")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.domain.definition.OProcess> getAllActiveProcesses() {
 		final Task task = createTaskBuilder("TkGetAllActiveProcesses")
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
 				.build();

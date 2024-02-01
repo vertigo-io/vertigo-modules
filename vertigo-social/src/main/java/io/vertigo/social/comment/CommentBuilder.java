@@ -25,7 +25,7 @@ import io.vertigo.account.account.AccountManager;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 
 /**
  * @author pchretien

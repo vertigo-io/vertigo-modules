@@ -18,11 +18,11 @@
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -34,7 +34,7 @@ public final class Creneau implements Entity {
 
 	private Long creId;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ACreneauTrancheHoraire",
 			fkFieldName = "trhId",
 			primaryDtDefinitionName = "DtTrancheHoraire",
@@ -49,7 +49,7 @@ public final class Creneau implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.planning.agenda.domain.TrancheHoraire> trhIdAccessor = new StoreVAccessor<>(io.vertigo.planning.agenda.domain.TrancheHoraire.class, "TrancheHoraire");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AReservationCreneauCreneau",
 			fkFieldName = "recId",
 			primaryDtDefinitionName = "DtReservationCreneau",
@@ -94,7 +94,7 @@ public final class Creneau implements Entity {
 	 * Récupère la valeur de la propriété 'Tranche horaire'.
 	 * @return Long trhId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyPId", label = "Tranche horaire", fkDefinition = "DtTrancheHoraire", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyPId", label = "Tranche horaire", fkDefinition = "DtTrancheHoraire", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTrhId() {
 		return (Long) trhIdAccessor.getId();
 	}
@@ -113,7 +113,7 @@ public final class Creneau implements Entity {
 	 * Récupère la valeur de la propriété 'Réservation'.
 	 * @return Long recId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyPId", label = "Réservation", fkDefinition = "DtReservationCreneau" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyPId", label = "Réservation", fkDefinition = "DtReservationCreneau" )
 	public Long getRecId() {
 		return (Long) recIdAccessor.getId();
 	}

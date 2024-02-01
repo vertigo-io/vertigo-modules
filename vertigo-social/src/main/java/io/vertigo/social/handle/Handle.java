@@ -18,7 +18,7 @@
 package io.vertigo.social.handle;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 
 public final class Handle {
 

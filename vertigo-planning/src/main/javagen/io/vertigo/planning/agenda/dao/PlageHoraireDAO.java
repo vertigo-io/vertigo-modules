@@ -22,14 +22,14 @@ import javax.inject.Inject;
 import java.util.Optional;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
+import io.vertigo.datafactory.task.TaskManager;
+import io.vertigo.datafactory.task.definitions.TaskDefinition;
+import io.vertigo.datafactory.task.model.Task;
+import io.vertigo.datafactory.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.task.TaskManager;
 import io.vertigo.planning.agenda.domain.PlageHoraire;
 
 /**
@@ -69,7 +69,7 @@ public final class PlageHoraireDAO extends DAO<PlageHoraire, java.lang.Long> imp
 	 * @param heureFin Integer
 	 * @return Option de PlageHoraire plageHoraires
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			name = "TkGetExistsConflictingPlageHoraire",
 			request = """
 			select plh.*
@@ -79,8 +79,8 @@ public final class PlageHoraireDAO extends DAO<PlageHoraire, java.lang.Long> imp
            AND plh.minutes_Debut < #heureFin# AND plh.minutes_Fin > #heureDebut#
            LIMIT 1;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPlageHoraire", name = "plageHoraires")
-	public Optional<io.vertigo.planning.agenda.domain.PlageHoraire> getExistsConflictingPlageHoraire(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocale", smartType = "STyPLocalDate") final java.time.LocalDate dateLocale, @io.vertigo.datamodel.task.proxy.TaskInput(name = "heureDebut", smartType = "STyPHeureMinute") final Integer heureDebut, @io.vertigo.datamodel.task.proxy.TaskInput(name = "heureFin", smartType = "STyPHeureMinute") final Integer heureFin) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtPlageHoraire", name = "plageHoraires")
+	public Optional<io.vertigo.planning.agenda.domain.PlageHoraire> getExistsConflictingPlageHoraire(@io.vertigo.datafactory.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datafactory.task.proxy.TaskInput(name = "dateLocale", smartType = "STyPLocalDate") final java.time.LocalDate dateLocale, @io.vertigo.datafactory.task.proxy.TaskInput(name = "heureDebut", smartType = "STyPHeureMinute") final Integer heureDebut, @io.vertigo.datafactory.task.proxy.TaskInput(name = "heureFin", smartType = "STyPHeureMinute") final Integer heureFin) {
 		final Task task = createTaskBuilder("TkGetExistsConflictingPlageHoraire")
 				.addValue("ageId", ageId)
 				.addValue("dateLocale", dateLocale)

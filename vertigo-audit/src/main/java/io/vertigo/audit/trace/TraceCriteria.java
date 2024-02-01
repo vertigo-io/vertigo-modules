@@ -19,8 +19,8 @@ package io.vertigo.audit.trace;
 
 import java.time.Instant;
 
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 
 /**
  * This class defines the Audit Trace for an Object.

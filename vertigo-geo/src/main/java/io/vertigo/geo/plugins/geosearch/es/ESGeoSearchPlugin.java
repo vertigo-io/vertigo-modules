@@ -46,11 +46,11 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.structure.definitions.DataFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.geo.geocoder.GeoLocation;
 import io.vertigo.geo.impl.geosearch.GeoSearchPlugin;
 

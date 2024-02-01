@@ -18,10 +18,10 @@
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.model.KeyConcept;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.

@@ -1,9 +1,9 @@
 package io.vertigo.easyforms.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -24,7 +24,7 @@ public final class EasyFormsFieldValidatorUi implements DtObject {
 	 * @return String code
 	 */
 	@Field(smartType = "STyEfCode", label = "Constraint")
-	@io.vertigo.datamodel.structure.stereotype.SortField
+	@io.vertigo.datamodel.data.stereotype.SortField
 	public String getCode() {
 		return code;
 	}
@@ -44,7 +44,7 @@ public final class EasyFormsFieldValidatorUi implements DtObject {
 	 * @return String label
 	 */
 	@Field(smartType = "STyEfLabel", label = "Constraint")
-	@io.vertigo.datamodel.structure.stereotype.DisplayField
+	@io.vertigo.datamodel.data.stereotype.DisplayField
 	public String getLabel() {
 		return label;
 	}

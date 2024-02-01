@@ -31,7 +31,7 @@ import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.data.MockIdentities;
 import io.vertigo.social.impl.notification.NotificationPlugin;
 import io.vertigo.social.plugins.notification.memory.MemoryNotificationPlugin;

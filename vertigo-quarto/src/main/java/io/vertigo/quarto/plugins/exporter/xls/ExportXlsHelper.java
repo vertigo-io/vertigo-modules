@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.definitions.DataDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 import io.vertigo.quarto.exporter.model.ExportSheetBuilder;

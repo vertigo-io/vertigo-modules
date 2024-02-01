@@ -3,7 +3,7 @@ package io.vertigo.easyforms.easyformsrunner.model;
 import java.util.List;
 
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent.UiComponentParam;
 
 @FunctionalInterface

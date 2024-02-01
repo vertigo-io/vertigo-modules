@@ -18,7 +18,7 @@
 package io.vertigo.quarto.publisher.data.domain;
 
 import io.vertigo.core.lang.Cardinality;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtObject;
 
 /**
  * Attention cette classe est générée automatiquement !
@@ -27,14 +27,14 @@ import io.vertigo.datamodel.structure.model.DtObject;
 public final class MisEnCause implements DtObject {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "Sexe")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "Sexe")
 	private Boolean siHomme;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Nom")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Nom")
 	private String nom;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Prenom")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Prenom")
 	private String prenom;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyDtAddress", cardinality = Cardinality.MANY, label = "Addresses connues")
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.quarto.publisher.data.domain.Address> adressesConnues;
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyDtAddress", cardinality = Cardinality.MANY, label = "Addresses connues")
+	private io.vertigo.datamodel.data.model.DtList<io.vertigo.quarto.publisher.data.domain.Address> adressesConnues;
 
 	/**
 	 * Champ : DATA.
@@ -95,7 +95,7 @@ public final class MisEnCause implements DtObject {
 	 * Récupère la valeur de la propriété 'Addresses connues'.
 	 * @return DtList<io.vertigo.publisher.mock.Address> adressesConnues
 	 */
-	public final io.vertigo.datamodel.structure.model.DtList<io.vertigo.quarto.publisher.data.domain.Address> getAdressesConnues() {
+	public final io.vertigo.datamodel.data.model.DtList<io.vertigo.quarto.publisher.data.domain.Address> getAdressesConnues() {
 		return adressesConnues;
 	}
 
@@ -104,7 +104,7 @@ public final class MisEnCause implements DtObject {
 	 * Définit la valeur de la propriété 'Addresses connues'.
 	 * @param adressesConnues DtList<io.vertigo.publisher.mock.Address>
 	 */
-	public final void setAdressesConnues(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.quarto.publisher.data.domain.Address> adressesConnues) {
+	public final void setAdressesConnues(final io.vertigo.datamodel.data.model.DtList<io.vertigo.quarto.publisher.data.domain.Address> adressesConnues) {
 		this.adressesConnues = adressesConnues;
 	}
 }

@@ -17,7 +17,7 @@
  */
 package io.vertigo.quarto.publisher.data.domain;
 
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtObject;
 
 /**
  * Attention cette classe est générée automatiquement !
@@ -27,13 +27,13 @@ public final class Enquete implements DtObject {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "Terminée?")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "Terminée?")
 	private Boolean enqueteTerminee;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Code")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Code")
 	private String codeEnquete;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Sexe")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Sexe")
 	private String fait;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "Sexe")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "Sexe")
 	private Boolean siGrave;
 
 	/**

@@ -41,7 +41,7 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.FileUtil;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.FSFile;
 import io.vertigo.quarto.impl.publisher.PublisherDataUtil;

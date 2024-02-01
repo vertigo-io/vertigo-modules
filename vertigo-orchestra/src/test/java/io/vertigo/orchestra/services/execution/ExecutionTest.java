@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.orchestra.AbstractOrchestraTestCase;
 import io.vertigo.orchestra.definitions.OrchestraDefinitionManager;
 import io.vertigo.orchestra.definitions.ProcessDefinition;

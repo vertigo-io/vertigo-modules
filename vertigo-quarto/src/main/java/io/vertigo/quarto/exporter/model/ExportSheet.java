@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtObject;
 
 /**
  * Interface de consultation des ExportDtParameters.

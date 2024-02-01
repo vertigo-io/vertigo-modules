@@ -32,7 +32,7 @@ import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.MapBuilder;
 import io.vertigo.core.param.ParamValue;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.impl.notification.NotificationEvent;
 import io.vertigo.social.impl.notification.NotificationPlugin;
 import io.vertigo.social.notification.Notification;

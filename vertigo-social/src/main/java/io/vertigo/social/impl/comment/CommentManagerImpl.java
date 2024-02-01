@@ -24,8 +24,8 @@ import javax.inject.Inject;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.KeyConcept;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.comment.Comment;
 import io.vertigo.social.comment.CommentManager;
 

@@ -22,14 +22,14 @@ import javax.inject.Inject;
 import java.util.Optional;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
+import io.vertigo.datafactory.task.TaskManager;
+import io.vertigo.datafactory.task.definitions.TaskDefinition;
+import io.vertigo.datafactory.task.model.Task;
+import io.vertigo.datafactory.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.task.TaskManager;
 import io.vertigo.planning.agenda.domain.Creneau;
 
 /**
@@ -66,7 +66,7 @@ public final class CreneauDAO extends DAO<Creneau, java.lang.Long> implements St
 	 * @param trhId Long
 	 * @return Option de Creneau creneau
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			name = "TkSelectCreneauForUpdateByTrhId",
 			request = """
 			SELECT 
@@ -75,8 +75,8 @@ public final class CreneauDAO extends DAO<Creneau, java.lang.Long> implements St
            WHERE cre.TRH_ID = #trhId# and cre.rec_id is null
            LIMIT 1 FOR UPDATE SKIP LOCKED""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtCreneau", name = "creneau")
-	public Optional<io.vertigo.planning.agenda.domain.Creneau> selectCreneauForUpdateByTrhId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "trhId", smartType = "STyPId") final Long trhId) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtCreneau", name = "creneau")
+	public Optional<io.vertigo.planning.agenda.domain.Creneau> selectCreneauForUpdateByTrhId(@io.vertigo.datafactory.task.proxy.TaskInput(name = "trhId", smartType = "STyPId") final Long trhId) {
 		final Task task = createTaskBuilder("TkSelectCreneauForUpdateByTrhId")
 				.addValue("trhId", trhId)
 				.build();
@@ -93,7 +93,7 @@ public final class CreneauDAO extends DAO<Creneau, java.lang.Long> implements St
 	 * @param now Instant
 	 * @return DtList de Creneau creneau
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			name = "TkSelectFreeCreneauByAgeId",
 			request = """
 			SELECT 
@@ -105,8 +105,8 @@ public final class CreneauDAO extends DAO<Creneau, java.lang.Long> implements St
            AND trh.instant_Publication <= #now#
            and cre.rec_id is null""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtCreneau", name = "creneau")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.Creneau> selectFreeCreneauByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtCreneau", name = "creneau")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.Creneau> selectFreeCreneauByAgeId(@io.vertigo.datafactory.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datafactory.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datafactory.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datafactory.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
 		final Task task = createTaskBuilder("TkSelectFreeCreneauByAgeId")
 				.addValue("ageId", ageId)
 				.addValue("startDate", startDate)

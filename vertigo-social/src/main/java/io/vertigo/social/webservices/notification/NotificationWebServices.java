@@ -29,7 +29,7 @@ import io.vertigo.account.authentication.AuthenticationManager;
 import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.core.lang.MapBuilder;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.notification.Notification;
 import io.vertigo.social.notification.NotificationManager;
 import io.vertigo.vega.webservice.WebServices;

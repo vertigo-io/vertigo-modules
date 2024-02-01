@@ -38,7 +38,7 @@ import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.connectors.redis.RedisConnector;
 import io.vertigo.core.analytics.AnalyticsManager;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.dao.TrancheHoraireDAO;
 import io.vertigo.planning.agenda.domain.Agenda;
 import io.vertigo.planning.agenda.domain.TrancheHoraire;

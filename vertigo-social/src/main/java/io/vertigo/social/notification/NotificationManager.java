@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.core.node.component.Manager;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 
 /**
  * @author pchretien, npiedeloup, btounkara

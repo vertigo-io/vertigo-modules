@@ -20,9 +20,9 @@ package io.vertigo.geo.geosearch;
 import java.util.Optional;
 
 import io.vertigo.core.node.component.Manager;
-import io.vertigo.datamodel.structure.definitions.DataFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.geo.geocoder.GeoLocation;
 
 public interface GeoSearchManager extends Manager {

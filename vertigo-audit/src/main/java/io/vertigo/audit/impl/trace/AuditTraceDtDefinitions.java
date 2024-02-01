@@ -20,7 +20,7 @@ package io.vertigo.audit.impl.trace;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import io.vertigo.datamodel.structure.definitions.DataFieldName;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 
 public final class AuditTraceDtDefinitions implements Iterable<Class<?>> {
 

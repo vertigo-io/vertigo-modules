@@ -32,10 +32,10 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.definitions.DataDefinition;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 /**

@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.data.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.datamodel.structure.definitions.DtProperty;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsListItem;

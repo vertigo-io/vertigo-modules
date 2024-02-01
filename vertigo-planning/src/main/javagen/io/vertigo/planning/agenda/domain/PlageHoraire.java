@@ -18,11 +18,11 @@
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -38,7 +38,7 @@ public final class PlageHoraire implements Entity {
 	private Integer minutesFin;
 	private Integer nbGuichet;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "APlageHoraireAgenda",
 			fkFieldName = "ageId",
 			primaryDtDefinitionName = "DtAgenda",
@@ -159,7 +159,7 @@ public final class PlageHoraire implements Entity {
 	 * Récupère la valeur de la propriété 'Agenda'.
 	 * @return Long ageId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyPId", label = "Agenda", fkDefinition = "DtAgenda", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyPId", label = "Agenda", fkDefinition = "DtAgenda", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getAgeId() {
 		return (Long) ageIdAccessor.getId();
 	}

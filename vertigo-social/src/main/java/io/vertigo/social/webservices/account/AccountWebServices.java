@@ -26,7 +26,7 @@ import io.vertigo.account.account.Account;
 import io.vertigo.account.account.AccountGroup;
 import io.vertigo.account.account.AccountManager;
 import io.vertigo.core.lang.MapBuilder;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;

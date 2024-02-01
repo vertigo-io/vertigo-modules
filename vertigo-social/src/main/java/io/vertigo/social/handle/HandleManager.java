@@ -20,7 +20,7 @@ package io.vertigo.social.handle;
 import java.util.List;
 
 import io.vertigo.core.node.component.Manager;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 
 public interface HandleManager extends Manager {
 

@@ -23,11 +23,11 @@ import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
+import io.vertigo.datafactory.task.TaskManager;
+import io.vertigo.datafactory.task.definitions.TaskDefinition;
+import io.vertigo.datafactory.task.model.Task;
+import io.vertigo.datafactory.task.model.TaskBuilder;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.task.TaskManager;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
@@ -67,7 +67,7 @@ public final class ONodeDAO extends DAO<ONode, java.lang.Long> implements StoreS
 	 * @param nodeName String
 	 * @return Option de ONode dtoONode
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetNodeByName",
 			request = "select \n" + 
@@ -75,8 +75,8 @@ public final class ONodeDAO extends DAO<ONode, java.lang.Long> implements StoreS
  "         	from o_node nod\n" + 
  "         	where nod.NAME = #nodeName#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtONode", name = "dtoONode")
-	public Optional<io.vertigo.orchestra.domain.execution.ONode> getNodeByName(@io.vertigo.datamodel.task.proxy.TaskInput(name = "nodeName", smartType = "STyOLibelle") final String nodeName) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtONode", name = "dtoONode")
+	public Optional<io.vertigo.orchestra.domain.execution.ONode> getNodeByName(@io.vertigo.datafactory.task.proxy.TaskInput(name = "nodeName", smartType = "STyOLibelle") final String nodeName) {
 		final Task task = createTaskBuilder("TkGetNodeByName")
 				.addValue("nodeName", nodeName)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))

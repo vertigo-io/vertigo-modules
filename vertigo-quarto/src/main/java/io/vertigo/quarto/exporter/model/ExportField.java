@@ -19,7 +19,7 @@ package io.vertigo.quarto.exporter.model;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DtField;
 
 /**
  * Définition d'une colonne à exporter.

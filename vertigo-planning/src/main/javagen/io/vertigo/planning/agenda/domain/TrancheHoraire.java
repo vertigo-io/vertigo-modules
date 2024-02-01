@@ -18,11 +18,11 @@
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -39,7 +39,7 @@ public final class TrancheHoraire implements Entity {
 	private Integer nbGuichet;
 	private java.time.Instant instantPublication;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ATranchePlageHoraire",
 			fkFieldName = "plhId",
 			primaryDtDefinitionName = "DtPlageHoraire",
@@ -54,7 +54,7 @@ public final class TrancheHoraire implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.planning.agenda.domain.PlageHoraire> plhIdAccessor = new StoreVAccessor<>(io.vertigo.planning.agenda.domain.PlageHoraire.class, "PlageHoraire");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ATrancheHoraireAgenda",
 			fkFieldName = "ageId",
 			primaryDtDefinitionName = "DtAgenda",
@@ -194,7 +194,7 @@ public final class TrancheHoraire implements Entity {
 	 * Récupère la valeur de la propriété 'Plage horaire'.
 	 * @return Long plhId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyPId", label = "Plage horaire", fkDefinition = "DtPlageHoraire", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyPId", label = "Plage horaire", fkDefinition = "DtPlageHoraire", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getPlhId() {
 		return (Long) plhIdAccessor.getId();
 	}
@@ -213,7 +213,7 @@ public final class TrancheHoraire implements Entity {
 	 * Récupère la valeur de la propriété 'Agenda'.
 	 * @return Long ageId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyPId", label = "Agenda", fkDefinition = "DtAgenda", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyPId", label = "Agenda", fkDefinition = "DtAgenda", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getAgeId() {
 		return (Long) ageIdAccessor.getId();
 	}

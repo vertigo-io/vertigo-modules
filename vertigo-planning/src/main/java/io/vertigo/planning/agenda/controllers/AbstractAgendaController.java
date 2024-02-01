@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.domain.Agenda;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;

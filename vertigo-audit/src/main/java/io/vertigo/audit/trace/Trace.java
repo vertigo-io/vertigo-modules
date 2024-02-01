@@ -20,17 +20,17 @@ package io.vertigo.audit.trace;
 import java.time.Instant;
 
 import io.vertigo.core.lang.Cardinality;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DtObjectUtil;
 
 /**
  * This class defines the Auditing Trace for an Object.
  *
  * @author xdurand
  */
-@io.vertigo.datamodel.structure.stereotype.DataSpace("audit")
+@io.vertigo.datamodel.data.stereotype.DataSpace("audit")
 public final class Trace implements Entity {
 	private static final long serialVersionUID = 2280022920606418634L;
 

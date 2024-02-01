@@ -17,7 +17,7 @@
  */
 package io.vertigo.quarto.publisher.data.domain;
 
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtObject;
 
 /**
  * Attention cette classe est générée automatiquement !
@@ -29,9 +29,9 @@ public final class Enqueteur implements DtObject {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Nom")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Nom")
 	private String nom;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Prenom")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Prenom")
 	private String prenom;
 
 	/**

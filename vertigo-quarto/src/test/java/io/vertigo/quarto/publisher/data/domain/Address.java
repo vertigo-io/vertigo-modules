@@ -17,7 +17,7 @@
  */
 package io.vertigo.quarto.publisher.data.domain;
 
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtObject;
 
 /**
  * Attention cette classe est générée automatiquement !
@@ -27,9 +27,9 @@ public final class Address implements DtObject {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Rue")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Rue")
 	private String rue;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyDtVille", label = "Ville")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyDtVille", label = "Ville")
 	private io.vertigo.quarto.publisher.data.domain.Ville ville;
 
 	/**

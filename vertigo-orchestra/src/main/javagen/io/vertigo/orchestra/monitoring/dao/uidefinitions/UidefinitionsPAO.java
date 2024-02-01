@@ -22,10 +22,10 @@ import javax.inject.Inject;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.task.TaskManager;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
+import io.vertigo.datafactory.task.TaskManager;
+import io.vertigo.datafactory.task.definitions.TaskDefinition;
+import io.vertigo.datafactory.task.model.Task;
+import io.vertigo.datafactory.task.model.TaskBuilder;
 import io.vertigo.datastore.impl.dao.StoreServices;
 
 /**
@@ -62,7 +62,7 @@ public final class UidefinitionsPAO implements StoreServices {
 	 * @param name String
 	 * @return OProcessUi dtOProcessUi
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetProcessByName",
 			request = "select  pro.PRO_ID as PRO_ID,\n" + 
@@ -77,8 +77,8 @@ public final class UidefinitionsPAO implements StoreServices {
  "         	from o_process pro   \n" + 
  "         	where pro.NAME = #name# and pro.ACTIVE_VERSION is true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcessUi", name = "dtOProcessUi")
-	public io.vertigo.orchestra.monitoring.domain.uidefinitions.OProcessUi getProcessByName(@io.vertigo.datamodel.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOProcessUi", name = "dtOProcessUi")
+	public io.vertigo.orchestra.monitoring.domain.uidefinitions.OProcessUi getProcessByName(@io.vertigo.datafactory.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
 		final Task task = createTaskBuilder("TkGetProcessByName")
 				.addValue("name", name)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -93,7 +93,7 @@ public final class UidefinitionsPAO implements StoreServices {
 	 * @param search String
 	 * @return DtList de OProcessUi dtcOProcessUi
 	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkSearchProcessByLabel",
 			request = "select  pro.PRO_ID as PRO_ID,\n" + 
@@ -108,8 +108,8 @@ public final class UidefinitionsPAO implements StoreServices {
  "         	from o_process pro   \n" + 
  "         	where lower(pro.LABEL) like lower(#search#)  and pro.ACTIVE_VERSION is true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcessUi", name = "dtcOProcessUi")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.orchestra.monitoring.domain.uidefinitions.OProcessUi> searchProcessByLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "search", smartType = "STyOLibelle") final String search) {
+	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOProcessUi", name = "dtcOProcessUi")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.monitoring.domain.uidefinitions.OProcessUi> searchProcessByLabel(@io.vertigo.datafactory.task.proxy.TaskInput(name = "search", smartType = "STyOLibelle") final String search) {
 		final Task task = createTaskBuilder("TkSearchProcessByLabel")
 				.addValue("search", search)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
