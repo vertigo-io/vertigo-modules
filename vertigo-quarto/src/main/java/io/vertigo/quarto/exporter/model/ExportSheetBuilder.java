@@ -24,7 +24,7 @@ import java.util.List;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DataDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -48,7 +48,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 */
 	private final DtObject dto;
 	private final DtList<?> dtc;
-	private final DtDefinition dtDefinition;
+	private final DataDefinition dataDefinition;
 
 	private final String title;
 	private final ExportBuilder exportBuilder;
@@ -69,7 +69,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dto = dto;
 		dtc = null;
 		this.title = title;
-		dtDefinition = DtObjectUtil.findDtDefinition(dto);
+		dataDefinition = DtObjectUtil.findDtDefinition(dto);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dtc = dtc;
 		dto = null;
 		this.title = title;
-		dtDefinition = dtc.getDefinition();
+		dataDefinition = dtc.getDefinition();
 	}
 
 	/**
@@ -122,7 +122,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		Assertion.check()
 				.isNotNull(fieldName)
 				// On vérifie que la colonne est bien dans la définition de la DTC
-				.isTrue(dtDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
+				.isTrue(dataDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
 		// car pour des raisons diverses ils peuvent l'être plusieurs fois.
 		//-----
@@ -155,7 +155,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		Assertion.check()
 				.isNotNull(fieldName)
 				// On vérifie que la colonne est bien dans la définition de la DTC
-				.isTrue(dtDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter")
+				.isTrue(dataDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter")
 				.isTrue(list.getDefinition().contains(keyfield.name()), "Le champ " + keyfield.name() + " n'est pas dans la liste de dénorm")
 				.isTrue(list.getDefinition().contains(displayfield.name()), "Le champ " + displayfield.name() + " n'est pas dans la liste de dénorm");
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
@@ -173,7 +173,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		if (exportFields.isEmpty()) {
 			// si la liste des colonnes est vide alors par convention on les
 			// prend toutes.
-			final Collection<DtField> fields = dtDefinition.getFields();
+			final Collection<DtField> fields = dataDefinition.getFields();
 			for (final DtField dtField : fields) {
 				exportFields.add(new ExportField(dtField, null));
 			}
@@ -190,10 +190,10 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	}
 
 	private DtField resolveDtField(final DtFieldName fieldName) {
-		return resolveDtField(fieldName, dtDefinition);
+		return resolveDtField(fieldName, dataDefinition);
 	}
 
-	private static DtField resolveDtField(final DtFieldName fieldName, final DtDefinition definition) {
+	private static DtField resolveDtField(final DtFieldName fieldName, final DataDefinition definition) {
 		return definition.getField(fieldName);
 	}
 }

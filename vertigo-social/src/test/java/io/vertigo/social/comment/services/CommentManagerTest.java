@@ -29,7 +29,7 @@ import io.vertigo.account.account.AccountGroup;
 import io.vertigo.connectors.redis.RedisConnector;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.util.InjectorUtil;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DataDefinition;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
@@ -63,9 +63,9 @@ public class CommentManagerTest {
 		mockIdentities.initData();
 
 		//on triche un peu, car AcountGroup n'est pas un KeyConcept
-		final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
-		keyConcept1Uri = UID.of(dtDefinition, "10");
-		keyConcept1Uri = UID.of(dtDefinition, "20");
+		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
+		keyConcept1Uri = UID.of(dataDefinition, "10");
+		keyConcept1Uri = UID.of(dataDefinition, "20");
 	}
 
 	@AfterEach

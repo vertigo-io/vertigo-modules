@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DataDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -150,10 +150,10 @@ public final class ExportXlsHelper<R extends DtObject> {
 	 */
 	private static List<DtField> getExportCriterionFields(final DtObject dto, final List<String> criterionExcludedColumnNameList) {
 		final List<DtField> exportColumns = new ArrayList<>();
-		final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(dto);
-		addFieldToExcludedExportColumnNameList(dtDefinition, criterionExcludedColumnNameList);
+		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(dto);
+		addFieldToExcludedExportColumnNameList(dataDefinition, criterionExcludedColumnNameList);
 
-		for (final DtField dtField : dtDefinition.getFields()) {
+		for (final DtField dtField : dataDefinition.getFields()) {
 			if (!criterionExcludedColumnNameList.contains(dtField.name())) {
 				exportColumns.add(dtField);
 			}
@@ -161,7 +161,7 @@ public final class ExportXlsHelper<R extends DtObject> {
 		return exportColumns;
 	}
 
-	private static void addFieldToExcludedExportColumnNameList(final DtDefinition definition, final List<String> criterionExcludedColumnNameList) {
+	private static void addFieldToExcludedExportColumnNameList(final DataDefinition definition, final List<String> criterionExcludedColumnNameList) {
 		if (definition.getIdField().isPresent()) {
 			final DtField keyField = definition.getIdField().get();
 			if ("DoIdentifier".equals(keyField.smartTypeDefinition().getName())) {

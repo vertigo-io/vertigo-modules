@@ -25,7 +25,7 @@ import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DataDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.definitions.DtProperty;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -88,8 +88,8 @@ public final class PublisherDataUtil {
 				.isNotNull(dto)
 				.isNotNull(publisherDataNode);
 		//-----
-		final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(dto);
-		final List<String> dtFieldNames = getDtFieldList(dtDefinition);
+		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(dto);
+		final List<String> dtFieldNames = getDtFieldList(dataDefinition);
 		final PublisherNodeDefinition pnDefinition = publisherDataNode.getNodeDefinition();
 		int nbMappedField = 0;
 		for (final PublisherField publisherField : pnDefinition.getFields()) {
@@ -97,12 +97,12 @@ public final class PublisherDataUtil {
 			if (!dtFieldNames.contains(fieldName)) {
 				continue;
 			}
-			final DtField dtField = dtDefinition.getField(fieldName);
+			final DtField dtField = dataDefinition.getField(fieldName);
 			final Object value = dtField.getDataAccessor().getValue(dto);
 			nbMappedField++;
 			switch (publisherField.getFieldType()) {
 				case Boolean:
-					Assertion.check().isTrue(value instanceof Boolean, "Le champ {0} du DT {1} doit être un Boolean (non null)", fieldName, dtDefinition.getName());
+					Assertion.check().isTrue(value instanceof Boolean, "Le champ {0} du DT {1} doit être un Boolean (non null)", fieldName, dataDefinition.getName());
 					publisherDataNode.setBoolean(fieldName, (Boolean) value);
 					break;
 				case String:
@@ -141,7 +141,7 @@ public final class PublisherDataUtil {
 		}
 		Assertion.check().isTrue(nbMappedField > 0,
 				"Aucun champ du Dt ne correspond à ceux du PublisherNode, vérifier vos définitions. ({0}:{1}) et ({2}:{3})", "PN",
-				pnDefinition.getFields(), dtDefinition.getName(), dtFieldNames);
+				pnDefinition.getFields(), dataDefinition.getName(), dtFieldNames);
 	}
 
 	/**
@@ -158,9 +158,9 @@ public final class PublisherDataUtil {
 		return formattedValue + (!StringUtil.isBlank(unit) ? " " + unit : "");
 	}
 
-	private static List<String> getDtFieldList(final DtDefinition dtDefinition) {
+	private static List<String> getDtFieldList(final DataDefinition dataDefinition) {
 		final List<String> dtFieldNames = new ArrayList<>();
-		for (final DtField dtField : dtDefinition.getFields()) {
+		for (final DtField dtField : dataDefinition.getFields()) {
 			dtFieldNames.add(dtField.name());
 		}
 		return dtFieldNames;
@@ -178,15 +178,15 @@ public final class PublisherDataUtil {
 	public static String generatePublisherNodeDefinitionAsKsp(final String... dtDefinitions) {
 		final StringBuilder sb = new StringBuilder();
 		for (final String dtDefinitionUrn : dtDefinitions) {
-			appendPublisherNodeDefinition(sb, Node.getNode().getDefinitionSpace().resolve(dtDefinitionUrn, DtDefinition.class));
+			appendPublisherNodeDefinition(sb, Node.getNode().getDefinitionSpace().resolve(dtDefinitionUrn, DataDefinition.class));
 			sb.append('\n');
 		}
 		return sb.toString();
 	}
 
-	private static void appendPublisherNodeDefinition(final StringBuilder sb, final DtDefinition dtDefinition) {
-		sb.append("PN_").append(dtDefinition.id().shortName()).append("  = new PublisherNode (\n");
-		for (final DtField dtField : dtDefinition.getFields()) {
+	private static void appendPublisherNodeDefinition(final StringBuilder sb, final DataDefinition dataDefinition) {
+		sb.append("PN_").append(dataDefinition.id().shortName()).append("  = new PublisherNode (\n");
+		for (final DtField dtField : dataDefinition.getFields()) {
 			final String fieldName = dtField.name();
 			switch (dtField.smartTypeDefinition().getScope()) {
 				case BASIC_TYPE:
@@ -198,9 +198,9 @@ public final class PublisherDataUtil {
 					break;
 				case DATA_TYPE:
 					if (dtField.cardinality().hasMany()) {
-						sb.append("\t\tlistField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DtDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
+						sb.append("\t\tlistField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DataDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
 					} else {
-						sb.append("\t\tdataField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DtDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
+						sb.append("\t\tdataField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DataDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
 					}
 					break;
 				case VALUE_TYPE:

@@ -37,7 +37,7 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DataAccessor;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DataDefinition;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.Entity;
@@ -54,7 +54,7 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 	private final EntityStoreManager entityStoreManager;
 	private final VTransactionManager transactionManager;
 
-	private List<DtDefinition> dtDefinitionsWithHandle;
+	private List<DataDefinition> dtDefinitionsWithHandle;
 	private final HandlePlugin handlePlugin;
 
 	@Inject
@@ -75,7 +75,7 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 
 	@Override
 	public void start() {
-		dtDefinitionsWithHandle = Node.getNode().getDefinitionSpace().getAll(DtDefinition.class)
+		dtDefinitionsWithHandle = Node.getNode().getDefinitionSpace().getAll(DataDefinition.class)
 				.stream()
 				.filter(dtDefinition -> dtDefinition.getHandleField().isPresent())
 				.toList();
@@ -94,14 +94,14 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 	 */
 	@EventBusSubscribed
 	public void onEvent(final StoreEvent storeEvent) {
-		final Map<DtDefinition, List<UID>> uidsByDefinition = storeEvent.getUIDs().stream()
+		final Map<DataDefinition, List<UID>> uidsByDefinition = storeEvent.getUIDs().stream()
 				//On ne traite l'event que si il porte sur un KeyConcept
 				.filter(uid -> uid.getDefinition().getHandleField().isPresent())
 				.collect(Collectors.groupingBy(uid -> uid.getDefinition()));
 
 		uidsByDefinition.entrySet().stream()
 				.forEach(entry -> {
-					final DtDefinition dtDefinition = entry.getKey();
+					final DataDefinition dataDefinition = entry.getKey();
 					final List<UID> uids = entry.getValue();
 					switch (storeEvent.getType()) {
 						case UPDATE:
@@ -110,10 +110,10 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 							final DtList<Entity> entities;
 							try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
 								//we need to make better than this...
-								entities = entityStoreManager.find(dtDefinition, Criterions.in(() -> dtDefinition.getIdField().get().name(), uids.toArray()), DtListState.of(null));
+								entities = entityStoreManager.find(dataDefinition, Criterions.in(() -> dataDefinition.getIdField().get().name(), uids.toArray()), DtListState.of(null));
 							}
 							// add the handle in the plugin
-							handlePlugin.add(entities.stream().map(entity -> toHandle(dtDefinition, entity)).toList());
+							handlePlugin.add(entities.stream().map(entity -> toHandle(dataDefinition, entity)).toList());
 							break;
 						case DELETE:
 							handlePlugin.remove(uids);
@@ -155,17 +155,17 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 		return handlePlugin.getByCode(code);
 	}
 
-	private Optional<DtDefinition> isStartingByDtDefinition(final String handlePrefix) {
+	private Optional<DataDefinition> isStartingByDtDefinition(final String handlePrefix) {
 		return dtDefinitionsWithHandle
 				.stream()
 				.filter(dtDefinition -> handlePrefix.startsWith(StringUtil.first2LowerCase(dtDefinition.id().shortName()) + "/"))
 				.findAny();
 	}
 
-	private static Handle toHandle(final DtDefinition dtDefinition, final Entity entity) {
-		final DataAccessor dataAccessor = dtDefinition.getHandleField().get().getDataAccessor();
+	private static Handle toHandle(final DataDefinition dataDefinition, final Entity entity) {
+		final DataAccessor dataAccessor = dataDefinition.getHandleField().get().getDataAccessor();
 		return new Handle(entity.getUID(),
-				StringUtil.first2LowerCase(dtDefinition.id().shortName()) + "/" +
+				StringUtil.first2LowerCase(dataDefinition.id().shortName()) + "/" +
 						dataAccessor.getValue(entity));
 	}
 
@@ -175,9 +175,9 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 		dtDefinitionsWithHandle.forEach(this::indexDefinition);
 	}
 
-	private void indexDefinition(final DtDefinition dtDefinition) {
-		final String idFieldName = dtDefinition.getIdField().get().name();
-		final DataAccessor idFieldAccessor = dtDefinition.getIdField().get().getDataAccessor();
+	private void indexDefinition(final DataDefinition dataDefinition) {
+		final String idFieldName = dataDefinition.getIdField().get().name();
+		final DataAccessor idFieldAccessor = dataDefinition.getIdField().get().getDataAccessor();
 		int lastResultsSize;
 		Serializable lastId = null;
 		//we do it by chunks
@@ -187,13 +187,13 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 			try (final VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
 				final Criteria criteria = lastId != null ? Criterions.isGreaterThan(() -> idFieldName, lastId) : Criterions.alwaysTrue();
 				final DtListState dtListState = DtListState.of(CHUNK_SIZE, 0, idFieldName, false);
-				entities = entityStoreManager.find(dtDefinition, criteria, dtListState);
+				entities = entityStoreManager.find(dataDefinition, criteria, dtListState);
 			}
 			lastResultsSize = entities.size();
 			lastId = (Serializable) idFieldAccessor.getValue(entities.get(entities.size() - 1));
 
 			handlePlugin.add(entities.stream()
-					.map(entity -> toHandle(dtDefinition, entity))
+					.map(entity -> toHandle(dataDefinition, entity))
 					.collect(Collectors.toList()));
 		} while (lastResultsSize == CHUNK_SIZE);
 	}

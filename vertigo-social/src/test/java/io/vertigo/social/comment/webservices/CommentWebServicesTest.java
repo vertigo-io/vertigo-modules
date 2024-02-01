@@ -40,7 +40,7 @@ import io.vertigo.core.lang.MapBuilder;
 import io.vertigo.core.lang.json.UTCDateUtil;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.util.InjectorUtil;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DataDefinition;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
@@ -82,10 +82,10 @@ public final class CommentWebServicesTest {
 		account1Uri = MockIdentities.createAccountURI("1");
 
 		//on triche un peu, car AcountGroup n'est pas un KeyConcept
-		final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
-		keyConcept1Uri = UID.of(dtDefinition, "10");
-		keyConcept2Uri = UID.of(dtDefinition, "20");
-		CONCEPT_KEY_NAME = dtDefinition.getClassSimpleName();
+		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
+		keyConcept1Uri = UID.of(dataDefinition, "10");
+		keyConcept2Uri = UID.of(dataDefinition, "20");
+		CONCEPT_KEY_NAME = dataDefinition.getClassSimpleName();
 
 		preTestLogin();
 	}
