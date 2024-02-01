@@ -38,7 +38,7 @@ import io.vertigo.core.analytics.trace.Trace;
 import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
-import io.vertigo.datamodel.criteria.Criterions;
+import io.vertigo.datafactory.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
