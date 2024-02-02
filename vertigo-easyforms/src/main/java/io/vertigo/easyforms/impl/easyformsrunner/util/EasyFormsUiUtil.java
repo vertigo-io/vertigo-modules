@@ -7,21 +7,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsListItem;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
 import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsUiComponentSupplier;
+import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.ui.impl.springmvc.util.UiUtil;
+import io.vertigo.vega.webservice.model.UiList;
+import io.vertigo.vega.webservice.model.UiObject;
 
 public class EasyFormsUiUtil implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Gson GSON = new GsonBuilder()
+			.serializeNulls()
+			.create();
 
 	public EasyFormsFieldType getFieldTypeByName(final String fieldTypeName) {
 		return Node.getNode().getDefinitionSpace().resolve(fieldTypeName, EasyFormsFieldType.class);
@@ -39,25 +50,38 @@ public class EasyFormsUiUtil implements Serializable {
 		return null;
 	}
 
-	public LinkedHashMap<String, String> getEasyForm(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
-		final var easyFormDisplay = new LinkedHashMap<String, String>();
-		final Map<String, String> outOfEasyFormTemplate = new HashMap<>(easyForm);
+	public String getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
+		final var object = UiRequestUtil.getCurrentViewContext().get(objectKey);
+		if (row == null && object instanceof final UiObject<?> uiObject) {
+			final EasyFormsData easyForm = uiObject.getTypedValue(field, EasyFormsData.class);
+			return getEasyFormRead(easyFormsTemplate, easyForm);
+		} else if (row != null && object instanceof final UiList<?> uiList) {
+			final EasyFormsData easyForm = uiList.get(Integer.valueOf(row)).getTypedValue(field, EasyFormsData.class);
+			return getEasyFormRead(easyFormsTemplate, easyForm);
+		}
+		throw new VSystemException("Unsupported object for easy form data.");
+	}
+
+	public String getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
+		final var easyFormDisplay = new LinkedHashMap<String, Object>();
+		final Map<String, Object> outOfEasyFormTemplate = new HashMap<>(easyForm);
 
 		for (final Field field : easyFormsTemplate.getFields()) { // order is important
 			final var fieldCode = field.getCode();
 			easyFormDisplay.put(field.getLabel(), outOfEasyFormTemplate.get(fieldCode));
 			outOfEasyFormTemplate.remove(fieldCode);
 		}
-		for (final Entry<String, String> champ : outOfEasyFormTemplate.entrySet()) {
-			easyFormDisplay.put(champ.getKey() + " (old)", champ.getValue());
+		for (final Entry<String, Object> champ : outOfEasyFormTemplate.entrySet()) {
+			easyFormDisplay.put(champ.getKey() + " (old)", champ.getValue().toString());
 		}
-		return easyFormDisplay;
+
+		return GSON.toJson(easyFormDisplay);
 	}
 
 	public String getDynamicListForField(final Field field) {
 		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldType.class);
 
-		final var resolvedParameters = EasyFormsParameterData.combine(fieldType.getUiParameters(), field.getParameters());
+		final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
 
 		final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentSupplier.LIST_SUPPLIER);
 
@@ -80,9 +104,9 @@ public class EasyFormsUiUtil implements Serializable {
 		return "transformListForSelection('" + ctxKeyName + "', '" + idField + "', '" + displayField + "', null, null)";
 	}
 
-	public EasyFormsParameterData getParametersForField(final Field field) {
+	public EasyFormsData getParametersForField(final Field field) {
 		final var fieldType = getFieldTypeByName(field.getFieldTypeName());
-		return EasyFormsParameterData.combine(fieldType.getUiParameters(), field.getParameters());
+		return EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
 	}
 
 }

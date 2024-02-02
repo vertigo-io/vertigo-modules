@@ -51,12 +51,6 @@ create Domain DoEfFormData {
     storeType : "JSONB"
 }
 
-create Domain DoEfFormParameterData {
-    dataType : ValueObject
-    type : "io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData"
-    storeType : "JSONB"
-}
-
 create Domain DoEfFormTemplate {
     dataType : ValueObject
     type : "io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate"

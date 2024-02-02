@@ -17,7 +17,7 @@ public class EasyFormsDesignerManagerImpl implements EasyFormsDesignerManager, A
 
 	@Override
 	public void start() {
-		localeManager.add("io.vertigo.easyforms.impl.easyformsdesigner.Resources", Resources.values());
+		localeManager.add("io.vertigo.easyforms.easyformsdesigner.Resources", Resources.values());
 	}
 
 	@Override

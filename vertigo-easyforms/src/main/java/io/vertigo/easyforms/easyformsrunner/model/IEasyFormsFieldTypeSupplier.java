@@ -47,11 +47,11 @@ public interface IEasyFormsFieldTypeSupplier {
 		return List.of();
 	}
 
-	public default void setDefaultValue(final EasyFormsParameterData parameters) {
+	public default void setDefaultValue(final EasyFormsData parameters) {
 		// no default values
 	}
 
-	public default String getDefaultValue() {
+	public default Object getDefaultValue() {
 		return null;
 	}
 

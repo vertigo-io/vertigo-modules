@@ -20,7 +20,7 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 			final String tooltip,
 			final boolean isDefault,
 			final boolean isMandatory,
-			final EasyFormsParameterData parameters,
+			final EasyFormsData parameters,
 			final List<String> fieldValidators) {
 		final var field = new Field();
 		field.setCode(fieldCode);
@@ -44,7 +44,7 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 			final String tooltip,
 			final boolean isDefault,
 			final boolean isMandatory,
-			EasyFormsParameterData parameters, final List<String> fieldValidators) {
+			EasyFormsData parameters, final List<String> fieldValidators) {
 		final var field = new Field();
 		field.setCode(fieldCode);
 		field.setFieldTypeName(fieldTypeEnum.getDefinitionName());

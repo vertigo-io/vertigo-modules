@@ -50,8 +50,6 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
-		BUSINESS_LIST(new BusinessType()),
-
 		// internals
 		I_RADIO_LAYOUT(new RadioLayoutFieldType()),
 		I_MAP(EasyFormsSmartTypes.EfFormData, UiComponentEnum.I_MAP),
@@ -63,19 +61,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		private final IEasyFormsFieldTypeSupplier typeSupplier;
 
 		private FieldTypeEnum(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponent, ?> uiComponent) {
-			this(new IEasyFormsFieldTypeSupplier() {
-
-				@Override
-				public EasyFormsSmartTypes getSmartType() {
-					return smartType;
-				}
-
-				@Override
-				public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
-					return uiComponent;
-				}
-
-			});
+			this(new SimpleFieldType(smartType, uiComponent));
 		}
 
 		private FieldTypeEnum(final IEasyFormsFieldTypeSupplier typeSupplier) {
@@ -103,6 +89,28 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 	@Override
 	public Class<FieldTypeEnum> getEnumClass() {
 		return FieldTypeEnum.class;
+	}
+
+	// ---
+
+	public static class SimpleFieldType implements IEasyFormsFieldTypeSupplier {
+		private final EasyFormsSmartTypes smartType;
+		private final EnumDefinition<EasyFormsUiComponent, ?> uiComponent;
+
+		public SimpleFieldType(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponent, ?> uiComponent) {
+			this.smartType = smartType;
+			this.uiComponent = uiComponent;
+		}
+
+		@Override
+		public EasyFormsSmartTypes getSmartType() {
+			return smartType;
+		}
+
+		@Override
+		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+			return uiComponent;
+		}
 	}
 
 	public static class AutocompleteFieldType implements IEasyFormsFieldTypeSupplier {
@@ -174,7 +182,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public String getDefaultValue() {
+		public Object getDefaultValue() {
 			return ""; // Horizontal
 		}
 
@@ -216,23 +224,5 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 			return List.of(new UiComponentParam(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.I_MAP, null, true));
 		}
 
-	}
-
-	public static class BusinessType implements IEasyFormsFieldTypeSupplier {
-		@Override
-		public EasyFormsSmartTypes getSmartType() {
-			return EasyFormsSmartTypes.EfId;
-		}
-
-		@Override
-		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
-			return UiComponentEnum.RADIO;
-		}
-
-		@Override
-		public Map<String, Serializable> getUiParams() {
-			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, "ref:Business");
-//			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, "ctx:persons");
-		}
 	}
 }

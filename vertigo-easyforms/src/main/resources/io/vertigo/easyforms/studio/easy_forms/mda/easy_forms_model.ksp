@@ -10,7 +10,7 @@ create DtDefinition DtEasyFormsFieldTypeUi {
     field name 				{domain: DoEfLabel 				label:"Field type" }
     field label 			{domain: DoEfLabel 				label:"Label" }
     field uiComponentName 	{domain: DoEfLabel 				label:"Ui component name" }
-    field uiParameters 		{domain: DoEfFormParameterData	label:"UI parameters" }
+    field uiParameters 		{domain: DoEfFormData			label:"UI parameters" }
     field paramTemplate 	{domain: DoEfFormTemplate 		label:"UI configuration template" }
     computed hasTemplate	{domain: DoEfBooleen			label:"Have configuration"
     						 expression: "return getParamTemplate() != null && !getParamTemplate().getFields().isEmpty();"
@@ -20,10 +20,10 @@ create DtDefinition DtEasyFormsFieldTypeUi {
 }
 
 create DtDefinition DtEasyFormsFieldValidatorUi {
-    field code 			{domain: DoEfCode 	label:"Constraint" }
-    field label 		{domain: DoEfLabel 	label:"Constraint" }
-    field description 	{domain: DoEfText 	label:"Description" }
-    field fieldTypes 	{domain: DoEfText 	label:"Attached to fields" cardinality:"*" }
+    field code 				{domain: DoEfCode 				label:"Constraint" }
+    field label 			{domain: DoEfLabel 				label:"Constraint" }
+    field description 		{domain: DoEfText 				label:"Description" }
+    field fieldTypes 		{domain: DoEfText 				label:"Attached to fields" cardinality:"*" }
     sortField: "code"
     displayField: "label"
 }
@@ -36,7 +36,7 @@ create DtDefinition DtEasyFormsFieldUi {
     field tooltip 			{domain: DoEfLabel 				label:"Tooltip" 				}
     field isDefault 		{domain: DoEfBooleen 			label:"System field" 			}
     field isMandatory 		{domain: DoEfBooleen 			label:"Mandatory field" 		}
-    field parameters 		{domain: DoEfFormParameterData	label:"Parameters JSON" 		}
+    field parameters 		{domain: DoEfFormData			label:"Parameters JSON" 		}
     field fieldValidators 	{domain: DoEfText 				label:"Constraints" 			cardinality:"*" }
 }
 

@@ -41,7 +41,7 @@ import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
 import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
@@ -135,7 +135,7 @@ public class AbstractEasyFormsController extends AbstractVSpringMvcController {
 		// add default values for field type parameters
 		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(fieldType, EasyFormsFieldType.class);
 		if (fieldTypeDefinition.getParamTemplate() != null) {
-			final var fieldTypeParameters = new EasyFormsParameterData();
+			final var fieldTypeParameters = new EasyFormsData();
 			for (final var paramField : fieldTypeDefinition.getParamTemplate().getFields()) {
 				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldType.class);
 				if (paramFieldTypeDefinition.getDefaultValue() != null) {

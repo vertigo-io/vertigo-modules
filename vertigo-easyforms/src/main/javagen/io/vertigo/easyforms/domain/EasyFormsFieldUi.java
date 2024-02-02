@@ -20,7 +20,7 @@ public final class EasyFormsFieldUi implements Data {
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
-	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData parameters;
+	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsData parameters;
 	private java.util.List<String> fieldValidators = new java.util.ArrayList<>();
 
 	/**
@@ -159,19 +159,19 @@ public final class EasyFormsFieldUi implements Data {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Parameters JSON'.
-	 * @return EasyFormsParameterData parameters
+	 * @return EasyFormsData parameters
 	 */
-	@Field(smartType = "STyEfFormParameterData", label = "Parameters JSON")
-	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData getParameters() {
+	@Field(smartType = "STyEfFormData", label = "Parameters JSON")
+	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsData getParameters() {
 		return parameters;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Parameters JSON'.
-	 * @param parameters EasyFormsParameterData
+	 * @param parameters EasyFormsData
 	 */
-	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData parameters) {
+	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsData parameters) {
 		this.parameters = parameters;
 	}
 

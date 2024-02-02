@@ -30,7 +30,7 @@ public class EasyFormsTemplate implements Serializable {
 		private Integer order;
 		private boolean isDefault;
 		private boolean isMandatory;
-		private EasyFormsParameterData parameters;
+		private EasyFormsData parameters;
 		private List<FieldValidator> validators;
 
 		public String getCode() {
@@ -89,11 +89,11 @@ public class EasyFormsTemplate implements Serializable {
 			this.isMandatory = isMandatory;
 		}
 
-		public EasyFormsParameterData getParameters() {
+		public EasyFormsData getParameters() {
 			return parameters;
 		}
 
-		public void setParameters(final EasyFormsParameterData parameters) {
+		public void setParameters(final EasyFormsData parameters) {
 			this.parameters = parameters;
 		}
 

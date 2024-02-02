@@ -17,22 +17,22 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 
 	private final String smartTypeName;
 	private final String uiComponentName;
-	private final String defaultValue;
-	private final EasyFormsParameterData uiParameters; // configure uiComponent
+	private final Object defaultValue;
+	private final EasyFormsData uiParameters; // configure uiComponent
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
 
-	private EasyFormsFieldType(final String name, final String smartTypeName, final String uiComponentName, final String defaultValue, final Map<String, Serializable> uiParameters,
+	private EasyFormsFieldType(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Serializable> uiParameters,
 			final EasyFormsTemplate paramTemplate) {
 		super(name);
 		//---
 		this.smartTypeName = smartTypeName;
 		this.uiComponentName = uiComponentName;
 		this.defaultValue = defaultValue;
-		this.uiParameters = new EasyFormsParameterData(uiParameters);
+		this.uiParameters = new EasyFormsData(uiParameters);
 		this.paramTemplate = paramTemplate;
 	}
 
-	public static EasyFormsFieldType of(final String name, final String smartTypeName, final String uiComponentName, final String defaultValue, final Map<String, Serializable> uiParameters,
+	public static EasyFormsFieldType of(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Serializable> uiParameters,
 			final EasyFormsTemplate paramTemplate) {
 		return new EasyFormsFieldType(name, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate);
 	}
@@ -49,11 +49,11 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 		return uiComponentName;
 	}
 
-	public String getDefaultValue() {
+	public Object getDefaultValue() {
 		return defaultValue;
 	}
 
-	public EasyFormsParameterData getUiParameters() {
+	public EasyFormsData getUiParameters() {
 		return uiParameters;
 	}
 

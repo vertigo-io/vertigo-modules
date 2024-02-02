@@ -16,8 +16,8 @@ import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsDataAdapter;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterData;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsParameterDataAdapter;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsDataAdapter;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplateAdapter;
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintLocalDateMaximum;
@@ -120,9 +120,9 @@ public enum EasyFormsSmartTypes {
 	@SmartTypeProperty(property = "indexType", value = "text_fr")
 	EfFormData,
 
-	@SmartTypeDefinition(EasyFormsParameterData.class)
+	@SmartTypeDefinition(EasyFormsData.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsParameterDataAdapter.class, targetBasicType = BasicType.String)
+	@Adapter(clazz = EasyFormsDataAdapter.class, targetBasicType = BasicType.String)
 	EfFormParameterData,
 
 	@SmartTypeDefinition(EasyFormsTemplate.class)

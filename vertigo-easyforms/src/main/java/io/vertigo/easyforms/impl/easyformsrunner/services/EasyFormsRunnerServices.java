@@ -90,7 +90,7 @@ public class EasyFormsRunnerServices implements Component {
 		final var typeChamp = EasyFormsFieldType.resolve(champ.getFieldTypeName());
 		final var smartTypeDefinition = getSmartTypeByNom(typeChamp.getSmartTypeName());
 		final var inputValue = formulaire.get(champ.getCode());
-		if (inputValue == null || inputValue.isBlank()) {
+		if (inputValue == null || (inputValue instanceof final String inputString && inputString.isBlank())) {
 			// when null, the only check is for mandatory
 			if (champ.isMandatory()) {
 				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
@@ -101,7 +101,7 @@ public class EasyFormsRunnerServices implements Component {
 			}
 		} else {
 			try {
-				final var typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputValue);
+				final var typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputValue.toString());
 				final var formatedValue = smartTypeManager.valueToString(smartTypeDefinition, typedValue);
 				formulaire.put(champ.getCode(), formatedValue);
 
