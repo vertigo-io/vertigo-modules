@@ -22,10 +22,10 @@ import javax.inject.Inject;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datafactory.task.TaskManager;
-import io.vertigo.datafactory.task.definitions.TaskDefinition;
-import io.vertigo.datafactory.task.model.Task;
-import io.vertigo.datafactory.task.model.TaskBuilder;
+import io.vertigo.datamodel.task.TaskManager;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.impl.dao.StoreServices;
 
 /**
@@ -61,7 +61,7 @@ public final class DefinitionPAO implements StoreServices {
 	 * Execute la tache TkDisableOldProcessDefinitions.
 	 * @param name String
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkDisableOldProcessDefinitions",
 			request = "update o_process \n" + 
@@ -69,7 +69,7 @@ public final class DefinitionPAO implements StoreServices {
  "         		NEED_UPDATE = false\n" + 
  "         	where NAME = #name#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void disableOldProcessDefinitions(@io.vertigo.datafactory.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
+	public void disableOldProcessDefinitions(@io.vertigo.datamodel.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
 		final Task task = createTaskBuilder("TkDisableOldProcessDefinitions")
 				.addValue("name", name)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -82,7 +82,7 @@ public final class DefinitionPAO implements StoreServices {
 	 * @param name String
 	 * @return Integer nombre
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetProcessesByName",
 			request = "select \n" + 
@@ -90,8 +90,8 @@ public final class DefinitionPAO implements StoreServices {
  "         	from o_process pro\n" + 
  "         	where pro.NAME = #name#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyONombre", name = "nombre")
-	public Integer getProcessesByName(@io.vertigo.datafactory.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyONombre", name = "nombre")
+	public Integer getProcessesByName(@io.vertigo.datamodel.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name) {
 		final Task task = createTaskBuilder("TkGetProcessesByName")
 				.addValue("name", name)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))

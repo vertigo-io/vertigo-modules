@@ -21,14 +21,14 @@ import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datafactory.task.TaskManager;
-import io.vertigo.datafactory.task.definitions.TaskDefinition;
-import io.vertigo.datafactory.task.model.Task;
-import io.vertigo.datafactory.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
+import io.vertigo.datamodel.task.TaskManager;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.planning.agenda.domain.ReservationCreneau;
 
 /**
@@ -64,7 +64,7 @@ public final class ReservationCreneauDAO extends DAO<ReservationCreneau, java.la
 	 * Execute la tache TkInsertReservationsCreneau.
 	 * @param reservationsCreneau DtList de ReservationCreneau
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkInsertReservationsCreneau",
 			request = """
 			INSERT INTO reservation_creneau(REC_ID, DATE_LOCALE, MINUTES_DEBUT, MINUTES_FIN, INSTANT_CREATION, AGE_ID)
@@ -76,7 +76,7 @@ public final class ReservationCreneauDAO extends DAO<ReservationCreneau, java.la
             #reservationsCreneau.0.instantCreation#
             #reservationsCreneau.0.ageId#);""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
-	public void insertReservationsCreneau(@io.vertigo.datafactory.task.proxy.TaskInput(name = "reservationsCreneau", smartType = "STyDtReservationCreneau") final io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.ReservationCreneau> reservationsCreneau) {
+	public void insertReservationsCreneau(@io.vertigo.datamodel.task.proxy.TaskInput(name = "reservationsCreneau", smartType = "STyDtReservationCreneau") final io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.ReservationCreneau> reservationsCreneau) {
 		final Task task = createTaskBuilder("TkInsertReservationsCreneau")
 				.addValue("reservationsCreneau", reservationsCreneau)
 				.build();

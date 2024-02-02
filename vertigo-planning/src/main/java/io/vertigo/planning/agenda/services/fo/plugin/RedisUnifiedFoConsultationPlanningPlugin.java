@@ -51,7 +51,7 @@ import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.json.CoreJsonAdapters;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
-import io.vertigo.datafactory.criteria.Criterions;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;

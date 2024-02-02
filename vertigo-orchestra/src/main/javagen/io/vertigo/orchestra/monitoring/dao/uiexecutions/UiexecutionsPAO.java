@@ -22,10 +22,10 @@ import javax.inject.Inject;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datafactory.task.TaskManager;
-import io.vertigo.datafactory.task.definitions.TaskDefinition;
-import io.vertigo.datafactory.task.model.Task;
-import io.vertigo.datafactory.task.model.TaskBuilder;
+import io.vertigo.datamodel.task.TaskManager;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.impl.dao.StoreServices;
 
 /**
@@ -62,7 +62,7 @@ public final class UiexecutionsPAO implements StoreServices {
 	 * @param preId Long
 	 * @return DtList de OActivityExecutionUi dtcOActivityExecutionUi
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetActivitiesByPreId",
 			request = "select  ace.ACE_ID as ACE_ID,\n" + 
@@ -82,8 +82,8 @@ public final class UiexecutionsPAO implements StoreServices {
  "         	where ace.PRE_ID = #preId#\n" + 
  "         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOActivityExecutionUi", name = "dtcOActivityExecutionUi")
-	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.monitoring.domain.uiexecutions.OActivityExecutionUi> getActivitiesByPreId(@io.vertigo.datafactory.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId) {
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOActivityExecutionUi", name = "dtcOActivityExecutionUi")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.monitoring.domain.uiexecutions.OActivityExecutionUi> getActivitiesByPreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId) {
 		final Task task = createTaskBuilder("TkGetActivitiesByPreId")
 				.addValue("preId", preId)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -98,7 +98,7 @@ public final class UiexecutionsPAO implements StoreServices {
 	 * @param aceId Long
 	 * @return OActivityExecutionUi dtOActivityExecutionUi
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetActivitiyByAceId",
 			request = "select  ace.ACE_ID as ACE_ID,\n" + 
@@ -118,8 +118,8 @@ public final class UiexecutionsPAO implements StoreServices {
  "         	where ace.ACE_ID = #aceId#\n" + 
  "         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOActivityExecutionUi", name = "dtOActivityExecutionUi")
-	public io.vertigo.orchestra.monitoring.domain.uiexecutions.OActivityExecutionUi getActivitiyByAceId(@io.vertigo.datafactory.task.proxy.TaskInput(name = "aceId", smartType = "STyOIdentifiant") final Long aceId) {
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOActivityExecutionUi", name = "dtOActivityExecutionUi")
+	public io.vertigo.orchestra.monitoring.domain.uiexecutions.OActivityExecutionUi getActivitiyByAceId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "aceId", smartType = "STyOIdentifiant") final Long aceId) {
 		final Task task = createTaskBuilder("TkGetActivitiyByAceId")
 				.addValue("aceId", aceId)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -134,7 +134,7 @@ public final class UiexecutionsPAO implements StoreServices {
 	 * @param preId Long
 	 * @return OProcessExecutionUi dtOProcessExecutionUi
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetExecutionByPreId",
 			request = "select  pre.PRE_ID as PRE_ID,\n" + 
@@ -154,8 +154,8 @@ public final class UiexecutionsPAO implements StoreServices {
  "         	from o_process_execution pre   \n" + 
  "         	where pre.PRE_ID = #preId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOProcessExecutionUi", name = "dtOProcessExecutionUi")
-	public io.vertigo.orchestra.monitoring.domain.uiexecutions.OProcessExecutionUi getExecutionByPreId(@io.vertigo.datafactory.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId) {
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcessExecutionUi", name = "dtOProcessExecutionUi")
+	public io.vertigo.orchestra.monitoring.domain.uiexecutions.OProcessExecutionUi getExecutionByPreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId) {
 		final Task task = createTaskBuilder("TkGetExecutionByPreId")
 				.addValue("preId", preId)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -173,7 +173,7 @@ public final class UiexecutionsPAO implements StoreServices {
 	 * @param offset Integer
 	 * @return DtList de OProcessExecutionUi dtcOProcessExecutionUi
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkGetExecutionsByProcessName",
 			request = "select  pre.PRE_ID as PRE_ID,\n" + 
@@ -191,8 +191,8 @@ public final class UiexecutionsPAO implements StoreServices {
  "         	limit #limit#\n" + 
  "         	offset #offset#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datafactory.task.proxy.TaskOutput(smartType = "STyDtOProcessExecutionUi", name = "dtcOProcessExecutionUi")
-	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.monitoring.domain.uiexecutions.OProcessExecutionUi> getExecutionsByProcessName(@io.vertigo.datafactory.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name, @io.vertigo.datafactory.task.proxy.TaskInput(name = "status", smartType = "STyOCodeIdentifiant") final String status, @io.vertigo.datafactory.task.proxy.TaskInput(name = "limit", smartType = "STyONombre") final Integer limit, @io.vertigo.datafactory.task.proxy.TaskInput(name = "offset", smartType = "STyONombre") final Integer offset) {
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcessExecutionUi", name = "dtcOProcessExecutionUi")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.monitoring.domain.uiexecutions.OProcessExecutionUi> getExecutionsByProcessName(@io.vertigo.datamodel.task.proxy.TaskInput(name = "name", smartType = "STyOLibelle") final String name, @io.vertigo.datamodel.task.proxy.TaskInput(name = "status", smartType = "STyOCodeIdentifiant") final String status, @io.vertigo.datamodel.task.proxy.TaskInput(name = "limit", smartType = "STyONombre") final Integer limit, @io.vertigo.datamodel.task.proxy.TaskInput(name = "offset", smartType = "STyONombre") final Integer offset) {
 		final Task task = createTaskBuilder("TkGetExecutionsByProcessName")
 				.addValue("name", name)
 				.addValue("status", status)

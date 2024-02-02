@@ -22,10 +22,10 @@ import javax.inject.Inject;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datafactory.task.TaskManager;
-import io.vertigo.datafactory.task.definitions.TaskDefinition;
-import io.vertigo.datafactory.task.model.Task;
-import io.vertigo.datafactory.task.model.TaskBuilder;
+import io.vertigo.datamodel.task.TaskManager;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.impl.dao.StoreServices;
 
 /**
@@ -61,7 +61,7 @@ public final class ExecutionPAO implements StoreServices {
 	 * Execute la tache TkHandleDeadProcessesOfNode.
 	 * @param nodId Long
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkHandleDeadProcessesOfNode",
 			request = "update o_activity_execution \n" + 
@@ -79,7 +79,7 @@ public final class ExecutionPAO implements StoreServices {
  " 				join o_activity_execution ace on ace.PRE_ID = pre.PRE_ID\n" + 
  " 				where ace.EST_CD = 'ABORTED');",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void handleDeadProcessesOfNode(@io.vertigo.datafactory.task.proxy.TaskInput(name = "nodId", smartType = "STyOIdentifiant") final Long nodId) {
+	public void handleDeadProcessesOfNode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "nodId", smartType = "STyOIdentifiant") final Long nodId) {
 		final Task task = createTaskBuilder("TkHandleDeadProcessesOfNode")
 				.addValue("nodId", nodId)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -91,7 +91,7 @@ public final class ExecutionPAO implements StoreServices {
 	 * Execute la tache TkHandleProcessesOfDeadNodes.
 	 * @param maxDate Instant
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkHandleProcessesOfDeadNodes",
 			request = "update o_activity_execution \n" + 
@@ -110,7 +110,7 @@ public final class ExecutionPAO implements StoreServices {
  " 				join o_activity_execution ace on ace.PRE_ID = pre.PRE_ID\n" + 
  " 				where ace.EST_CD = 'ABORTED');",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void handleProcessesOfDeadNodes(@io.vertigo.datafactory.task.proxy.TaskInput(name = "maxDate", smartType = "STyOTimestamp") final java.time.Instant maxDate) {
+	public void handleProcessesOfDeadNodes(@io.vertigo.datamodel.task.proxy.TaskInput(name = "maxDate", smartType = "STyOTimestamp") final java.time.Instant maxDate) {
 		final Task task = createTaskBuilder("TkHandleProcessesOfDeadNodes")
 				.addValue("maxDate", maxDate)
 				.addContextProperty("connectionName", io.vertigo.datastore.impl.dao.StoreUtil.getConnectionName("orchestra"))
@@ -123,7 +123,7 @@ public final class ExecutionPAO implements StoreServices {
 	 * @param nodId Long
 	 * @param maxNumber Integer
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkReserveActivitiesToLaunch",
 			request = "update  o_activity_execution \n" + 
@@ -138,7 +138,7 @@ public final class ExecutionPAO implements StoreServices {
  "         			limit #maxNumber#\n" + 
  "         	)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void reserveActivitiesToLaunch(@io.vertigo.datafactory.task.proxy.TaskInput(name = "nodId", smartType = "STyOIdentifiant") final Long nodId, @io.vertigo.datafactory.task.proxy.TaskInput(name = "maxNumber", smartType = "STyONombre") final Integer maxNumber) {
+	public void reserveActivitiesToLaunch(@io.vertigo.datamodel.task.proxy.TaskInput(name = "nodId", smartType = "STyOIdentifiant") final Long nodId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "maxNumber", smartType = "STyONombre") final Integer maxNumber) {
 		final Task task = createTaskBuilder("TkReserveActivitiesToLaunch")
 				.addValue("nodId", nodId)
 				.addValue("maxNumber", maxNumber)
@@ -154,7 +154,7 @@ public final class ExecutionPAO implements StoreServices {
 	 * @param checkingDate Instant
 	 * @param checkingComment String
 	*/
-	@io.vertigo.datafactory.task.proxy.TaskAnnotation(
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			dataSpace = "orchestra",
 			name = "TkUpdateProcessExecutionTreatment",
 			request = "update o_process_execution\n" + 
@@ -163,7 +163,7 @@ public final class ExecutionPAO implements StoreServices {
  "         		CHECKING_COMMENT = #checkingComment#\n" + 
  "         		where PRE_ID = #preId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void updateProcessExecutionTreatment(@io.vertigo.datafactory.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId, @io.vertigo.datafactory.task.proxy.TaskInput(name = "checked", smartType = "STyOBooleen") final Boolean checked, @io.vertigo.datafactory.task.proxy.TaskInput(name = "checkingDate", smartType = "STyOTimestamp") final java.time.Instant checkingDate, @io.vertigo.datafactory.task.proxy.TaskInput(name = "checkingComment", smartType = "STyOText") final String checkingComment) {
+	public void updateProcessExecutionTreatment(@io.vertigo.datamodel.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "checked", smartType = "STyOBooleen") final Boolean checked, @io.vertigo.datamodel.task.proxy.TaskInput(name = "checkingDate", smartType = "STyOTimestamp") final java.time.Instant checkingDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "checkingComment", smartType = "STyOText") final String checkingComment) {
 		final Task task = createTaskBuilder("TkUpdateProcessExecutionTreatment")
 				.addValue("preId", preId)
 				.addValue("checked", checked)
