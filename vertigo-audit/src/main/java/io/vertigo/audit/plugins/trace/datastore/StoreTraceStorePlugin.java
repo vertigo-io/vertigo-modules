@@ -67,7 +67,7 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	/** {@inheritDoc} */
 	@Override
 	public void start() {
-		traceDtDefinition = DtObjectUtil.findDtDefinition(Trace.class);
+		traceDtDefinition = DtObjectUtil.findDataDefinition(Trace.class);
 	}
 
 	/** {@inheritDoc} */

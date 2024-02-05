@@ -19,7 +19,7 @@ package io.vertigo.audit.trace;
 
 import java.time.Instant;
 
-import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.util.DtObjectUtil;
 
 /**
@@ -27,7 +27,7 @@ import io.vertigo.datamodel.data.util.DtObjectUtil;
  *
  * @author xdurand
  */
-public final class TraceCriteria implements DtObject {
+public final class TraceCriteria implements Data {
 	private static final long serialVersionUID = 1L;
 
 	private final String category;
