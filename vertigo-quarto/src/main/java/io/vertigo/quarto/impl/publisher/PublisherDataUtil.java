@@ -27,8 +27,8 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DtProperty;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.quarto.publisher.definitions.PublisherField;
@@ -55,7 +55,7 @@ public final class PublisherDataUtil {
 	 * @param dtoValue Dto contenant les valeurs
 	 * @return publisherNode du champ
 	 */
-	public static PublisherNode populateField(final PublisherNode parentNode, final String fieldName, final DtObject dtoValue) {
+	public static PublisherNode populateField(final PublisherNode parentNode, final String fieldName, final Data dtoValue) {
 		final PublisherNode childNode = parentNode.createNode(fieldName);
 		PublisherDataUtil.populateData(dtoValue, childNode);
 		parentNode.setNode(fieldName, childNode);
@@ -70,7 +70,7 @@ public final class PublisherDataUtil {
 	 */
 	public static void populateField(final PublisherNode parentNode, final String fieldName, final DtList<?> dtcValue) {
 		final List<PublisherNode> publisherNodes = new ArrayList<>();
-		for (final DtObject dto : dtcValue) {
+		for (final Data dto : dtcValue) {
 			final PublisherNode childNode = parentNode.createNode(fieldName);
 			PublisherDataUtil.populateData(dto, childNode);
 			publisherNodes.add(childNode);
@@ -83,12 +83,12 @@ public final class PublisherDataUtil {
 	 * @param dto Objet de données
 	 * @param publisherDataNode PublisherDataNode
 	 */
-	public static void populateData(final DtObject dto, final PublisherNode publisherDataNode) {
+	public static void populateData(final Data dto, final PublisherNode publisherDataNode) {
 		Assertion.check()
 				.isNotNull(dto)
 				.isNotNull(publisherDataNode);
 		//-----
-		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(dto);
+		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(dto);
 		final List<String> dtFieldNames = getDataFieldList(dataDefinition);
 		final PublisherNodeDefinition pnDefinition = publisherDataNode.getNodeDefinition();
 		int nbMappedField = 0;
@@ -115,7 +115,7 @@ public final class PublisherDataUtil {
 						//et le champ sera peut être peuplé plus tard
 						final DtList<?> dtc = (DtList<?>) value;
 						final List<PublisherNode> publisherNodes = new ArrayList<>();
-						for (final DtObject element : dtc) {
+						for (final Data element : dtc) {
 							final PublisherNode publisherNode = publisherDataNode.createNode(fieldName);
 							populateData(element, publisherNode);
 							publisherNodes.add(publisherNode);
@@ -127,7 +127,7 @@ public final class PublisherDataUtil {
 					if (value != null) { //on autorise les objet null,
 						//car la composition d'objet métier n'est pas obligatoire
 						//et le champ sera peut être peuplé plus tard
-						final DtObject element = (DtObject) value;
+						final Data element = (Data) value;
 						final PublisherNode elementPublisherDataNode = publisherDataNode.createNode(fieldName);
 						populateData(element, elementPublisherDataNode);
 						publisherDataNode.setNode(fieldName, elementPublisherDataNode);
@@ -150,7 +150,7 @@ public final class PublisherDataUtil {
 	 * @param dtField le champs à rendre
 	 * @return la chaine de caractère correspondant au rendu du champs
 	 */
-	public static String renderStringField(final DtObject dto, final DataField dtField) {
+	public static String renderStringField(final Data dto, final DataField dtField) {
 		final String unit = dtField.smartTypeDefinition().getProperties().getValue(DtProperty.UNIT);
 		final SmartTypeManager smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
 		final Object value = dtField.getDataAccessor().getValue(dto);

@@ -47,8 +47,8 @@ import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.geo.geocoder.GeoLocation;
@@ -106,7 +106,7 @@ public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 	}
 
 	@Override
-	public <D extends DtObject> DtList<D> searchInBoundingBox(
+	public <D extends Data> DtList<D> searchInBoundingBox(
 			final GeoLocation topLeft,
 			final GeoLocation bottomRight,
 			final String indexName,

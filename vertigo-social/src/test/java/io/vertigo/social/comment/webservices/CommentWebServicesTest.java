@@ -82,7 +82,7 @@ public final class CommentWebServicesTest {
 		account1Uri = MockIdentities.createAccountURI("1");
 
 		//on triche un peu, car AcountGroup n'est pas un KeyConcept
-		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
+		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(AccountGroup.class);
 		keyConcept1Uri = UID.of(dataDefinition, "10");
 		keyConcept2Uri = UID.of(dataDefinition, "20");
 		CONCEPT_KEY_NAME = dataDefinition.getClassSimpleName();

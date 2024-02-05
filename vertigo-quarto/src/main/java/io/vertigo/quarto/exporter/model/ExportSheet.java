@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 
 /**
  * Interface de consultation des ExportDtParameters.
@@ -39,12 +39,12 @@ public final class ExportSheet {
 	 * Objet à exporter.
 	 * dto XOR dtc est renseigné.
 	 */
-	private final DtObject dto;
+	private final Data dto;
 	private final DtList<?> dtc;
 
 	private final String title;
 
-	public ExportSheet(final String title, final List<ExportField> exportFields, final DtObject dto, final DtList dtc) {
+	public ExportSheet(final String title, final List<ExportField> exportFields, final Data dto, final DtList dtc) {
 		Assertion.check()
 				.isNotNull(exportFields)
 				.isTrue(dto == null ^ dtc == null, "a dto or a dtc is required");
@@ -73,7 +73,7 @@ public final class ExportSheet {
 	/**
 	 * @return Données sous forme d'un DTO, ceci est un cast donc il y a levé d'une assertion si ce n'est pas un DTO
 	 */
-	public DtObject getDtObject() {
+	public Data getDtObject() {
 		Assertion.check().isNotNull(dto);
 		//-----
 		return dto;

@@ -23,8 +23,8 @@ import javax.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.geo.geocoder.GeoLocation;
 import io.vertigo.geo.geosearch.GeoSearchManager;
 
@@ -44,7 +44,7 @@ public class GeoSearchManagerImpl implements GeoSearchManager {
 	}
 
 	@Override
-	public <D extends DtObject> DtList<D> searchInBoundingBox(
+	public <D extends Data> DtList<D> searchInBoundingBox(
 			final GeoLocation topLeft,
 			final GeoLocation bottomRight,
 			final String indexName,

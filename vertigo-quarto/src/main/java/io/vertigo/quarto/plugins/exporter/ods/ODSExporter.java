@@ -38,7 +38,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
@@ -170,7 +170,7 @@ final class ODSExporter {
 		}
 
 		int rowIndex = 1;
-		for (final DtObject dto : parameters.getDtList()) {
+		for (final Data dto : parameters.getDtList()) {
 			cellIndex = 0;
 			Object value;
 			for (final ExportField exportColumn : parameters.getExportFields()) {
@@ -187,7 +187,7 @@ final class ODSExporter {
 	private void exportObject(final ExportSheet parameters, final Sheet sheet, final Map<Integer, Double> maxWidthPerColumn) {
 		final int labelCellIndex = 0;
 		final int valueCellIndex = 1;
-		final DtObject dto = parameters.getDtObject();
+		final Data dto = parameters.getDtObject();
 		Object value;
 		int rowIndex = 0;
 		for (final ExportField exportColumn : parameters.getExportFields()) {

@@ -63,7 +63,7 @@ public class CommentManagerTest {
 		mockIdentities.initData();
 
 		//on triche un peu, car AcountGroup n'est pas un KeyConcept
-		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
+		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(AccountGroup.class);
 		keyConcept1Uri = UID.of(dataDefinition, "10");
 		keyConcept1Uri = UID.of(dataDefinition, "20");
 	}

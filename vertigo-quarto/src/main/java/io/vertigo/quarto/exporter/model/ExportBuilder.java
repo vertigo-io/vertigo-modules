@@ -22,8 +22,8 @@ import java.util.List;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.quarto.exporter.model.Export.Orientation;
 
 /**
@@ -84,7 +84,7 @@ public final class ExportBuilder implements Builder<Export> {
 	 * @param title Titre de l'objet
 	 * @return Parametre d'export pour une donnée de type DtObject
 	 */
-	public ExportSheetBuilder beginSheet(final DtObject dto, final String title) {
+	public ExportSheetBuilder beginSheet(final Data dto, final String title) {
 		return new ExportSheetBuilder(this, dto, title);
 	}
 

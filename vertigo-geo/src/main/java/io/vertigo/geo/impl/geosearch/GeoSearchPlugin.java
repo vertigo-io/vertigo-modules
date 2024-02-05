@@ -19,13 +19,13 @@ package io.vertigo.geo.impl.geosearch;
 
 import io.vertigo.core.node.component.Plugin;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.geo.geocoder.GeoLocation;
 
 public interface GeoSearchPlugin extends Plugin {
 
-	<D extends DtObject> DtList<D> searchInBoundingBox(
+	<D extends Data> DtList<D> searchInBoundingBox(
 			final GeoLocation topLeft,
 			final GeoLocation bottomRight,
 			final String indexName,

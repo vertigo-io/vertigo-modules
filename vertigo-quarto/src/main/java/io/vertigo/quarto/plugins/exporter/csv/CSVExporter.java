@@ -32,7 +32,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.DtObject;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.quarto.exporter.model.Export;
@@ -153,13 +153,13 @@ final class CSVExporter {
 		if (parameters.hasDtObject()) {
 			exportLine(parameters.getDtObject(), parameters, out);
 		} else {
-			for (final DtObject dto : parameters.getDtList()) {
+			for (final Data dto : parameters.getDtList()) {
 				exportLine(dto, parameters, out);
 			}
 		}
 	}
 
-	private void exportLine(final DtObject dto, final ExportSheet parameters, final Writer out) throws IOException {
+	private void exportLine(final Data dto, final ExportSheet parameters, final Writer out) throws IOException {
 		String sep = "";
 		String sValue;
 		for (final ExportField exportColumn : parameters.getExportFields()) {

@@ -24,8 +24,8 @@ import java.util.Map;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.data.util.DtObjectUtil;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
@@ -38,7 +38,7 @@ import io.vertigo.quarto.exporter.model.ExportSheetBuilder;
  * @param <R>
  *            Type d'objet pour la liste
  */
-public final class ExportXlsHelper<R extends DtObject> {
+public final class ExportXlsHelper<R extends Data> {
 	private final ExportBuilder exportBuilder;
 
 	/**
@@ -63,14 +63,14 @@ public final class ExportXlsHelper<R extends DtObject> {
 	 * @param criterionExcludedColumnNames list of the criteria that must be excluded for the export
 	 * @param specificLabelMap map of the column names to be used instead of the default label associated with the field
 	 */
-	public void prepareExport(final DtList<R> dtcToExport, final List<String> collectionColumnNames, final DtObject criterion, final List<String> criterionExcludedColumnNames,
+	public void prepareExport(final DtList<R> dtcToExport, final List<String> collectionColumnNames, final Data criterion, final List<String> criterionExcludedColumnNames,
 			final Map<String, String> specificLabelMap) {
 
 		addDtList(dtcToExport, collectionColumnNames, specificLabelMap);
 
 		// We add a criteria page if exists
 		if (criterion != null) {
-			addDtObject(criterion, criterionExcludedColumnNames);
+			addData(criterion, criterionExcludedColumnNames);
 		}
 	}
 
@@ -108,7 +108,7 @@ public final class ExportXlsHelper<R extends DtObject> {
 	 * @param criterion criterion object to be exported
 	 * @param criterionExcludedColumnNames names of the columns to be excluded
 	 */
-	public void addDtObject(final DtObject criterion, final List<String> criterionExcludedColumnNames) {
+	public void addData(final Data criterion, final List<String> criterionExcludedColumnNames) {
 		Assertion.check()
 				.isNotNull(criterion)
 				.isTrue(criterionExcludedColumnNames != null, "The list of the columns to be excluded must exist");
@@ -132,7 +132,7 @@ public final class ExportXlsHelper<R extends DtObject> {
 	 * @param collectionColumnNames Liste des noms de champs à exporter
 	 * @return Liste des DataField correspondant
 	 */
-	private static <R extends DtObject> List<DataField> getExportColumnList(final DtList<R> list, final List<String> collectionColumnNames) {
+	private static <R extends Data> List<DataField> getExportColumnList(final DtList<R> list, final List<String> collectionColumnNames) {
 		final List<DataField> exportColumns = new ArrayList<>();
 
 		for (final String field : collectionColumnNames) {
@@ -148,9 +148,9 @@ public final class ExportXlsHelper<R extends DtObject> {
 	 * @param criterionExcludedColumnNameList Liste des noms de champs à NE PAS exporter
 	 * @return Liste des DataField à exporter
 	 */
-	private static List<DataField> getExportCriterionFields(final DtObject dto, final List<String> criterionExcludedColumnNameList) {
+	private static List<DataField> getExportCriterionFields(final Data dto, final List<String> criterionExcludedColumnNameList) {
 		final List<DataField> exportColumns = new ArrayList<>();
-		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(dto);
+		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(dto);
 		addFieldToExcludedExportColumnNameList(dataDefinition, criterionExcludedColumnNameList);
 
 		for (final DataField dtField : dataDefinition.getFields()) {
