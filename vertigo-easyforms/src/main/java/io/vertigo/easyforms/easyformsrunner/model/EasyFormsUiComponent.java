@@ -1,11 +1,8 @@
 package io.vertigo.easyforms.easyformsrunner.model;
 
-import java.util.List;
-
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
-import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
 
 @DefinitionPrefix(EasyFormsUiComponent.PREFIX)
 public class EasyFormsUiComponent extends AbstractDefinition<EasyFormsUiComponent> {
@@ -34,22 +31,6 @@ public class EasyFormsUiComponent extends AbstractDefinition<EasyFormsUiComponen
 
 	public EasyFormsTemplate getParameters() {
 		return parameters;
-	}
-
-	/**
-	 * Helper class.
-	 */
-	public static record UiComponentParam(
-			String fieldCode,
-			EnumDefinition<EasyFormsFieldType, ?> fieldTypeEnum,
-			String tooltip,
-			boolean isMandatory,
-			List<String> fieldValidators) {
-
-		public UiComponentParam(final String fieldCode, final EnumDefinition<EasyFormsFieldType, ?> fieldTypeEnum, final String tooltip, final boolean isMandatory) {
-			this(fieldCode, fieldTypeEnum, tooltip, isMandatory, List.of());
-		}
-
 	}
 
 }

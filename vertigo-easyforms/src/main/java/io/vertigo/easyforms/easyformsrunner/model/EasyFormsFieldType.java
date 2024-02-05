@@ -1,13 +1,11 @@
 package io.vertigo.easyforms.easyformsrunner.model;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
-import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 @DefinitionPrefix(EasyFormsFieldType.PREFIX)
@@ -21,7 +19,7 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 	private final EasyFormsData uiParameters; // configure uiComponent
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
 
-	private EasyFormsFieldType(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Serializable> uiParameters,
+	private EasyFormsFieldType(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
 			final EasyFormsTemplate paramTemplate) {
 		super(name);
 		//---
@@ -32,7 +30,7 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 		this.paramTemplate = paramTemplate;
 	}
 
-	public static EasyFormsFieldType of(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Serializable> uiParameters,
+	public static EasyFormsFieldType of(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
 			final EasyFormsTemplate paramTemplate) {
 		return new EasyFormsFieldType(name, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate);
 	}
@@ -62,7 +60,7 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 	}
 
 	public String getLabel() {
-		return LocaleMessageText.of(() -> StringUtil.camelToConstCase(getName()) + "_LABEL").getDisplay();
+		return LocaleMessageText.of(() -> getName() + "Label").getDisplay();
 	}
 
 }

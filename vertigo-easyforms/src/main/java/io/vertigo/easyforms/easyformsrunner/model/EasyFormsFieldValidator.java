@@ -11,7 +11,6 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
-import io.vertigo.core.util.StringUtil;
 
 @DefinitionPrefix(EasyFormsFieldValidator.PREFIX)
 public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsFieldValidator> {
@@ -73,10 +72,10 @@ public final class EasyFormsFieldValidator extends AbstractDefinition<EasyFormsF
 	}
 
 	public String getLabel() {
-		return LocaleMessageText.of(() -> StringUtil.camelToConstCase(getName()) + "_LABEL").getDisplay();
+		return LocaleMessageText.of(() -> getName() + "Label").getDisplay();
 	}
 
 	public String getDescription() {
-		return LocaleMessageText.of(() -> StringUtil.camelToConstCase(getName()) + "_DESCRIPTION").getDisplay();
+		return LocaleMessageText.of(() -> getName() + "Description").getDisplay();
 	}
 }

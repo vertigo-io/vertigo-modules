@@ -1,12 +1,10 @@
 package io.vertigo.easyforms.easyformsrunner.model;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
-import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent.UiComponentParam;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 
 public interface IEasyFormsFieldTypeSupplier {
@@ -18,18 +16,14 @@ public interface IEasyFormsFieldTypeSupplier {
 		if (uiComponentParams == null || uiComponentParams.isEmpty()) {
 			template = null;
 		} else {
-			final var easyFormsTemplateBuilder = new EasyFormsTemplateBuilder();
+			var i = 0;
 			for (final var uiComponentParam : uiComponentParams) {
-				easyFormsTemplateBuilder.addField(
-						uiComponentParam.fieldCode(),
-						uiComponentParam.fieldTypeEnum(),
-						StringUtil.camelToConstCase(definitionName) + '_' + StringUtil.camelToConstCase(uiComponentParam.fieldCode()) + "_LABEL",
-						uiComponentParam.tooltip(),
-						true,
-						uiComponentParam.isMandatory(),
-						null, uiComponentParam.fieldValidators());
+				uiComponentParam
+						.withOrder(i)
+						.withLabel(definitionName + '$' + uiComponentParam.getCode() + "Label");
+				i++;
 			}
-			template = easyFormsTemplateBuilder.build();
+			template = new EasyFormsTemplate(uiComponentParams);
 		}
 
 		return EasyFormsFieldType.of(definitionName, getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template);
@@ -39,16 +33,12 @@ public interface IEasyFormsFieldTypeSupplier {
 
 	public abstract EnumDefinition<EasyFormsUiComponent, ?> getUiComponent();
 
-	public default Map<String, Serializable> getUiParams() {
+	public default Map<String, Object> getUiParams() {
 		return Map.of();
 	}
 
-	public default List<UiComponentParam> getExposedComponentParams() {
+	public default List<Field> getExposedComponentParams() {
 		return List.of();
-	}
-
-	public default void setDefaultValue(final EasyFormsData parameters) {
-		// no default values
 	}
 
 	public default Object getDefaultValue() {

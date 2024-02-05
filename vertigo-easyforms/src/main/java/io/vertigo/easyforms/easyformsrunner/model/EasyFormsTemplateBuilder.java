@@ -22,15 +22,13 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 			final boolean isMandatory,
 			final EasyFormsData parameters,
 			final List<String> fieldValidators) {
-		final var field = new Field();
-		field.setCode(fieldCode);
-		field.setFieldTypeName(fieldType.getName());
-		field.setLabel(label);
-		field.setTooltip(tooltip);
-		field.setOrder(fields.size() + 1);
-		field.setDefault(isDefault);
-		field.setParameters(parameters);
-		field.setMandatory(isMandatory);
+		final var field = new Field(fieldCode, fieldType)
+				.withLabel(label)
+				.withTooltip(tooltip)
+				.withOrder(fields.size() + 1)
+				.withDefault(isDefault)
+				.withParameters(parameters)
+				.withMandatory(isMandatory);
 		//	field.setFieldValidators(fieldValidators);
 		//-- add to list
 		fields.add(field);
@@ -44,15 +42,13 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 			final String tooltip,
 			final boolean isDefault,
 			final boolean isMandatory,
-			EasyFormsData parameters, final List<String> fieldValidators) {
-		final var field = new Field();
-		field.setCode(fieldCode);
-		field.setFieldTypeName(fieldTypeEnum.getDefinitionName());
-		field.setLabel(label);
-		field.setTooltip(tooltip);
-		field.setOrder(fields.size() + 1);
-		field.setDefault(isDefault);
-		field.setMandatory(isMandatory);
+			final EasyFormsData parameters, final List<String> fieldValidators) {
+		final var field = new Field(fieldCode, fieldTypeEnum)
+				.withLabel(label)
+				.withTooltip(tooltip)
+				.withOrder(fields.size() + 1)
+				.withDefault(isDefault)
+				.withMandatory(isMandatory);
 		//	field.setFieldValidators(fieldValidators);
 		//-- add to list
 		fields.add(field);

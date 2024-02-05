@@ -9,8 +9,8 @@ import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsListItem;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent.UiComponentParam;
 import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsFieldTypeSupplier;
 import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsUiComponentSupplier;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
@@ -24,9 +24,9 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 	public enum FieldTypeEnum implements EnumDefinition<EasyFormsFieldType, FieldValidatorEnum> {
 		LABEL(EasyFormsSmartTypes.EfLabel, UiComponentEnum.TEXT_FIELD),
 
-		NOM(new AutocompleteFieldType(EasyFormsSmartTypes.EfNom, "family-name")),
+		LAST_NAME(new AutocompleteFieldType(EasyFormsSmartTypes.EfNom, "family-name")),
 
-		PRENOM(new AutocompleteFieldType(EasyFormsSmartTypes.EfPrenom, "given-name")),
+		FIRST_NAME(new AutocompleteFieldType(EasyFormsSmartTypes.EfPrenom, "given-name")),
 
 		EMAIL(new AutocompleteFieldType(EasyFormsSmartTypes.EfEmail, "email")),
 
@@ -40,7 +40,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		VISA(EasyFormsSmartTypes.EfVisa, UiComponentEnum.TEXT_FIELD),
 
-		NATIONALITE(EasyFormsSmartTypes.EfNationalite, UiComponentEnum.TEXT_FIELD),
+		NATIONALITY(EasyFormsSmartTypes.EfNationalite, UiComponentEnum.TEXT_FIELD),
 
 		POSTAL_CODE(new AutocompleteFieldType(EasyFormsSmartTypes.EfCodePostal, "postal-code")),
 
@@ -50,9 +50,9 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
-		// internals
-		I_RADIO_LAYOUT(new RadioLayoutFieldType()),
-		I_MAP(EasyFormsSmartTypes.EfFormData, UiComponentEnum.I_MAP),
+		// internal use
+		INTERNAL_RADIO_LAYOUT(new RadioLayoutFieldType()),
+		INTERNAL_MAP(EasyFormsSmartTypes.EfFormData, UiComponentEnum.INTERNAL_MAP),
 		;
 
 		// ---
@@ -133,7 +133,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public Map<String, Serializable> getUiParams() {
+		public Map<String, Object> getUiParams() {
 			return Map.of(TextFieldUiComponent.AUTOCOMPLETE, uiAutocompleteInputAttribute);
 		}
 	}
@@ -150,7 +150,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public Map<String, Serializable> getUiParams() {
+		public Map<String, Object> getUiParams() {
 			return Map.of(
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
@@ -172,7 +172,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public Map<String, Serializable> getUiParams() {
+		public Map<String, Object> getUiParams() {
 			return Map.of(
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
@@ -183,7 +183,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		@Override
 		public Object getDefaultValue() {
-			return ""; // Horizontal
+			return ""; // Vertical
 		}
 
 	}
@@ -207,7 +207,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public Map<String, Serializable> getUiParams() {
+		public Map<String, Object> getUiParams() {
 			if (uiComponent == UiComponentEnum.RADIO) {
 				return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 						RadioUiComponent.LAYOUT, "horizontal");
@@ -216,12 +216,14 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public List<UiComponentParam> getExposedComponentParams() {
+		public List<Field> getExposedComponentParams() {
 			if (uiComponent == UiComponentEnum.RADIO) {
-				return List.of(new UiComponentParam(RadioUiComponent.LAYOUT, FieldTypeEnum.I_RADIO_LAYOUT, null, false),
-						new UiComponentParam(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.I_MAP, null, true));
+				return List.of(
+						new Field(RadioUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT)
+								.withParameters(Map.of(RadioUiComponent.LAYOUT, "horizontal")),
+						new Field(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 			}
-			return List.of(new UiComponentParam(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.I_MAP, null, true));
+			return List.of(new Field(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 		}
 
 	}

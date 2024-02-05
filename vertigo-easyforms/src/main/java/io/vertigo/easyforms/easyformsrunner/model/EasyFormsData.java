@@ -1,6 +1,5 @@
 package io.vertigo.easyforms.easyformsrunner.model;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ public class EasyFormsData extends HashMap<String, Object> {
 		super();
 	}
 
-	public EasyFormsData(final Map<String, Serializable> m) {
+	public EasyFormsData(final Map<String, Object> m) {
 		super(m);
 	}
 

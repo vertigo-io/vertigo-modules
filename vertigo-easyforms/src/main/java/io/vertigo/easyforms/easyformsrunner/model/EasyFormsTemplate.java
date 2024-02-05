@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
+
 public class EasyFormsTemplate implements Serializable {
 
 	private final List<Field> fields;
@@ -23,8 +25,8 @@ public class EasyFormsTemplate implements Serializable {
 	public static class Field implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		private String code;
-		private String fieldTypeName;
+		private final String code;
+		private final String fieldTypeName;
 		private String label;
 		private String tooltip;
 		private Integer order;
@@ -33,76 +35,101 @@ public class EasyFormsTemplate implements Serializable {
 		private EasyFormsData parameters;
 		private List<FieldValidator> validators;
 
-		public String getCode() {
-			return code;
+		public Field(final String code, final String fieldTypeName) {
+			this.code = code;
+			this.fieldTypeName = fieldTypeName;
+			label = code;
 		}
 
-		public void setCode(final String code) {
-			this.code = code;
+		public Field(final String code, final EasyFormsFieldType fieldType) {
+			this(code, fieldType.getName());
+		}
+
+		public Field(final String code, final EnumDefinition<EasyFormsFieldType, ?> fieldTypeEnun) {
+			this(code, fieldTypeEnun.getDefinitionName());
+		}
+
+		public String getCode() {
+			return code;
 		}
 
 		public String getFieldTypeName() {
 			return fieldTypeName;
 		}
 
-		public void setFieldTypeName(final String fieldTypeName) {
-			this.fieldTypeName = fieldTypeName;
-		}
-
 		public String getLabel() {
 			return label;
 		}
 
-		public void setLabel(final String label) {
+		public Field withLabel(final String label) {
 			this.label = label;
+			return this;
 		}
 
 		public String getTooltip() {
 			return tooltip;
 		}
 
-		public void setTooltip(final String tooltip) {
+		public Field withTooltip(final String tooltip) {
 			this.tooltip = tooltip;
+			return this;
 		}
 
 		public Integer getOrder() {
 			return order;
 		}
 
-		public void setOrder(final Integer order) {
+		public Field withOrder(final Integer order) {
 			this.order = order;
+			return this;
 		}
 
 		public boolean isDefault() {
 			return isDefault;
 		}
 
-		public void setDefault(final boolean isDefault) {
-			this.isDefault = isDefault;
+		public Field withDefault() {
+			return withDefault(true);
+		}
+
+		public Field withDefault(final boolean isDefault) {
+			this.isDefault = true;
+			return this;
 		}
 
 		public boolean isMandatory() {
 			return isMandatory;
 		}
 
-		public void setMandatory(final boolean isMandatory) {
+		public Field withMandatory() {
+			return withMandatory(true);
+		}
+
+		public Field withMandatory(final boolean isMandatory) {
 			this.isMandatory = isMandatory;
+			return this;
 		}
 
 		public EasyFormsData getParameters() {
 			return parameters;
 		}
 
-		public void setParameters(final EasyFormsData parameters) {
+		public Field withParameters(final Map<String, Object> parameters) {
+			return withParameters(new EasyFormsData(parameters));
+		}
+
+		public Field withParameters(final EasyFormsData parameters) {
 			this.parameters = parameters;
+			return this;
 		}
 
 		public List<FieldValidator> getValidators() {
 			return validators;
 		}
 
-		public void setValidators(final List<FieldValidator> validators) {
+		public Field withValidators(final List<FieldValidator> validators) {
 			this.validators = validators;
+			return this;
 		}
 
 	}

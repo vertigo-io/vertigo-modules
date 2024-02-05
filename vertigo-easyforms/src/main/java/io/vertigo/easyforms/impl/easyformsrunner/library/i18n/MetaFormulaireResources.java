@@ -22,35 +22,28 @@ import io.vertigo.core.locale.LocaleMessageKey;
 /**
  * Dictionnaire des ressources.
  *
- * @author  npiedeloup
-*/
+ * @author npiedeloup
+ */
 public enum MetaFormulaireResources implements LocaleMessageKey {
 
-	EF_FORM_CONTROL_OPTIONEL_LABEL, EF_FORM_CONTROL_OPTIONEL_DESCRIPTION, EF_FORM_CONTROL_OPTIONEL_ERROR,
+	EfFormControlEmailNotInBlackListLabel, EfFormControlEmailNotInBlackListDescription, EfFormControlEmailNotInBlackListError,
 
-	/**
-	 * Pour le message d'erreur unique : 0 : nom de la démarche, 1 label du champs non unique
-	 */
-	EF_FORM_CONTROL_UNIQUE_LABEL, EF_FORM_CONTROL_UNIQUE_DESCRIPTION, EF_FORM_CONTROL_UNIQUE_ERROR,
+	EfFormControlGTE18AnsLabel, EfFormControlGTE18AnsDescription, EfFormControlGTE18AnsError,
 
-	EF_FORM_CONTROL_EMAIL_NOT_IN_BLACK_LIST_LABEL, EF_FORM_CONTROL_EMAIL_NOT_IN_BLACK_LIST_DESCRIPTION, EF_FORM_CONTROL_EMAIL_NOT_IN_BLACK_LIST_ERROR,
+	EfFormControlLTE18AnsLabel, EfFormControlLTE18AnsDescription, EfFormControlLTE18AnsError,
 
-	EF_FORM_CONTROL_G_T_E_18ANS_LABEL, EF_FORM_CONTROL_G_T_E_18ANS_DESCRIPTION, EF_FORM_CONTROL_G_T_E_18ANS_ERROR,
+	EfFormControlLT18AnsLabel, EfFormControlLT18AnsDescription, EfFormControlLT18AnsError, //
 
-	EF_FORM_CONTROL_L_T_E_18ANS_LABEL, EF_FORM_CONTROL_L_T_E_18ANS_DESCRIPTION, EF_FORM_CONTROL_L_T_E_18ANS_ERROR,
+	EfFormControlGTE13AnsLabel, EfFormControlGTE13AnsDescription, EfFormControlGTE13AnsError, //
 
-	EF_FORM_CONTROL_L_T_18ANS_LABEL, EF_FORM_CONTROL_L_T_18ANS_DESCRIPTION, EF_FORM_CONTROL_L_T_18ANS_ERROR, //
+	EfFormControlLT16AnsLabel, EfFormControlLT16AnsDescription, EfFormControlLT16AnsError, //
 
-	EF_FORM_CONTROL_G_T_E_13ANS_LABEL, EF_FORM_CONTROL_G_T_E_13ANS_DESCRIPTION, EF_FORM_CONTROL_G_T_E_13ANS_ERROR, //
+	EfFormControlGTE16AnsLabel, EfFormControlGTE16AnsDescription, EfFormControlGTE16AnsError,
 
-	EF_FORM_CONTROL_L_T_16ANS_LABEL, EF_FORM_CONTROL_L_T_16ANS_DESCRIPTION, EF_FORM_CONTROL_L_T_16ANS_ERROR, //
+	EfFormControlTelephoneFrLabel, EfFormControlTelephoneFrDescription, EfFormControlTelephoneFrError, //
 
-	EF_FORM_CONTROL_G_T_E_16ANS_LABEL, EF_FORM_CONTROL_G_T_E_16ANS_DESCRIPTION, EF_FORM_CONTROL_G_T_E_16ANS_ERROR,
+	EfFormControlTelephoneMobileSmsLabel, EfFormControlTelephoneMobileSmsDescription, EfFormControlTelephoneMobileSmsError, //
 
-	EF_FORM_CONTROL_TELEPHONE_FR_LABEL, EF_FORM_CONTROL_TELEPHONE_FR_DESCRIPTION, EF_FORM_CONTROL_TELEPHONE_FR_ERROR, //
-
-	EF_FORM_CONTROL_TELEPHONE_MOBILE_SMS_LABEL, EF_FORM_CONTROL_TELEPHONE_MOBILE_SMS_DESCRIPTION, EF_FORM_CONTROL_TELEPHONE_MOBILE_SMS_ERROR, //
-
-	EF_FORM_CONTROL_CODE_DEPARTEMENT_LABEL, EF_FORM_CONTROL_CODE_DEPARTEMENT_DESCRIPTION, EF_FORM_CONTROL_CODE_DEPARTEMENT_ERROR
+	EfFormControlCodeDepartementLabel, EfFormControlCodeDepartementDescription, EfFormControlCodeDepartementError
 
 }

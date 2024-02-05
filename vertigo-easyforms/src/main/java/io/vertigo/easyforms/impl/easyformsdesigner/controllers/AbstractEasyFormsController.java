@@ -40,8 +40,8 @@ import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
 import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
@@ -193,7 +193,7 @@ public class AbstractEasyFormsController extends AbstractVSpringMvcController {
 			final DtList<EasyFormsFieldValidatorUi> fieldValidators,
 			final EasyFormsFieldUi editField) {
 		final DtList<EasyFormsFieldValidatorUi> fieldValidatorsByType = fieldValidators.stream()
-				.filter(c -> c.getFieldTypes().contains(EasyFormsFieldType.PREFIX + editField.getFieldType()))
+				.filter(c -> c.getFieldTypes().contains(editField.getFieldType()))
 				.collect(VCollectors.toDtList(EasyFormsFieldValidatorUi.class));
 
 		viewContext.publishDtList(editFieldValidatorsKey, fieldValidatorsByType);
