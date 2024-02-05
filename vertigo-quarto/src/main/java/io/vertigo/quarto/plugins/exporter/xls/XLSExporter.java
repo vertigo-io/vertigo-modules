@@ -51,7 +51,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
@@ -70,8 +70,8 @@ import io.vertigo.quarto.impl.exporter.util.ExporterUtil;
 final class XLSExporter {
 	private static final int MAX_COLUMN_WIDTH = 50;
 
-	private final Map<DtField, Map<Object, String>> referenceCache = new HashMap<>();
-	private final Map<DtField, Map<Object, String>> denormCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> referenceCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> denormCache = new HashMap<>();
 
 	private final Map<BasicType, HSSFCellStyle> evenHssfStyleCache = new EnumMap<>(BasicType.class);
 	private final Map<BasicType, HSSFCellStyle> oddHssfStyleCache = new EnumMap<>(BasicType.class);
@@ -247,7 +247,7 @@ final class XLSExporter {
 				final HSSFCell cell = row.createCell(cellIndex);
 
 				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDtField().smartTypeDefinition());
+				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 
 				cellIndex++;
 			}
@@ -272,7 +272,7 @@ final class XLSExporter {
 
 			final HSSFCell valueCell = row.createCell(valueCellIndex);
 			value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-			putValueInCell(smartTypeManager, value, valueCell, oddHssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDtField().smartTypeDefinition());
+			putValueInCell(smartTypeManager, value, valueCell, oddHssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 			rowIndex++;
 		}
 

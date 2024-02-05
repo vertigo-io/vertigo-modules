@@ -31,7 +31,7 @@ import io.vertigo.commons.codec.Encoder;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
@@ -61,9 +61,9 @@ final class CSVExporter {
 	 */
 	private final Encoder<String, String> csvEncoder;
 
-	private final Map<DtField, Map<Object, String>> referenceCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> referenceCache = new HashMap<>();
 	private final Map<Class, BasicTypeAdapter> exportAdapters;
-	private final Map<DtField, Map<Object, String>> denormCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> denormCache = new HashMap<>();
 	private final EntityStoreManager entityStoreManager;
 	private final SmartTypeManager smartTypeManager;
 	private final Charset charset;
@@ -163,7 +163,7 @@ final class CSVExporter {
 		String sep = "";
 		String sValue;
 		for (final ExportField exportColumn : parameters.getExportFields()) {
-			final DtField dtField = exportColumn.getDtField();
+			final DataField dtField = exportColumn.getDataField();
 			out.write(sep);
 			sValue = ExporterUtil.getText(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
 			if (dtField.smartTypeDefinition().getScope().isBasicType() && dtField.smartTypeDefinition().getBasicType() == BasicType.BigDecimal) {

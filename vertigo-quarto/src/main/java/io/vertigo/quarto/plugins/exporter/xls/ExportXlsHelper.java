@@ -23,7 +23,7 @@ import java.util.Map;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.data.util.DtObjectUtil;
@@ -92,7 +92,7 @@ public final class ExportXlsHelper<R extends DtObject> {
 
 		final ExportSheetBuilder exportSheetBuilder = exportBuilder.beginSheet(dtcToExport, null);
 
-		for (final DtField dtField : getExportColumnList(dtcToExport, collectionColumnNameList)) {
+		for (final DataField dtField : getExportColumnList(dtcToExport, collectionColumnNameList)) {
 			if (specificLabelMap == null) {
 				exportSheetBuilder.addField(dtField::name);
 			} else {
@@ -118,7 +118,7 @@ public final class ExportXlsHelper<R extends DtObject> {
 		final ExportSheetBuilder exportSheetBuilder = exportBuilder.beginSheet(criterion, null);
 
 		// TODO set tabname exportObjectParameters.setMetaData(PublisherMetaData.TITLE, tabName);
-		for (final DtField dtField : getExportCriterionFields(criterion, criterionExcludedColumnNames)) {
+		for (final DataField dtField : getExportCriterionFields(criterion, criterionExcludedColumnNames)) {
 			exportSheetBuilder.addField(dtField::name);
 		}
 
@@ -126,14 +126,14 @@ public final class ExportXlsHelper<R extends DtObject> {
 	}
 
 	/**
-	 * Traduit la liste des champs à exporter en liste de DtField.
+	 * Traduit la liste des champs à exporter en liste de DataField.
 	 *
 	 * @param list Liste à exporter
 	 * @param collectionColumnNames Liste des noms de champs à exporter
-	 * @return Liste des DtField correspondant
+	 * @return Liste des DataField correspondant
 	 */
-	private static <R extends DtObject> List<DtField> getExportColumnList(final DtList<R> list, final List<String> collectionColumnNames) {
-		final List<DtField> exportColumns = new ArrayList<>();
+	private static <R extends DtObject> List<DataField> getExportColumnList(final DtList<R> list, final List<String> collectionColumnNames) {
+		final List<DataField> exportColumns = new ArrayList<>();
 
 		for (final String field : collectionColumnNames) {
 			exportColumns.add(list.getDefinition().getField(field));
@@ -142,18 +142,18 @@ public final class ExportXlsHelper<R extends DtObject> {
 	}
 
 	/**
-	 * Détermine la liste des champs du critère à exporter en liste de DtField.
+	 * Détermine la liste des champs du critère à exporter en liste de DataField.
 	 *
 	 * @param dto DtObject à exporter
 	 * @param criterionExcludedColumnNameList Liste des noms de champs à NE PAS exporter
-	 * @return Liste des DtField à exporter
+	 * @return Liste des DataField à exporter
 	 */
-	private static List<DtField> getExportCriterionFields(final DtObject dto, final List<String> criterionExcludedColumnNameList) {
-		final List<DtField> exportColumns = new ArrayList<>();
+	private static List<DataField> getExportCriterionFields(final DtObject dto, final List<String> criterionExcludedColumnNameList) {
+		final List<DataField> exportColumns = new ArrayList<>();
 		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(dto);
 		addFieldToExcludedExportColumnNameList(dataDefinition, criterionExcludedColumnNameList);
 
-		for (final DtField dtField : dataDefinition.getFields()) {
+		for (final DataField dtField : dataDefinition.getFields()) {
 			if (!criterionExcludedColumnNameList.contains(dtField.name())) {
 				exportColumns.add(dtField);
 			}
@@ -163,7 +163,7 @@ public final class ExportXlsHelper<R extends DtObject> {
 
 	private static void addFieldToExcludedExportColumnNameList(final DataDefinition definition, final List<String> criterionExcludedColumnNameList) {
 		if (definition.getIdField().isPresent()) {
-			final DtField keyField = definition.getIdField().get();
+			final DataField keyField = definition.getIdField().get();
 			if ("DoIdentifier".equals(keyField.smartTypeDefinition().getName())) {
 				criterionExcludedColumnNameList.add(keyField.name());
 			}

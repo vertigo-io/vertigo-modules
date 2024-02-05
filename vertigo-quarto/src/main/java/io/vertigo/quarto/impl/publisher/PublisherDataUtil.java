@@ -25,7 +25,7 @@ import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DtProperty;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtObject;
@@ -89,7 +89,7 @@ public final class PublisherDataUtil {
 				.isNotNull(publisherDataNode);
 		//-----
 		final DataDefinition dataDefinition = DtObjectUtil.findDtDefinition(dto);
-		final List<String> dtFieldNames = getDtFieldList(dataDefinition);
+		final List<String> dtFieldNames = getDataFieldList(dataDefinition);
 		final PublisherNodeDefinition pnDefinition = publisherDataNode.getNodeDefinition();
 		int nbMappedField = 0;
 		for (final PublisherField publisherField : pnDefinition.getFields()) {
@@ -97,7 +97,7 @@ public final class PublisherDataUtil {
 			if (!dtFieldNames.contains(fieldName)) {
 				continue;
 			}
-			final DtField dtField = dataDefinition.getField(fieldName);
+			final DataField dtField = dataDefinition.getField(fieldName);
 			final Object value = dtField.getDataAccessor().getValue(dto);
 			nbMappedField++;
 			switch (publisherField.getFieldType()) {
@@ -150,7 +150,7 @@ public final class PublisherDataUtil {
 	 * @param dtField le champs à rendre
 	 * @return la chaine de caractère correspondant au rendu du champs
 	 */
-	public static String renderStringField(final DtObject dto, final DtField dtField) {
+	public static String renderStringField(final DtObject dto, final DataField dtField) {
 		final String unit = dtField.smartTypeDefinition().getProperties().getValue(DtProperty.UNIT);
 		final SmartTypeManager smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
 		final Object value = dtField.getDataAccessor().getValue(dto);
@@ -158,9 +158,9 @@ public final class PublisherDataUtil {
 		return formattedValue + (!StringUtil.isBlank(unit) ? " " + unit : "");
 	}
 
-	private static List<String> getDtFieldList(final DataDefinition dataDefinition) {
+	private static List<String> getDataFieldList(final DataDefinition dataDefinition) {
 		final List<String> dtFieldNames = new ArrayList<>();
-		for (final DtField dtField : dataDefinition.getFields()) {
+		for (final DataField dtField : dataDefinition.getFields()) {
 			dtFieldNames.add(dtField.name());
 		}
 		return dtFieldNames;
@@ -186,7 +186,7 @@ public final class PublisherDataUtil {
 
 	private static void appendPublisherNodeDefinition(final StringBuilder sb, final DataDefinition dataDefinition) {
 		sb.append("PN_").append(dataDefinition.id().shortName()).append("  = new PublisherNode (\n");
-		for (final DtField dtField : dataDefinition.getFields()) {
+		for (final DataField dtField : dataDefinition.getFields()) {
 			final String fieldName = dtField.name();
 			switch (dtField.smartTypeDefinition().getScope()) {
 				case BASIC_TYPE:

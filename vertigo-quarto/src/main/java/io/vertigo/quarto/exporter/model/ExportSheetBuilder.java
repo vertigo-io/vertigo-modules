@@ -25,8 +25,8 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
-import io.vertigo.datamodel.data.definitions.DtField;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.data.util.DtObjectUtil;
@@ -126,7 +126,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
 		// car pour des raisons diverses ils peuvent l'être plusieurs fois.
 		//-----
-		final ExportField exportField = new ExportField(resolveDtField(fieldName), overridedLabel);
+		final ExportField exportField = new ExportField(resolveDataField(fieldName), overridedLabel);
 		exportFields.add(exportField);
 		return this;
 	}
@@ -161,8 +161,8 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
 		// car pour des raisons diverses ils peuvent l'être plusieurs fois.
 		//-----
-		final ExportField exportField = new ExportDenormField(resolveDtField(fieldName), overridedLabel, list,
-				resolveDtField(keyfield, list.getDefinition()), resolveDtField(displayfield, list.getDefinition()));
+		final ExportField exportField = new ExportDenormField(resolveDataField(fieldName), overridedLabel, list,
+				resolveDataField(keyfield, list.getDefinition()), resolveDataField(displayfield, list.getDefinition()));
 		exportFields.add(exportField);
 		return this;
 	}
@@ -173,8 +173,8 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		if (exportFields.isEmpty()) {
 			// si la liste des colonnes est vide alors par convention on les
 			// prend toutes.
-			final Collection<DtField> fields = dataDefinition.getFields();
-			for (final DtField dtField : fields) {
+			final Collection<DataField> fields = dataDefinition.getFields();
+			for (final DataField dtField : fields) {
 				exportFields.add(new ExportField(dtField, null));
 			}
 		}
@@ -189,11 +189,11 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		return exportBuilder.addSheet(build());
 	}
 
-	private DtField resolveDtField(final DataFieldName fieldName) {
-		return resolveDtField(fieldName, dataDefinition);
+	private DataField resolveDataField(final DataFieldName fieldName) {
+		return resolveDataField(fieldName, dataDefinition);
 	}
 
-	private static DtField resolveDtField(final DataFieldName fieldName, final DataDefinition definition) {
+	private static DataField resolveDataField(final DataFieldName fieldName, final DataDefinition definition) {
 		return definition.getField(fieldName);
 	}
 }

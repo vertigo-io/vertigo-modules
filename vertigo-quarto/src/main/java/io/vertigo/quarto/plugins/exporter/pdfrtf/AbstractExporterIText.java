@@ -38,7 +38,7 @@ import com.lowagie.text.Table;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
@@ -52,8 +52,8 @@ import io.vertigo.quarto.impl.exporter.util.ExporterUtil;
  */
 public abstract class AbstractExporterIText {
 	private static final String CREATOR = "System";
-	private final Map<DtField, Map<Object, String>> referenceCache = new HashMap<>();
-	private final Map<DtField, Map<Object, String>> denormCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> referenceCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> denormCache = new HashMap<>();
 
 	private final EntityStoreManager entityStoreManager;
 	private final SmartTypeManager smartTypeManager;
@@ -157,7 +157,7 @@ public abstract class AbstractExporterIText {
 
 			datatable.getDefaultCell().setBorderWidth(1);
 			datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
-			final DtField dtField = exportColumn.getDtField();
+			final DataField dtField = exportColumn.getDataField();
 			final Object value = dtField.getDataAccessor().getValue(exportSheet.getDtObject());
 			final int horizontalAlignement;
 			if (value instanceof Number || value instanceof LocalDate || value instanceof Instant) {
@@ -213,7 +213,7 @@ public abstract class AbstractExporterIText {
 		// Parcours des DTO de la DTC
 		for (final DtObject dto : parameters.getDtList()) {
 			for (final ExportField exportColumn : parameters.getExportFields()) {
-				final DtField dtField = exportColumn.getDtField();
+				final DataField dtField = exportColumn.getDataField();
 				final Object value = dtField.getDataAccessor().getValue(dto);
 				final int horizontalAlignement;
 				if (value instanceof Number || value instanceof LocalDate || value instanceof Instant) {

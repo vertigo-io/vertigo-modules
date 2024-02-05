@@ -18,7 +18,7 @@
 package io.vertigo.quarto.exporter.model;
 
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtList;
 
 /**
@@ -30,8 +30,8 @@ import io.vertigo.datamodel.data.model.DtList;
  */
 public final class ExportDenormField extends ExportField {
 	private final DtList<?> list;
-	private final DtField keyField;
-	private final DtField displayField;
+	private final DataField keyField;
+	private final DataField displayField;
 
 	/**
 	 * Constructor.
@@ -40,7 +40,7 @@ public final class ExportDenormField extends ExportField {
 	 * @param list Liste de éléments dénormés
 	 * @param displayField Champs dénormé
 	 */
-	ExportDenormField(final DtField dtField, final LocaleMessageText label, final DtList<?> list, final DtField keyField, final DtField displayField) {
+	ExportDenormField(final DataField dtField, final LocaleMessageText label, final DtList<?> list, final DataField keyField, final DataField displayField) {
 		super(dtField, label);
 		this.list = list;
 		this.keyField = keyField;
@@ -55,16 +55,16 @@ public final class ExportDenormField extends ExportField {
 	}
 
 	/**
-	 * @return DtField représentant le display de la liste de dénorm.
+	 * @return DataField représentant le display de la liste de dénorm.
 	 */
-	public DtField getDisplayField() {
+	public DataField getDisplayField() {
 		return displayField;
 	}
 
 	/**
-	 * @return DtField représentant la clé de la liste de dénorm. (par défaut la  key du DT)
+	 * @return DataField représentant la clé de la liste de dénorm. (par défaut la  key du DT)
 	 */
-	public DtField getKeyField() {
+	public DataField getKeyField() {
 		return keyField;
 	}
 }

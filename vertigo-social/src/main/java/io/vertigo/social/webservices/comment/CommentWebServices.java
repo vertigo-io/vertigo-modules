@@ -32,7 +32,7 @@ import io.vertigo.core.lang.MapBuilder;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
-import io.vertigo.datamodel.data.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.KeyConcept;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.comment.Comment;
@@ -161,7 +161,7 @@ public final class CommentWebServices implements WebServices {
 	}
 
 	private static Object stringToId(final String id, final DataDefinition dataDefinition) {
-		final Optional<DtField> idFieldOpt = dataDefinition.getIdField();
+		final Optional<DataField> idFieldOpt = dataDefinition.getIdField();
 		Assertion.check().isTrue(idFieldOpt.isPresent(), "KeyConcept {0} must have an id field, in order to support Comment extension", dataDefinition.id().shortName());
 
 		final Class dataType = idFieldOpt.get().smartTypeDefinition().getJavaClass();
