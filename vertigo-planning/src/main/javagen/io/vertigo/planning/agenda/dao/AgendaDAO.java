@@ -65,6 +65,6 @@ public final class AgendaDAO extends DAO<Agenda, java.lang.Long> implements Stor
 	 * @return KeyConcept à modifier
 	 */
 	public Agenda readOneForUpdate(final java.lang.Long id) {
-		return readOneForUpdate(createDtObjectUID(id));
+		return readOneForUpdate(createUID(id));
 	}
 }

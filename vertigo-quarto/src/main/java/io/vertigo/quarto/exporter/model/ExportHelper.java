@@ -125,7 +125,7 @@ public final class ExportHelper {
 		//La collection n'est pas précisé alors on va la chercher dans le repository du référentiel
 		final DtListURIForMasterData mdlUri = entityStoreManager.getMasterDataConfig().getDtListURIForMasterData(dtField.getFkDtDefinition());
 		final DtList<Entity> valueList = entityStoreManager.findAll(mdlUri);
-		final DataField dtFieldDisplay = mdlUri.getDtDefinition().getDisplayField().get();
+		final DataField dtFieldDisplay = mdlUri.getDataDefinition().getDisplayField().get();
 		final DataField dtFieldKey = valueList.getDefinition().getIdField().get();
 		return createDenormIndex(valueList, dtFieldKey, dtFieldDisplay);
 	}
