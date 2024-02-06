@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.easyformsrunner.model;
+package io.vertigo.easyforms.easyformsrunner.model.definitions;
 
 import java.util.Map;
 
@@ -7,6 +7,8 @@ import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 
 @DefinitionPrefix(EasyFormsFieldType.PREFIX)
 public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {

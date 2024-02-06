@@ -14,13 +14,12 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsListItem;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
-import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsListItem;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.ui.impl.springmvc.util.UiUtil;
 import io.vertigo.vega.webservice.model.UiList;
@@ -66,7 +65,7 @@ public class EasyFormsUiUtil implements Serializable {
 		final var easyFormDisplay = new LinkedHashMap<String, Object>();
 		final Map<String, Object> outOfEasyFormTemplate = new HashMap<>(easyForm);
 
-		for (final Field field : easyFormsTemplate.getFields()) { // order is important
+		for (final EasyFormsTemplateField field : easyFormsTemplate.getFields()) { // order is important
 			final var fieldCode = field.getCode();
 			easyFormDisplay.put(field.getLabel(), outOfEasyFormTemplate.get(fieldCode));
 			outOfEasyFormTemplate.remove(fieldCode);
@@ -78,7 +77,7 @@ public class EasyFormsUiUtil implements Serializable {
 		return GSON.toJson(easyFormDisplay);
 	}
 
-	public String getDynamicListForField(final Field field) {
+	public String getDynamicListForField(final EasyFormsTemplateField field) {
 		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldType.class);
 
 		final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
@@ -104,7 +103,7 @@ public class EasyFormsUiUtil implements Serializable {
 		return "transformListForSelection('" + ctxKeyName + "', '" + idField + "', '" + displayField + "', null, null)";
 	}
 
-	public EasyFormsData getParametersForField(final Field field) {
+	public EasyFormsData getParametersForField(final EasyFormsTemplateField field) {
 		final var fieldType = getFieldTypeByName(field.getFieldTypeName());
 		return EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
 	}

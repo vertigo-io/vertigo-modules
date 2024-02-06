@@ -9,14 +9,14 @@ import org.springframework.stereotype.Controller;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.DataUtil;
 import io.vertigo.easyforms.domain.EasyForm;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
-import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
@@ -64,7 +64,7 @@ public class EasyFormsRunnerController {
 				.forEach(mdlClass -> {
 					// add to back context
 					final var ctxKey = ViewContextKey.<Entity>of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + mdlClass);
-					viewContext.publishMdl(ctxKey, DtObjectUtil.findDtDefinition(mdlClass), null);
+					viewContext.publishMdl(ctxKey, DataUtil.findDataDefinition(mdlClass), null);
 					// add to front context
 					addListToFrontCtx(viewContext, ctxKey.get());
 				});

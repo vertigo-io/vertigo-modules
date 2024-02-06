@@ -1,13 +1,15 @@
-package io.vertigo.easyforms.easyformsrunner.model;
+package io.vertigo.easyforms.easyformsrunner.model.template;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsJsonAdapter;
 
 public class EasyFormsData extends HashMap<String, Object> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static EasyFormsDataAdapter adapter = new EasyFormsDataAdapter();
+	private static EasyFormsJsonAdapter<EasyFormsData> adapter = new EasyFormsJsonAdapter<>();
 
 	/**
 	 * Merge 2 lists of parameters. If both define same parameter, the second parameter 'win'.

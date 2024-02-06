@@ -14,12 +14,11 @@ import io.vertigo.datamodel.smarttype.annotations.Constraint;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsDataAdapter;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsData;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsDataAdapter;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplateAdapter;
+import io.vertigo.easyforms.easyformsrunner.model.EasyFormsJsonAdapter;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateFieldValidator;
+import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList;
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintLocalDateMaximum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintLocalDateMinimum;
 
@@ -116,17 +115,22 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(EasyFormsData.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsDataAdapter.class, targetBasicType = BasicType.String)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
 	@SmartTypeProperty(property = "indexType", value = "text_fr")
 	EfFormData,
 
-	@SmartTypeDefinition(EasyFormsData.class)
-	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsDataAdapter.class, targetBasicType = BasicType.String)
-	EfFormParameterData,
-
 	@SmartTypeDefinition(EasyFormsTemplate.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsTemplateAdapter.class, targetBasicType = BasicType.String, type = "sql")
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
 	EfFormTemplate,
+
+	@SmartTypeDefinition(EasyFormsTemplateFieldValidator.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
+	EfFieldValidator,
+
+	@SmartTypeDefinition(EasyFormsTemplateFieldValidatorUiList.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
+	EfFieldValidatorUiList,
 }

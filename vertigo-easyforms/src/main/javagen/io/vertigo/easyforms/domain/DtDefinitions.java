@@ -23,8 +23,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		EasyFormsFieldTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldTypeUi.class),
 		/** Objet de données EasyFormsFieldUi. */
 		EasyFormsFieldUi(io.vertigo.easyforms.domain.EasyFormsFieldUi.class),
-		/** Objet de données EasyFormsFieldValidatorUi. */
-		EasyFormsFieldValidatorUi(io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi.class)		;
+		/** Objet de données EasyFormsFieldValidatorTypeUi. */
+		EasyFormsFieldValidatorTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi.class),
+		/** Objet de données EasyFormsTemplateFieldValidatorUi. */
+		EasyFormsTemplateFieldValidatorUi(io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi.class)		;
 
 		private final Class<?> clazz;
 
@@ -58,7 +60,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		name,
 		/** Propriété 'Label'. */
 		label,
-		/** Propriété 'Ui component name'. */
+		/** Propriété 'UI component name'. */
 		uiComponentName,
 		/** Propriété 'UI parameters'. */
 		uiParameters,
@@ -83,25 +85,44 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		tooltip,
 		/** Propriété 'System field'. */
 		isDefault,
-		/** Propriété 'Mandatory field'. */
+		/** Propriété 'Mandatory'. */
 		isMandatory,
-		/** Propriété 'Parameters JSON'. */
+		/** Propriété 'Parameters'. */
 		parameters,
-		/** Propriété 'Constraints'. */
-		fieldValidators	}
+		/** Propriété 'Validators'. */
+		fieldValidators,
+		/** Propriété 'Validators'. */
+		fieldValidatorSelection	}
 
 	/**
-	 * Enumération des champs de EasyFormsFieldValidatorUi.
+	 * Enumération des champs de EasyFormsFieldValidatorTypeUi.
 	 */
-	public enum EasyFormsFieldValidatorUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi> {
-		/** Propriété 'Constraint'. */
-		code,
-		/** Propriété 'Constraint'. */
+	public enum EasyFormsFieldValidatorTypeUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi> {
+		/** Propriété 'Validator type name'. */
+		name,
+		/** Propriété 'Label'. */
 		label,
 		/** Propriété 'Description'. */
 		description,
+		/** Propriété 'UI configuration template'. */
+		paramTemplate,
 		/** Propriété 'Attached to fields'. */
 		fieldTypes	}
+
+	/**
+	 * Enumération des champs de EasyFormsTemplateFieldValidatorUi.
+	 */
+	public enum EasyFormsTemplateFieldValidatorUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi> {
+		/** Propriété 'Validator type name'. */
+		validatorTypeName,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Label'. */
+		parameterizedLabel,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Parameters JSON'. */
+		parameters	}
 
 	/** {@inheritDoc} */
 	@Override

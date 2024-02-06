@@ -1,0 +1,116 @@
+<th:block th:fragment="easy-forms-admin(title)">
+	
+	<div class="col-12" v-if-unsaved-updates>
+		<div th:if="${viewMode == 'edit'}" class="q-card bg-info text-white col">
+			<div class="q-card-main q-pa-md">
+				<div class="q-item-label" vu:text="#{EfDesignerPendingChanges}"></div>
+			</div>
+		</div>
+	</div>
+	
+	<vu:include-data object="fields" field="isDefault" />
+	<vu:include-data object="fields" field="isMandatory" />
+	<vu:include-data object="fields" field="fieldValidators" />
+	<vu:table id="easyFormsFieldTable" title="${title}" list="fields" componentId="easyFormsFieldTable" rowsPerPage="0" hide-pagination class="auto-ellipsis" gridBreak="md">
+		<vu:slot name="top_right_slot">
+			<vu:button th:if="${viewMode != 'read'}" icon="add" title="#{EfDesignerAddField}" @click="efAddItem()"/>
+		</vu:slot>
+		<vu:slot th:if="${viewMode != 'read'}" name="actions_slot">
+			<vu:button :disabled="!(props.rowIndex > 0)"
+			           flat icon="fas fa-arrow-up" title="#{EfDesignerMoveFieldUp}" @click="efMoveItem(props.rowIndex,-1)"/>
+			<vu:button :disabled="!(props.rowIndex < vueData.fields.length - 1)"
+			           flat icon="fas fa-arrow-down" title="#{EfDesignerMoveFieldDown}" @click="efMoveItem(props.rowIndex,1)"/>
+			<vu:button flat icon="fas fa-pencil-alt" title="#{EfDesignerEditField}" @click="efEditItem(props.rowIndex)"/>
+			<vu:button :disabled="props.row.isDefault"
+			           flat icon="fas fa-trash-alt" v-title="|props.row.isDefault?'#{EfDesignerNoDeleteField}':'#{EfDesignerDeleteField}'|"
+			           @click="efDeleteItem(props.rowIndex)" />
+		</vu:slot>
+		<vu:column field="fieldCode" label="Code" sortable="false">
+		     <div :class="props.row.isMandatory?'v-block__required':''">{{props.row.fieldCode}}</div> <q-badge th:if="${viewMode != 'read'}" v-if="props.row.isDefault" color="grey" th:text="#{EfDesignerIsDefaultField}"></q-badge>
+		</vu:column>
+		<vu:column field="fieldTypeLabel" label="Type" sortable="false" />
+		<vu:column field="label" sortable="false" label="Label" />
+		<vu:column field="tooltip" label="Tooltip" sortable="false" />
+		<vu:column name="fieldValidators" auto-width label="" sortable="false" th:with="modifiableTable='true', rowIndex='props.rowIndex'">
+			<q-icon v-if="props.row.fieldValidators.length>0" size="sm" color="primary" name="fas fa-file-shield">
+				<span class="sr-only" vu:text="#{EfDesignerHasControl}"></span>
+				<q-badge color="secondary" rounded>{{props.row.fieldValidators.length}}</q-badge> 
+				<q-tooltip>
+					<span vu:text="#{EfDesignerHasControl}"></span> :<br />
+					<q-chip v-for="value in props.row.fieldValidators">{{ value.parameterizedLabel }}</q-chip>
+				</q-tooltip>
+		    </q-icon>
+		</vu:column>
+	</vu:table>
+	
+	<th:block id="easyFormsModalEditItem" th:if="${viewMode != 'read'}"
+		th:attr="objectKey=${model.vContext['componentStates'].addComponentState('itemModal').addPrimitive('opened', false)}, objectKey=${model.vContext['componentStates']['itemModal'].addPrimitive('editIndex', null)} ">
+		<vu:include-data object="fieldTypes" field="name" />
+		<vu:include-data object="fieldTypes" field="label" />
+		<vu:include-data object="fieldTypes" field="hasTemplate" />
+		<vu:include-data object="editFieldValidatorTypes" field="*" />
+		<vu:include-data object="fields" field="parameters" />
+		<q-dialog th:v-model="componentStates.itemModal.opened" maximized position="right">
+			<q-card class="bg-white" style="width: min(800px, 100vw);">
+				<q-toolbar class="bg-primary">
+					<vu:button flat dense v-close-popup icon="keyboard_arrow_left" text-color="white" title="#{EfDesignerClose}"/>
+					<q-toolbar-title vu:text="#{EfDesignerPopupTitle}" class="text-white"></q-toolbar-title>
+				</q-toolbar>
+				<q-card-section class="q-layout-padding">
+					<vu:grid>
+						<vu:select-edit object="editField" field="fieldType" list="fieldTypes" valueField="name" labelField="label" :disable="componentStates.itemModal.editIndex != -1" 
+										@update:model-value="efRefreshItem()" 
+										searchable="true"/>
+						
+						<vu:text-field-edit object="editField" field="fieldCode"
+											th::hint="|(componentStates.itemModal.editIndex == -1)?`#{EfDesignerFieldCodeHint}`:``|" 
+											title="#{EfDesignerRequiredNotModifiable}"
+							                aria-title="#{EfDesignerFieldAria}"
+											:disable="componentStates.itemModal.editIndex != -1 || vueData.editField.fieldType==null" />
+		                
+						<vu:grid-cell>
+						    <vu:text-field-edit object="editField" field="label"/>
+						</vu:grid-cell>
+						<vu:grid-cell>
+							<vu:text-field-edit object="editField" field="tooltip"/>
+						</vu:grid-cell>
+						<vu:grid-cell>
+							<vu:include-data object="editField" field="isDefault" />
+							<vu:include-data object="editField" field="isMandatory" modifiable="true" />
+							<q-toggle class="q-field" :disable="vueData.editField.isDefault" v-model="vueData.editField.isMandatory"
+								th::title="|vueData.editField.isDefault?'#{EfDesignerRequiredNotModifiable}':''|"
+								th::aria-title="|vueData.editField.isDefault?'#{EfDesignerRequiredNotModifiable}':''|"
+								th:label="${model.util.label('editField.isMandatory')}"></q-toggle>
+							<input type="hidden" name="vContext[editField][isMandatory]" v-bind:value="vueData.editField.isMandatory" />
+						</vu:grid-cell>
+						<vu:grid-cell>
+							<vu:select-multiple-edit v-if="vueData.editFieldValidatorTypes.length>0" object="editField" field="fieldValidatorSelection" list="editFieldValidatorTypes"
+								valueField="name" labelField="label" popup-content-class="popupDescriptionFieldValidators">
+								<vu:slot name="edit_content_slot">
+									<template v-slot:option="scope">
+										<q-item v-bind="scope.itemProps">
+											<q-item-section>
+												<q-item-label v-text="scope.opt.label"></q-item-label>
+												<q-item-label caption>{{ vueData.editFieldValidatorTypes[scope.index].description}}</q-item-label>
+											 </q-item-section>
+										 </q-item>
+									</template>
+								</vu:slot>
+							</vu:select-multiple-edit>
+						</vu:grid-cell>
+						<vu:grid-cell>
+							<div th:each="parentFieldType : ${model.fieldTypes}" th:if="${parentFieldType.hasTemplate}" th:v-if="|vueData.editField.fieldType === '${parentFieldType.name}'|">
+								<th:block vu:text="#{EfDesignerParameters}"/> :
+								<vu:easy-forms object="editField" field="parameters" template="${model.fieldTypesTemplate['__${parentFieldType.name}__']}" isI18nLabel="true"/>
+							</div>
+						</vu:grid-cell>
+					</vu:grid>
+				</q-card-section>
+				<q-card-section class="flex justify-end">
+					<q-btn @click="efSaveEditItem" color="primary" th:label="#{EfDesignerSave}" rounded></q-btn>
+				</q-card-section>
+			</q-card>
+		</q-dialog>
+	</th:block>
+	
+</th:block>

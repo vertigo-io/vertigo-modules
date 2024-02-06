@@ -9,7 +9,7 @@ create DtDefinition DtEasyForm {
 create DtDefinition DtEasyFormsFieldTypeUi {
     field name 				{domain: DoEfLabel 				label:"Field type" }
     field label 			{domain: DoEfLabel 				label:"Label" }
-    field uiComponentName 	{domain: DoEfLabel 				label:"Ui component name" }
+    field uiComponentName 	{domain: DoEfLabel 				label:"UI component name" }
     field uiParameters 		{domain: DoEfFormData			label:"UI parameters" }
     field paramTemplate 	{domain: DoEfFormTemplate 		label:"UI configuration template" }
     computed hasTemplate	{domain: DoEfBooleen			label:"Have configuration"
@@ -19,24 +19,33 @@ create DtDefinition DtEasyFormsFieldTypeUi {
     displayField: "label"
 }
 
-create DtDefinition DtEasyFormsFieldValidatorUi {
-    field code 				{domain: DoEfCode 				label:"Constraint" }
-    field label 			{domain: DoEfLabel 				label:"Constraint" }
+create DtDefinition DtEasyFormsFieldUi {
+    field fieldCode 		{domain: DoEfCode 					label:"Field code" 				}
+    field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
+    field fieldTypeLabel 	{domain: DoEfLabel 					label:"Field type" 				}
+    field label 			{domain: DoEfLabel 					label:"Label" 					}
+    field tooltip 			{domain: DoEfLabel 					label:"Tooltip" 				}
+    field isDefault 		{domain: DoEfBooleen 				label:"System field" 			}
+    field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				}
+    field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
+    field fieldValidators 	{domain: DoEfFieldValidatorUiList	label:"Validators" 				}
+    field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}
+}
+
+create DtDefinition DtEasyFormsFieldValidatorTypeUi {
+    field name 				{domain: DoEfLabel 				label:"Validator type name" }
+    field label 			{domain: DoEfLabel 				label:"Label" }
     field description 		{domain: DoEfText 				label:"Description" }
+    field paramTemplate 	{domain: DoEfFormTemplate 		label:"UI configuration template" }
     field fieldTypes 		{domain: DoEfText 				label:"Attached to fields" cardinality:"*" }
-    sortField: "code"
+    sortField: "name"
     displayField: "label"
 }
 
-create DtDefinition DtEasyFormsFieldUi {
-    field fieldCode 		{domain: DoEfCode 				label:"Field code" 				}
-    field fieldType 		{domain: DoEfLabel 				label:"Field type" 				}
-    field fieldTypeLabel 	{domain: DoEfLabel 				label:"Field type" 				}
-    field label 			{domain: DoEfLabel 				label:"Label" 					}
-    field tooltip 			{domain: DoEfLabel 				label:"Tooltip" 				}
-    field isDefault 		{domain: DoEfBooleen 			label:"System field" 			}
-    field isMandatory 		{domain: DoEfBooleen 			label:"Mandatory field" 		}
-    field parameters 		{domain: DoEfFormData			label:"Parameters JSON" 		}
-    field fieldValidators 	{domain: DoEfText 				label:"Constraints" 			cardinality:"*" }
+create DtDefinition DtEasyFormsTemplateFieldValidatorUi {
+    field validatorTypeName 	{domain: DoEfLabel 				label:"Validator type name" 	}
+    field label 				{domain: DoEfLabel 				label:"Label"					}
+    field parameterizedLabel 	{domain: DoEfLabel 				label:"Label"					}
+    field description 			{domain: DoEfText 				label:"Description" 			}
+    field parameters 			{domain: DoEfFormData			label:"Parameters JSON" 		}
 }
-

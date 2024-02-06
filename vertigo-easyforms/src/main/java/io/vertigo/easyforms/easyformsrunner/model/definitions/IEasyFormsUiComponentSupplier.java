@@ -1,9 +1,10 @@
-package io.vertigo.easyforms.easyformsrunner.model;
+package io.vertigo.easyforms.easyformsrunner.model.definitions;
 
 import java.util.List;
 
 import io.vertigo.datamodel.data.model.Entity;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 
 @FunctionalInterface
 public interface IEasyFormsUiComponentSupplier {
@@ -12,7 +13,7 @@ public interface IEasyFormsUiComponentSupplier {
 
 	public static final String LIST_SUPPLIER = "uiListSupplier";
 	public static final String CUSTOM_LIST_ARG_NAME = "customList";
-	public static final Field LIST_SUPPLIER_FIELD_PARAM = new Field(LIST_SUPPLIER, "").withMandatory();
+	public static final EasyFormsTemplateField LIST_SUPPLIER_FIELD_PARAM = new EasyFormsTemplateField(LIST_SUPPLIER, "").withMandatory();
 
 	public static final String LIST_SUPPLIER_REF_PREFIX = "ref:";
 	public static final String LIST_SUPPLIER_CTX_PREFIX = "ctx:";
@@ -36,7 +37,7 @@ public interface IEasyFormsUiComponentSupplier {
 		return EasyFormsUiComponent.of(definitionName, new EasyFormsTemplate(uiComponentParams));
 	}
 
-	public abstract List<Field> getUiComponentParams();
+	public abstract List<EasyFormsTemplateField> getUiComponentParams();
 
 	public static String getMdlSupplier(final Class<? extends Entity> clazz) {
 		return LIST_SUPPLIER_REF_PREFIX + clazz.getSimpleName();

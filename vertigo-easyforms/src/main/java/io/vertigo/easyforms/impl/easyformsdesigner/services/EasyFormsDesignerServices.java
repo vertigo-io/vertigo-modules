@@ -1,6 +1,7 @@
 package io.vertigo.easyforms.impl.easyformsdesigner.services;
 
 import java.util.Comparator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -17,10 +18,13 @@ import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
-import io.vertigo.easyforms.domain.EasyFormsFieldValidatorUi;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldValidator;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplateBuilder;
+import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
+import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorType;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateBuilder;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateFieldValidator;
+import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
@@ -51,24 +55,23 @@ public class EasyFormsDesignerServices implements Component {
 				.collect(VCollectors.toDtList(EasyFormsFieldTypeUi.class));
 	}
 
-	public DtList<EasyFormsFieldValidatorUi> getFieldValidatorUiList() {
-		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldValidator.class)
+	public DtList<EasyFormsFieldValidatorTypeUi> getFieldValidatorTypeUiList() {
+		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldValidatorType.class)
 				.stream()
-				.sorted(Comparator.comparingInt(EasyFormsFieldValidator::getPriority))
+				.sorted(Comparator.comparingInt(EasyFormsFieldValidatorType::getPriority))
 				.map(fieldValidator -> {
-					final var fieldValidatorUi = new EasyFormsFieldValidatorUi();
+					final var fieldValidatorUi = new EasyFormsFieldValidatorTypeUi();
 
-					fieldValidatorUi.setCode(fieldValidator.id().fullName());
+					fieldValidatorUi.setName(fieldValidator.id().fullName());
 					fieldValidatorUi.setLabel(fieldValidator.getLabel());
 					fieldValidatorUi.setDescription(fieldValidator.getDescription());
 					fieldValidatorUi.setFieldTypes(fieldValidator.getFieldTypes().stream().map(EasyFormsFieldType::getName).toList());
 					return fieldValidatorUi;
 				})
-				.collect(VCollectors.toDtList(EasyFormsFieldValidatorUi.class));
+				.collect(VCollectors.toDtList(EasyFormsFieldValidatorTypeUi.class));
 	}
 
-	public DtList<EasyFormsFieldUi> getFieldUiListByEasyFormId(final UID<EasyForm> efoUid) {
-		final var easyForm = getEasyFormById(efoUid);
+	public DtList<EasyFormsFieldUi> getFieldUiListByEasyForm(final EasyForm easyForm) {
 		return easyForm.getTemplate().getFields().stream()
 				.map(field -> {
 					final var fieldType = EasyFormsFieldType.resolve(field.getFieldTypeName());
@@ -81,10 +84,33 @@ public class EasyFormsDesignerServices implements Component {
 					fieldUi.setIsDefault(field.isDefault());
 					fieldUi.setParameters(field.getParameters());
 					fieldUi.setIsMandatory(field.isMandatory());
-					// TODO fieldUi.setFieldValidators(field.getFieldValidators() != null ? field.getFieldValidators() : Collections.emptyList()); //TODO normalement pas util
+					fieldUi.setFieldValidators(validatorToValidatorUi(field.getValidators()));
+
 					return fieldUi;
 				})
 				.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
+	}
+
+	private EasyFormsTemplateFieldValidatorUiList validatorToValidatorUi(final List<EasyFormsTemplateFieldValidator> validators) {
+		if (validators == null) {
+			return new EasyFormsTemplateFieldValidatorUiList();
+		}
+
+		return new EasyFormsTemplateFieldValidatorUiList(
+				validators.stream()
+						.map(validator -> {
+							final var validatorUi = new EasyFormsTemplateFieldValidatorUi();
+							validatorUi.setValidatorTypeName(validator.getName());
+							validatorUi.setParameters(validator.getParameters());
+
+							final EasyFormsFieldValidatorType validatorType = Node.getNode().getDefinitionSpace().resolve(validator.getName(), EasyFormsFieldValidatorType.class);
+							validatorUi.setLabel(validatorType.getLabel());
+							validatorUi.setParameterizedLabel(validatorType.getParameterizedLabel(validator.getParameters()));
+							validatorUi.setDescription(validatorType.getDescription());
+
+							return validatorUi;
+						})
+						.toList());
 	}
 
 	public void checkUpdateField(final DtList<EasyFormsFieldUi> fields, final Integer editIndex, final EasyFormsFieldUi fieldEdit, final UiMessageStack uiMessageStack) {
@@ -97,6 +123,7 @@ public class EasyFormsDesignerServices implements Component {
 		}
 
 		/*
+		 * TODO: Example of multi-field parameter constraint that should be parametrable by project (via manager ?)
 				if (!editField.getIsDefault() && editField.getIsDisplay()) {
 					//on retire tous les autres qui auraient isDisplay (sauf les defaults)
 					for (var champIndex = 0; champIndex < champs.size(); ++champIndex) {
@@ -115,6 +142,7 @@ public class EasyFormsDesignerServices implements Component {
 		for (final EasyFormsFieldUi fieldUi : fields) {
 			final EasyFormsFieldType fieldType = EasyFormsFieldType.resolve(fieldUi.getFieldType());
 			Assertion.check().isNotNull(fieldType, "Field type can't be null");
+
 			easyFormsTemplateBuilder.addField(
 					fieldUi.getFieldCode(),
 					fieldType,
@@ -123,11 +151,22 @@ public class EasyFormsDesignerServices implements Component {
 					Boolean.TRUE.equals(fieldUi.getIsDefault()),
 					Boolean.TRUE.equals(fieldUi.getIsMandatory()),
 					fieldUi.getParameters(),
-					fieldUi.getFieldValidators());
+					validatorUiToValidator(fieldUi.getFieldValidators()));
 		}
 		easyForm.setTemplate(easyFormsTemplateBuilder.build());
 		easyFormDAO.save(easyForm);
 		return easyForm.getEfoId();
+	}
+
+	private List<EasyFormsTemplateFieldValidator> validatorUiToValidator(final List<EasyFormsTemplateFieldValidatorUi> validatorsUi) {
+		if (validatorsUi == null) {
+			return List.of();
+		}
+
+		return validatorsUi.stream()
+				.map(validatorUi -> new EasyFormsTemplateFieldValidator(validatorUi.getValidatorTypeName())
+						.withParameters(validatorUi.getParameters()))
+				.toList();
 	}
 
 	public EasyForm createEasyForm(final EasyForm easyForm) {

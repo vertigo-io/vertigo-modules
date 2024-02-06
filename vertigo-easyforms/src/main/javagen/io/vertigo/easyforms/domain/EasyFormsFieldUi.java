@@ -20,9 +20,10 @@ public final class EasyFormsFieldUi implements Data {
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
-	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsData parameters;
-	private java.util.List<String> fieldValidators = new java.util.ArrayList<>();
-
+	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters;
+	private io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList fieldValidators;
+	private java.util.List<String> fieldValidatorSelection = new java.util.ArrayList<>();
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Field code'.
@@ -41,7 +42,7 @@ public final class EasyFormsFieldUi implements Data {
 	public void setFieldCode(final String fieldCode) {
 		this.fieldCode = fieldCode;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Field type'.
@@ -60,7 +61,7 @@ public final class EasyFormsFieldUi implements Data {
 	public void setFieldType(final String fieldType) {
 		this.fieldType = fieldType;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Field type'.
@@ -79,7 +80,7 @@ public final class EasyFormsFieldUi implements Data {
 	public void setFieldTypeLabel(final String fieldTypeLabel) {
 		this.fieldTypeLabel = fieldTypeLabel;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Label'.
@@ -98,7 +99,7 @@ public final class EasyFormsFieldUi implements Data {
 	public void setLabel(final String label) {
 		this.label = label;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Tooltip'.
@@ -117,7 +118,7 @@ public final class EasyFormsFieldUi implements Data {
 	public void setTooltip(final String tooltip) {
 		this.tooltip = tooltip;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'System field'.
@@ -136,66 +137,85 @@ public final class EasyFormsFieldUi implements Data {
 	public void setIsDefault(final Boolean isDefault) {
 		this.isDefault = isDefault;
 	}
-
+	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Mandatory field'.
+	 * Récupère la valeur de la propriété 'Mandatory'.
 	 * @return Boolean isMandatory
 	 */
-	@Field(smartType = "STyEfBooleen", label = "Mandatory field")
+	@Field(smartType = "STyEfBooleen", label = "Mandatory")
 	public Boolean getIsMandatory() {
 		return isMandatory;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Mandatory field'.
+	 * Définit la valeur de la propriété 'Mandatory'.
 	 * @param isMandatory Boolean
 	 */
 	public void setIsMandatory(final Boolean isMandatory) {
 		this.isMandatory = isMandatory;
 	}
-
+	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Parameters JSON'.
+	 * Récupère la valeur de la propriété 'Parameters'.
 	 * @return EasyFormsData parameters
 	 */
-	@Field(smartType = "STyEfFormData", label = "Parameters JSON")
-	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsData getParameters() {
+	@Field(smartType = "STyEfFormData", label = "Parameters")
+	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData getParameters() {
 		return parameters;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Parameters JSON'.
+	 * Définit la valeur de la propriété 'Parameters'.
 	 * @param parameters EasyFormsData
 	 */
-	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsData parameters) {
+	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters) {
 		this.parameters = parameters;
 	}
-
+	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Constraints'.
-	 * @return List de String fieldValidators
+	 * Récupère la valeur de la propriété 'Validators'.
+	 * @return EasyFormsTemplateFieldValidatorUiList fieldValidators
 	 */
-	@Field(smartType = "STyEfText", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Constraints")
-	public java.util.List<String> getFieldValidators() {
+	@Field(smartType = "STyEfFieldValidatorUiList", label = "Validators")
+	public io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList getFieldValidators() {
 		return fieldValidators;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Constraints'.
-	 * @param fieldValidators List de String
+	 * Définit la valeur de la propriété 'Validators'.
+	 * @param fieldValidators EasyFormsTemplateFieldValidatorUiList
 	 */
-	public void setFieldValidators(final java.util.List<String> fieldValidators) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(fieldValidators);
-		//---
+	public void setFieldValidators(final io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList fieldValidators) {
 		this.fieldValidators = fieldValidators;
 	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Validators'.
+	 * @return List de String fieldValidatorSelection
+	 */
+	@Field(smartType = "STyEfLabel", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Validators")
+	public java.util.List<String> getFieldValidatorSelection() {
+		return fieldValidatorSelection;
+	}
 
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Validators'.
+	 * @param fieldValidatorSelection List de String
+	 */
+	public void setFieldValidatorSelection(final java.util.List<String> fieldValidatorSelection) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(fieldValidatorSelection);
+		//---
+		this.fieldValidatorSelection = fieldValidatorSelection;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

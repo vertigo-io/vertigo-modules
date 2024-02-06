@@ -7,12 +7,12 @@ import java.util.Map;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsListItem;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent;
-import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsFieldTypeSupplier;
-import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsListItem;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponent;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsFieldTypeSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.RadioUiComponent;
@@ -216,14 +216,14 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public List<Field> getExposedComponentParams() {
+		public List<EasyFormsTemplateField> getExposedComponentParams() {
 			if (uiComponent == UiComponentEnum.RADIO) {
 				return List.of(
-						new Field(RadioUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT)
+						new EasyFormsTemplateField(RadioUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT)
 								.withParameters(Map.of(RadioUiComponent.LAYOUT, "horizontal")),
-						new Field(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+						new EasyFormsTemplateField(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 			}
-			return List.of(new Field(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+			return List.of(new EasyFormsTemplateField(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 		}
 
 	}

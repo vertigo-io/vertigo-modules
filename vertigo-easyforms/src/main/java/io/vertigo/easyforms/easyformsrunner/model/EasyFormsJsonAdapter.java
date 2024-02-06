@@ -5,12 +5,12 @@ import com.google.gson.Gson;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 
-public class EasyFormsDataAdapter implements BasicTypeAdapter<EasyFormsData, String> {
+public class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 
 	private static final Gson GSON = new Gson();
 
 	@Override
-	public EasyFormsData toJava(final String formAsString, final Class<EasyFormsData> type) {
+	public C toJava(final String formAsString, final Class<C> type) {
 		if (formAsString == null) {
 			return null;
 		}
@@ -22,14 +22,14 @@ public class EasyFormsDataAdapter implements BasicTypeAdapter<EasyFormsData, Str
 					.substring(1, formAsString.length() - 1)
 					.replace("\\\"", "\"")
 					.replace("\\\\", "\\");
-			return GSON.fromJson(resolvedJson, EasyFormsData.class);
+			return GSON.fromJson(resolvedJson, type);
 		}
-		return GSON.fromJson(formAsString, EasyFormsData.class);
+		return GSON.fromJson(formAsString, type);
 
 	}
 
 	@Override
-	public String toBasic(final EasyFormsData form) {
+	public String toBasic(final C form) {
 		if (form == null) {
 			return null;
 		}
@@ -40,5 +40,4 @@ public class EasyFormsDataAdapter implements BasicTypeAdapter<EasyFormsData, Str
 	public BasicType getBasicType() {
 		return BasicType.String;
 	}
-
 }

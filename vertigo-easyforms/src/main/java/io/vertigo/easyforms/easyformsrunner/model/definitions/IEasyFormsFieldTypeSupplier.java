@@ -1,10 +1,11 @@
-package io.vertigo.easyforms.easyformsrunner.model;
+package io.vertigo.easyforms.easyformsrunner.model.definitions;
 
 import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 
 public interface IEasyFormsFieldTypeSupplier {
@@ -37,7 +38,7 @@ public interface IEasyFormsFieldTypeSupplier {
 		return Map.of();
 	}
 
-	public default List<Field> getExposedComponentParams() {
+	public default List<EasyFormsTemplateField> getExposedComponentParams() {
 		return List.of();
 	}
 

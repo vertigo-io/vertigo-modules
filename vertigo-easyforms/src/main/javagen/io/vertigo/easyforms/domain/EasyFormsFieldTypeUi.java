@@ -16,8 +16,8 @@ public final class EasyFormsFieldTypeUi implements Data {
 	private String name;
 	private String label;
 	private String uiComponentName;
-	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsData uiParameters;
-	private io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate paramTemplate;
+	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters;
+	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate;
 
 	/**
 	 * Champ : DATA.
@@ -61,17 +61,17 @@ public final class EasyFormsFieldTypeUi implements Data {
 
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Ui component name'.
+	 * Récupère la valeur de la propriété 'UI component name'.
 	 * @return String uiComponentName
 	 */
-	@Field(smartType = "STyEfLabel", label = "Ui component name")
+	@Field(smartType = "STyEfLabel", label = "UI component name")
 	public String getUiComponentName() {
 		return uiComponentName;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Ui component name'.
+	 * Définit la valeur de la propriété 'UI component name'.
 	 * @param uiComponentName String
 	 */
 	public void setUiComponentName(final String uiComponentName) {
@@ -84,7 +84,7 @@ public final class EasyFormsFieldTypeUi implements Data {
 	 * @return EasyFormsData uiParameters
 	 */
 	@Field(smartType = "STyEfFormData", label = "UI parameters")
-	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsData getUiParameters() {
+	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData getUiParameters() {
 		return uiParameters;
 	}
 
@@ -93,7 +93,7 @@ public final class EasyFormsFieldTypeUi implements Data {
 	 * Définit la valeur de la propriété 'UI parameters'.
 	 * @param uiParameters EasyFormsData
 	 */
-	public void setUiParameters(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsData uiParameters) {
+	public void setUiParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters) {
 		this.uiParameters = uiParameters;
 	}
 
@@ -103,7 +103,7 @@ public final class EasyFormsFieldTypeUi implements Data {
 	 * @return EasyFormsTemplate paramTemplate
 	 */
 	@Field(smartType = "STyEfFormTemplate", label = "UI configuration template")
-	public io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate getParamTemplate() {
+	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate getParamTemplate() {
 		return paramTemplate;
 	}
 
@@ -112,7 +112,7 @@ public final class EasyFormsFieldTypeUi implements Data {
 	 * Définit la valeur de la propriété 'UI configuration template'.
 	 * @param paramTemplate EasyFormsTemplate
 	 */
-	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate paramTemplate) {
+	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate) {
 		this.paramTemplate = paramTemplate;
 	}
 

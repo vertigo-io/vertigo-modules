@@ -28,6 +28,25 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerMandatory,
 	EfDesignerParameters,
 
+	EfDesignerPendingChanges,
+
+	EfDesignerAddField,
+	EfDesignerMoveFieldUp,
+	EfDesignerMoveFieldDown,
+	EfDesignerEditField,
+	EfDesignerDeleteField,
+	EfDesignerNoDeleteField,
+	EfDesignerIsDefaultField,
+	EfDesignerHasControl,
+
+	EfDesignerClose,
+	EfDesignerSave,
+	EfDesignerPopupTitle,
+
+	EfDesignerFieldCodeHint,
+	EfDesignerFieldAria,
+	EfDesignerRequiredNotModifiable,
+
 	EfUicMap$value,
 	EfUicMap$label,
 }

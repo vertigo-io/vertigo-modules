@@ -5,12 +5,12 @@ import java.util.Arrays;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsFieldValidator;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorType;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 
-public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidator> {
+public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidatorType> {
 
-	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidator, FieldValidatorEnum> {
+	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidatorType, FieldValidatorEnum> {
 
 		EMAIL_NOT_IN_BLACKLIST(20, FieldTypeEnum.EMAIL),
 		GTE_13_ANS(10, FieldTypeEnum.BIRTH_DATE),
@@ -27,20 +27,20 @@ public class FieldValidatorDefinitionProvider implements SimpleEnumDefinitionPro
 		private final FieldTypeEnum[] fieldTypes;
 
 		private FieldValidatorEnum(final int priorite, final FieldTypeEnum... fieldTypes) {
-			definitionName = EasyFormsFieldValidator.PREFIX + StringUtil.constToUpperCamelCase(name());
+			definitionName = EasyFormsFieldValidatorType.PREFIX + StringUtil.constToUpperCamelCase(name());
 			this.priorite = priorite;
 			this.fieldTypes = fieldTypes;
 		}
 
 		@Override
-		public EasyFormsFieldValidator buildDefinition(final DefinitionSpace definitionSpace) {
+		public EasyFormsFieldValidatorType buildDefinition(final DefinitionSpace definitionSpace) {
 			final var types = Arrays.stream(fieldTypes).map(FieldTypeEnum::get).toList();
-			return EasyFormsFieldValidator.of(definitionName, priorite, types);
+			return EasyFormsFieldValidatorType.of(definitionName, priorite, types);
 		}
 
 		@Override
-		public EasyFormsFieldValidator get() {
-			return EasyFormsFieldValidator.resolve(definitionName);
+		public EasyFormsFieldValidatorType get() {
+			return EasyFormsFieldValidatorType.resolve(definitionName);
 		}
 
 		@Override

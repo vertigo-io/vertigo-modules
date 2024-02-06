@@ -1,8 +1,9 @@
-package io.vertigo.easyforms.easyformsrunner.model;
+package io.vertigo.easyforms.easyformsrunner.model.definitions;
 
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 
 @DefinitionPrefix(EasyFormsUiComponent.PREFIX)
 public class EasyFormsUiComponent extends AbstractDefinition<EasyFormsUiComponent> {

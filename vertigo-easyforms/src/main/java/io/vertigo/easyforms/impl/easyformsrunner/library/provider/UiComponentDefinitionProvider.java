@@ -5,9 +5,9 @@ import java.util.List;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsTemplate.Field;
-import io.vertigo.easyforms.easyformsrunner.model.EasyFormsUiComponent;
-import io.vertigo.easyforms.easyformsrunner.model.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponent;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 
 public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponent> {
@@ -71,9 +71,9 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		public static final String AUTOCOMPLETE = "textFieldAutocomplete";
 
 		@Override
-		public List<Field> getUiComponentParams() {
+		public List<EasyFormsTemplateField> getUiComponentParams() {
 			return List.of(
-					new Field(AUTOCOMPLETE, FieldTypeEnum.LABEL));
+					new EasyFormsTemplateField(AUTOCOMPLETE, FieldTypeEnum.LABEL));
 		}
 
 	}
@@ -83,10 +83,10 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		public static final String LAYOUT = "radioLayout";
 
 		@Override
-		public List<Field> getUiComponentParams() {
+		public List<EasyFormsTemplateField> getUiComponentParams() {
 			return List.of(
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new Field(LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT));
+					new EasyFormsTemplateField(LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT));
 		}
 
 	}
@@ -96,10 +96,10 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		public static final String SEARCHABLE = "selectMasterDataSearchable";
 
 		@Override
-		public List<Field> getUiComponentParams() {
+		public List<EasyFormsTemplateField> getUiComponentParams() {
 			return List.of(
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new Field(SEARCHABLE, FieldTypeEnum.YES_NO));
+					new EasyFormsTemplateField(SEARCHABLE, FieldTypeEnum.YES_NO));
 		}
 
 	}
