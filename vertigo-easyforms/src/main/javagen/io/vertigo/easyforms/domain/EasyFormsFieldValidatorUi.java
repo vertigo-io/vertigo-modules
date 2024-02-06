@@ -3,7 +3,7 @@ package io.vertigo.easyforms.domain;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.stereotype.Field;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 
 /**
  * This class is automatically generated.
@@ -101,6 +101,6 @@ public final class EasyFormsFieldValidatorUi implements Data {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataUtil.toString(this);
 	}
 }

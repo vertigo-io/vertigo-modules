@@ -29,7 +29,7 @@ import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DtProperty;
 import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.quarto.publisher.definitions.PublisherField;
 import io.vertigo.quarto.publisher.definitions.PublisherNodeDefinition;
@@ -88,7 +88,7 @@ public final class PublisherDataUtil {
 				.isNotNull(dto)
 				.isNotNull(publisherDataNode);
 		//-----
-		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(dto);
+		final DataDefinition dataDefinition = DataUtil.findDataDefinition(dto);
 		final List<String> dtFieldNames = getDataFieldList(dataDefinition);
 		final PublisherNodeDefinition pnDefinition = publisherDataNode.getNodeDefinition();
 		int nbMappedField = 0;

@@ -43,7 +43,7 @@ import io.vertigo.core.util.InjectorUtil;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.model.KeyConcept;
 import io.vertigo.datamodel.data.model.UID;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 import io.vertigo.social.MyNodeConfig;
 import io.vertigo.social.comment.Comment;
 import io.vertigo.social.comment.CommentManager;
@@ -82,7 +82,7 @@ public final class CommentWebServicesTest {
 		account1Uri = MockIdentities.createAccountURI("1");
 
 		//on triche un peu, car AcountGroup n'est pas un KeyConcept
-		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(AccountGroup.class);
+		final DataDefinition dataDefinition = DataUtil.findDataDefinition(AccountGroup.class);
 		keyConcept1Uri = UID.of(dataDefinition, "10");
 		keyConcept2Uri = UID.of(dataDefinition, "20");
 		CONCEPT_KEY_NAME = dataDefinition.getClassSimpleName();

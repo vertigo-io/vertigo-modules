@@ -35,7 +35,7 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 /**
@@ -67,7 +67,7 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	/** {@inheritDoc} */
 	@Override
 	public void start() {
-		traceDtDefinition = DtObjectUtil.findDataDefinition(Trace.class);
+		traceDtDefinition = DataUtil.findDataDefinition(Trace.class);
 	}
 
 	/** {@inheritDoc} */

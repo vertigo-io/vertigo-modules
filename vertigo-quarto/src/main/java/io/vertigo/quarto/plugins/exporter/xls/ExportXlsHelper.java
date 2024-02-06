@@ -26,7 +26,7 @@ import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 import io.vertigo.quarto.exporter.model.ExportSheetBuilder;
@@ -150,7 +150,7 @@ public final class ExportXlsHelper<R extends Data> {
 	 */
 	private static List<DataField> getExportCriterionFields(final Data dto, final List<String> criterionExcludedColumnNameList) {
 		final List<DataField> exportColumns = new ArrayList<>();
-		final DataDefinition dataDefinition = DtObjectUtil.findDataDefinition(dto);
+		final DataDefinition dataDefinition = DataUtil.findDataDefinition(dto);
 		addFieldToExcludedExportColumnNameList(dataDefinition, criterionExcludedColumnNameList);
 
 		for (final DataField dtField : dataDefinition.getFields()) {

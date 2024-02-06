@@ -20,7 +20,7 @@ package io.vertigo.audit.trace;
 import java.time.Instant;
 
 import io.vertigo.datamodel.data.model.Data;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 
 /**
  * This class defines the Audit Trace for an Object.
@@ -114,6 +114,6 @@ public final class TraceCriteria implements Data {
 
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataUtil.toString(this);
 	}
 }

@@ -29,7 +29,7 @@ import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.Data;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 
 /**
  * Parametre d'export pour les données de type DT.
@@ -69,7 +69,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dto = dto;
 		dtc = null;
 		this.title = title;
-		dataDefinition = DtObjectUtil.findDataDefinition(dto);
+		dataDefinition = DataUtil.findDataDefinition(dto);
 	}
 
 	/**

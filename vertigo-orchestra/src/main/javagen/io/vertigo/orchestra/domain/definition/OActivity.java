@@ -21,7 +21,7 @@ import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.stereotype.Field;
-import io.vertigo.datamodel.data.util.DtObjectUtil;
+import io.vertigo.datamodel.data.util.DataUtil;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 
 /**
@@ -205,6 +205,6 @@ public final class OActivity implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataUtil.toString(this);
 	}
 }
