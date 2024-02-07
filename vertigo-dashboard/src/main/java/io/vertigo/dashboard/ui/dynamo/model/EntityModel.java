@@ -20,26 +20,26 @@ package io.vertigo.dashboard.ui.dynamo.model;
 import io.vertigo.core.lang.Assertion;
 
 public final class EntityModel {
-	private final String dtDefinition;
+	private final String dataDefinition;
 	private final Double count; // may be null for UI (displayed as N/A)
 	private final Double taskCount; // may be null for UI (displayed as N/A)
 	private final Double fieldCount; // may be null for UI (displayed as N/A)
 
 	public EntityModel(
-			final String dtDefinition,
+			final String dataDefinition,
 			final Double count,
 			final Double taskCount,
 			final Double fieldCount) {
-		Assertion.check().isNotNull(dtDefinition);
+		Assertion.check().isNotNull(dataDefinition);
 		//---
-		this.dtDefinition = dtDefinition;
+		this.dataDefinition = dataDefinition;
 		this.count = count;
 		this.taskCount = taskCount;
 		this.fieldCount = fieldCount;
 	}
 
 	public String getName() {
-		return dtDefinition;
+		return dataDefinition;
 	}
 
 	public boolean isKeyConcept() {

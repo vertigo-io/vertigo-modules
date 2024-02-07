@@ -172,13 +172,13 @@ public final class PublisherDataUtil {
 
 	/**
 	 * Méthode utilitaire pour générer une proposition de définition de PublisherNode, pour des DtDefinitions.
-	 * @param dtDefinitions DtDefinition à utiliser.
+	 * @param dataDefinitions DtDefinition à utiliser.
 	 * @return Proposition de PublisherNode.
 	 */
-	public static String generatePublisherNodeDefinitionAsKsp(final String... dtDefinitions) {
+	public static String generatePublisherNodeDefinitionAsKsp(final String... dataDefinitions) {
 		final StringBuilder sb = new StringBuilder();
-		for (final String dtDefinitionUrn : dtDefinitions) {
-			appendPublisherNodeDefinition(sb, Node.getNode().getDefinitionSpace().resolve(dtDefinitionUrn, DataDefinition.class));
+		for (final String dataDefinitionUrn : dataDefinitions) {
+			appendPublisherNodeDefinition(sb, Node.getNode().getDefinitionSpace().resolve(dataDefinitionUrn, DataDefinition.class));
 			sb.append('\n');
 		}
 		return sb.toString();

@@ -54,7 +54,7 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 	private final EntityStoreManager entityStoreManager;
 	private final VTransactionManager transactionManager;
 
-	private List<DataDefinition> dtDefinitionsWithHandle;
+	private List<DataDefinition> dataDefinitionsWithHandle;
 	private final HandlePlugin handlePlugin;
 
 	@Inject
@@ -75,9 +75,9 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 
 	@Override
 	public void start() {
-		dtDefinitionsWithHandle = Node.getNode().getDefinitionSpace().getAll(DataDefinition.class)
+		dataDefinitionsWithHandle = Node.getNode().getDefinitionSpace().getAll(DataDefinition.class)
 				.stream()
-				.filter(dtDefinition -> dtDefinition.getHandleField().isPresent())
+				.filter(dataDefinition -> dataDefinition.getHandleField().isPresent())
 				.toList();
 
 	}
@@ -128,8 +128,8 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 
 	@Override
 	public List<String> getHandlePrefixes() {
-		return dtDefinitionsWithHandle.stream()
-				.map(dtDefinition -> dtDefinition.id().shortName())
+		return dataDefinitionsWithHandle.stream()
+				.map(dataDefinition -> dataDefinition.id().shortName())
 				.map(StringUtil::first2LowerCase)
 				.toList();
 	}
@@ -156,9 +156,9 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 	}
 
 	private Optional<DataDefinition> isStartingByDtDefinition(final String handlePrefix) {
-		return dtDefinitionsWithHandle
+		return dataDefinitionsWithHandle
 				.stream()
-				.filter(dtDefinition -> handlePrefix.startsWith(StringUtil.first2LowerCase(dtDefinition.id().shortName()) + "/"))
+				.filter(dataDefinition -> handlePrefix.startsWith(StringUtil.first2LowerCase(dataDefinition.id().shortName()) + "/"))
 				.findAny();
 	}
 
@@ -172,7 +172,7 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 	@Override
 	public void reindexAll() {
 		handlePlugin.removeAll();
-		dtDefinitionsWithHandle.forEach(this::indexDefinition);
+		dataDefinitionsWithHandle.forEach(this::indexDefinition);
 	}
 
 	private void indexDefinition(final DataDefinition dataDefinition) {
