@@ -8,9 +8,9 @@ import io.vertigo.basics.constraint.ConstraintUtil;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.util.DateUtil;
-import io.vertigo.datamodel.data.definitions.Constraint;
 import io.vertigo.datamodel.data.definitions.DtProperty;
 import io.vertigo.datamodel.data.definitions.Property;
+import io.vertigo.datamodel.smarttype.definitions.Constraint;
 
 /**
  * Contrainte sur la valeur minimale d'une date.

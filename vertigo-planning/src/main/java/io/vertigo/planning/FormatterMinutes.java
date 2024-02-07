@@ -20,8 +20,8 @@ package io.vertigo.planning;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.data.definitions.Formatter;
-import io.vertigo.datamodel.data.definitions.FormatterException;
+import io.vertigo.datamodel.smarttype.definitions.Formatter;
+import io.vertigo.datamodel.smarttype.definitions.FormatterException;
 
 /**
  * Gestion des formatages de minutes en hh:mm.

@@ -11,7 +11,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.data.definitions.Formatter;
+import io.vertigo.datamodel.smarttype.definitions.Formatter;
 
 /**
  * Gestion des formattages de téléphone.
