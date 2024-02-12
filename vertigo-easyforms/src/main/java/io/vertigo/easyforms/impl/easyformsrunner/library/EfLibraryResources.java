@@ -25,6 +25,9 @@ import io.vertigo.core.locale.LocaleMessageKey;
  * @author skerdudou
  */
 public enum EfLibraryResources implements LocaleMessageKey {
+	EfTrue,
+	EfFalse,
+
 	// Field types
 	EfFtyLabelLabel,
 	EfFtyLastNameLabel,
@@ -49,6 +52,8 @@ public enum EfLibraryResources implements LocaleMessageKey {
 	EfFtyCustomListCheckbox$customListLabel,
 
 	EfFtyCustomListRadio$radioLayoutLabel,
+	EfFtyCustomListRadio$radioLayoutVerticalLabel,
+	EfFtyCustomListRadio$radioLayoutHorizontalLabel,
 
 	// Validators
 	EfFvaEmailNotInBlacklistLabel,

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.locale.LocaleMessageText;
 
 public record EasyFormsListItem(
 		String value,
@@ -14,10 +15,11 @@ public record EasyFormsListItem(
 
 	@Override
 	public String toString() {
+		final var labelDisplay = getDisplayLabel().replace("\\", "\\\\").replace("'", "\\'");
 		if (value == null) {
-			return "{value:null, label:'" + label + "'}";
+			return "{value:null, label:'" + labelDisplay + "'}";
 		}
-		return "{value:'" + value + "', label:'" + label + "'}";
+		return "{value:'" + value + "', label:'" + labelDisplay + "'}";
 	}
 
 	public static List<EasyFormsListItem> ofCollection(final Object o) {
@@ -44,6 +46,13 @@ public record EasyFormsListItem(
 			}
 		}
 		throw new VSystemException("Argument is not a valid representation of EasyFormsListItem.");
+	}
+
+	public String getDisplayLabel() {
+		if (label.startsWith("#{")) {
+			return LocaleMessageText.of(() -> label.substring(2, label.length() - 1)).getDisplay();
+		}
+		return label;
 	}
 
 }

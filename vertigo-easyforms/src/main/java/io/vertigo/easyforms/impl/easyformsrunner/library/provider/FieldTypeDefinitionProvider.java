@@ -155,8 +155,8 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
-							new EasyFormsListItem("true", "#{TRUE}"),
-							new EasyFormsListItem("false", "#{FALSE}")));
+							new EasyFormsListItem("true", "#{EfTrue}"),
+							new EasyFormsListItem("false", "#{EfFalse}")));
 		}
 	}
 
@@ -177,8 +177,8 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
-							new EasyFormsListItem("", "Vertical"),
-							new EasyFormsListItem("horizontal", "Horizontal")));
+							new EasyFormsListItem("", "#{EfFtyCustomListRadio$radioLayoutVerticalLabel}"),
+							new EasyFormsListItem("horizontal", "#{EfFtyCustomListRadio$radioLayoutHorizontalLabel}")));
 		}
 
 		@Override

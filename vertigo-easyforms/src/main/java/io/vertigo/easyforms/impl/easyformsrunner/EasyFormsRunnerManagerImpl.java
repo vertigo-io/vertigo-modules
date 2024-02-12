@@ -19,6 +19,8 @@ public class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager, Activ
 	@Override
 	public void start() {
 		localeManager.add("io.vertigo.easyforms.easyformsrunner.library.EfLibraryResources", EfLibraryResources.values());
+
+		localeManager.add("io.vertigo.easyforms.domain.DtResources", io.vertigo.easyforms.domain.DtResources.values());
 	}
 
 	@Override

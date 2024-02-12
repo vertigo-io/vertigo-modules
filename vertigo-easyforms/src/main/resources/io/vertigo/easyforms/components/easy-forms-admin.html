@@ -25,12 +25,12 @@
 			           flat icon="fas fa-trash-alt" v-title="|props.row.isDefault?'#{EfDesignerNoDeleteField}':'#{EfDesignerDeleteField}'|"
 			           @click="efDeleteItem(props.rowIndex)" />
 		</vu:slot>
-		<vu:column field="fieldCode" label="Code" sortable="false">
+		<vu:column field="fieldCode" sortable="false">
 		     <div :class="props.row.isMandatory?'v-block__required':''">{{props.row.fieldCode}}</div> <q-badge th:if="${viewMode != 'read'}" v-if="props.row.isDefault" color="grey" th:text="#{EfDesignerIsDefaultField}"></q-badge>
 		</vu:column>
-		<vu:column field="fieldTypeLabel" label="Type" sortable="false" />
-		<vu:column field="label" sortable="false" label="Label" />
-		<vu:column field="tooltip" label="Tooltip" sortable="false" />
+		<vu:column field="fieldTypeLabel" sortable="false" />
+		<vu:column field="label" sortable="false" />
+		<vu:column field="tooltip" sortable="false" />
 		<vu:column name="fieldValidators" auto-width label="" sortable="false" th:with="modifiableTable='true', rowIndex='props.rowIndex'">
 			<q-icon v-if="props.row.fieldValidators.length>0" size="sm" color="primary" name="fas fa-file-shield">
 				<span class="sr-only" vu:text="#{EfDesignerHasControl}"></span>
@@ -100,7 +100,7 @@
 						</vu:grid-cell>
 						<vu:grid-cell>
 							<div th:each="parentFieldType : ${model.fieldTypes}" th:if="${parentFieldType.hasTemplate}" th:v-if="|vueData.editField.fieldType === '${parentFieldType.name}'|">
-								<th:block vu:text="#{EfDesignerParameters}"/> :
+								<span vu:text="#{EfDesignerParameters}"/> :
 								<vu:easy-forms object="editField" field="parameters" template="${model.fieldTypesTemplate['__${parentFieldType.name}__']}" isI18nLabel="true"/>
 							</div>
 						</vu:grid-cell>
