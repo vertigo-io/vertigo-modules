@@ -12,6 +12,9 @@
 				    <div th:attr="__${elem_attrs}__" class="col-12" >
 						<div th::class="|{'fr-input-group--error' : efHasFormError(uiMessageStack, 'editField', '${templateField.code}')}|"
 						      th:switch="${fieldType.uiComponentName}">
+						    
+						    <vu:content></vu:content>
+						    
 							<div th:case="'EfUicInternalMap'">
 								<vu:label-edit object="${object}" field="${field}" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}">
 									<vu:slot name="after_label_slot">
@@ -41,7 +44,7 @@
 										th:id="|text-input-${templateField.code}-${templateField.order}|"
 										th::error="|efHasFormError(uiMessageStack, ${field}, '${templateField.code}')|" 
 										th::error-message="|efGetFormError(uiMessageStack, ${field}, '${templateField.code}')|"
-										th:type="${fieldType.uiComponentName == 'textfield' ? 'text' : (fieldType.uiComponentName == 'date' ? 'date' : 'text')}"
+										th:type="${fieldType.uiComponentName == 'textfield' ? 'text' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : 'text')}"
 										th:autocomplete="${fieldParameters['textFieldAutocomplete']}"
 										th:maxlength="${model.efoUiUtil.smartTypeMaxLength(templateField.fieldTypeName)}"
 										orientation="vertical"
