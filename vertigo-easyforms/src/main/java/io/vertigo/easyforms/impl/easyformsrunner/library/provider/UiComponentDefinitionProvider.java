@@ -93,7 +93,7 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 
 	public static class SelectUiComponent implements IEasyFormsUiComponentSupplier {
 
-		public static final String SEARCHABLE = "selectMasterDataSearchable";
+		public static final String SEARCHABLE = "selectSearchable";
 
 		@Override
 		public List<EasyFormsTemplateField> getUiComponentParams() {

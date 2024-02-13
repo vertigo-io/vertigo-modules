@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
+import io.vertigo.core.lang.json.CoreJsonAdapters;
 
 public class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 
-	private static final Gson GSON = new Gson();
+	private static final Gson GSON = CoreJsonAdapters.V_CORE_GSON;
 
 	@Override
 	public C toJava(final String formAsString, final Class<C> type) {
@@ -21,7 +22,8 @@ public class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 			final var resolvedJson = formAsString
 					.substring(1, formAsString.length() - 1)
 					.replace("\\\"", "\"")
-					.replace("\\\\", "\\");
+					.replace("\\\\", "\\")
+					.replace("\\n", "\n");
 			return GSON.fromJson(resolvedJson, type);
 		}
 		return GSON.fromJson(formAsString, type);

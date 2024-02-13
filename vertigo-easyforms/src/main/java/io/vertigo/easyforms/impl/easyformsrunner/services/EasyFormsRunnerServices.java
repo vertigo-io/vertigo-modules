@@ -1,5 +1,9 @@
 package io.vertigo.easyforms.impl.easyformsrunner.services;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -31,6 +35,7 @@ public class EasyFormsRunnerServices implements Component {
 
 	private static final String FORM_PREFIX = "form_";
 	private static final String ERROR_CONTROL_FORM_MEASURE = "errorControlForm";
+	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
 
 	//	private static final int AGE_13_ANS = 13;
 	//	private static final int AGE_16_ANS = 16;
@@ -88,7 +93,7 @@ public class EasyFormsRunnerServices implements Component {
 
 	private void checkChampFormulaire(final EasyFormsTemplateField champ, final EasyFormsData formulaire, final Entity formulaireOwner, final UiMessageStack uiMessageStack) {
 		final var typeChamp = EasyFormsFieldType.resolve(champ.getFieldTypeName());
-		final var smartTypeDefinition = getSmartTypeByNom(typeChamp.getSmartTypeName());
+		final var smartTypeDefinition = getSmartTypeByName(typeChamp.getSmartTypeName());
 		final var inputValue = formulaire.get(champ.getCode());
 		if (inputValue == null || (inputValue instanceof final String inputString && inputString.isBlank())) {
 			// when null, the only check is for mandatory
@@ -100,29 +105,58 @@ public class EasyFormsRunnerServices implements Component {
 						.setTag("champ", champ.getLabel()));
 			}
 		} else {
-			try {
-				final var typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputValue.toString());
-				final var formatedValue = smartTypeManager.valueToString(smartTypeDefinition, typedValue);
-				formulaire.put(champ.getCode(), formatedValue);
-
-				smartTypeManager.validate(smartTypeDefinition, Cardinality.OPTIONAL_OR_NULLABLE, typedValue);
-				checkFieldValidators(champ, typedValue, formulaireOwner, uiMessageStack);
-			} catch (final FormatterException e) {
-				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
-				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
-						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
-						.setTag("controle", "Formatter")
-						.setTag("smartType", smartTypeDefinition.id().shortName())
-						.setTag("champ", champ.getLabel()));
-			} catch (final ConstraintException e) {
-				uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
-				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
-						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
-						.setTag("controle", "Constraints")
-						.setTag("smartType", smartTypeDefinition.id().shortName())
-						.setTag("champ", champ.getLabel()));
+			if (inputValue instanceof final List<?> inputCollection) {
+				final List<Object> resolvedList = new ArrayList<>();
+				for (final var elem : inputCollection) {
+					checkType(champ, formulaireOwner, uiMessageStack, smartTypeDefinition, elem)
+							.ifPresent(resolvedList::add);
+				}
+				formulaire.put(champ.getCode(), resolvedList);
+			} else {
+				checkType(champ, formulaireOwner, uiMessageStack, smartTypeDefinition, inputValue)
+						.ifPresent(v -> formulaire.put(champ.getCode(), v));
 			}
 		}
+	}
+
+	private Optional<Object> checkType(final EasyFormsTemplateField champ, final Entity formulaireOwner, final UiMessageStack uiMessageStack,
+			final SmartTypeDefinition smartTypeDefinition, final Object inputValue) {
+		Object typedValue = null;
+		try {
+			typedValue = fixTypedValue(smartTypeDefinition, inputValue);
+
+			smartTypeManager.validate(smartTypeDefinition, Cardinality.OPTIONAL_OR_NULLABLE, typedValue);
+			checkFieldValidators(champ, typedValue, formulaireOwner, uiMessageStack);
+		} catch (final FormatterException e) {
+			uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
+			analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
+					.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
+					.setTag("controle", "Formatter")
+					.setTag("smartType", smartTypeDefinition.id().shortName())
+					.setTag("champ", champ.getLabel()));
+		} catch (final ConstraintException e) {
+			uiMessageStack.error(e.getMessageText().getDisplay(), formulaireOwner, FORM_PREFIX + champ.getCode());
+			analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
+					.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
+					.setTag("controle", "Constraints")
+					.setTag("smartType", smartTypeDefinition.id().shortName())
+					.setTag("champ", champ.getLabel()));
+		}
+		return Optional.ofNullable(typedValue);
+	}
+
+	public Object fixTypedValue(final SmartTypeDefinition smartTypeDefinition, final Object inputValue) throws FormatterException {
+		Object typedValue;
+		String inputString;
+		if (inputValue instanceof final Double inputDouble) {
+			// Gson parse all numbers to double and formatters don't always accept floating numbers (ex id formatter)
+			inputString = DECIMAL_FORMAT.format(inputDouble);
+		} else {
+			inputString = inputValue.toString();
+		}
+
+		typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputString);
+		return typedValue;
 	}
 
 	private void checkFieldValidators(final EasyFormsTemplateField champ, final Object typedValue, final Entity formulaireOwner, final UiMessageStack uiMessageStack) {
@@ -171,7 +205,7 @@ public class EasyFormsRunnerServices implements Component {
 						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", fieldValidator)
 						.setTag("champ", champ.getLabel()));
-		
+
 				break; //si un contrôle ne passe pas sur un champ, on passe au champ suivant
 			}
 		}
@@ -233,7 +267,7 @@ public class EasyFormsRunnerServices implements Component {
 	//		return false;
 	//	}
 
-	private static SmartTypeDefinition getSmartTypeByNom(final String nomSmartType) {
+	private static SmartTypeDefinition getSmartTypeByName(final String nomSmartType) {
 		return Node.getNode().getDefinitionSpace().resolve(nomSmartType, SmartTypeDefinition.class);
 	}
 

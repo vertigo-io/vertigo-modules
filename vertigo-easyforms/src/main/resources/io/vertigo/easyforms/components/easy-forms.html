@@ -8,15 +8,15 @@
 		<template v-slot:default="slotProps">
 			<div class="row q-col-gutter-md">
 				<th:block th:each="templateField : ${template.fields}"
-				          th:with="fieldType = ${model.efoUiUtil.getFieldTypeByName(templateField.fieldTypeName)}, fieldParameters = ${model.efoUiUtil.getParametersForField(templateField)}">
+				          th:with="fieldType = ${model.efoUiUtil.getFieldTypeByName(templateField.fieldTypeName)}, fieldParameters = ${model.efoUiUtil.getParametersForField(templateField)}, fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${templateField.code}">
 				    <div th:attr="__${elem_attrs}__" class="col-12" >
-						<div th::class="|{'fr-input-group--error' : efHasFormError(uiMessageStack, 'editField', '${templateField.code}')}|"
+						<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})}|"
 						      th:switch="${fieldType.uiComponentName}">
 						    
 						    <vu:content></vu:content>
 						    
 							<div th:case="'EfUicInternalMap'">
-								<vu:label-edit object="${object}" field="${field}" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}">
+								<vu:label-edit object="${object}" field="|form_${field}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="false">
 									<vu:slot name="after_label_slot">
 										<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 										<span th:if="${templateField.isMandatory}" class="v-block__required"></span>
@@ -26,7 +26,7 @@
 								</vu:label-edit>
 							</div>
 							<div th:case="'EfUicRadio'">
-								<vu:label-edit object="${object}" field="${field}" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}">
+								<vu:label-edit object="${object}" field="|form_${field}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}">
 									<q-option-group
 								    	th:v-model="|slotProps.formData['${templateField.code}']|"
 								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
@@ -35,15 +35,45 @@
 								    ></q-option-group>
 								</vu:label-edit>
 							</div>
+							<div th:case="'EfUicCheckbox'">
+								<vu:label-edit object="${object}" field="|form_${field}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}"
+											   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateField.code}']) { slotProps.formData['${templateField.code}'] = []}}|">
+									<q-option-group
+								    	th:v-model="|slotProps.formData['${templateField.code}']|"
+								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
+								    	type="checkbox"
+										th::inline="${(fieldParameters['radioLayout'] != null && fieldParameters['radioLayout'] == 'horizontal') ? true : false }"
+								    	color="primary"
+								    ></q-option-group>
+								</vu:label-edit>
+							</div>
+							<div th:case="'EfUicSelect'"
+								 th:attr="objectKey=${model.vContext['componentStates'].addComponentState(fieldId).addPrimitive('searchValue','')}">
+								<q-select
+									th:v-model="|slotProps.formData['${templateField.code}']|"
+									fill-input map-options emit-value
+							        th::use-input="${fieldParameters['selectSearchable'] == true}" 
+							        th::hide-selected="${fieldParameters['selectSearchable'] == true}"
+							        th::options="${model.efoUiUtil.getDynamicListForField(templateField, fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? 'componentStates.'+fieldId+'.searchValue' : null)}"
+						            th:@filter="${fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? '(val, update, abort) => update(() => this.componentStates.'+fieldId+'.searchValue = val, ref => ref.setOptionIndex(0))' :null}"
+									th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}"
+									th:classappend="|${templateField.isMandatory?'v-field__required':''}|"
+						            th:aria-required="${templateField.isMandatory}"
+						            th::error="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
+									th::error-message="|getErrorMessage('${object}', 'form_${templateField.code}', ${rowIndex})|"
+									orientation="vertical"
+									stack-label>
+								</q-select>
+							</div>
 							<div th:case="*">
 								<q-input label-slot
-										th:v-autofocus="|efHasFormError(uiMessageStack, ${field}, '${templateField.code}')|"
+										th:v-autofocus="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|"
 										th:v-model="|slotProps.formData['${templateField.code}']|"
-										th::aria-describedby="|efHasFormError(uiMessageStack, ${field}, '${templateField.code}') ? 'text-input-${templateField.code}-${templateField.order}-desc-error' : null|"
-										th::aria-invalid="|efHasFormError(uiMessageStack, ${field}, '${templateField.code}')|" 
+										th::aria-describedby="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex}) ? 'text-input-${templateField.code}-${templateField.order}-desc-error' : null|"
+										th::aria-invalid="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
 										th:id="|text-input-${templateField.code}-${templateField.order}|"
-										th::error="|efHasFormError(uiMessageStack, ${field}, '${templateField.code}')|" 
-										th::error-message="|efGetFormError(uiMessageStack, ${field}, '${templateField.code}')|"
+										th::error="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
+										th::error-message="|getErrorMessage('${object}', 'form_${templateField.code}', ${rowIndex})|"
 										th:type="${fieldType.uiComponentName == 'textfield' ? 'text' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : 'text')}"
 										th:autocomplete="${fieldParameters['textFieldAutocomplete']}"
 										th:maxlength="${model.efoUiUtil.smartTypeMaxLength(templateField.fieldTypeName)}"
@@ -62,7 +92,6 @@
 						</div>
 					</div>
 				</th:block>
-			</div>
 		</template>
 	</vui-easy-forms>
 	

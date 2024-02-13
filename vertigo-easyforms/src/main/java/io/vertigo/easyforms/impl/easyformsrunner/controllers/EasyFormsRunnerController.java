@@ -38,6 +38,8 @@ public class EasyFormsRunnerController {
 
 		final var easyForm = easyFormsDesignerServices.getEasyFormById(efoUid);
 		viewContext.publishRef(templateKey, easyForm.getTemplate());
+
+		addRequiredContext(viewContext, easyForm, false);
 	}
 
 	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
@@ -49,7 +51,11 @@ public class EasyFormsRunnerController {
 		viewContext.publishRef(templateKey, easyForm.getTemplate());
 
 		// Add master data list needed for fields to context
+		addRequiredContext(viewContext, easyForm, true);
+	}
 
+	private void addRequiredContext(final ViewContext viewContext, final EasyForm easyForm, final boolean pushToFront) {
+		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final Set<String> listSuppliers = easyForm.getTemplate().getFields().stream()
 				.map(easyFormsUiUtil::getParametersForField)
 				.flatMap(p -> p.entrySet().stream()) // stream all parameters for all fields
@@ -65,20 +71,24 @@ public class EasyFormsRunnerController {
 					// add to back context
 					final var ctxKey = ViewContextKey.<Entity>of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + mdlClass);
 					viewContext.publishMdl(ctxKey, DataModelUtil.findDataDefinition(mdlClass), null);
-					// add to front context
-					addListToFrontCtx(viewContext, ctxKey.get());
+					if (pushToFront) {
+						// add to front context
+						addListToFrontCtx(viewContext, ctxKey.get());
+					}
 				});
 
-		// Force context references to be pushed to front context
-		listSuppliers.stream()
-				.filter(p -> p.startsWith(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX))
-				.map(p -> p.substring(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX.length())) // get ctx name
-				.forEach(ctxKey -> {
-					Assertion.check()
-							.isTrue(viewContext.containsKey(ctxKey), "Context key '{0}' not found.", ctxKey)
-							.isTrue(viewContext.get(ctxKey) instanceof UiList, "Context key '{0}' is not a list.", ctxKey);
-					addListToFrontCtx(viewContext, ctxKey);
-				});
+		if (pushToFront) {
+			// Force context references to be pushed to front context
+			listSuppliers.stream()
+					.filter(p -> p.startsWith(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX))
+					.map(p -> p.substring(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX.length())) // get ctx name
+					.forEach(ctxKey -> {
+						Assertion.check()
+								.isTrue(viewContext.containsKey(ctxKey), "Context key '{0}' not found.", ctxKey)
+								.isTrue(viewContext.get(ctxKey) instanceof UiList, "Context key '{0}' is not a list.", ctxKey);
+						addListToFrontCtx(viewContext, ctxKey);
+					});
+		}
 	}
 
 	/**

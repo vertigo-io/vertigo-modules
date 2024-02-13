@@ -2,14 +2,6 @@ let context = document.currentScript.dataset.context ;
 
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
-    efHasFormError : function(uiMessageStack, object, champ) { // TODO no uiMessageStack, add rowIndex and possibly converge with hasFieldsError from methods.js
-    	return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['form_'+ champ] != null)
-    },
-	
-    efGetFormError : function(uiMessageStack, object, champ) { // TODO no uiMessageStack, add rowIndex and possibly converge with getErrorMessage from methods.js
-    	  return (uiMessageStack.objectFieldErrors[object] != null && uiMessageStack.objectFieldErrors[object]['form_'+ champ] != null &&
-    	  			 uiMessageStack.objectFieldErrors[object]['form_'+ champ].join(', '));
-    },
 
     efAddItem : function() {
         this.httpPostAjax(context + 'easyforms/designer/_addItem', {}, {

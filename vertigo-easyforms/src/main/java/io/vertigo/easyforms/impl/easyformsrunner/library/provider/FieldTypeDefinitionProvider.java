@@ -198,7 +198,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		@Override
 		public EasyFormsSmartTypes getSmartType() {
-			return EasyFormsSmartTypes.EfCode;
+			return EasyFormsSmartTypes.EfLabel;
 		}
 
 		@Override
