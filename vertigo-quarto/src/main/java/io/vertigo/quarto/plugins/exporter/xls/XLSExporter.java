@@ -52,7 +52,7 @@ import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
@@ -239,7 +239,7 @@ final class XLSExporter {
 		sheet.setRepeatingRows(new CellRangeAddress(0, 0, -1, -1));
 
 		int rowIndex = 1;
-		for (final Data dto : parameters.getDtList()) {
+		for (final DataObject dto : parameters.getDtList()) {
 			final HSSFRow row = sheet.createRow(rowIndex);
 			cellIndex = 0;
 			Object value;
@@ -259,7 +259,7 @@ final class XLSExporter {
 		int rowIndex = 0;
 		final int labelCellIndex = 0;
 		final int valueCellIndex = 1;
-		final Data dto = parameters.getDtObject();
+		final DataObject dto = parameters.getDtObject();
 		Object value;
 		for (final ExportField exportColumn : parameters.getExportFields()) {
 			final HSSFRow row = sheet.createRow(rowIndex);

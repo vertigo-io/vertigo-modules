@@ -24,7 +24,7 @@ import io.vertigo.core.lang.Cardinality;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.stereotype.Field;
-import io.vertigo.datamodel.data.util.DataUtil;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * Country.
@@ -108,6 +108,6 @@ public final class Country implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DataUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

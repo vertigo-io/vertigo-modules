@@ -18,13 +18,13 @@
 package io.vertigo.quarto.publisher.data.domain;
 
 import io.vertigo.core.lang.Cardinality;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Objet de données AbstractMisEnCause
  */
-public final class MisEnCause implements Data {
+public final class MisEnCause implements DataObject {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "Sexe")

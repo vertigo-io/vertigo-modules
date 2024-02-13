@@ -27,9 +27,9 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.util.DataUtil;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * Parametre d'export pour les données de type DT.
@@ -46,7 +46,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	/**
 	 * Objet à exporter. dto XOR dtc est renseigné.
 	 */
-	private final Data dto;
+	private final DataObject dto;
 	private final DtList<?> dtc;
 	private final DataDefinition dataDefinition;
 
@@ -59,7 +59,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param dto Object to export
 	 * @param title Sheet title
 	 */
-	ExportSheetBuilder(final ExportBuilder exportBuilder, final Data dto, final String title) {
+	ExportSheetBuilder(final ExportBuilder exportBuilder, final DataObject dto, final String title) {
 		Assertion.check()
 				.isNotNull(exportBuilder)
 				.isNotNull(dto);
@@ -69,7 +69,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dto = dto;
 		dtc = null;
 		this.title = title;
-		dataDefinition = DataUtil.findDataDefinition(dto);
+		dataDefinition = DataModelUtil.findDataDefinition(dto);
 	}
 
 	/**

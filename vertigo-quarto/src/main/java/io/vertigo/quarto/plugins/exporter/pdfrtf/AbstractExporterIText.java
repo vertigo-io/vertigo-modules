@@ -39,7 +39,7 @@ import com.lowagie.text.Table;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.quarto.exporter.model.Export;
@@ -211,7 +211,7 @@ public abstract class AbstractExporterIText {
 		datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
 
 		// Parcours des DTO de la DTC
-		for (final Data dto : parameters.getDtList()) {
+		for (final DataObject dto : parameters.getDtList()) {
 			for (final ExportField exportColumn : parameters.getExportFields()) {
 				final DataField dtField = exportColumn.getDataField();
 				final Object value = dtField.getDataAccessor().getValue(dto);

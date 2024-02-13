@@ -14,21 +14,21 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 
 	public enum UiComponentEnum implements EnumDefinition<EasyFormsUiComponent, UiComponentEnum> {
 
-		TEXT_FIELD(new TextFieldUiComponent()),
-		TEXT_AREA,
+		TEXT_FIELD(new TextFieldUiComponent()), //
+		TEXT_AREA, //
 
-		CHECKBOX,
-		RADIO(new RadioUiComponent()),
+		CHECKBOX, //
+		RADIO(new RadioUiComponent()), //
 
-		DATE,
-		DATE_TIME,
+		DATE, //
+		DATE_TIME, //
 
-		SLIDER,
+		SLIDER, //
 
-		SELECT(new SelectUiComponent()),
+		SELECT(new SelectUiComponent()), //
 
 		// Internal use
-		INTERNAL_MAP,
+		INTERNAL_MAP,//
 		;
 
 		// ---
@@ -36,11 +36,11 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		private final String definitionName;
 		private final IEasyFormsUiComponentSupplier componentSupplier;
 
-		private <T> UiComponentEnum() {
+		UiComponentEnum() {
 			this(IEasyFormsUiComponentSupplier.NO_PARAM);
 		}
 
-		private <T> UiComponentEnum(final IEasyFormsUiComponentSupplier componentSupplier) {
+		UiComponentEnum(final IEasyFormsUiComponentSupplier componentSupplier) {
 			definitionName = EasyFormsUiComponent.PREFIX + StringUtil.constToUpperCamelCase(name());
 			this.componentSupplier = componentSupplier;
 		}

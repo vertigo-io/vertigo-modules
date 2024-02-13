@@ -19,15 +19,15 @@ package io.vertigo.audit.trace;
 
 import java.time.Instant;
 
-import io.vertigo.datamodel.data.model.Data;
-import io.vertigo.datamodel.data.util.DataUtil;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class defines the Audit Trace for an Object.
  *
  * @author xdurand
  */
-public final class TraceCriteria implements Data {
+public final class TraceCriteria implements DataObject {
 	private static final long serialVersionUID = 1L;
 
 	private final String category;
@@ -114,6 +114,6 @@ public final class TraceCriteria implements Data {
 
 	@Override
 	public String toString() {
-		return DataUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

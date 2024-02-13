@@ -20,13 +20,13 @@ package io.vertigo.quarto.publisher.data.domain;
 import java.time.LocalDate;
 
 import io.vertigo.core.lang.Cardinality;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Objet de données AbstractPublisherMock
  */
-public final class PublisherMock implements Data {
+public final class PublisherMock implements DataObject {
 	/**
 	 * SerialVersionUID.
 	 */

@@ -28,7 +28,7 @@ import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListURIForMasterData;
 import io.vertigo.datamodel.data.model.Entity;
@@ -69,7 +69,7 @@ public final class ExporterUtil {
 			final Map<Class, BasicTypeAdapter> exportAdapters,
 			final Map<DataField, Map<Object, String>> referenceCache,
 			final Map<DataField, Map<Object, String>> denormCache,
-			final Data dto,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		return (String) getValue(entityStoreManager, smartTypeManager, exportAdapters, true, referenceCache, denormCache, dto, exportColumn);
 	}
@@ -92,7 +92,7 @@ public final class ExporterUtil {
 			final Map<Class, BasicTypeAdapter> exportAdapters,
 			final Map<DataField, Map<Object, String>> referenceCache,
 			final Map<DataField, Map<Object, String>> denormCache,
-			final Data dto,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		return getValue(entityStoreManager, smartTypeManager, exportAdapters, false, referenceCache, denormCache, dto, exportColumn);
 	}
@@ -104,7 +104,7 @@ public final class ExporterUtil {
 			final boolean forceStringValue,
 			final Map<DataField, Map<Object, String>> referenceCache,
 			final Map<DataField, Map<Object, String>> denormCache,
-			final Data dto,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		final DataField dtField = exportColumn.getDataField();
 		Object value;
@@ -170,7 +170,7 @@ public final class ExporterUtil {
 			final DataField keyField,
 			final DataField displayField) {
 		final Map<Object, String> denormIndex = new HashMap<>(valueList.size());
-		for (final Data dto : valueList) {
+		for (final DataObject dto : valueList) {
 			final String svalue = smartTypeManager.valueToString(displayField.smartTypeDefinition(), displayField.getDataAccessor().getValue(dto));
 			denormIndex.put(keyField.getDataAccessor().getValue(dto), svalue);
 		}

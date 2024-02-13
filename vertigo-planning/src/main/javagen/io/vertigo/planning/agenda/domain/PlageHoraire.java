@@ -21,7 +21,7 @@ import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.stereotype.Field;
-import io.vertigo.datamodel.data.util.DataUtil;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 
 /**
@@ -184,6 +184,6 @@ public final class PlageHoraire implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DataUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

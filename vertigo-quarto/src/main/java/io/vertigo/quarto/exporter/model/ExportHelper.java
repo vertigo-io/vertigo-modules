@@ -22,7 +22,7 @@ import java.util.Map;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListURIForMasterData;
 import io.vertigo.datamodel.data.model.Entity;
@@ -65,7 +65,7 @@ public final class ExportHelper {
 	public String getText(
 			final Map<DataField, Map<Object, String>> referenceCache,
 			final Map<DataField, Map<Object, String>> denormCache,
-			final Data dto,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		return (String) getValue(true, referenceCache, denormCache, dto, exportColumn);
 	}
@@ -83,7 +83,7 @@ public final class ExportHelper {
 	public Object getValue(
 			final Map<DataField, Map<Object, String>> referenceCache,
 			final Map<DataField, Map<Object, String>> denormCache,
-			final Data dto,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		return getValue(false, referenceCache, denormCache, dto, exportColumn);
 	}
@@ -92,7 +92,7 @@ public final class ExportHelper {
 			final boolean forceStringValue,
 			final Map<DataField, Map<Object, String>> referenceCache,
 			final Map<DataField, Map<Object, String>> denormCache,
-			final Data dto,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		final DataField dtField = exportColumn.getDataField();
 		Object value;
@@ -132,7 +132,7 @@ public final class ExportHelper {
 
 	private Map<Object, String> createDenormIndex(final DtList<?> valueList, final DataField keyField, final DataField displayField) {
 		final Map<Object, String> denormIndex = new HashMap<>(valueList.size());
-		for (final Data dto : valueList) {
+		for (final DataObject dto : valueList) {
 			final String svalue = smartTypeManager.valueToString(displayField.smartTypeDefinition(), displayField.getDataAccessor().getValue(dto));
 			denormIndex.put(keyField.getDataAccessor().getValue(dto), svalue);
 		}

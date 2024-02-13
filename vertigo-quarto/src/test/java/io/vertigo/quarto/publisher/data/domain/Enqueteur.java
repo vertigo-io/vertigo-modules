@@ -17,13 +17,13 @@
  */
 package io.vertigo.quarto.publisher.data.domain;
 
-import io.vertigo.datamodel.data.model.Data;
+import io.vertigo.datamodel.data.model.DataObject;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Objet de données AbstractEnqueteur
  */
-public final class Enqueteur implements Data {
+public final class Enqueteur implements DataObject {
 	/**
 	 * SerialVersionUID.
 	 */
