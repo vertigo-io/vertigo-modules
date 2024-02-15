@@ -2,7 +2,6 @@ package io.vertigo.easyforms.impl.easyformsrunner.library.provider;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
 
 import io.vertigo.basics.constraint.ConstraintRegex;
 import io.vertigo.core.node.definition.DefinitionSpace;
@@ -39,12 +38,9 @@ public class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitio
 			+ "|(((?:\\+|00)262\\W*)6\\W*(?:3\\W*9|9\\W*2|9\\W*3)(?:\\W*\\d){5}\\d)"
 			+ "|(((?:\\+|00)(?:508|689|681|687)\\W*)[0-9](?:\\W*\\d){7}\\d))$";
 
-	private static final Set<String> EMAIL_DOMAIN_BLACK_LIST = Set.of("yopmail.com", "yopmail.net", "mailinator.com", "jetable.org", "trashmail.com", "throwawaymail.com", "emailondeck.com",
-			"emailfake.com");
-
 	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidatorType, FieldValidatorEnum> {
 
-		EMAIL_NOT_IN_BLACKLIST(20, new ConstraintEmailBlackList(String.join(",", EMAIL_DOMAIN_BLACK_LIST), Optional.empty(), Optional.empty()), FieldTypeEnum.EMAIL),
+		EMAIL_NOT_IN_BLACKLIST(20, new ConstraintEmailBlackList(ConstraintEmailBlackList.DISPOSABLE, Optional.empty(), Optional.empty()), FieldTypeEnum.EMAIL),
 		GTE_13_ANS(10, new ConstraintAgeMinimum("13", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
 		LT_16_ANS(20, new ConstraintAgeMaximum("15", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
 		GTE_16_ANS(30, new ConstraintAgeMinimum("16", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),

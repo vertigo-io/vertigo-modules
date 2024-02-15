@@ -8,7 +8,6 @@ import io.vertigo.basics.constraint.ConstraintUtil;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
-import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.Property;
 
 /**
@@ -23,7 +22,7 @@ public final class ConstraintAgeMinimum implements Constraint<Integer, LocalDate
 	/**
 	 * Constructor.
 	 *
-	 * @param args the max age
+	 * @param args the min age
 	 */
 	public ConstraintAgeMinimum(final String args, final Optional<String> overrideMessageOpt, final Optional<String> overrideResourceMessageOpt) {
 		Assertion.check()
@@ -52,7 +51,7 @@ public final class ConstraintAgeMinimum implements Constraint<Integer, LocalDate
 	/** {@inheritDoc} */
 	@Override
 	public Property getProperty() {
-		return DtProperty.MAX_VALUE;
+		return new Property<>("minAge", Integer.class);
 	}
 
 	/** {@inheritDoc} */
