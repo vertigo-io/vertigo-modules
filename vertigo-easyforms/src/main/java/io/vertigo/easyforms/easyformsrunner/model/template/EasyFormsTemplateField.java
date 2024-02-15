@@ -109,6 +109,9 @@ public class EasyFormsTemplateField implements Serializable {
 	}
 
 	public List<EasyFormsTemplateFieldValidator> getValidators() {
+		if (validators == null) {
+			return List.of();
+		}
 		return validators;
 	}
 

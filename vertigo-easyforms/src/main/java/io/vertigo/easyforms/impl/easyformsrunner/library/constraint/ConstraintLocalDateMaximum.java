@@ -27,7 +27,7 @@ public final class ConstraintLocalDateMaximum implements Constraint<Double, Loca
 	/**
 	 * Constructor.
 	 *
-	 * @param args the minimum value
+	 * @param args the maximum value
 	 */
 	public ConstraintLocalDateMaximum(final String args, final Optional<String> overrideMessageOpt, final Optional<String> overrideResourceMessageOpt) {
 		Assertion.check()

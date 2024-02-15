@@ -13,6 +13,7 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
+import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 
@@ -25,37 +26,34 @@ public final class EasyFormsFieldValidatorType extends AbstractDefinition<EasyFo
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
 	private final Set<EasyFormsFieldType> fieldTypes;
 	private final Function<EasyFormsData, Serializable[]> descriptionParameterResolver;
+	private final Constraint constraint;
 
-	private EasyFormsFieldValidatorType(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldType> fieldTypes) {
-		this(name, priority, paramTemplate, fieldTypes, p -> new Serializable[0]);
+	private EasyFormsFieldValidatorType(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldType> fieldTypes,
+			final Constraint constraint) {
+		this(name, priority, paramTemplate, fieldTypes, p -> new Serializable[0], constraint);
 	}
 
 	private EasyFormsFieldValidatorType(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldType> fieldTypes,
-			final Function<EasyFormsData, Serializable[]> descriptionParameterResolver) {
+			final Function<EasyFormsData, Serializable[]> descriptionParameterResolver, final Constraint constraint) {
 		super(name);
 		//---
 		this.priority = priority;
 		this.paramTemplate = paramTemplate;
 		this.fieldTypes = fieldTypes;
 		this.descriptionParameterResolver = descriptionParameterResolver;
+		this.constraint = constraint;
 	}
 
-	public static EasyFormsFieldValidatorType of(final String name, final int priority, final EasyFormsFieldType... fieldTypes) {
-		return new EasyFormsFieldValidatorType(name, priority, null, Set.of(fieldTypes));
-	}
-
-	public static EasyFormsFieldValidatorType of(final String name, final int priority, final EasyFormsTemplate paramTemplate, final EasyFormsFieldType... fieldTypes) {
-		return new EasyFormsFieldValidatorType(name, priority, paramTemplate, Set.of(fieldTypes));
-	}
-
-	public static EasyFormsFieldValidatorType of(final String name, final int priority, final Collection<EasyFormsFieldType> fieldTypes) {
+	public static EasyFormsFieldValidatorType of(final String name, final int priority, final Collection<EasyFormsFieldType> fieldTypes,
+			final Constraint constraint) {
 		Assertion.check().isNotNull(fieldTypes);
-		return new EasyFormsFieldValidatorType(name, priority, null, Collections.unmodifiableSet(new HashSet<>(fieldTypes)));
+		return new EasyFormsFieldValidatorType(name, priority, null, Collections.unmodifiableSet(new HashSet<>(fieldTypes)), constraint);
 	}
 
-	public static EasyFormsFieldValidatorType of(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Collection<EasyFormsFieldType> fieldTypes) {
+	public static EasyFormsFieldValidatorType of(final String name, final int priority, final Collection<EasyFormsFieldType> fieldTypes, final Constraint constraint,
+			final EasyFormsTemplate paramTemplate) {
 		Assertion.check().isNotNull(fieldTypes);
-		return new EasyFormsFieldValidatorType(name, priority, paramTemplate, Collections.unmodifiableSet(new HashSet<>(fieldTypes)));
+		return new EasyFormsFieldValidatorType(name, priority, paramTemplate, Collections.unmodifiableSet(new HashSet<>(fieldTypes)), constraint);
 	}
 
 	public static EasyFormsFieldValidatorType resolve(final String name) {
@@ -80,6 +78,10 @@ public final class EasyFormsFieldValidatorType extends AbstractDefinition<EasyFo
 
 	public Set<EasyFormsFieldType> getFieldTypes() {
 		return fieldTypes;
+	}
+
+	public Constraint getConstraint() {
+		return constraint;
 	}
 
 	public String getLabel() {

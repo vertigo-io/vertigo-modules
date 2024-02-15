@@ -14,7 +14,7 @@ import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsFieldTyp
 import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorDefinitionProvider.FieldValidatorEnum;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.RadioUiComponent;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.TextFieldUiComponent;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.UiComponentEnum;

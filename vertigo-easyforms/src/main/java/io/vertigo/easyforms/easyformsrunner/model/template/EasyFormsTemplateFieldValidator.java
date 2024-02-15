@@ -8,8 +8,8 @@ public class EasyFormsTemplateFieldValidator implements Serializable {
 	private final String name;
 	private EasyFormsData parameters;
 
-	public EasyFormsTemplateFieldValidator(final String code) {
-		this.name = code;
+	public EasyFormsTemplateFieldValidator(final String name) {
+		this.name = name;
 	}
 
 	public String getName() {
