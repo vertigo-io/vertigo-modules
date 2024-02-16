@@ -14,7 +14,6 @@ public class EasyFormsTemplateField implements Serializable {
 	private final String fieldTypeName;
 	private String label;
 	private String tooltip;
-	private Integer order;
 	private boolean isDefault;
 	private boolean isMandatory;
 	private EasyFormsData parameters; // Field type parameters
@@ -57,15 +56,6 @@ public class EasyFormsTemplateField implements Serializable {
 
 	public EasyFormsTemplateField withTooltip(final String tooltip) {
 		this.tooltip = tooltip;
-		return this;
-	}
-
-	public Integer getOrder() {
-		return order;
-	}
-
-	public EasyFormsTemplateField withOrder(final Integer order) {
-		this.order = order;
 		return this;
 	}
 

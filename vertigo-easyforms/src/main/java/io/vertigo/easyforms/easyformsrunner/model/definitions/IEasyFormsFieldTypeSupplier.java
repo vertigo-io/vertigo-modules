@@ -17,12 +17,10 @@ public interface IEasyFormsFieldTypeSupplier {
 		if (uiComponentParams == null || uiComponentParams.isEmpty()) {
 			template = null;
 		} else {
-			var i = 0;
 			for (final var uiComponentParam : uiComponentParams) {
+				// default i18n label for fieldType
 				uiComponentParam
-						.withOrder(i)
 						.withLabel(definitionName + '$' + uiComponentParam.getCode() + "Label");
-				i++;
 			}
 			template = new EasyFormsTemplate(uiComponentParams);
 		}

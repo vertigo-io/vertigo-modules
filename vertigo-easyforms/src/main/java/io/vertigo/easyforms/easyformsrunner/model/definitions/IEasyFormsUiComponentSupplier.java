@@ -26,12 +26,10 @@ public interface IEasyFormsUiComponentSupplier {
 			return EasyFormsUiComponent.of(definitionName, null);
 		}
 
-		var i = 0;
 		for (final var uiComponentParam : uiComponentParams) {
+			// default i18n label for ui component
 			uiComponentParam
-					.withOrder(i)
 					.withLabel(definitionName + '$' + uiComponentParam.getCode() + "Label");
-			i++;
 		}
 
 		return EasyFormsUiComponent.of(definitionName, new EasyFormsTemplate(uiComponentParams));

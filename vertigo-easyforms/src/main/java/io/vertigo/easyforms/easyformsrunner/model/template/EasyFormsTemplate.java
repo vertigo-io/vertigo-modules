@@ -2,7 +2,6 @@ package io.vertigo.easyforms.easyformsrunner.model.template;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class EasyFormsTemplate implements Serializable {
@@ -16,7 +15,7 @@ public class EasyFormsTemplate implements Serializable {
 	}
 
 	public List<EasyFormsTemplateField> getFields() {
-		return fields.stream().sorted(Comparator.comparing(EasyFormsTemplateField::getOrder)).toList();
+		return fields;
 	}
 
 }

@@ -26,7 +26,6 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 		final var field = new EasyFormsTemplateField(fieldCode, fieldType)
 				.withLabel(label)
 				.withTooltip(tooltip)
-				.withOrder(fields.size() + 1)
 				.withDefault(isDefault)
 				.withParameters(parameters)
 				.withMandatory(isMandatory)
@@ -49,7 +48,6 @@ public class EasyFormsTemplateBuilder implements Builder<EasyFormsTemplate> {
 		final var field = new EasyFormsTemplateField(fieldCode, fieldTypeEnum)
 				.withLabel(label)
 				.withTooltip(tooltip)
-				.withOrder(fields.size() + 1)
 				.withDefault(isDefault)
 				.withMandatory(isMandatory)
 				.withValidators(fieldValidators.stream().map(EasyFormsTemplateFieldValidator::new).toList());

@@ -69,9 +69,9 @@
 								<q-input label-slot
 										th:v-autofocus="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|"
 										th:v-model="|slotProps.formData['${templateField.code}']|"
-										th::aria-describedby="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex}) ? 'text-input-${templateField.code}-${templateField.order}-desc-error' : null|"
+										th::aria-describedby="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex}) ? 'text-input-${templateField.code}-desc-error' : null|"
 										th::aria-invalid="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
-										th:id="|text-input-${templateField.code}-${templateField.order}|"
+										th:id="|text-input-${templateField.code}|"
 										th::error="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
 										th::error-message="|getErrorMessage('${object}', 'form_${templateField.code}', ${rowIndex})|"
 										th:type="${fieldType.uiComponentName == 'textfield' ? 'text' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : 'text')}"
