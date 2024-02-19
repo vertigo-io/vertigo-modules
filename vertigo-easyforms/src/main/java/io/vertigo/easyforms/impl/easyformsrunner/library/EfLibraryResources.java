@@ -63,6 +63,7 @@ public enum EfLibraryResources implements LocaleMessageKey {
 	EfFvaGte16AnsLabel,
 	EfFvaLt18AnsLabel,
 	EfFvaGte18AnsLabel,
-	EfFvaTelephoneFrLabel,
-	EfFvaTelephoneMobileSmsLabel,
+	EfFvaPhoneFrLabel,
+	EfFvaPhoneFrFixeLabel,
+	EfFvaPhoneFrMobileLabel,
 }

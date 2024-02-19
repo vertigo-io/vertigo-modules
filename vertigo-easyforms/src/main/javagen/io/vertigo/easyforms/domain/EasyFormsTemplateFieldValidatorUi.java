@@ -18,11 +18,10 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	private String parameterizedLabel;
 	private String description;
 	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Validator type name'.
-	 *
 	 * @return String validatorTypeName
 	 */
 	@Field(smartType = "STyEfLabel", label = "Validator type name")
@@ -33,17 +32,15 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Validator type name'.
-	 *
 	 * @param validatorTypeName String
 	 */
 	public void setValidatorTypeName(final String validatorTypeName) {
 		this.validatorTypeName = validatorTypeName;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Label'.
-	 *
 	 * @return String label
 	 */
 	@Field(smartType = "STyEfLabel", label = "Label")
@@ -54,17 +51,15 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Label'.
-	 *
 	 * @param label String
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Label'.
-	 *
 	 * @return String parameterizedLabel
 	 */
 	@Field(smartType = "STyEfLabel", label = "Label")
@@ -75,17 +70,15 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Label'.
-	 *
 	 * @param parameterizedLabel String
 	 */
 	public void setParameterizedLabel(final String parameterizedLabel) {
 		this.parameterizedLabel = parameterizedLabel;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Description'.
-	 *
 	 * @return String description
 	 */
 	@Field(smartType = "STyEfText", label = "Description")
@@ -96,17 +89,15 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Description'.
-	 *
 	 * @param description String
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Parameters JSON'.
-	 *
 	 * @return EasyFormsData parameters
 	 */
 	@Field(smartType = "STyEfFormData", label = "Parameters JSON")
@@ -117,13 +108,12 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Parameters JSON'.
-	 *
 	 * @param parameters EasyFormsData
 	 */
 	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters) {
 		this.parameters = parameters;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

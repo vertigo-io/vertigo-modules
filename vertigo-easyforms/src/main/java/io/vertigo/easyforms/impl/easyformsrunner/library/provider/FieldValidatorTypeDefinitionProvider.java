@@ -26,6 +26,7 @@ public class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitio
 		LT_18_ANS(40, new ConstraintAgeMaximum("17", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
 		GTE_18_ANS(60, new ConstraintAgeMinimum("18", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
 		PHONE_FR(10, ConstraintPhone.ofEnum(ConstraintPhoneEnum.FR_METRO, Optional.empty(), Optional.empty()), FieldTypeEnum.PHONE),
+		PHONE_FR_FIXE(10, ConstraintPhone.ofEnum(ConstraintPhoneEnum.FR_FIXE, Optional.empty(), Optional.empty()), FieldTypeEnum.PHONE),
 		PHONE_FR_MOBILE(20, ConstraintPhone.ofEnum(ConstraintPhoneEnum.FR_MOBILE, Optional.empty(), Optional.empty()), FieldTypeEnum.PHONE),
 		;
 

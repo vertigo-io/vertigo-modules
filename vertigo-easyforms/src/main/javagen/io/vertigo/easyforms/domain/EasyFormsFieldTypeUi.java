@@ -18,7 +18,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	private String uiComponentName;
 	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters;
 	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Field type'.
@@ -38,7 +38,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	public void setName(final String name) {
 		this.name = name;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Label'.
@@ -58,7 +58,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	public void setLabel(final String label) {
 		this.label = label;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'UI component name'.
@@ -77,7 +77,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	public void setUiComponentName(final String uiComponentName) {
 		this.uiComponentName = uiComponentName;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'UI parameters'.
@@ -96,7 +96,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	public void setUiParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters) {
 		this.uiParameters = uiParameters;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'UI configuration template'.
@@ -115,7 +115,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate) {
 		this.paramTemplate = paramTemplate;
 	}
-
+	
 	/**
 	 * Champ : COMPUTED.
 	 * Récupère la valeur de la propriété calculée 'Have configuration'.
@@ -125,7 +125,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	public Boolean getHasTemplate() {
 		return getParamTemplate() != null && !getParamTemplate().getFields().isEmpty();
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

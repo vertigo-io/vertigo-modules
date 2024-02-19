@@ -46,6 +46,7 @@ import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldVali
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList;
 import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
+import io.vertigo.easyforms.impl.easyformsrunner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -55,7 +56,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/easyforms/designer")
-public class AbstractEasyFormsController extends AbstractVSpringMvcController {
+public class EasyFormsDesignerController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<EasyForm> efoKey = ViewContextKey.of("efo");
 	private static final ViewContextKey<EasyFormsFieldTypeUi> fieldTypesKey = ViewContextKey.of("fieldTypes");
@@ -70,6 +71,9 @@ public class AbstractEasyFormsController extends AbstractVSpringMvcController {
 	@Inject
 	private EasyFormsDesignerServices easyFormsDesignerServices;
 
+	@Inject
+	private EasyFormsRunnerServices easyFormsRunnerServices;
+
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt) {
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
@@ -83,7 +87,7 @@ public class AbstractEasyFormsController extends AbstractVSpringMvcController {
 		viewContext.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
 		//---
 		final EasyForm easyForm = efoIdOpt
-				.map(easyFormsDesignerServices::getEasyFormById)
+				.map(easyFormsRunnerServices::getEasyFormById)
 				.orElseGet(EasyForm::new);
 		viewContext.publishDto(efoKey, easyForm);
 		viewContext.publishDtList(fieldsKey, easyFormsDesignerServices.getFieldUiListByEasyForm(easyForm));

@@ -18,11 +18,10 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	private String description;
 	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate;
 	private java.util.List<String> fieldTypes = new java.util.ArrayList<>();
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Validator type name'.
-	 *
 	 * @return String name
 	 */
 	@Field(smartType = "STyEfLabel", label = "Validator type name")
@@ -34,17 +33,15 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Validator type name'.
-	 *
 	 * @param name String
 	 */
 	public void setName(final String name) {
 		this.name = name;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Label'.
-	 *
 	 * @return String label
 	 */
 	@Field(smartType = "STyEfLabel", label = "Label")
@@ -56,17 +53,15 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Label'.
-	 *
 	 * @param label String
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Description'.
-	 *
 	 * @return String description
 	 */
 	@Field(smartType = "STyEfText", label = "Description")
@@ -77,17 +72,15 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Description'.
-	 *
 	 * @param description String
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'UI configuration template'.
-	 *
 	 * @return EasyFormsTemplate paramTemplate
 	 */
 	@Field(smartType = "STyEfFormTemplate", label = "UI configuration template")
@@ -98,17 +91,15 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'UI configuration template'.
-	 *
 	 * @param paramTemplate EasyFormsTemplate
 	 */
 	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate) {
 		this.paramTemplate = paramTemplate;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Attached to fields'.
-	 *
 	 * @return List de String fieldTypes
 	 */
 	@Field(smartType = "STyEfText", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Attached to fields")
@@ -119,7 +110,6 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Attached to fields'.
-	 *
 	 * @param fieldTypes List de String
 	 */
 	public void setFieldTypes(final java.util.List<String> fieldTypes) {
@@ -127,7 +117,7 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 		//---
 		this.fieldTypes = fieldTypes;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

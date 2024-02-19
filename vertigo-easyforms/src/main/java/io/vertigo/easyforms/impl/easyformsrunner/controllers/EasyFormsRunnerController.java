@@ -1,6 +1,7 @@
 package io.vertigo.easyforms.impl.easyformsrunner.controllers;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -17,10 +18,11 @@ import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType
 import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
+import io.vertigo.easyforms.impl.easyformsrunner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.ui.impl.springmvc.util.UiUtil;
 import io.vertigo.vega.webservice.model.UiList;
 
@@ -28,7 +30,7 @@ import io.vertigo.vega.webservice.model.UiList;
 public class EasyFormsRunnerController {
 
 	@Inject
-	private EasyFormsDesignerServices easyFormsDesignerServices;
+	private EasyFormsRunnerServices easyFormsRunnerServices;
 
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
@@ -36,7 +38,7 @@ public class EasyFormsRunnerController {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil);
 
-		final var easyForm = easyFormsDesignerServices.getEasyFormById(efoUid);
+		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 		viewContext.publishRef(templateKey, easyForm.getTemplate());
 
 		addRequiredContext(viewContext, easyForm, false);
@@ -46,7 +48,7 @@ public class EasyFormsRunnerController {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil);
 
-		final var easyForm = easyFormsDesignerServices.getEasyFormById(efoUid);
+		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
 		viewContext.publishRef(templateKey, easyForm.getTemplate());
 
@@ -95,7 +97,7 @@ public class EasyFormsRunnerController {
 	 * Get default template values. initReadContext or initEditContext must have been previously called.
 	 *
 	 * @param viewContext viewContext
-	 * @param templateKey ViewContextKey where the template will be published
+	 * @param templateKey ViewContextKey where the template is published
 	 */
 	public EasyFormsData getDefaultDataValues(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
@@ -114,5 +116,20 @@ public class EasyFormsRunnerController {
 	private void addListToFrontCtx(final ViewContext viewContext, final String ctxKey) {
 		viewContext.asMap().addKeyForClient(ctxKey, UiUtil.getIdField(ctxKey), null, false); // expose key attribute
 		viewContext.asMap().addKeyForClient(ctxKey, UiUtil.getDisplayField(ctxKey), null, false); // expose display attribute
+	}
+
+	/**
+	 * Validate EasyFormData
+	 *
+	 * @param viewContext viewContext
+	 * @param templateKey ViewContextKey where the template is published
+	 * @param formOwner entity holding the form
+	 * @param formDataAccessor accessor to the form data on the formOwner
+	 * @param <E> Entity type
+	 */
+	public <E extends Entity> void checkForm(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey, final E formOwner, final Function<E, EasyFormsData> formDataAccessor) {
+		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
+
+		easyFormsRunnerServices.checkFormulaire(formOwner, formDataAccessor.apply(formOwner), easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
 	}
 }

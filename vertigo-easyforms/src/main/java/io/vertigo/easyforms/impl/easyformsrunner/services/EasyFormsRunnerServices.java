@@ -11,17 +11,21 @@ import javax.inject.Inject;
 
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.SmarttypeResources;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.ConstraintException;
 import io.vertigo.datamodel.smarttype.definitions.FormatterException;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
+import io.vertigo.easyforms.dao.EasyFormDAO;
+import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorType;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
@@ -42,16 +46,25 @@ public class EasyFormsRunnerServices implements Component {
 	@Inject
 	private AnalyticsManager analyticsManager;
 
-	public void checkFormulaire(final Entity formuOwner, final EasyFormsData formData, final EasyFormsTemplate formTempalte, final UiMessageStack uiMessageStack) {
+	@Inject
+	private EasyFormDAO easyFormDAO;
+
+	public EasyForm getEasyFormById(final UID<EasyForm> efoUid) {
+		Assertion.check().isNotNull(efoUid);
+		//---
+		return easyFormDAO.get(efoUid);
+	}
+
+	public void checkFormulaire(final Entity formOwner, final EasyFormsData formData, final EasyFormsTemplate formTempalte, final UiMessageStack uiMessageStack) {
 		final Set<String> champsAutorises = formTempalte.getFields().stream().map(EasyFormsTemplateField::getCode).collect(Collectors.toSet());
 		for (final String champFormulaire : formData.keySet()) {
 			if (!champsAutorises.contains(champFormulaire)) {
-				uiMessageStack.error("Champ non autorisé ", formuOwner, FORM_PREFIX + champFormulaire);
+				uiMessageStack.error("Champ non autorisé ", formOwner, FORM_PREFIX + champFormulaire);
 			}
 		}
 		//---
 		for (final EasyFormsTemplateField field : formTempalte.getFields()) {
-			checkChampFormulaire(field, formData, formuOwner, uiMessageStack);
+			checkChampFormulaire(field, formData, formOwner, uiMessageStack);
 		}
 
 		//---
@@ -60,14 +73,14 @@ public class EasyFormsRunnerServices implements Component {
 		}
 	}
 
-	private void checkChampFormulaire(final EasyFormsTemplateField field, final EasyFormsData formData, final Entity formuOwner, final UiMessageStack uiMessageStack) {
+	private void checkChampFormulaire(final EasyFormsTemplateField field, final EasyFormsData formData, final Entity formOwner, final UiMessageStack uiMessageStack) {
 		final var fieldType = EasyFormsFieldType.resolve(field.getFieldTypeName());
 		final var smartTypeDefinition = getSmartTypeByName(fieldType.getSmartTypeName());
 		final var inputValue = formData.get(field.getCode());
 		if (inputValue == null || (inputValue instanceof final String inputString && inputString.isBlank())) {
 			// when null, the only check is for mandatory
 			if (field.isMandatory()) {
-				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formuOwner, FORM_PREFIX + field.getCode());
+				uiMessageStack.error(LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE).getDisplay(), formOwner, FORM_PREFIX + field.getCode());
 				analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 						.incMeasure(ERROR_CONTROL_FORM_MEASURE, 1)
 						.setTag("controle", "Obligatoire")
@@ -77,12 +90,12 @@ public class EasyFormsRunnerServices implements Component {
 			if (inputValue instanceof final List<?> inputCollection) {
 				final List<Object> resolvedList = new ArrayList<>();
 				for (final var elem : inputCollection) {
-					checkType(field, formuOwner, uiMessageStack, smartTypeDefinition, elem)
+					checkType(field, formOwner, uiMessageStack, smartTypeDefinition, elem)
 							.ifPresent(resolvedList::add);
 				}
 				formData.put(field.getCode(), resolvedList);
 			} else {
-				checkType(field, formuOwner, uiMessageStack, smartTypeDefinition, inputValue)
+				checkType(field, formOwner, uiMessageStack, smartTypeDefinition, inputValue)
 						.ifPresent(v -> formData.put(field.getCode(), v));
 			}
 		}

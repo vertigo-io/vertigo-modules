@@ -11,7 +11,6 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.data.model.DtList;
-import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
@@ -33,12 +32,6 @@ public class EasyFormsDesignerServices implements Component {
 
 	@Inject
 	private EasyFormDAO easyFormDAO;
-
-	public EasyForm getEasyFormById(final UID<EasyForm> efoUid) {
-		Assertion.check().isNotNull(efoUid);
-		//---
-		return easyFormDAO.get(efoUid);
-	}
 
 	public DtList<EasyFormsFieldTypeUi> getFieldTypeUiList() {
 		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldType.class)
