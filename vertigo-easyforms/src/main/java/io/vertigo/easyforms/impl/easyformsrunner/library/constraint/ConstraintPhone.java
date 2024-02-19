@@ -123,6 +123,8 @@ public final class ConstraintPhone implements Constraint<String, String> {
 	}
 
 	public static enum ConstraintPhoneEnum {
+		US(new PhonePattern("+1", 10)),
+
 		FR_METRO(new PhonePattern(List.of("+33", "0"), 9)),
 		FR_FIXE_METRO(new PhonePattern(List.of("+33 [1-5]", "0[1-5]"), 8)),
 		FR_FIXE_METRO_SPECIAL(new PhonePattern(List.of("+33 [89]", "0[89]"), 8)),
