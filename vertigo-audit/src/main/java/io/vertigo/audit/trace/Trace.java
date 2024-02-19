@@ -23,6 +23,7 @@ import io.vertigo.core.lang.Cardinality;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.stereotype.SortField;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
@@ -47,6 +48,7 @@ public final class Trace implements Entity {
 	private Instant businessDate;
 
 	@Field(smartType = "STyATraceInstant", label = "executionDate", cardinality = Cardinality.ONE)
+	@SortField
 	private Instant executionDate;
 
 	@Field(smartType = "STyATraceItem", label = "itemUrn", cardinality = Cardinality.ONE)

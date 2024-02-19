@@ -17,11 +17,10 @@
  */
 package io.vertigo.audit.impl.trace;
 
-import java.util.List;
-
 import io.vertigo.audit.trace.Trace;
 import io.vertigo.audit.trace.TraceCriteria;
 import io.vertigo.core.node.component.Plugin;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * This class defines the storage of audit trails.
@@ -47,6 +46,6 @@ public interface TraceStorePlugin extends Plugin {
 	 * @param auditTraceCriteria
 	 * @return the matching taces for the provided criteria
 	 */
-	List<Trace> findByCriteria(TraceCriteria auditTraceCriteria);
+	DtList<Trace> findByCriteria(TraceCriteria auditTraceCriteria);
 
 }

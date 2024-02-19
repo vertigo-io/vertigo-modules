@@ -17,14 +17,13 @@
  */
 package io.vertigo.audit.impl.trace;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import io.vertigo.audit.trace.Trace;
 import io.vertigo.audit.trace.TraceCriteria;
 import io.vertigo.audit.trace.TraceManager;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * @author xdurand
@@ -49,7 +48,7 @@ public final class TraceManagerImpl implements TraceManager {
 	}
 
 	@Override
-	public List<Trace> findTrace(final TraceCriteria auditTraceCriteria) {
+	public DtList<Trace> findTrace(final TraceCriteria auditTraceCriteria) {
 		return auditTraceStorePlugin.findByCriteria(auditTraceCriteria);
 	}
 

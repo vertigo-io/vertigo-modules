@@ -17,7 +17,6 @@
  */
 package io.vertigo.audit.plugins.trace.datastore;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -33,6 +32,7 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.DataModelUtil;
@@ -91,7 +91,7 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	}
 
 	@Override
-	public List<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
+	public DtList<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
 		return executeInTransaction(() -> {
 			Criteria<Trace> criteria = Criterions.alwaysTrue();
 			if (!StringUtil.isBlank(auditTraceCriteria.getCategory())) {

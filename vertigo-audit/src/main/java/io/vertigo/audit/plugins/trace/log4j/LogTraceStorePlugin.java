@@ -17,7 +17,6 @@
  */
 package io.vertigo.audit.plugins.trace.log4j;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +26,7 @@ import io.vertigo.audit.impl.trace.TraceStorePlugin;
 import io.vertigo.audit.trace.Trace;
 import io.vertigo.audit.trace.TraceCriteria;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * @author npiedeloup
@@ -54,7 +54,7 @@ public final class LogTraceStorePlugin implements TraceStorePlugin {
 	}
 
 	@Override
-	public List<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
+	public DtList<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
 		throw new UnsupportedOperationException("LogTraceStorePlugin don't support trace read");
 	}
 }

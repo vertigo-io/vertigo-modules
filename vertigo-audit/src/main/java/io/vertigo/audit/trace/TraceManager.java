@@ -17,9 +17,8 @@
  */
 package io.vertigo.audit.trace;
 
-import java.util.List;
-
 import io.vertigo.core.node.component.Manager;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * @author xdurand
@@ -37,7 +36,7 @@ public interface TraceManager extends Manager {
 	 * @param auditTraceCriteria
 	 * @return the matching audit traces
 	 */
-	List<Trace> findTrace(TraceCriteria auditTraceCriteria);
+	DtList<Trace> findTrace(TraceCriteria auditTraceCriteria);
 
 	/**
 	 * Get an audit trail
