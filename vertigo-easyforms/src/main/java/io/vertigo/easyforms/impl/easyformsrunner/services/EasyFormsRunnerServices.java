@@ -1,6 +1,5 @@
 package io.vertigo.easyforms.impl.easyformsrunner.services;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +38,6 @@ public class EasyFormsRunnerServices implements Component {
 
 	private static final String FORM_PREFIX = "form_";
 	private static final String ERROR_CONTROL_FORM_MEASURE = "errorControlForm";
-	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
 
 	@Inject
 	private SmartTypeManager smartTypeManager;
@@ -105,7 +103,7 @@ public class EasyFormsRunnerServices implements Component {
 			final SmartTypeDefinition smartTypeDefinition, final Object inputValue) {
 		Object typedValue = null;
 		try {
-			typedValue = fixTypedValue(smartTypeDefinition, inputValue);
+			typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputValue.toString());
 
 			smartTypeManager.validate(smartTypeDefinition, Cardinality.OPTIONAL_OR_NULLABLE, typedValue);
 			checkFieldValidators(field, typedValue, formOwner, uiMessageStack);
@@ -125,20 +123,6 @@ public class EasyFormsRunnerServices implements Component {
 					.setTag("champ", field.getLabel()));
 		}
 		return Optional.ofNullable(typedValue);
-	}
-
-	public Object fixTypedValue(final SmartTypeDefinition smartTypeDefinition, final Object inputValue) throws FormatterException {
-		Object typedValue;
-		String inputString;
-		if (inputValue instanceof final Double inputDouble) {
-			// Gson parse all numbers to double and formatters don't always accept floating numbers (ex id formatter)
-			inputString = DECIMAL_FORMAT.format(inputDouble);
-		} else {
-			inputString = inputValue.toString();
-		}
-
-		typedValue = smartTypeManager.stringToValue(smartTypeDefinition, inputString);
-		return typedValue;
 	}
 
 	private void checkFieldValidators(final EasyFormsTemplateField field, final Object typedValue, final Entity formOwner, final UiMessageStack uiMessageStack) {

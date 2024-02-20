@@ -1,6 +1,8 @@
 package io.vertigo.easyforms.easyformsrunner.model;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
 
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
@@ -8,7 +10,7 @@ import io.vertigo.core.lang.json.CoreJsonAdapters;
 
 public class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 
-	private static final Gson GSON = CoreJsonAdapters.V_CORE_GSON;
+	private static final Gson GSON = CoreJsonAdapters.addCoreGsonConfig(new GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE), false).create();
 
 	@Override
 	public C toJava(final String formAsString, final Class<C> type) {
@@ -42,4 +44,5 @@ public class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 	public BasicType getBasicType() {
 		return BasicType.String;
 	}
+
 }

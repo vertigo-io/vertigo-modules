@@ -16,7 +16,6 @@ import com.google.gson.GsonBuilder;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
-import io.vertigo.datamodel.smarttype.definitions.FormatterException;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
 import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsListItem;
@@ -24,7 +23,6 @@ import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiCompon
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
-import io.vertigo.easyforms.impl.easyformsrunner.services.EasyFormsRunnerServices;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.ui.impl.springmvc.util.UiUtil;
@@ -128,15 +126,9 @@ public class EasyFormsUiUtil implements Serializable {
 		final var uiList = (AbstractUiListUnmodifiable<?>) UiRequestUtil.getCurrentViewContext().getUiList(() -> ctxKey);
 		final var dtDefinition = uiList.getDtDefinition();
 		final var idField = dtDefinition.getIdField().get();
-		final Object typedValue;
-		try {
-			final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(EasyFormsRunnerServices.class);
-			typedValue = easyFormsRunnerServices.fixTypedValue(idField.smartTypeDefinition(), value);
-		} catch (final FormatterException e) {
-			return value.toString();
-		}
 		final var displayField = dtDefinition.getDisplayField().get();
-		return uiList.getById(idField.name(), (Serializable) typedValue).getSingleInputValue(displayField.name());
+
+		return uiList.getById(idField.name(), (Serializable) value).getSingleInputValue(displayField.name());
 	}
 
 	public String getDynamicListForField(final EasyFormsTemplateField field) {
