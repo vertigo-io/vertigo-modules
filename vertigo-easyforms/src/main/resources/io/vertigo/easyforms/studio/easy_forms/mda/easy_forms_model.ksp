@@ -20,13 +20,13 @@ create DtDefinition DtEasyFormsFieldTypeUi {
 }
 
 create DtDefinition DtEasyFormsFieldUi {
-    field fieldCode 		{domain: DoEfCode 					label:"Field code" 				}
-    field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
+    field fieldCode 		{domain: DoEfCode 					label:"Field code" 				cardinality:"1"}
+    field fieldType 		{domain: DoEfLabel 					label:"Field type"				cardinality:"1"}
     field fieldTypeLabel 	{domain: DoEfLabel 					label:"Field type" 				}
-    field label 			{domain: DoEfLabel 					label:"Label" 					}
+    field label 			{domain: DoEfLabel 					label:"Label" 					cardinality:"1"}
     field tooltip 			{domain: DoEfLabel 					label:"Tooltip" 				}
-    field isDefault 		{domain: DoEfBooleen 				label:"System field" 			}
-    field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				}
+    field isDefault 		{domain: DoEfBooleen 				label:"System field" 			cardinality:"1"}
+    field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				cardinality:"1"}
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
     field fieldValidators 	{domain: DoEfFieldValidatorUiList	label:"Validators" 				}
     field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}

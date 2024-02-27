@@ -37,9 +37,11 @@ public final class ConstraintAgeMaximum implements Constraint<Integer, LocalDate
 	/** {@inheritDoc} */
 	@Override
 	public boolean checkConstraint(final LocalDate value) {
-		final var actualAge = Period.between(value, LocalDate.now()).getYears();
-		return value == null || actualAge <= age;
+		return value == null || actualAge(value) <= age;
+	}
 
+	private static int actualAge(final LocalDate birthdate) {
+		return Period.between(birthdate, LocalDate.now()).getYears();
 	}
 
 	/** {@inheritDoc} */

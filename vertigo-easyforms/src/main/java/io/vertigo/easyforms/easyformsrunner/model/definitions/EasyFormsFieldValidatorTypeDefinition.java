@@ -17,23 +17,23 @@ import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 
-@DefinitionPrefix(EasyFormsFieldValidatorType.PREFIX)
-public final class EasyFormsFieldValidatorType extends AbstractDefinition<EasyFormsFieldValidatorType> {
+@DefinitionPrefix(EasyFormsFieldValidatorTypeDefinition.PREFIX)
+public final class EasyFormsFieldValidatorTypeDefinition extends AbstractDefinition<EasyFormsFieldValidatorTypeDefinition> {
 
 	public static final String PREFIX = "EfFva";
 
 	private final int priority;
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
-	private final Set<EasyFormsFieldType> fieldTypes;
+	private final Set<EasyFormsFieldTypeDefinition> fieldTypes;
 	private final Function<EasyFormsData, Serializable[]> descriptionParameterResolver;
 	private final Constraint constraint;
 
-	private EasyFormsFieldValidatorType(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldType> fieldTypes,
+	private EasyFormsFieldValidatorTypeDefinition(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldTypeDefinition> fieldTypes,
 			final Constraint constraint) {
 		this(name, priority, paramTemplate, fieldTypes, p -> new Serializable[0], constraint);
 	}
 
-	private EasyFormsFieldValidatorType(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldType> fieldTypes,
+	private EasyFormsFieldValidatorTypeDefinition(final String name, final int priority, final EasyFormsTemplate paramTemplate, final Set<EasyFormsFieldTypeDefinition> fieldTypes,
 			final Function<EasyFormsData, Serializable[]> descriptionParameterResolver, final Constraint constraint) {
 		super(name);
 		//---
@@ -44,25 +44,25 @@ public final class EasyFormsFieldValidatorType extends AbstractDefinition<EasyFo
 		this.constraint = constraint;
 	}
 
-	public static EasyFormsFieldValidatorType of(final String name, final int priority, final Collection<EasyFormsFieldType> fieldTypes,
+	public static EasyFormsFieldValidatorTypeDefinition of(final String name, final int priority, final Collection<EasyFormsFieldTypeDefinition> fieldTypes,
 			final Constraint constraint) {
 		Assertion.check().isNotNull(fieldTypes);
-		return new EasyFormsFieldValidatorType(name, priority, null, Collections.unmodifiableSet(new HashSet<>(fieldTypes)), constraint);
+		return new EasyFormsFieldValidatorTypeDefinition(name, priority, null, Collections.unmodifiableSet(new HashSet<>(fieldTypes)), constraint);
 	}
 
-	public static EasyFormsFieldValidatorType of(final String name, final int priority, final Collection<EasyFormsFieldType> fieldTypes, final Constraint constraint,
+	public static EasyFormsFieldValidatorTypeDefinition of(final String name, final int priority, final Collection<EasyFormsFieldTypeDefinition> fieldTypes, final Constraint constraint,
 			final EasyFormsTemplate paramTemplate) {
 		Assertion.check().isNotNull(fieldTypes);
-		return new EasyFormsFieldValidatorType(name, priority, paramTemplate, Collections.unmodifiableSet(new HashSet<>(fieldTypes)), constraint);
+		return new EasyFormsFieldValidatorTypeDefinition(name, priority, paramTemplate, Collections.unmodifiableSet(new HashSet<>(fieldTypes)), constraint);
 	}
 
-	public static EasyFormsFieldValidatorType resolve(final String name) {
-		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldValidatorType.class);
+	public static EasyFormsFieldValidatorTypeDefinition resolve(final String name) {
+		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldValidatorTypeDefinition.class);
 	}
 
-	public static List<EasyFormsFieldValidatorType> getConstraintForType(final EasyFormsFieldType type) {
+	public static List<EasyFormsFieldValidatorTypeDefinition> getConstraintForType(final EasyFormsFieldTypeDefinition type) {
 		return Node.getNode().getDefinitionSpace()
-				.getAll(EasyFormsFieldValidatorType.class)
+				.getAll(EasyFormsFieldValidatorTypeDefinition.class)
 				.stream()
 				.filter(c -> c.getFieldTypes().contains(type))
 				.toList();
@@ -76,7 +76,7 @@ public final class EasyFormsFieldValidatorType extends AbstractDefinition<EasyFo
 		return paramTemplate;
 	}
 
-	public Set<EasyFormsFieldType> getFieldTypes() {
+	public Set<EasyFormsFieldTypeDefinition> getFieldTypes() {
 		return fieldTypes;
 	}
 

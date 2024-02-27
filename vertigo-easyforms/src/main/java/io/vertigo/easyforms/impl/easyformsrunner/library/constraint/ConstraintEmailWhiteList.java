@@ -38,6 +38,9 @@ public final class ConstraintEmailWhiteList implements Constraint<Integer, Strin
 	/** {@inheritDoc} */
 	@Override
 	public boolean checkConstraint(final String email) {
+		if (email == null) {
+			return true;
+		}
 		final int arobaIndex = email.indexOf('@');
 		final String emailDomain = email.substring(arobaIndex + 1).toLowerCase(Locale.ROOT);
 		return whitelist.contains(emailDomain) ||

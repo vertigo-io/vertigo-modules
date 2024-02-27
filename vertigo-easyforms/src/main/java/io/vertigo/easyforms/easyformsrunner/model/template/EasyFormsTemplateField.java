@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
 
 public class EasyFormsTemplateField implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -25,11 +25,11 @@ public class EasyFormsTemplateField implements Serializable {
 		label = code;
 	}
 
-	public EasyFormsTemplateField(final String code, final EasyFormsFieldType fieldType) {
+	public EasyFormsTemplateField(final String code, final EasyFormsFieldTypeDefinition fieldType) {
 		this(code, fieldType.getName());
 	}
 
-	public EasyFormsTemplateField(final String code, final EnumDefinition<EasyFormsFieldType, ?> fieldTypeEnun) {
+	public EasyFormsTemplateField(final String code, final EnumDefinition<EasyFormsFieldTypeDefinition, ?> fieldTypeEnun) {
 		this(code, fieldTypeEnun.getDefinitionName());
 	}
 

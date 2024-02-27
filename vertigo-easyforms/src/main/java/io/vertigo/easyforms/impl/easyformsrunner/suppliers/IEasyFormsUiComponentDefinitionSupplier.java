@@ -1,15 +1,16 @@
-package io.vertigo.easyforms.easyformsrunner.model.definitions;
+package io.vertigo.easyforms.impl.easyformsrunner.suppliers;
 
 import java.util.List;
 
 import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 
 @FunctionalInterface
-public interface IEasyFormsUiComponentSupplier {
+public interface IEasyFormsUiComponentDefinitionSupplier {
 
-	public static final IEasyFormsUiComponentSupplier NO_PARAM = List::of;
+	public static final IEasyFormsUiComponentDefinitionSupplier NO_PARAM = List::of;
 
 	public static final String LIST_SUPPLIER = "uiListSupplier";
 	public static final String CUSTOM_LIST_ARG_NAME = "customList";
@@ -19,11 +20,11 @@ public interface IEasyFormsUiComponentSupplier {
 	public static final String LIST_SUPPLIER_CTX_PREFIX = "ctx:";
 	public static final String LIST_SUPPLIER_REF_CTX_NAME_PREFIX = "efoMdl";
 
-	public default EasyFormsUiComponent get(final String definitionName) {
+	public default EasyFormsUiComponentDefinition get(final String definitionName) {
 		final var uiComponentParams = getUiComponentParams();
 
 		if (uiComponentParams == null || uiComponentParams.isEmpty()) {
-			return EasyFormsUiComponent.of(definitionName, null);
+			return EasyFormsUiComponentDefinition.of(definitionName, null);
 		}
 
 		for (final var uiComponentParam : uiComponentParams) {
@@ -32,7 +33,7 @@ public interface IEasyFormsUiComponentSupplier {
 					.withLabel(definitionName + '$' + uiComponentParam.getCode() + "Label");
 		}
 
-		return EasyFormsUiComponent.of(definitionName, new EasyFormsTemplate(uiComponentParams));
+		return EasyFormsUiComponentDefinition.of(definitionName, new EasyFormsTemplate(uiComponentParams));
 	}
 
 	public abstract List<EasyFormsTemplateField> getUiComponentParams();

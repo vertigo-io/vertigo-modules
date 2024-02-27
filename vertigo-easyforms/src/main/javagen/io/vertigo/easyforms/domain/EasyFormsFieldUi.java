@@ -27,9 +27,9 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Field code'.
-	 * @return String fieldCode
+	 * @return String fieldCode <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfCode", label = "Field code")
+	@Field(smartType = "STyEfCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Field code")
 	public String getFieldCode() {
 		return fieldCode;
 	}
@@ -37,7 +37,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Field code'.
-	 * @param fieldCode String
+	 * @param fieldCode String <b>Obligatoire</b>
 	 */
 	public void setFieldCode(final String fieldCode) {
 		this.fieldCode = fieldCode;
@@ -46,9 +46,9 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Field type'.
-	 * @return String fieldType
+	 * @return String fieldType <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfLabel", label = "Field type")
+	@Field(smartType = "STyEfLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Field type")
 	public String getFieldType() {
 		return fieldType;
 	}
@@ -56,7 +56,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Field type'.
-	 * @param fieldType String
+	 * @param fieldType String <b>Obligatoire</b>
 	 */
 	public void setFieldType(final String fieldType) {
 		this.fieldType = fieldType;
@@ -84,9 +84,9 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Label'.
-	 * @return String label
+	 * @return String label <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfLabel", label = "Label")
+	@Field(smartType = "STyEfLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Label")
 	public String getLabel() {
 		return label;
 	}
@@ -94,7 +94,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Label'.
-	 * @param label String
+	 * @param label String <b>Obligatoire</b>
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
@@ -122,9 +122,9 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'System field'.
-	 * @return Boolean isDefault
+	 * @return Boolean isDefault <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfBooleen", label = "System field")
+	@Field(smartType = "STyEfBooleen", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "System field")
 	public Boolean getIsDefault() {
 		return isDefault;
 	}
@@ -132,7 +132,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'System field'.
-	 * @param isDefault Boolean
+	 * @param isDefault Boolean <b>Obligatoire</b>
 	 */
 	public void setIsDefault(final Boolean isDefault) {
 		this.isDefault = isDefault;
@@ -141,9 +141,9 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Mandatory'.
-	 * @return Boolean isMandatory
+	 * @return Boolean isMandatory <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfBooleen", label = "Mandatory")
+	@Field(smartType = "STyEfBooleen", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Mandatory")
 	public Boolean getIsMandatory() {
 		return isMandatory;
 	}
@@ -151,7 +151,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Mandatory'.
-	 * @param isMandatory Boolean
+	 * @param isMandatory Boolean <b>Obligatoire</b>
 	 */
 	public void setIsMandatory(final Boolean isMandatory) {
 		this.isMandatory = isMandatory;

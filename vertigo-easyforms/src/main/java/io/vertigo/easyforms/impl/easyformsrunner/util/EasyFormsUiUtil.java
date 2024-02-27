@@ -17,12 +17,12 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsListItem;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsListItem;
+import io.vertigo.easyforms.impl.easyformsrunner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.ui.impl.springmvc.util.UiUtil;
@@ -37,8 +37,8 @@ public class EasyFormsUiUtil implements Serializable {
 			.serializeNulls()
 			.create();
 
-	public EasyFormsFieldType getFieldTypeByName(final String fieldTypeName) {
-		return Node.getNode().getDefinitionSpace().resolve(fieldTypeName, EasyFormsFieldType.class);
+	public EasyFormsFieldTypeDefinition getFieldTypeByName(final String fieldTypeName) {
+		return Node.getNode().getDefinitionSpace().resolve(fieldTypeName, EasyFormsFieldTypeDefinition.class);
 	}
 
 	/**
@@ -72,9 +72,9 @@ public class EasyFormsUiUtil implements Serializable {
 		for (final EasyFormsTemplateField field : easyFormsTemplate.getFields()) { // order is important
 			final var fieldCode = field.getCode();
 
-			final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldType.class);
+			final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 			final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
-			final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentSupplier.LIST_SUPPLIER);
+			final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
 
 			final Object rawValue = outOfEasyFormData.get(fieldCode);
 			if (listSupplier == null) {
@@ -108,7 +108,7 @@ public class EasyFormsUiUtil implements Serializable {
 			return "";
 		}
 
-		final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentSupplier.LIST_SUPPLIER);
+		final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
 		final var ctxNameOpt = resolveCtxName(listSupplier);
 		if (ctxNameOpt.isPresent()) {
 			return getValueFromContext(ctxNameOpt.get(), rawValue);
@@ -136,11 +136,11 @@ public class EasyFormsUiUtil implements Serializable {
 	}
 
 	public String getDynamicListForField(final EasyFormsTemplateField field, final String searchValue) {
-		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldType.class);
+		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 
 		final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
 
-		final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentSupplier.LIST_SUPPLIER);
+		final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
 		final var ctxNameOpt = resolveCtxName(listSupplier);
 
 		if (ctxNameOpt.isPresent()) {
@@ -151,11 +151,11 @@ public class EasyFormsUiUtil implements Serializable {
 	}
 
 	private Optional<String> resolveCtxName(final String listSupplier) {
-		if (listSupplier.startsWith(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_PREFIX)) {
-			final var entityName = listSupplier.substring(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_PREFIX.length());
-			return Optional.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + entityName);
-		} else if (listSupplier.startsWith(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX)) {
-			return Optional.of(listSupplier.substring(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX.length()));
+		if (listSupplier.startsWith(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_PREFIX)) {
+			final var entityName = listSupplier.substring(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_PREFIX.length());
+			return Optional.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + entityName);
+		} else if (listSupplier.startsWith(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_CTX_PREFIX)) {
+			return Optional.of(listSupplier.substring(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_CTX_PREFIX.length()));
 		}
 		return Optional.empty();
 	}

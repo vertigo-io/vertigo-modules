@@ -16,7 +16,7 @@
 						    <vu:content></vu:content>
 						    
 							<div th:case="'EfUicInternalMap'">
-								<vu:label-edit object="${object}" field="|form_${field}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="false">
+								<vu:label-edit object="${object}" field="|form_${templateField.code}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="false">
 									<vu:slot name="after_label_slot">
 										<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 										<span th:if="${templateField.isMandatory}" class="v-block__required"></span>
@@ -26,7 +26,7 @@
 								</vu:label-edit>
 							</div>
 							<div th:case="'EfUicRadio'">
-								<vu:label-edit object="${object}" field="|form_${field}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}">
+								<vu:label-edit object="${object}" field="|form_${templateField.code}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}">
 									<q-option-group
 								    	th:v-model="|slotProps.formData['${templateField.code}']|"
 								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
@@ -36,8 +36,12 @@
 								</vu:label-edit>
 							</div>
 							<div th:case="'EfUicCheckbox'">
-								<vu:label-edit object="${object}" field="|form_${field}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}"
+								<vu:label-edit object="${object}" field="|form_${templateField.code}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="false"
 											   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateField.code}']) { slotProps.formData['${templateField.code}'] = []}}|">
+									<vu:slot name="after_label_slot">
+										<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
+										<span th:if="${templateField.isMandatory}" class="v-block__required"></span>
+									</vu:slot>
 									<q-option-group
 								    	th:v-model="|slotProps.formData['${templateField.code}']|"
 								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"

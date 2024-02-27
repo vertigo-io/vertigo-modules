@@ -10,8 +10,8 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 
-@DefinitionPrefix(EasyFormsFieldType.PREFIX)
-public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
+@DefinitionPrefix(EasyFormsFieldTypeDefinition.PREFIX)
+public class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyFormsFieldTypeDefinition> {
 
 	public static final String PREFIX = "EfFty";
 
@@ -20,9 +20,10 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 	private final Object defaultValue;
 	private final EasyFormsData uiParameters; // configure uiComponent
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
+	private final boolean isList;
 
-	private EasyFormsFieldType(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
-			final EasyFormsTemplate paramTemplate) {
+	private EasyFormsFieldTypeDefinition(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
+			final EasyFormsTemplate paramTemplate, final boolean isList) {
 		super(name);
 		//---
 		this.smartTypeName = smartTypeName;
@@ -30,15 +31,16 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 		this.defaultValue = defaultValue;
 		this.uiParameters = new EasyFormsData(uiParameters);
 		this.paramTemplate = paramTemplate;
+		this.isList = isList;
 	}
 
-	public static EasyFormsFieldType of(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
-			final EasyFormsTemplate paramTemplate) {
-		return new EasyFormsFieldType(name, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate);
+	public static EasyFormsFieldTypeDefinition of(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
+			final EasyFormsTemplate paramTemplate, final boolean isList) {
+		return new EasyFormsFieldTypeDefinition(name, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate, isList);
 	}
 
-	public static EasyFormsFieldType resolve(final String name) {
-		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldType.class);
+	public static EasyFormsFieldTypeDefinition resolve(final String name) {
+		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldTypeDefinition.class);
 	}
 
 	public String getSmartTypeName() {
@@ -63,6 +65,10 @@ public class EasyFormsFieldType extends AbstractDefinition<EasyFormsFieldType> {
 
 	public String getLabel() {
 		return LocaleMessageText.of(() -> getName() + "Label").getDisplay();
+	}
+
+	public boolean isList() {
+		return isList;
 	}
 
 }

@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.easyformsrunner.model.definitions;
+package io.vertigo.easyforms.easyformsrunner.model.ui;
 
 import java.io.Serializable;
 import java.util.Collection;

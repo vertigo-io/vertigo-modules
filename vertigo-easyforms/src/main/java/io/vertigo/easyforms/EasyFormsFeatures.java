@@ -21,13 +21,13 @@ import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
 
-import io.vertigo.core.impl.analytics.trace.TraceAspect;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.easyforms.domain.DtDefinitions;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorTypeDefinitionProvider;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider;
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
 @Configuration
@@ -46,13 +46,14 @@ public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures
 	protected void buildFeatures() {
 		super.buildFeatures();
 		getModuleConfigBuilder()
-				.addAspect(TraceAspect.class)
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 						.addDefinitionResource("smarttypes", EasyFormsSmartTypes.class.getName())
 						.addDefinitionResource("dtobjects", DtDefinitions.class.getName())
 						.build())
+				// add
 				.addDefinitionProvider(FieldTypeDefinitionProvider.class)
-				.addDefinitionProvider(FieldValidatorTypeDefinitionProvider.class);
+				.addDefinitionProvider(FieldValidatorTypeDefinitionProvider.class)
+				.addDefinitionProvider(UiComponentDefinitionProvider.class);
 	}
 
 	@Override

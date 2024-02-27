@@ -36,16 +36,16 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorTypeUiFields;
+import io.vertigo.easyforms.easyformsdesigner.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList;
-import io.vertigo.easyforms.impl.easyformsdesigner.services.EasyFormsDesignerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
@@ -69,7 +69,7 @@ public class EasyFormsDesignerController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
 	@Inject
-	private EasyFormsDesignerServices easyFormsDesignerServices;
+	private IEasyFormsDesignerServices easyFormsDesignerServices;
 
 	@Inject
 	private EasyFormsRunnerServices easyFormsRunnerServices;
@@ -142,11 +142,11 @@ public class EasyFormsDesignerController extends AbstractVSpringMvcController {
 		editField.setFieldType(fieldType);
 
 		// add default values for field type parameters
-		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(fieldType, EasyFormsFieldType.class);
+		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(fieldType, EasyFormsFieldTypeDefinition.class);
 		if (fieldTypeDefinition.getParamTemplate() != null) {
 			final var fieldTypeParameters = new EasyFormsData();
 			for (final var paramField : fieldTypeDefinition.getParamTemplate().getFields()) {
-				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldType.class);
+				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 				if (paramFieldTypeDefinition.getDefaultValue() != null) {
 					fieldTypeParameters.put(paramField.getCode(), paramFieldTypeDefinition.getDefaultValue());
 				}
@@ -180,13 +180,13 @@ public class EasyFormsDesignerController extends AbstractVSpringMvcController {
 
 		easyFormsDesignerServices.checkUpdateField(fields, editIndex, editField, uiMessageStack);
 
-		editField.setFieldTypeLabel(EasyFormsFieldType.resolve(editField.getFieldType()).getLabel());
+		editField.setFieldTypeLabel(EasyFormsFieldTypeDefinition.resolve(editField.getFieldType()).getLabel());
 
 		// Convert validator selection into real validator UI
 		// This is necessary beacause actual UI is a simple list of validators with no params
 		final var easyFormsTemplateFieldValidatorUiList = new EasyFormsTemplateFieldValidatorUiList(editField.getFieldValidatorSelection().size());
 		for (final var validatorName : editField.getFieldValidatorSelection()) {
-			final var validatorType = Node.getNode().getDefinitionSpace().resolve(validatorName, EasyFormsFieldValidatorType.class);
+			final var validatorType = Node.getNode().getDefinitionSpace().resolve(validatorName, EasyFormsFieldValidatorTypeDefinition.class);
 			final var validator = new EasyFormsTemplateFieldValidatorUi();
 			validator.setValidatorTypeName(validatorName);
 			validator.setLabel(validatorType.getLabel());

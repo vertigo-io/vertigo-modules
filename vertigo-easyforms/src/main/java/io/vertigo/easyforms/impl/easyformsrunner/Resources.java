@@ -22,8 +22,10 @@ import io.vertigo.core.locale.LocaleMessageKey;
 /**
  * Resources dictionary.
  *
- * @author npiedeloup
+ * @author skerdudou
  */
 public enum Resources implements LocaleMessageKey {
 
+	EfMinListSize,
+	EfMaxListSize,
 }

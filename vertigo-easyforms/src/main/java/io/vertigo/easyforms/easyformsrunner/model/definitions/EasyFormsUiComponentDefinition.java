@@ -5,8 +5,8 @@ import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 
-@DefinitionPrefix(EasyFormsUiComponent.PREFIX)
-public class EasyFormsUiComponent extends AbstractDefinition<EasyFormsUiComponent> {
+@DefinitionPrefix(EasyFormsUiComponentDefinition.PREFIX)
+public class EasyFormsUiComponentDefinition extends AbstractDefinition<EasyFormsUiComponentDefinition> {
 
 	public static final String PREFIX = "EfUic";
 
@@ -16,18 +16,18 @@ public class EasyFormsUiComponent extends AbstractDefinition<EasyFormsUiComponen
 	 */
 	private final EasyFormsTemplate parameters;
 
-	private EasyFormsUiComponent(final String name, final EasyFormsTemplate parameters) {
+	private EasyFormsUiComponentDefinition(final String name, final EasyFormsTemplate parameters) {
 		super(name);
 		//---
 		this.parameters = parameters;
 	}
 
-	public static EasyFormsUiComponent of(final String name, final EasyFormsTemplate parameters) {
-		return new EasyFormsUiComponent(name, parameters);
+	public static EasyFormsUiComponentDefinition of(final String name, final EasyFormsTemplate parameters) {
+		return new EasyFormsUiComponentDefinition(name, parameters);
 	}
 
-	public static EasyFormsUiComponent resolve(final String name) {
-		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsUiComponent.class);
+	public static EasyFormsUiComponentDefinition resolve(final String name) {
+		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsUiComponentDefinition.class);
 	}
 
 	public EasyFormsTemplate getParameters() {

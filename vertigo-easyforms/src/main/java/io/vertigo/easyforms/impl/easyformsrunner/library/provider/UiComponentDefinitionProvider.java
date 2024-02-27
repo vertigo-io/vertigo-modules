@@ -5,14 +5,14 @@ import java.util.List;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponent;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
+import io.vertigo.easyforms.impl.easyformsrunner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 
-public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponent> {
+public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponentDefinition> {
 
-	public enum UiComponentEnum implements EnumDefinition<EasyFormsUiComponent, UiComponentEnum> {
+	public enum UiComponentEnum implements EnumDefinition<EasyFormsUiComponentDefinition, UiComponentEnum> {
 
 		TEXT_FIELD(new TextFieldUiComponent()), //
 		TEXT_AREA, //
@@ -34,25 +34,25 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		// ---
 
 		private final String definitionName;
-		private final IEasyFormsUiComponentSupplier componentSupplier;
+		private final IEasyFormsUiComponentDefinitionSupplier componentSupplier;
 
 		UiComponentEnum() {
-			this(IEasyFormsUiComponentSupplier.NO_PARAM);
+			this(IEasyFormsUiComponentDefinitionSupplier.NO_PARAM);
 		}
 
-		UiComponentEnum(final IEasyFormsUiComponentSupplier componentSupplier) {
-			definitionName = EasyFormsUiComponent.PREFIX + StringUtil.constToUpperCamelCase(name());
+		UiComponentEnum(final IEasyFormsUiComponentDefinitionSupplier componentSupplier) {
+			definitionName = EasyFormsUiComponentDefinition.PREFIX + StringUtil.constToUpperCamelCase(name());
 			this.componentSupplier = componentSupplier;
 		}
 
 		@Override
-		public EasyFormsUiComponent buildDefinition(final DefinitionSpace definitionSpace) {
+		public EasyFormsUiComponentDefinition buildDefinition(final DefinitionSpace definitionSpace) {
 			return componentSupplier.get(definitionName);
 		}
 
 		@Override
-		public EasyFormsUiComponent get() {
-			return EasyFormsUiComponent.resolve(definitionName);
+		public EasyFormsUiComponentDefinition get() {
+			return EasyFormsUiComponentDefinition.resolve(definitionName);
 		}
 
 		@Override
@@ -66,7 +66,7 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		return UiComponentEnum.class;
 	}
 
-	public static class TextFieldUiComponent implements IEasyFormsUiComponentSupplier {
+	public static class TextFieldUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
 
 		public static final String AUTOCOMPLETE = "textFieldAutocomplete";
 
@@ -78,27 +78,27 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 
 	}
 
-	public static class RadioUiComponent implements IEasyFormsUiComponentSupplier {
+	public static class RadioUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
 
 		public static final String LAYOUT = "radioLayout";
 
 		@Override
 		public List<EasyFormsTemplateField> getUiComponentParams() {
 			return List.of(
-					IEasyFormsUiComponentSupplier.LIST_SUPPLIER_FIELD_PARAM,
+					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
 					new EasyFormsTemplateField(LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT));
 		}
 
 	}
 
-	public static class SelectUiComponent implements IEasyFormsUiComponentSupplier {
+	public static class SelectUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
 
 		public static final String SEARCHABLE = "selectSearchable";
 
 		@Override
 		public List<EasyFormsTemplateField> getUiComponentParams() {
 			return List.of(
-					IEasyFormsUiComponentSupplier.LIST_SUPPLIER_FIELD_PARAM,
+					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
 					new EasyFormsTemplateField(SEARCHABLE, FieldTypeEnum.YES_NO));
 		}
 

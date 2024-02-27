@@ -7,7 +7,7 @@ import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorType;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintAgeMaximum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintAgeMinimum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintEmailBlackList;
@@ -15,9 +15,9 @@ import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintPh
 import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.ConstraintPhone.ConstraintPhoneEnum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 
-public class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidatorType> {
+public class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidatorTypeDefinition> {
 
-	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidatorType, FieldValidatorEnum> {
+	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidatorTypeDefinition, FieldValidatorEnum> {
 
 		EMAIL_NOT_IN_BLACKLIST(20, new ConstraintEmailBlackList(ConstraintEmailBlackList.DISPOSABLE, Optional.empty(), Optional.empty()), FieldTypeEnum.EMAIL),
 		GTE_13_ANS(10, new ConstraintAgeMinimum("13", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
@@ -36,21 +36,21 @@ public class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitio
 		private final FieldTypeEnum[] fieldTypes;
 
 		private FieldValidatorEnum(final int priority, final Constraint constraint, final FieldTypeEnum... fieldTypes) {
-			definitionName = EasyFormsFieldValidatorType.PREFIX + StringUtil.constToUpperCamelCase(name());
+			definitionName = EasyFormsFieldValidatorTypeDefinition.PREFIX + StringUtil.constToUpperCamelCase(name());
 			this.priority = priority;
 			this.constraint = constraint;
 			this.fieldTypes = fieldTypes;
 		}
 
 		@Override
-		public EasyFormsFieldValidatorType buildDefinition(final DefinitionSpace definitionSpace) {
+		public EasyFormsFieldValidatorTypeDefinition buildDefinition(final DefinitionSpace definitionSpace) {
 			final var types = Arrays.stream(fieldTypes).map(FieldTypeEnum::get).toList();
-			return EasyFormsFieldValidatorType.of(definitionName, priority, types, constraint);
+			return EasyFormsFieldValidatorTypeDefinition.of(definitionName, priority, types, constraint);
 		}
 
 		@Override
-		public EasyFormsFieldValidatorType get() {
-			return EasyFormsFieldValidatorType.resolve(definitionName);
+		public EasyFormsFieldValidatorTypeDefinition get() {
+			return EasyFormsFieldValidatorTypeDefinition.resolve(definitionName);
 		}
 
 		@Override

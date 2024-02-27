@@ -1,16 +1,18 @@
-package io.vertigo.easyforms.easyformsrunner.model.definitions;
+package io.vertigo.easyforms.impl.easyformsrunner.suppliers;
 
 import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 
-public interface IEasyFormsFieldTypeSupplier {
+public interface IEasyFormsFieldTypeDefinitionSupplier {
 
-	public default EasyFormsFieldType get(final String definitionName) {
+	public default EasyFormsFieldTypeDefinition get(final String definitionName) {
 		final var uiComponentParams = getExposedComponentParams();
 
 		final EasyFormsTemplate template;
@@ -25,12 +27,12 @@ public interface IEasyFormsFieldTypeSupplier {
 			template = new EasyFormsTemplate(uiComponentParams);
 		}
 
-		return EasyFormsFieldType.of(definitionName, getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template);
+		return EasyFormsFieldTypeDefinition.of(definitionName, getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList());
 	}
 
 	public abstract EasyFormsSmartTypes getSmartType();
 
-	public abstract EnumDefinition<EasyFormsUiComponent, ?> getUiComponent();
+	public abstract EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent();
 
 	public default Map<String, Object> getUiParams() {
 		return Map.of();
@@ -42,6 +44,10 @@ public interface IEasyFormsFieldTypeSupplier {
 
 	public default Object getDefaultValue() {
 		return null;
+	}
+
+	public default boolean isList() {
+		return false;
 	}
 
 }

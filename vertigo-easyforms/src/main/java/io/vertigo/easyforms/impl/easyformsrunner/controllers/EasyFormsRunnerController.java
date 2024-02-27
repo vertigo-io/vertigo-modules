@@ -14,11 +14,11 @@ import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.easyforms.domain.EasyForm;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.impl.easyformsrunner.services.EasyFormsRunnerServices;
+import io.vertigo.easyforms.impl.easyformsrunner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.impl.easyformsrunner.util.EasyFormsUiUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -61,17 +61,17 @@ public class EasyFormsRunnerController {
 		final Set<String> listSuppliers = easyForm.getTemplate().getFields().stream()
 				.map(easyFormsUiUtil::getParametersForField)
 				.flatMap(p -> p.entrySet().stream()) // stream all parameters for all fields
-				.filter(p -> IEasyFormsUiComponentSupplier.LIST_SUPPLIER.equals(p.getKey())) // get custom list configuration
+				.filter(p -> IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER.equals(p.getKey())) // get custom list configuration
 				.map(p -> p.getValue().toString())
 				.collect(Collectors.toUnmodifiableSet()); // get distinct values
 
 		// Handle master data lists (add to context and push to front context)
 		listSuppliers.stream()
-				.filter(p -> p.startsWith(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_PREFIX))
-				.map(p -> p.substring(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_PREFIX.length())) // get Mda class name
+				.filter(p -> p.startsWith(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_PREFIX))
+				.map(p -> p.substring(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_PREFIX.length())) // get Mda class name
 				.forEach(mdlClass -> {
 					// add to back context
-					final var ctxKey = ViewContextKey.<Entity>of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + mdlClass);
+					final var ctxKey = ViewContextKey.<Entity>of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + mdlClass);
 					viewContext.publishMdl(ctxKey, DataModelUtil.findDataDefinition(mdlClass), null);
 					if (pushToFront) {
 						// add to front context
@@ -82,8 +82,8 @@ public class EasyFormsRunnerController {
 		if (pushToFront) {
 			// Force context references to be pushed to front context
 			listSuppliers.stream()
-					.filter(p -> p.startsWith(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX))
-					.map(p -> p.substring(IEasyFormsUiComponentSupplier.LIST_SUPPLIER_CTX_PREFIX.length())) // get ctx name
+					.filter(p -> p.startsWith(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_CTX_PREFIX))
+					.map(p -> p.substring(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_CTX_PREFIX.length())) // get ctx name
 					.forEach(ctxKey -> {
 						Assertion.check()
 								.isTrue(viewContext.containsKey(ctxKey), "Context key '{0}' not found.", ctxKey)
@@ -105,7 +105,7 @@ public class EasyFormsRunnerController {
 		final var fieldTypeParameters = new EasyFormsData();
 
 		for (final var paramField : easyFormsTemplate.getFields()) {
-			final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldType.class);
+			final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 			if (paramFieldTypeDefinition.getDefaultValue() != null) {
 				fieldTypeParameters.put(paramField.getCode(), paramFieldTypeDefinition.getDefaultValue());
 			}

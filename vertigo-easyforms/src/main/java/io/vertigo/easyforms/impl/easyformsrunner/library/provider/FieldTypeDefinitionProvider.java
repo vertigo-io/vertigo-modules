@@ -7,21 +7,21 @@ import java.util.Map;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldType;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsListItem;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponent;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsFieldTypeSupplier;
-import io.vertigo.easyforms.easyformsrunner.model.definitions.IEasyFormsUiComponentSupplier;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
+import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsListItem;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.RadioUiComponent;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.TextFieldUiComponent;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.UiComponentEnum;
+import io.vertigo.easyforms.impl.easyformsrunner.suppliers.IEasyFormsFieldTypeDefinitionSupplier;
+import io.vertigo.easyforms.impl.easyformsrunner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 
-public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldType> {
+public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldTypeDefinition> {
 
-	public enum FieldTypeEnum implements EnumDefinition<EasyFormsFieldType, FieldValidatorEnum> {
+	public enum FieldTypeEnum implements EnumDefinition<EasyFormsFieldTypeDefinition, FieldValidatorEnum> {
 		LABEL(EasyFormsSmartTypes.EfLabel, UiComponentEnum.TEXT_FIELD),
 
 		LAST_NAME(new AutocompleteFieldType(EasyFormsSmartTypes.EfNom, "family-name")),
@@ -58,25 +58,25 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		// ---
 
 		private final String definitionName;
-		private final IEasyFormsFieldTypeSupplier typeSupplier;
+		private final IEasyFormsFieldTypeDefinitionSupplier typeSupplier;
 
-		private FieldTypeEnum(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponent, ?> uiComponent) {
+		private FieldTypeEnum(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
 			this(new SimpleFieldType(smartType, uiComponent));
 		}
 
-		private FieldTypeEnum(final IEasyFormsFieldTypeSupplier typeSupplier) {
-			definitionName = EasyFormsFieldType.PREFIX + StringUtil.constToUpperCamelCase(name());
+		private FieldTypeEnum(final IEasyFormsFieldTypeDefinitionSupplier typeSupplier) {
+			definitionName = EasyFormsFieldTypeDefinition.PREFIX + StringUtil.constToUpperCamelCase(name());
 			this.typeSupplier = typeSupplier;
 		}
 
 		@Override
-		public EasyFormsFieldType buildDefinition(final DefinitionSpace definitionSpace) {
+		public EasyFormsFieldTypeDefinition buildDefinition(final DefinitionSpace definitionSpace) {
 			return typeSupplier.get(definitionName);
 		}
 
 		@Override
-		public EasyFormsFieldType get() {
-			return EasyFormsFieldType.resolve(definitionName);
+		public EasyFormsFieldTypeDefinition get() {
+			return EasyFormsFieldTypeDefinition.resolve(definitionName);
 		}
 
 		@Override
@@ -93,11 +93,11 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 	// ---
 
-	public static class SimpleFieldType implements IEasyFormsFieldTypeSupplier {
+	public static class SimpleFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		private final EasyFormsSmartTypes smartType;
-		private final EnumDefinition<EasyFormsUiComponent, ?> uiComponent;
+		private final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent;
 
-		public SimpleFieldType(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponent, ?> uiComponent) {
+		public SimpleFieldType(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
 			this.smartType = smartType;
 			this.uiComponent = uiComponent;
 		}
@@ -108,12 +108,12 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+		public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
 			return uiComponent;
 		}
 	}
 
-	public static class AutocompleteFieldType implements IEasyFormsFieldTypeSupplier {
+	public static class AutocompleteFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		private final EasyFormsSmartTypes smartType;
 		private final String uiAutocompleteInputAttribute;
 
@@ -128,7 +128,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+		public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
 			return UiComponentEnum.TEXT_FIELD;
 		}
 
@@ -138,44 +138,44 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 	}
 
-	public static class YesNoFieldType implements IEasyFormsFieldTypeSupplier {
+	public static class YesNoFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		@Override
 		public EasyFormsSmartTypes getSmartType() {
 			return EasyFormsSmartTypes.EfBooleen;
 		}
 
 		@Override
-		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+		public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
 			return UiComponentEnum.RADIO;
 		}
 
 		@Override
 		public Map<String, Object> getUiParams() {
 			return Map.of(
-					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
-					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
+					IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
 							new EasyFormsListItem("true", "#{EfTrue}"),
 							new EasyFormsListItem("false", "#{EfFalse}")));
 		}
 	}
 
-	public static class RadioLayoutFieldType implements IEasyFormsFieldTypeSupplier {
+	public static class RadioLayoutFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		@Override
 		public EasyFormsSmartTypes getSmartType() {
 			return EasyFormsSmartTypes.EfLabel;
 		}
 
 		@Override
-		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+		public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
 			return UiComponentEnum.RADIO;
 		}
 
 		@Override
 		public Map<String, Object> getUiParams() {
 			return Map.of(
-					IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
-					IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
+					IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
 							new EasyFormsListItem("", "#{EfFtyCustomListRadio$radioLayoutVerticalLabel}"),
 							new EasyFormsListItem("horizontal", "#{EfFtyCustomListRadio$radioLayoutHorizontalLabel}")));
@@ -188,11 +188,11 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 	}
 
-	public static class CustomListFieldType implements IEasyFormsFieldTypeSupplier {
+	public static class CustomListFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 
-		private final EnumDefinition<EasyFormsUiComponent, ?> uiComponent;
+		private final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent;
 
-		public CustomListFieldType(final EnumDefinition<EasyFormsUiComponent, ?> uiComponent) {
+		public CustomListFieldType(final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
 			this.uiComponent = uiComponent;
 		}
 
@@ -202,17 +202,17 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		}
 
 		@Override
-		public EnumDefinition<EasyFormsUiComponent, ?> getUiComponent() {
+		public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
 			return uiComponent;
 		}
 
 		@Override
 		public Map<String, Object> getUiParams() {
 			if (uiComponent == UiComponentEnum.RADIO) {
-				return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME,
+				return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 						RadioUiComponent.LAYOUT, "horizontal");
 			}
-			return Map.of(IEasyFormsUiComponentSupplier.LIST_SUPPLIER, IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME);
+			return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME);
 		}
 
 		@Override
@@ -221,9 +221,14 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 				return List.of(
 						new EasyFormsTemplateField(RadioUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT)
 								.withParameters(Map.of(RadioUiComponent.LAYOUT, "horizontal")),
-						new EasyFormsTemplateField(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+						new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 			}
-			return List.of(new EasyFormsTemplateField(IEasyFormsUiComponentSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+			return List.of(new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+		}
+
+		@Override
+		public boolean isList() {
+			return uiComponent == UiComponentEnum.CHECKBOX;
 		}
 
 	}
