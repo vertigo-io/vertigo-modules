@@ -15,12 +15,12 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
-import io.vertigo.easyforms.easyformsdesigner.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
+import io.vertigo.easyforms.easyformsdesigner.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate;
@@ -40,9 +40,11 @@ public class EasyFormsDesignerServices implements Component, IEasyFormsDesignerS
 	public DtList<EasyFormsFieldTypeUi> getFieldTypeUiList() {
 		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldTypeDefinition.class)
 				.stream()
+				.filter(d -> d.getCategory() != null)
 				.map(fieldType -> {
 					final var fieldTypeUi = new EasyFormsFieldTypeUi();
 					fieldTypeUi.setName(fieldType.id().fullName());
+					fieldTypeUi.setCategory(fieldType.getCategory());
 					fieldTypeUi.setUiComponentName(fieldType.getUiComponentName());
 					fieldTypeUi.setLabel(fieldType.getLabel());
 					fieldTypeUi.setUiParameters(fieldType.getUiParameters());

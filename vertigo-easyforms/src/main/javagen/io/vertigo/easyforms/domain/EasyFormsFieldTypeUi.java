@@ -14,6 +14,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	private static final long serialVersionUID = 1L;
 
 	private String name;
+	private String category;
 	private String label;
 	private String uiComponentName;
 	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters;
@@ -37,6 +38,25 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Field type category'.
+	 * @return String category
+	 */
+	@Field(smartType = "STyEfLabel", label = "Field type category")
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Field type category'.
+	 * @param category String
+	 */
+	public void setCategory(final String category) {
+		this.category = category;
 	}
 	
 	/**

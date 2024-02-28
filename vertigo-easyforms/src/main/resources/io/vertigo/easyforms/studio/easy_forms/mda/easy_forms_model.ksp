@@ -8,6 +8,7 @@ create DtDefinition DtEasyForm {
 
 create DtDefinition DtEasyFormsFieldTypeUi {
     field name 				{domain: DoEfLabel 				label:"Field type" }
+    field category 			{domain: DoEfLabel 				label:"Field type category" }
     field label 			{domain: DoEfLabel 				label:"Label" }
     field uiComponentName 	{domain: DoEfLabel 				label:"UI component name" }
     field uiParameters 		{domain: DoEfFormData			label:"UI parameters" }

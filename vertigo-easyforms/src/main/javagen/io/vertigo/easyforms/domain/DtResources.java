@@ -28,6 +28,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldEasyFormsFieldTypeUi$name,
 	/**
+	 * Field type category.
+	 */
+	fldEasyFormsFieldTypeUi$category,
+	/**
 	 * Label.
 	 */
 	fldEasyFormsFieldTypeUi$label,

@@ -58,6 +58,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum EasyFormsFieldTypeUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldTypeUi> {
 		/** Propriété 'Field type'. */
 		name,
+		/** Propriété 'Field type category'. */
+		category,
 		/** Propriété 'Label'. */
 		label,
 		/** Propriété 'UI component name'. */

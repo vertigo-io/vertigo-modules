@@ -12,6 +12,8 @@ import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 
 public interface IEasyFormsFieldTypeDefinitionSupplier {
 
+	public static final String DEFAULT_CATEGORY = "default";
+
 	public default EasyFormsFieldTypeDefinition get(final String definitionName) {
 		final var uiComponentParams = getExposedComponentParams();
 
@@ -27,7 +29,11 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 			template = new EasyFormsTemplate(uiComponentParams);
 		}
 
-		return EasyFormsFieldTypeDefinition.of(definitionName, getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList());
+		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList());
+	}
+
+	public default String getCategory() {
+		return DEFAULT_CATEGORY;
 	}
 
 	public abstract EasyFormsSmartTypes getSmartType();

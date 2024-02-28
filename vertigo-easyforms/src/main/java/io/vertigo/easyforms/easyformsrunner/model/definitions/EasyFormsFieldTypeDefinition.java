@@ -15,6 +15,7 @@ public class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyFormsFi
 
 	public static final String PREFIX = "EfFty";
 
+	private final String category;
 	private final String smartTypeName;
 	private final String uiComponentName;
 	private final Object defaultValue;
@@ -22,10 +23,12 @@ public class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyFormsFi
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
 	private final boolean isList;
 
-	private EasyFormsFieldTypeDefinition(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
+	private EasyFormsFieldTypeDefinition(final String name, final String category, final String smartTypeName, final String uiComponentName, final Object defaultValue,
+			final Map<String, Object> uiParameters,
 			final EasyFormsTemplate paramTemplate, final boolean isList) {
 		super(name);
 		//---
+		this.category = category;
 		this.smartTypeName = smartTypeName;
 		this.uiComponentName = uiComponentName;
 		this.defaultValue = defaultValue;
@@ -34,13 +37,17 @@ public class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyFormsFi
 		this.isList = isList;
 	}
 
-	public static EasyFormsFieldTypeDefinition of(final String name, final String smartTypeName, final String uiComponentName, final Object defaultValue, final Map<String, Object> uiParameters,
-			final EasyFormsTemplate paramTemplate, final boolean isList) {
-		return new EasyFormsFieldTypeDefinition(name, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate, isList);
+	public static EasyFormsFieldTypeDefinition of(final String name, final String category, final String smartTypeName, final String uiComponentName, final Object defaultValue,
+			final Map<String, Object> uiParameters, final EasyFormsTemplate paramTemplate, final boolean isList) {
+		return new EasyFormsFieldTypeDefinition(name, category, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate, isList);
 	}
 
 	public static EasyFormsFieldTypeDefinition resolve(final String name) {
 		return Node.getNode().getDefinitionSpace().resolve(name, EasyFormsFieldTypeDefinition.class);
+	}
+
+	public String getCategory() {
+		return category;
 	}
 
 	public String getSmartTypeName() {

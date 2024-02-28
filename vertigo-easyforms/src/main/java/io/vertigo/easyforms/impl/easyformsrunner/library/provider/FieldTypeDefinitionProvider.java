@@ -52,7 +52,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		// internal use
 		INTERNAL_RADIO_LAYOUT(new RadioLayoutFieldType()),
-		INTERNAL_MAP(EasyFormsSmartTypes.EfFormData, UiComponentEnum.INTERNAL_MAP),
+		INTERNAL_MAP(null, EasyFormsSmartTypes.EfFormData, UiComponentEnum.INTERNAL_MAP), // null category to hide this item
 		;
 
 		// ---
@@ -62,6 +62,10 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		private FieldTypeEnum(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
 			this(new SimpleFieldType(smartType, uiComponent));
+		}
+
+		private FieldTypeEnum(final String category, final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
+			this(new SimpleFieldType(category, smartType, uiComponent));
 		}
 
 		private FieldTypeEnum(final IEasyFormsFieldTypeDefinitionSupplier typeSupplier) {
@@ -94,12 +98,23 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 	// ---
 
 	public static class SimpleFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
+		private final String category;
 		private final EasyFormsSmartTypes smartType;
 		private final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent;
 
 		public SimpleFieldType(final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
+			this(DEFAULT_CATEGORY, smartType, uiComponent);
+		}
+
+		public SimpleFieldType(final String category, final EasyFormsSmartTypes smartType, final EnumDefinition<EasyFormsUiComponentDefinition, ?> uiComponent) {
+			this.category = category;
 			this.smartType = smartType;
 			this.uiComponent = uiComponent;
+		}
+
+		@Override
+		public String getCategory() {
+			return category;
 		}
 
 		@Override
@@ -161,6 +176,12 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 	}
 
 	public static class RadioLayoutFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
+
+		@Override
+		public String getCategory() {
+			return null; // no category means "hidden"
+		}
+
 		@Override
 		public EasyFormsSmartTypes getSmartType() {
 			return EasyFormsSmartTypes.EfLabel;
