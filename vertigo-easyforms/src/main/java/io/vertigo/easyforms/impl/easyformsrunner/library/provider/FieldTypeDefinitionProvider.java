@@ -13,7 +13,7 @@ import io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateFiel
 import io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsListItem;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.RadioUiComponent;
+import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.RadioCheckUiComponent;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.TextFieldUiComponent;
 import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider.UiComponentEnum;
 import io.vertigo.easyforms.impl.easyformsrunner.suppliers.IEasyFormsFieldTypeDefinitionSupplier;
@@ -51,7 +51,7 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
 		// internal use
-		INTERNAL_RADIO_LAYOUT(new RadioLayoutFieldType()),
+		INTERNAL_LAYOUT(new RadioLayoutFieldType()),
 		INTERNAL_MAP(null, EasyFormsSmartTypes.EfFormData, UiComponentEnum.INTERNAL_MAP), // null category to hide this item
 		;
 
@@ -198,8 +198,8 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
-							new EasyFormsListItem("", "#{EfFtyCustomListRadio$radioLayoutVerticalLabel}"),
-							new EasyFormsListItem("horizontal", "#{EfFtyCustomListRadio$radioLayoutHorizontalLabel}")));
+							new EasyFormsListItem("", "#{EfFtyCustomListRadio$layoutVerticalLabel}"),
+							new EasyFormsListItem("horizontal", "#{EfFtyCustomListRadio$layoutHorizontalLabel}")));
 		}
 
 		@Override
@@ -229,19 +229,19 @@ public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider
 
 		@Override
 		public Map<String, Object> getUiParams() {
-			if (uiComponent == UiComponentEnum.RADIO) {
+			if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
 				return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
-						RadioUiComponent.LAYOUT, "horizontal");
+						RadioCheckUiComponent.LAYOUT, "horizontal");
 			}
 			return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME);
 		}
 
 		@Override
 		public List<EasyFormsTemplateField> getExposedComponentParams() {
-			if (uiComponent == UiComponentEnum.RADIO) {
+			if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
 				return List.of(
-						new EasyFormsTemplateField(RadioUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT)
-								.withParameters(Map.of(RadioUiComponent.LAYOUT, "horizontal")),
+						new EasyFormsTemplateField(RadioCheckUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT)
+								.withParameters(Map.of(RadioCheckUiComponent.LAYOUT, "horizontal")),
 						new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 			}
 			return List.of(new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());

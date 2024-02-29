@@ -44,16 +44,20 @@ public enum EfLibraryResources implements LocaleMessageKey {
 	EfFtyCustomListRadioLabel,
 	EfFtyCustomListCheckboxLabel,
 
-	EfFtyInternalRadioLayoutLabel,
+	EfFtyInternalLayoutLabel,
 	EfFtyInternalMapLabel,
 
 	EfFtyCustomListSelect$customListLabel,
 	EfFtyCustomListRadio$customListLabel,
 	EfFtyCustomListCheckbox$customListLabel,
 
-	EfFtyCustomListRadio$radioLayoutLabel,
-	EfFtyCustomListRadio$radioLayoutVerticalLabel,
-	EfFtyCustomListRadio$radioLayoutHorizontalLabel,
+	EfFtyCustomListRadio$layoutLabel,
+	EfFtyCustomListRadio$layoutVerticalLabel,
+	EfFtyCustomListRadio$layoutHorizontalLabel,
+
+	EfFtyCustomListCheckbox$layoutLabel,
+	EfFtyCustomListCheckbox$layoutVerticalLabel,
+	EfFtyCustomListCheckbox$layoutHorizontalLabel,
 
 	// Validators
 	EfFvaEmailNotInBlacklistLabel,

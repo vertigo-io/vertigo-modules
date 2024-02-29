@@ -17,8 +17,8 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 		TEXT_FIELD(new TextFieldUiComponent()), //
 		TEXT_AREA, //
 
-		CHECKBOX, //
-		RADIO(new RadioUiComponent()), //
+		CHECKBOX(new RadioCheckUiComponent()), //
+		RADIO(new RadioCheckUiComponent()), //
 
 		DATE, //
 		DATE_TIME, //
@@ -78,15 +78,15 @@ public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvid
 
 	}
 
-	public static class RadioUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
+	public static class RadioCheckUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
 
-		public static final String LAYOUT = "radioLayout";
+		public static final String LAYOUT = "layout";
 
 		@Override
 		public List<EasyFormsTemplateField> getUiComponentParams() {
 			return List.of(
 					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new EasyFormsTemplateField(LAYOUT, FieldTypeEnum.INTERNAL_RADIO_LAYOUT));
+					new EasyFormsTemplateField(LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT));
 		}
 
 	}

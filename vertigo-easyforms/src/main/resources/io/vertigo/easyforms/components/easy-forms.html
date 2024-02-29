@@ -30,7 +30,7 @@
 									<q-option-group
 								    	th:v-model="|slotProps.formData['${templateField.code}']|"
 								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
-										th::inline="${(fieldParameters['radioLayout'] != null && fieldParameters['radioLayout'] == 'horizontal') ? true : false }"
+										th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
 								    	color="primary"
 								    ></q-option-group>
 								</vu:label-edit>
@@ -46,7 +46,7 @@
 								    	th:v-model="|slotProps.formData['${templateField.code}']|"
 								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
 								    	type="checkbox"
-										th::inline="${(fieldParameters['radioLayout'] != null && fieldParameters['radioLayout'] == 'horizontal') ? true : false }"
+										th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
 								    	color="primary"
 								    ></q-option-group>
 								</vu:label-edit>
