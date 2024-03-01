@@ -39,13 +39,12 @@ public final class ConstraintLocalDateMinimum implements Constraint<Double, Loca
 		if (minExpression.contains("now")) {
 			Assertion.check().isNotNull(DateUtil.parseToLocalDate(minExpression, DATE_PATTERN), "Pattern de date non reconnu {0}", minExpression);
 			minStableValue = null;
-			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-					() -> LocaleMessageText.of("La date doit être égale ou postérieur au {0}", minExpression));
+			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConDateMin,
+					minExpression);
 		} else {
 			minStableValue = DateUtil.parseToLocalDate(minExpression, DATE_PATTERN);
-			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-					() -> LocaleMessageText.of("La date doit être égale ou postérieur au {0}", DateTimeFormatter.ofPattern(DATE_PATTERN)
-							.format(minStableValue))); //Message par défaut n'est pas satisfaisant : à surcharger en fonction des args
+			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConDateMin,
+					DateTimeFormatter.ofPattern(DATE_PATTERN).format(minStableValue));
 		}
 	}
 

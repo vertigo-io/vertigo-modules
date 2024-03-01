@@ -31,8 +31,7 @@ public final class ConstraintEmailWhiteList implements Constraint<Integer, Strin
 			whitelist.add(domain);
 		}
 
-		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-				() -> LocaleMessageText.of("Le mail n'est pas autorisé"));
+		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConEmail);
 	}
 
 	/** {@inheritDoc} */

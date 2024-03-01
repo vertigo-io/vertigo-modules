@@ -56,8 +56,7 @@ public final class ConstraintEmailBlackList implements Constraint<Integer, Strin
 		checkDisposable = blacklist.contains(DISPOSABLE);
 		blacklist.remove(DISPOSABLE);
 
-		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-				() -> LocaleMessageText.of("Le mail n'est pas autorisé"));
+		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConEmail);
 	}
 
 	/** {@inheritDoc} */

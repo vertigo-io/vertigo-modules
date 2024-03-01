@@ -6,6 +6,7 @@ import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.easyforms.easyformsrunner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.impl.easyformsrunner.library.EfLibraryResources;
+import io.vertigo.easyforms.impl.easyformsrunner.library.constraint.EfConstraintResources;
 
 public class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager, Activeable {
 
@@ -20,6 +21,7 @@ public class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager, Activ
 	public void start() {
 		localeManager.add("io.vertigo.easyforms.easyformsrunner.Resources", io.vertigo.easyforms.impl.easyformsrunner.Resources.values());
 		localeManager.add("io.vertigo.easyforms.easyformsrunner.library.EfLibraryResources", EfLibraryResources.values());
+		localeManager.add("io.vertigo.easyforms.easyformsrunner.library.EfConstraintResources", EfConstraintResources.values());
 
 		localeManager.add("io.vertigo.easyforms.domain.DtResources", io.vertigo.easyforms.domain.DtResources.values());
 	}

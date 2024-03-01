@@ -30,8 +30,7 @@ public final class ConstraintAgeMaximum implements Constraint<Integer, LocalDate
 		//-----
 		age = Integer.valueOf(args);
 
-		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-				() -> LocaleMessageText.of("L'age doit être au maximum de {0} ans", age));
+		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConAgeMax, age);
 	}
 
 	/** {@inheritDoc} */

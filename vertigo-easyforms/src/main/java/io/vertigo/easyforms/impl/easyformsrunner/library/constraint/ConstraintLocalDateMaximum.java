@@ -39,13 +39,12 @@ public final class ConstraintLocalDateMaximum implements Constraint<Double, Loca
 		if (maxExpression.contains("now")) {
 			Assertion.check().isNotNull(DateUtil.parseToLocalDate(maxExpression, DATE_PATTERN), "Pattern de date non reconnu {0}", maxExpression);
 			maxStableValue = null;
-			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-					() -> LocaleMessageText.of("La date doit être égale ou antérieur au {0}", maxExpression));
+			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConDateMax,
+					maxExpression);
 		} else {
 			maxStableValue = DateUtil.parseToLocalDate(maxExpression, DATE_PATTERN);
-			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-					() -> LocaleMessageText.of("La date doit être égale ou antérieur au {0}", DateTimeFormatter.ofPattern(DATE_PATTERN)
-							.format(maxStableValue))); //Message par défaut n'est pas satisfaisant : à surcharger en fonction des args
+			errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConDateMax,
+					DateTimeFormatter.ofPattern(DATE_PATTERN).format(maxStableValue));
 		}
 	}
 

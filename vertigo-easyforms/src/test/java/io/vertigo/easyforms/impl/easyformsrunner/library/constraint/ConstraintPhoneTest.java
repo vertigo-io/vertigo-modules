@@ -17,6 +17,7 @@
  */
 package io.vertigo.easyforms.impl.easyformsrunner.library.constraint;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -143,5 +144,29 @@ public final class ConstraintPhoneTest {
 		Assertions.assertFalse(constraint.checkConstraint(phoneFrFixeKo));
 		Assertions.assertFalse(constraint.checkConstraint(phoneFrMobile));
 		Assertions.assertFalse(constraint.checkConstraint(phoneFrMobileGuadeloupeKo));
+	}
+
+	@Test
+	public void testPhoneMultipleEnums() {
+		final var constraint = ConstraintPhone.ofEnums(List.of(ConstraintPhoneEnum.FR_FIXE, ConstraintPhoneEnum.FR_MOBILE), Optional.empty(), Optional.empty());
+
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrFixe));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrFixe2));
+
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrFixeGuadeloupe));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrFixeStPier));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrFixeWallis));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrFixeCaledonie));
+
+		Assertions.assertFalse(constraint.checkConstraint(phoneFrFixeKo));
+		Assertions.assertFalse(constraint.checkConstraint(phoneFrFixeKo2));
+
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrMobile));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrMobileGuadeloupe));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrMobileStPier));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrMobileWallis));
+		Assertions.assertTrue(constraint.checkConstraint(phoneFrMobileCaledonie));
+
+		Assertions.assertFalse(constraint.checkConstraint(phoneUs));
 	}
 }

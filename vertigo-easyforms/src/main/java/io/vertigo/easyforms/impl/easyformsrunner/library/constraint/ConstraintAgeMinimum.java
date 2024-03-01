@@ -30,8 +30,7 @@ public final class ConstraintAgeMinimum implements Constraint<Integer, LocalDate
 		//-----
 		age = Integer.valueOf(args);
 
-		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt,
-				() -> LocaleMessageText.of("L'age doit être d'au moins {0} ans", age));
+		errorMessage = ConstraintUtil.resolveMessage(overrideMessageOpt, overrideResourceMessageOpt, EfConstraintResources.EfConAgeMin, age);
 	}
 
 	/** {@inheritDoc} */
