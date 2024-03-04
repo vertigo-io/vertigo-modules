@@ -532,8 +532,7 @@ alter table O_ACTIVITY_WORKSPACE
 
 create index TKW_TKE_O_ACTIVITY_EXECUTION_FK on O_ACTIVITY_WORKSPACE (ACE_ID asc);
 
-
-
+create unique index o_process_name_active_unique on o_process (name) where active = true;
 
 insert into o_execution_state(est_cd, label) values ('WAITING', 'Waiting');
 insert into o_execution_state(est_cd, label) values ('RESERVED', 'Reserved');

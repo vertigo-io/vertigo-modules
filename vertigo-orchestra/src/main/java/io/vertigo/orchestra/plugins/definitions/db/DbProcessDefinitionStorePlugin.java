@@ -200,7 +200,8 @@ public class DbProcessDefinitionStorePlugin implements ProcessDefinitionStorePlu
 		// ---
 		final String processName = processDefinition.getName();
 
-		final int count = definitionPAO.getProcessesByName(processName);
+		definitionPAO.lockProcessesForInsert();
+		final int count = definitionPAO.countProcessesByName(processName);
 		final boolean exists = count > 0;
 		if (exists) {
 			final ProcessDefinition existingDefinition = getProcessDefinition(processName);
