@@ -12,7 +12,6 @@ import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.node.Node;
-import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
@@ -33,7 +32,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Transactional
-public class EasyFormsRunnerServices implements Component, IEasyFormsRunnerServices {
+public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	private static final String FORM_PREFIX = "form_";
 	private static final String ERROR_CONTROL_FORM_MEASURE = "errorControlForm";

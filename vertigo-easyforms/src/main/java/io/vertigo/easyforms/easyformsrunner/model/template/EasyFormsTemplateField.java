@@ -12,17 +12,17 @@ public class EasyFormsTemplateField implements Serializable {
 
 	private final String code;
 	private final String fieldTypeName;
-	private String label;
-	private String tooltip;
-	private boolean isDefault;
-	private boolean isMandatory;
-	private EasyFormsData parameters; // Field type parameters
-	private List<EasyFormsTemplateFieldValidator> validators;
+	private String _label;
+	private String _tooltip;
+	private boolean _isDefault;
+	private boolean _isMandatory;
+	private EasyFormsData _parameters; // Field type parameters
+	private List<EasyFormsTemplateFieldValidator> _validators;
 
 	public EasyFormsTemplateField(final String code, final String fieldTypeName) {
 		this.code = code;
 		this.fieldTypeName = fieldTypeName;
-		label = code;
+		_label = code;
 	}
 
 	public EasyFormsTemplateField(final String code, final EasyFormsFieldTypeDefinition fieldType) {
@@ -42,25 +42,25 @@ public class EasyFormsTemplateField implements Serializable {
 	}
 
 	public String getLabel() {
-		return label;
+		return _label;
 	}
 
 	public EasyFormsTemplateField withLabel(final String label) {
-		this.label = label;
+		this._label = label;
 		return this;
 	}
 
 	public String getTooltip() {
-		return tooltip;
+		return _tooltip;
 	}
 
 	public EasyFormsTemplateField withTooltip(final String tooltip) {
-		this.tooltip = tooltip;
+		this._tooltip = tooltip;
 		return this;
 	}
 
 	public boolean isDefault() {
-		return isDefault;
+		return _isDefault;
 	}
 
 	public EasyFormsTemplateField withDefault() {
@@ -68,12 +68,12 @@ public class EasyFormsTemplateField implements Serializable {
 	}
 
 	public EasyFormsTemplateField withDefault(final boolean isDefault) {
-		this.isDefault = isDefault;
+		this._isDefault = isDefault;
 		return this;
 	}
 
 	public boolean isMandatory() {
-		return isMandatory;
+		return _isMandatory;
 	}
 
 	public EasyFormsTemplateField withMandatory() {
@@ -81,12 +81,12 @@ public class EasyFormsTemplateField implements Serializable {
 	}
 
 	public EasyFormsTemplateField withMandatory(final boolean isMandatory) {
-		this.isMandatory = isMandatory;
+		this._isMandatory = isMandatory;
 		return this;
 	}
 
 	public EasyFormsData getParameters() {
-		return parameters;
+		return _parameters;
 	}
 
 	public EasyFormsTemplateField withParameters(final Map<String, Object> parameters) {
@@ -94,19 +94,19 @@ public class EasyFormsTemplateField implements Serializable {
 	}
 
 	public EasyFormsTemplateField withParameters(final EasyFormsData parameters) {
-		this.parameters = parameters;
+		this._parameters = parameters;
 		return this;
 	}
 
 	public List<EasyFormsTemplateFieldValidator> getValidators() {
-		if (validators == null) {
+		if (_validators == null) {
 			return List.of();
 		}
-		return validators;
+		return _validators;
 	}
 
 	public EasyFormsTemplateField withValidators(final List<EasyFormsTemplateFieldValidator> validators) {
-		this.validators = validators;
+		this._validators = validators;
 		return this;
 	}
 
