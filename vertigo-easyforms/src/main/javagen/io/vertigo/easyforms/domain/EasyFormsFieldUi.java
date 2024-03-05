@@ -20,8 +20,8 @@ public final class EasyFormsFieldUi implements DataObject {
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
-	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters;
-	private io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList fieldValidators;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
+	private io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList fieldValidators;
 	private java.util.List<String> fieldValidatorSelection = new java.util.ArrayList<>();
 	
 	/**
@@ -163,7 +163,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	 * @return EasyFormsData parameters
 	 */
 	@Field(smartType = "STyEfFormData", label = "Parameters")
-	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData getParameters() {
+	public io.vertigo.easyforms.runner.model.template.EasyFormsData getParameters() {
 		return parameters;
 	}
 
@@ -172,7 +172,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	 * Définit la valeur de la propriété 'Parameters'.
 	 * @param parameters EasyFormsData
 	 */
-	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters) {
+	public void setParameters(final io.vertigo.easyforms.runner.model.template.EasyFormsData parameters) {
 		this.parameters = parameters;
 	}
 	
@@ -182,7 +182,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	 * @return EasyFormsTemplateFieldValidatorUiList fieldValidators
 	 */
 	@Field(smartType = "STyEfFieldValidatorUiList", label = "Validators")
-	public io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList getFieldValidators() {
+	public io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList getFieldValidators() {
 		return fieldValidators;
 	}
 
@@ -191,7 +191,7 @@ public final class EasyFormsFieldUi implements DataObject {
 	 * Définit la valeur de la propriété 'Validators'.
 	 * @param fieldValidators EasyFormsTemplateFieldValidatorUiList
 	 */
-	public void setFieldValidators(final io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList fieldValidators) {
+	public void setFieldValidators(final io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList fieldValidators) {
 		this.fieldValidators = fieldValidators;
 	}
 	

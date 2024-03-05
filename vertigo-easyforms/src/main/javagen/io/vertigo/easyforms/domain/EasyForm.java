@@ -15,7 +15,7 @@ public final class EasyForm implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long efoId;
-	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate template;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsTemplate template;
 
 	/** {@inheritDoc} */
 	@Override
@@ -48,7 +48,7 @@ public final class EasyForm implements Entity {
 	 * @return EasyFormsTemplate template
 	 */
 	@Field(smartType = "STyEfFormTemplate", label = "Template")
-	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate getTemplate() {
+	public io.vertigo.easyforms.runner.model.template.EasyFormsTemplate getTemplate() {
 		return template;
 	}
 
@@ -57,7 +57,7 @@ public final class EasyForm implements Entity {
 	 * Définit la valeur de la propriété 'Template'.
 	 * @param template EasyFormsTemplate
 	 */
-	public void setTemplate(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate template) {
+	public void setTemplate(final io.vertigo.easyforms.runner.model.template.EasyFormsTemplate template) {
 		this.template = template;
 	}
 	

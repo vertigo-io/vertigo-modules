@@ -16,7 +16,7 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	private String name;
 	private String label;
 	private String description;
-	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsTemplate paramTemplate;
 	private java.util.List<String> fieldTypes = new java.util.ArrayList<>();
 	
 	/**
@@ -84,7 +84,7 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	 * @return EasyFormsTemplate paramTemplate
 	 */
 	@Field(smartType = "STyEfFormTemplate", label = "UI configuration template")
-	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate getParamTemplate() {
+	public io.vertigo.easyforms.runner.model.template.EasyFormsTemplate getParamTemplate() {
 		return paramTemplate;
 	}
 
@@ -93,7 +93,7 @@ public final class EasyFormsFieldValidatorTypeUi implements DataObject {
 	 * Définit la valeur de la propriété 'UI configuration template'.
 	 * @param paramTemplate EasyFormsTemplate
 	 */
-	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate) {
+	public void setParamTemplate(final io.vertigo.easyforms.runner.model.template.EasyFormsTemplate paramTemplate) {
 		this.paramTemplate = paramTemplate;
 	}
 	

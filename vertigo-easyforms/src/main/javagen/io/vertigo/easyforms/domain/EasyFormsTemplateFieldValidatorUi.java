@@ -17,7 +17,7 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	private String label;
 	private String parameterizedLabel;
 	private String description;
-	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
 	
 	/**
 	 * Champ : DATA.
@@ -101,7 +101,7 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	 * @return EasyFormsData parameters
 	 */
 	@Field(smartType = "STyEfFormData", label = "Parameters JSON")
-	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData getParameters() {
+	public io.vertigo.easyforms.runner.model.template.EasyFormsData getParameters() {
 		return parameters;
 	}
 
@@ -110,7 +110,7 @@ public final class EasyFormsTemplateFieldValidatorUi implements DataObject {
 	 * Définit la valeur de la propriété 'Parameters JSON'.
 	 * @param parameters EasyFormsData
 	 */
-	public void setParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData parameters) {
+	public void setParameters(final io.vertigo.easyforms.runner.model.template.EasyFormsData parameters) {
 		this.parameters = parameters;
 	}
 	

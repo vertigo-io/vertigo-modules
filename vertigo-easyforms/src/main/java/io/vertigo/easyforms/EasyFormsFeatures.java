@@ -24,10 +24,10 @@ import org.springframework.context.annotation.Configuration;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.easyforms.domain.DtDefinitions;
-import io.vertigo.easyforms.impl.easyformsrunner.library.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldTypeDefinitionProvider;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.FieldValidatorTypeDefinitionProvider;
-import io.vertigo.easyforms.impl.easyformsrunner.library.provider.UiComponentDefinitionProvider;
+import io.vertigo.easyforms.impl.runner.library.EasyFormsSmartTypes;
+import io.vertigo.easyforms.impl.runner.library.provider.FieldTypeDefinitionProvider;
+import io.vertigo.easyforms.impl.runner.library.provider.FieldValidatorTypeDefinitionProvider;
+import io.vertigo.easyforms.impl.runner.library.provider.UiComponentDefinitionProvider;
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
 @Configuration
@@ -58,7 +58,7 @@ public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures
 
 	@Override
 	protected List<String> getControllerPackages() {
-		return List.of(".impl.easyformsdesigner.controllers", ".impl.easyformsrunner.controllers");
+		return List.of(".impl.designer.controllers", ".impl.runner.controllers");
 	}
 
 }

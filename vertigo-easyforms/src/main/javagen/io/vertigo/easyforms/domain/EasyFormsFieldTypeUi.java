@@ -17,8 +17,8 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	private String category;
 	private String label;
 	private String uiComponentName;
-	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters;
-	private io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsData uiParameters;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsTemplate paramTemplate;
 	
 	/**
 	 * Champ : DATA.
@@ -104,7 +104,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 * @return EasyFormsData uiParameters
 	 */
 	@Field(smartType = "STyEfFormData", label = "UI parameters")
-	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData getUiParameters() {
+	public io.vertigo.easyforms.runner.model.template.EasyFormsData getUiParameters() {
 		return uiParameters;
 	}
 
@@ -113,7 +113,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 * Définit la valeur de la propriété 'UI parameters'.
 	 * @param uiParameters EasyFormsData
 	 */
-	public void setUiParameters(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData uiParameters) {
+	public void setUiParameters(final io.vertigo.easyforms.runner.model.template.EasyFormsData uiParameters) {
 		this.uiParameters = uiParameters;
 	}
 	
@@ -123,7 +123,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 * @return EasyFormsTemplate paramTemplate
 	 */
 	@Field(smartType = "STyEfFormTemplate", label = "UI configuration template")
-	public io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate getParamTemplate() {
+	public io.vertigo.easyforms.runner.model.template.EasyFormsTemplate getParamTemplate() {
 		return paramTemplate;
 	}
 
@@ -132,7 +132,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 * Définit la valeur de la propriété 'UI configuration template'.
 	 * @param paramTemplate EasyFormsTemplate
 	 */
-	public void setParamTemplate(final io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate paramTemplate) {
+	public void setParamTemplate(final io.vertigo.easyforms.runner.model.template.EasyFormsTemplate paramTemplate) {
 		this.paramTemplate = paramTemplate;
 	}
 	
