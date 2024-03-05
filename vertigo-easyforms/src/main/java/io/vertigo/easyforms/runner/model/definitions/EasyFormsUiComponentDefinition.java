@@ -6,7 +6,7 @@ import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 
 @DefinitionPrefix(EasyFormsUiComponentDefinition.PREFIX)
-public class EasyFormsUiComponentDefinition extends AbstractDefinition<EasyFormsUiComponentDefinition> {
+public final class EasyFormsUiComponentDefinition extends AbstractDefinition<EasyFormsUiComponentDefinition> {
 
 	public static final String PREFIX = "EfUic";
 

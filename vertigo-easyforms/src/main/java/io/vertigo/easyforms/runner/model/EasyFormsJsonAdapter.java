@@ -8,7 +8,7 @@ import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.lang.json.CoreJsonAdapters;
 
-public class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
+public final class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 
 	private static final Gson GSON = CoreJsonAdapters.addCoreGsonConfig(new GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE), false).create();
 

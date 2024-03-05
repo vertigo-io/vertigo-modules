@@ -11,7 +11,7 @@ import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 
 @DefinitionPrefix(EasyFormsFieldTypeDefinition.PREFIX)
-public class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyFormsFieldTypeDefinition> {
+public final class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyFormsFieldTypeDefinition> {
 
 	public static final String PREFIX = "EfFty";
 

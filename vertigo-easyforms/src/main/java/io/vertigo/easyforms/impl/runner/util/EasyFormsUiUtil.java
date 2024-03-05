@@ -29,7 +29,7 @@ import io.vertigo.ui.impl.springmvc.util.UiUtil;
 import io.vertigo.vega.webservice.model.UiList;
 import io.vertigo.vega.webservice.model.UiObject;
 
-public class EasyFormsUiUtil implements Serializable {
+public final class EasyFormsUiUtil implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

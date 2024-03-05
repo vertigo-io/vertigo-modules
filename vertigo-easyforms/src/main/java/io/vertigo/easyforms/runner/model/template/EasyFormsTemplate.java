@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class EasyFormsTemplate implements Serializable {
+public final class EasyFormsTemplate implements Serializable {
 
 	private final List<EasyFormsTemplateField> fields;
 

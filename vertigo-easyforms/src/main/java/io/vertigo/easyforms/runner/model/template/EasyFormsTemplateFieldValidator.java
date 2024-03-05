@@ -2,7 +2,7 @@ package io.vertigo.easyforms.runner.model.template;
 
 import java.io.Serializable;
 
-public class EasyFormsTemplateFieldValidator implements Serializable {
+public final class EasyFormsTemplateFieldValidator implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final String name;
@@ -21,7 +21,7 @@ public class EasyFormsTemplateFieldValidator implements Serializable {
 	}
 
 	public EasyFormsTemplateFieldValidator withParameters(final EasyFormsData myParameters) {
-		this.parameters = myParameters;
+		parameters = myParameters;
 		return this;
 	}
 

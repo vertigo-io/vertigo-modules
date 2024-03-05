@@ -6,7 +6,7 @@ import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.easyforms.designer.EasyFormsDesignerManager;
 
-public class EasyFormsDesignerManagerImpl implements EasyFormsDesignerManager, Activeable {
+public final class EasyFormsDesignerManagerImpl implements EasyFormsDesignerManager, Activeable {
 
 	private final LocaleManager localeManager;
 

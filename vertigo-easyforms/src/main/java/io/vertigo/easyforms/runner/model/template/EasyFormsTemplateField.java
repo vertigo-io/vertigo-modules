@@ -7,7 +7,7 @@ import java.util.Map;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 
-public class EasyFormsTemplateField implements Serializable {
+public final class EasyFormsTemplateField implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final String code;

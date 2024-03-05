@@ -10,7 +10,7 @@ import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitio
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
 
-public class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponentDefinition> {
+public final class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponentDefinition> {
 
 	public enum UiComponentEnum implements EnumDefinition<EasyFormsUiComponentDefinition, UiComponentEnum> {
 

@@ -31,7 +31,7 @@ import io.vertigo.easyforms.impl.runner.library.provider.UiComponentDefinitionPr
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
 @Configuration
-public class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures> {
+public final class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFeatures> {
 
 	public EasyFormsFeatures() {
 		super("vertigo-easyforms");

@@ -7,7 +7,7 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
 
-public class EasyFormsTemplateFieldValidatorUiList extends ArrayList<EasyFormsTemplateFieldValidatorUi> {
+public final class EasyFormsTemplateFieldValidatorUiList extends ArrayList<EasyFormsTemplateFieldValidatorUi> {
 
 	private static final long serialVersionUID = 1L;
 

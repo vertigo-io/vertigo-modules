@@ -3,7 +3,7 @@ package io.vertigo.easyforms.runner.model.template;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EasyFormsData extends HashMap<String, Object> {
+public final class EasyFormsData extends HashMap<String, Object> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -19,7 +19,7 @@ import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinit
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 
-public class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldTypeDefinition> {
+public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldTypeDefinition> {
 
 	public enum FieldTypeEnum implements EnumDefinition<EasyFormsFieldTypeDefinition, FieldValidatorEnum> {
 		LABEL(EasyFormsSmartTypes.EfLabel, UiComponentEnum.TEXT_FIELD),

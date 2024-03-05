@@ -27,7 +27,7 @@ import io.vertigo.ui.impl.springmvc.util.UiUtil;
 import io.vertigo.vega.webservice.model.UiList;
 
 @Controller
-public class EasyFormsRunnerController {
+public final class EasyFormsRunnerController {
 
 	@Inject
 	private EasyFormsRunnerServices easyFormsRunnerServices;

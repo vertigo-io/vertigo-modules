@@ -15,7 +15,7 @@ import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintPhone.Const
 import io.vertigo.easyforms.impl.runner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 
-public class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidatorTypeDefinition> {
+public final class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidatorTypeDefinition> {
 
 	public enum FieldValidatorEnum implements EnumDefinition<EasyFormsFieldValidatorTypeDefinition, FieldValidatorEnum> {
 

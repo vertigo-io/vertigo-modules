@@ -35,15 +35,15 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.VCollectors;
-import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorTypeUiFields;
-import io.vertigo.easyforms.impl.runner.services.EasyFormsRunnerServices;
-import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
 import io.vertigo.easyforms.designer.services.IEasyFormsDesignerServices;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorTypeUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
+import io.vertigo.easyforms.impl.runner.services.EasyFormsRunnerServices;
+import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
@@ -56,7 +56,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/easyforms/designer")
-public class EasyFormsDesignerController extends AbstractVSpringMvcController {
+public final class EasyFormsDesignerController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<EasyForm> efoKey = ViewContextKey.of("efo");
 	private static final ViewContextKey<EasyFormsFieldTypeUi> fieldTypesKey = ViewContextKey.of("fieldTypes");
