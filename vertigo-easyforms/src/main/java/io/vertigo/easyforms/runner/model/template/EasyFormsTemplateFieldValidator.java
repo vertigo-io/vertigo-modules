@@ -6,7 +6,7 @@ public class EasyFormsTemplateFieldValidator implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final String name;
-	private EasyFormsData _parameters;
+	private EasyFormsData parameters;
 
 	public EasyFormsTemplateFieldValidator(final String name) {
 		this.name = name;
@@ -17,11 +17,11 @@ public class EasyFormsTemplateFieldValidator implements Serializable {
 	}
 
 	public EasyFormsData getParameters() {
-		return _parameters;
+		return parameters;
 	}
 
-	public EasyFormsTemplateFieldValidator withParameters(final EasyFormsData parameters) {
-		this._parameters = parameters;
+	public EasyFormsTemplateFieldValidator withParameters(final EasyFormsData myParameters) {
+		this.parameters = myParameters;
 		return this;
 	}
 
