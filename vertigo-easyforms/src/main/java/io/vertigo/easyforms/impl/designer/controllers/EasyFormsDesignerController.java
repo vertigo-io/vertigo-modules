@@ -78,22 +78,22 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
 
-		viewContext.publishDtList(fieldTypesKey, fieldTypeUiList);
-		viewContext.publishRef(fieldTypesTemplateKey,
-				(Serializable) fieldTypeUiList.stream()
-						.filter(EasyFormsFieldTypeUi::getHasTemplate)
-						.collect(Collectors.toMap(EasyFormsFieldTypeUi::getName, EasyFormsFieldTypeUi::getParamTemplate)));
-		viewContext.publishDtList(fieldValidatorsKey, EasyFormsFieldValidatorTypeUiFields.name, easyFormsDesignerServices.getFieldValidatorTypeUiList());
-		viewContext.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
+		viewContext.publishDtList(fieldTypesKey, fieldTypeUiList)
+				.publishRef(fieldTypesTemplateKey,
+						(Serializable) fieldTypeUiList.stream()
+								.filter(EasyFormsFieldTypeUi::getHasTemplate)
+								.collect(Collectors.toMap(EasyFormsFieldTypeUi::getName, EasyFormsFieldTypeUi::getParamTemplate)))
+				.publishDtList(fieldValidatorsKey, EasyFormsFieldValidatorTypeUiFields.name, easyFormsDesignerServices.getFieldValidatorTypeUiList())
+				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
 		//---
 		final EasyForm easyForm = efoIdOpt
 				.map(easyFormsRunnerServices::getEasyFormById)
 				.orElseGet(EasyForm::new);
-		viewContext.publishDto(efoKey, easyForm);
-		viewContext.publishDtList(fieldsKey, easyFormsDesignerServices.getFieldUiListByEasyForm(easyForm));
-		viewContext.publishDto(editFieldKey, buildFieldUi());
+		viewContext.publishDto(efoKey, easyForm)
+				.publishDtList(fieldsKey, easyFormsDesignerServices.getFieldUiListByEasyForm(easyForm))
+				.publishDto(editFieldKey, buildFieldUi())
 
-		viewContext.publishRef(efoUiUtilKey, new EasyFormsUiUtil());
+				.publishRef(efoUiUtilKey, new EasyFormsUiUtil());
 	}
 
 	private static EasyFormsFieldUi buildFieldUi() {
@@ -115,8 +115,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 	@PostMapping("/_addItem")
 	public ViewContext addNewItem(final ViewContext viewContext) {
-		viewContext.publishDto(editFieldKey, buildFieldUi());
-		viewContext.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
+		viewContext.publishDto(editFieldKey, buildFieldUi())
+				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
 		return viewContext;
 	}
 

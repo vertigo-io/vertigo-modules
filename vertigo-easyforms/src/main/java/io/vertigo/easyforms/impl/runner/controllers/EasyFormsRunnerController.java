@@ -36,21 +36,20 @@ public final class EasyFormsRunnerController {
 
 	public void initReadContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
-		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil);
-
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
-		viewContext.publishRef(templateKey, easyForm.getTemplate());
+
+		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
+				.publishRef(templateKey, easyForm.getTemplate());
 
 		addRequiredContext(viewContext, easyForm, false);
 	}
 
 	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
-		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil);
-
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
-		viewContext.publishRef(templateKey, easyForm.getTemplate());
+		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
+				.publishRef(templateKey, easyForm.getTemplate());
 
 		// Add master data list needed for fields to context
 		addRequiredContext(viewContext, easyForm, true);
@@ -71,7 +70,7 @@ public final class EasyFormsRunnerController {
 				.map(p -> p.substring(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_PREFIX.length())) // get Mda class name
 				.forEach(mdlClass -> {
 					// add to back context
-					final var ctxKey = ViewContextKey.<Entity>of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + mdlClass);
+					final var ctxKey = ViewContextKey.<Entity> of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_REF_CTX_NAME_PREFIX + mdlClass);
 					viewContext.publishMdl(ctxKey, DataModelUtil.findDataDefinition(mdlClass), null);
 					if (pushToFront) {
 						// add to front context
