@@ -16,7 +16,7 @@ public final class EasyFormsTemplateField implements Serializable {
 	private String tooltip;
 	private boolean isDefault;
 	private boolean isMandatory;
-	private EasyFormsData parameters; // Field type parameters
+	private EasyFormsData _parameters; // Field type parameters
 	private List<EasyFormsTemplateFieldValidator> validators;
 
 	public EasyFormsTemplateField(final String code, final String fieldTypeName) {
@@ -86,7 +86,7 @@ public final class EasyFormsTemplateField implements Serializable {
 	}
 
 	public EasyFormsData getParameters() {
-		return parameters;
+		return _parameters;
 	}
 
 	public EasyFormsTemplateField withParameters(final Map<String, Object> parameters) {
@@ -94,7 +94,7 @@ public final class EasyFormsTemplateField implements Serializable {
 	}
 
 	public EasyFormsTemplateField withParameters(final EasyFormsData myParameters) {
-		parameters = myParameters;
+		_parameters = myParameters;
 		return this;
 	}
 
