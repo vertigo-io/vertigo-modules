@@ -47,25 +47,25 @@ create Domain DoEfText {
 
 create Domain DoEfFormData {
     dataType : ValueObject
-    type : "io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsData"
+    type : "io.vertigo.easyforms.runner.model.template.EasyFormsData"
     storeType : "JSONB"
 }
 
 create Domain DoEfFormTemplate {
     dataType : ValueObject
-    type : "io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplate"
+    type : "io.vertigo.easyforms.runner.model.template.EasyFormsTemplate"
     storeType : "JSONB"
 }
 
 create Domain DoEfFieldValidator {
     dataType : ValueObject
-    type : "io.vertigo.easyforms.easyformsrunner.model.template.EasyFormsTemplateFieldValidator"
+    type : "io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator"
     storeType : "JSONB"
 }
 
 create Domain DoEfFieldValidatorUiList {
     dataType : ValueObject
-    type : "io.vertigo.easyforms.easyformsrunner.model.ui.EasyFormsTemplateFieldValidatorUiList"
+    type : "io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList"
     storeType : "JSONB"
 }
 
