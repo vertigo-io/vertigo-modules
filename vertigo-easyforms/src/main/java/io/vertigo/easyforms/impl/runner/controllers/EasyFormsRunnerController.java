@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.DataModelUtil;
@@ -17,7 +16,6 @@ import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.impl.runner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
-import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.ui.core.ViewContext;
@@ -57,7 +55,8 @@ public final class EasyFormsRunnerController {
 
 	private void addRequiredContext(final ViewContext viewContext, final EasyForm easyForm, final boolean pushToFront) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
-		final Set<String> listSuppliers = easyForm.getTemplate().getFields().stream()
+		final Set<String> listSuppliers = easyForm.getTemplate().getSections().stream()
+				.flatMap(s -> easyFormsRunnerServices.getAllFieldsFromSection(s).stream())
 				.map(easyFormsUiUtil::getParametersForField)
 				.flatMap(p -> p.entrySet().stream()) // stream all parameters for all fields
 				.filter(p -> IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER.equals(p.getKey())) // get custom list configuration
@@ -101,15 +100,7 @@ public final class EasyFormsRunnerController {
 	public EasyFormsData getDefaultDataValues(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
 
-		final var fieldTypeParameters = new EasyFormsData();
-
-		for (final var paramField : easyFormsTemplate.getFields()) {
-			final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
-			if (paramFieldTypeDefinition.getDefaultValue() != null) {
-				fieldTypeParameters.put(paramField.getCode(), paramFieldTypeDefinition.getDefaultValue());
-			}
-		}
-		return fieldTypeParameters;
+		return easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate);
 	}
 
 	private void addListToFrontCtx(final ViewContext viewContext, final String ctxKey) {
@@ -129,6 +120,6 @@ public final class EasyFormsRunnerController {
 	public <E extends Entity> void checkForm(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey, final E formOwner, final Function<E, EasyFormsData> formDataAccessor) {
 		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
 
-		easyFormsRunnerServices.checkFormulaire(formOwner, formDataAccessor.apply(formOwner), easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
+		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataAccessor.apply(formOwner), easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
 	}
 }

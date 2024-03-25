@@ -7,10 +7,19 @@ import com.google.gson.ToNumberPolicy;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.lang.json.CoreJsonAdapters;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 
 public final class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String> {
 
-	private static final Gson GSON = CoreJsonAdapters.addCoreGsonConfig(new GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE), false).create();
+	static {
+		final var gsonBuilder = new GsonBuilder()
+				.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE) // later, integer formatter don't support conversion to double
+				.registerTypeAdapter(AbstractEasyFormsTemplateItem.class, new AbstractEasyFormsTemplateItem.GsonDeserializer());
+		CoreJsonAdapters.addCoreGsonConfig(gsonBuilder, false);
+
+		GSON = gsonBuilder.create();
+	}
+	private static final Gson GSON;
 
 	@Override
 	public C toJava(final String formAsString, final Class<C> type) {

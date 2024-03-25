@@ -26,15 +26,22 @@ import io.vertigo.core.locale.LocaleMessageKey;
  */
 public enum Resources implements LocaleMessageKey {
 	EfDesignerMandatory,
-	EfDesignerParameters,
 
 	EfDesignerPendingChanges,
 
+	EfDesignerAddSection,
+	EfDesignerMoveSectionUp,
+	EfDesignerMoveSectionDown,
+	EfDesignerEditSection,
+	EfDesignerDeleteSection,
+
+	EfDesignerAddStatic,
+	EfDesignerAddBlock,
 	EfDesignerAddField,
-	EfDesignerMoveFieldUp,
-	EfDesignerMoveFieldDown,
-	EfDesignerEditField,
-	EfDesignerDeleteField,
+	EfDesignerMoveItemUp,
+	EfDesignerMoveItemDown,
+	EfDesignerEditItem,
+	EfDesignerDeleteItem,
 	EfDesignerNoDeleteField,
 	EfDesignerIsDefaultField,
 	EfDesignerHasControl,

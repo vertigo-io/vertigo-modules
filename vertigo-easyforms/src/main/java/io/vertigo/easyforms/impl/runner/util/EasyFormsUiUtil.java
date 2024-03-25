@@ -19,9 +19,11 @@ import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
@@ -69,32 +71,40 @@ public final class EasyFormsUiUtil implements Serializable {
 		final var easyFormDisplay = new LinkedHashMap<String, Object>();
 		final Map<String, Object> outOfEasyFormData = new HashMap<>(easyForm);
 
-		for (final EasyFormsTemplateField field : easyFormsTemplate.getFields()) { // order is important
-			final var fieldCode = field.getCode();
+		// We use display order from template
+		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
+			final var sectionDisplay = new LinkedHashMap<String, Object>();
+			easyFormDisplay.put(section.getLabel(), sectionDisplay);
 
-			final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
-			final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
-			final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
+			for (final AbstractEasyFormsTemplateItem item : section.getItems()) {
+				if (item instanceof final EasyFormsTemplateItemField field) { // display only fields
+					final var fieldCode = field.getCode();
 
-			final Object rawValue = outOfEasyFormData.get(fieldCode);
-			if (listSupplier == null) {
-				// basic value
-				easyFormDisplay.put(field.getLabel(), rawValue);
-			} else {
-				// value selected from list
-				if (rawValue instanceof final List<?> rawList) {
-					// multi-selection
-					easyFormDisplay.put(field.getLabel(),
-							rawList.stream()
-									.map(i -> getListDisplayValue(resolvedParameters, i))
-									.collect(Collectors.joining(", ")));
+					final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
+					final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
+					final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
 
-				} else {
-					// single selection
-					easyFormDisplay.put(field.getLabel(), getListDisplayValue(resolvedParameters, rawValue));
+					final Object rawValue = outOfEasyFormData.get(fieldCode);
+					if (listSupplier == null) {
+						// basic value
+						sectionDisplay.put(field.getLabel(), rawValue);
+					} else {
+						// value selected from list
+						if (rawValue instanceof final List<?> rawList) {
+							// multi-selection
+							sectionDisplay.put(field.getLabel(),
+									rawList.stream()
+											.map(i -> getListDisplayValue(resolvedParameters, i))
+											.collect(Collectors.joining(", ")));
+
+						} else {
+							// single selection
+							sectionDisplay.put(field.getLabel(), getListDisplayValue(resolvedParameters, rawValue));
+						}
+					}
+					outOfEasyFormData.remove(fieldCode);
 				}
 			}
-			outOfEasyFormData.remove(fieldCode);
 		}
 		for (final Entry<String, Object> champ : outOfEasyFormData.entrySet()) {
 			easyFormDisplay.put(champ.getKey() + " (old)", champ.getValue());
@@ -131,11 +141,11 @@ public final class EasyFormsUiUtil implements Serializable {
 		return uiList.getById(idField.name(), (Serializable) value).getSingleInputValue(displayField.name());
 	}
 
-	public String getDynamicListForField(final EasyFormsTemplateField field) {
+	public String getDynamicListForField(final EasyFormsTemplateItemField field) {
 		return getDynamicListForField(field, null);
 	}
 
-	public String getDynamicListForField(final EasyFormsTemplateField field, final String searchValue) {
+	public String getDynamicListForField(final EasyFormsTemplateItemField field, final String searchValue) {
 		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 
 		final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
@@ -167,9 +177,13 @@ public final class EasyFormsUiUtil implements Serializable {
 		return "transformListForSelection('" + ctxKeyName + "', '" + idField + "', '" + displayField + "', null, " + searchValue + ")";
 	}
 
-	public EasyFormsData getParametersForField(final EasyFormsTemplateField field) {
+	public EasyFormsData getParametersForField(final EasyFormsTemplateItemField field) {
 		final var fieldType = getFieldTypeByName(field.getFieldTypeName());
 		return EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
+	}
+
+	public String resolveModelName(final EasyFormsTemplate template, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field) {
+		return "slotProps.formData['" + (template.useSections() ? section.getCode() + "']['" : "") + field.getCode() + "']";
 	}
 
 }

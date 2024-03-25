@@ -51,9 +51,13 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "250", msg = "Le text est trop long")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "10000", msg = "Le texte est trop long")
 	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", msg = "Les caractères < > & et \" ne sont pas acceptés")
 	EfText,
+
+	@SmartTypeDefinition(String.class)
+	@Formatter(clazz = FormatterDefault.class)
+	EfTextHtml,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "UPPER")

@@ -53,50 +53,6 @@ public enum DtResources implements LocaleMessageKey {
 	fldEasyFormsFieldTypeUi$hasTemplate,
 
 	/***********************************************************
-	 * EasyFormsFieldUi.
-	 **********************************************************/
-	/**
-	 * Field code.
-	 */
-	fldEasyFormsFieldUi$fieldCode,
-	/**
-	 * Field type.
-	 */
-	fldEasyFormsFieldUi$fieldType,
-	/**
-	 * Field type.
-	 */
-	fldEasyFormsFieldUi$fieldTypeLabel,
-	/**
-	 * Label.
-	 */
-	fldEasyFormsFieldUi$label,
-	/**
-	 * Tooltip.
-	 */
-	fldEasyFormsFieldUi$tooltip,
-	/**
-	 * System field.
-	 */
-	fldEasyFormsFieldUi$isDefault,
-	/**
-	 * Mandatory.
-	 */
-	fldEasyFormsFieldUi$isMandatory,
-	/**
-	 * Parameters.
-	 */
-	fldEasyFormsFieldUi$parameters,
-	/**
-	 * Validators.
-	 */
-	fldEasyFormsFieldUi$fieldValidators,
-	/**
-	 * Validators.
-	 */
-	fldEasyFormsFieldUi$fieldValidatorSelection,
-
-	/***********************************************************
 	 * EasyFormsFieldValidatorTypeUi.
 	 **********************************************************/
 	/**
@@ -119,6 +75,74 @@ public enum DtResources implements LocaleMessageKey {
 	 * Attached to fields.
 	 */
 	fldEasyFormsFieldValidatorTypeUi$fieldTypes,
+
+	/***********************************************************
+	 * EasyFormsItemUi.
+	 **********************************************************/
+	/**
+	 * Item type.
+	 */
+	fldEasyFormsItemUi$type,
+	/**
+	 * Field code.
+	 */
+	fldEasyFormsItemUi$fieldCode,
+	/**
+	 * Field type.
+	 */
+	fldEasyFormsItemUi$fieldType,
+	/**
+	 * Label.
+	 */
+	fldEasyFormsItemUi$label,
+	/**
+	 * Tooltip.
+	 */
+	fldEasyFormsItemUi$tooltip,
+	/**
+	 * System field.
+	 */
+	fldEasyFormsItemUi$isDefault,
+	/**
+	 * Mandatory.
+	 */
+	fldEasyFormsItemUi$isMandatory,
+	/**
+	 * Parameters.
+	 */
+	fldEasyFormsItemUi$parameters,
+	/**
+	 * Validators.
+	 */
+	fldEasyFormsItemUi$fieldValidators,
+	/**
+	 * Validators.
+	 */
+	fldEasyFormsItemUi$fieldValidatorSelection,
+	/**
+	 * Display condition.
+	 */
+	fldEasyFormsItemUi$condition,
+	/**
+	 * Text.
+	 */
+	fldEasyFormsItemUi$text,
+
+	/***********************************************************
+	 * EasyFormsSectionUi.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldEasyFormsSectionUi$fieldCode,
+	/**
+	 * Title.
+	 */
+	fldEasyFormsSectionUi$title,
+	/**
+	 * Display condition.
+	 */
+	fldEasyFormsSectionUi$condition,
 
 	/***********************************************************
 	 * EasyFormsTemplateFieldValidatorUi.

@@ -21,10 +21,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		EasyForm(io.vertigo.easyforms.domain.EasyForm.class),
 		/** Objet de données EasyFormsFieldTypeUi. */
 		EasyFormsFieldTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldTypeUi.class),
-		/** Objet de données EasyFormsFieldUi. */
-		EasyFormsFieldUi(io.vertigo.easyforms.domain.EasyFormsFieldUi.class),
 		/** Objet de données EasyFormsFieldValidatorTypeUi. */
 		EasyFormsFieldValidatorTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi.class),
+		/** Objet de données EasyFormsItemUi. */
+		EasyFormsItemUi(io.vertigo.easyforms.domain.EasyFormsItemUi.class),
+		/** Objet de données EasyFormsSectionUi. */
+		EasyFormsSectionUi(io.vertigo.easyforms.domain.EasyFormsSectionUi.class),
 		/** Objet de données EasyFormsTemplateFieldValidatorUi. */
 		EasyFormsTemplateFieldValidatorUi(io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi.class)		;
 
@@ -72,31 +74,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		hasTemplate	}
 
 	/**
-	 * Enumération des champs de EasyFormsFieldUi.
-	 */
-	public enum EasyFormsFieldUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldUi> {
-		/** Propriété 'Field code'. */
-		fieldCode,
-		/** Propriété 'Field type'. */
-		fieldType,
-		/** Propriété 'Field type'. */
-		fieldTypeLabel,
-		/** Propriété 'Label'. */
-		label,
-		/** Propriété 'Tooltip'. */
-		tooltip,
-		/** Propriété 'System field'. */
-		isDefault,
-		/** Propriété 'Mandatory'. */
-		isMandatory,
-		/** Propriété 'Parameters'. */
-		parameters,
-		/** Propriété 'Validators'. */
-		fieldValidators,
-		/** Propriété 'Validators'. */
-		fieldValidatorSelection	}
-
-	/**
 	 * Enumération des champs de EasyFormsFieldValidatorTypeUi.
 	 */
 	public enum EasyFormsFieldValidatorTypeUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi> {
@@ -110,6 +87,46 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		paramTemplate,
 		/** Propriété 'Attached to fields'. */
 		fieldTypes	}
+
+	/**
+	 * Enumération des champs de EasyFormsItemUi.
+	 */
+	public enum EasyFormsItemUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsItemUi> {
+		/** Propriété 'Item type'. */
+		type,
+		/** Propriété 'Field code'. */
+		fieldCode,
+		/** Propriété 'Field type'. */
+		fieldType,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Tooltip'. */
+		tooltip,
+		/** Propriété 'System field'. */
+		isDefault,
+		/** Propriété 'Mandatory'. */
+		isMandatory,
+		/** Propriété 'Parameters'. */
+		parameters,
+		/** Propriété 'Validators'. */
+		fieldValidators,
+		/** Propriété 'Validators'. */
+		fieldValidatorSelection,
+		/** Propriété 'Display condition'. */
+		condition,
+		/** Propriété 'Text'. */
+		text	}
+
+	/**
+	 * Enumération des champs de EasyFormsSectionUi.
+	 */
+	public enum EasyFormsSectionUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsSectionUi> {
+		/** Propriété 'Code'. */
+		fieldCode,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Display condition'. */
+		condition	}
 
 	/**
 	 * Enumération des champs de EasyFormsTemplateFieldValidatorUi.

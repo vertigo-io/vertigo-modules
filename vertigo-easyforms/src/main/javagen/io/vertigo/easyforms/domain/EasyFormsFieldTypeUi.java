@@ -143,7 +143,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 */
 	@Field(smartType = "STyEfBooleen", type = "COMPUTED", persistent = false, label = "Have configuration")
 	public Boolean getHasTemplate() {
-		return getParamTemplate() != null && !getParamTemplate().getFields().isEmpty();
+		return getParamTemplate() != null;
 	}
 	
 	/** {@inheritDoc} */

@@ -16,7 +16,8 @@ import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsFieldTypeDefinitionS
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 
 public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldTypeDefinition> {
@@ -237,14 +238,14 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		}
 
 		@Override
-		public List<EasyFormsTemplateField> getExposedComponentParams() {
+		public List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
 			if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
 				return List.of(
-						new EasyFormsTemplateField(RadioCheckUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT)
+						new EasyFormsTemplateItemField(RadioCheckUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT)
 								.withParameters(Map.of(RadioCheckUiComponent.LAYOUT, "horizontal")),
-						new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+						new EasyFormsTemplateItemField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 			}
-			return List.of(new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+			return List.of(new EasyFormsTemplateItemField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 		}
 
 		@Override
