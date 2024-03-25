@@ -1,7 +1,10 @@
-package io.vertigo.easyforms.impl.runner.library;
+package io.vertigo.easyforms.impl.runner.pack;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import io.vertigo.basics.constraint.ConstraintIntegerLength;
+import io.vertigo.basics.constraint.ConstraintNumberMinimum;
 import io.vertigo.basics.constraint.ConstraintRegex;
 import io.vertigo.basics.constraint.ConstraintStringLength;
 import io.vertigo.basics.formatter.FormatterDate;
@@ -14,13 +17,12 @@ import io.vertigo.datamodel.smarttype.annotations.Constraint;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintLocalDateMaximum;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintLocalDateMinimum;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMaximum;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMinimum;
 import io.vertigo.easyforms.runner.model.EasyFormsJsonAdapter;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
-import io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList;
 
 public enum EasyFormsSmartTypes {
 
@@ -47,13 +49,19 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)
-	EfSort,
+	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9", msg = "")
+	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "0", msg = "")
+	EfCount,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "250", msg = "Le text est trop long")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "10000", msg = "Le texte est trop long")
 	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", msg = "Les caractères < > & et \" ne sont pas acceptés")
 	EfText,
+
+	@SmartTypeDefinition(String.class)
+	@Formatter(clazz = FormatterDefault.class)
+	EfTextHtml,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "UPPER")
@@ -119,6 +127,11 @@ public enum EasyFormsSmartTypes {
 	@SmartTypeProperty(property = "indexType", value = "text_fr")
 	EfFormData,
 
+	@SmartTypeDefinition(List.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
+	EfIMapData,
+
 	@SmartTypeDefinition(EasyFormsTemplate.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
@@ -129,8 +142,4 @@ public enum EasyFormsSmartTypes {
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
 	EfFieldValidator,
 
-	@SmartTypeDefinition(EasyFormsTemplateFieldValidatorUiList.class)
-	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
-	EfFieldValidatorUiList,
 }

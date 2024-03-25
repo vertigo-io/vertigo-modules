@@ -6,16 +6,20 @@ import java.util.List;
 
 public final class EasyFormsTemplate implements Serializable {
 
-	private final List<EasyFormsTemplateField> fields;
+	private final List<EasyFormsTemplateSection> sections;
 
 	private static final long serialVersionUID = 1L;
 
-	public EasyFormsTemplate(final List<EasyFormsTemplateField> fields) {
-		this.fields = Collections.unmodifiableList(fields);
+	public EasyFormsTemplate(final List<EasyFormsTemplateSection> sections) {
+		this.sections = Collections.unmodifiableList(sections);
 	}
 
-	public List<EasyFormsTemplateField> getFields() {
-		return fields;
+	public List<EasyFormsTemplateSection> getSections() {
+		return sections;
+	}
+
+	public boolean useSections() {
+		return !(sections.size() == 1 && sections.get(0).getCode() == null);
 	}
 
 }

@@ -14,23 +14,30 @@ create DtDefinition DtEasyFormsFieldTypeUi {
     field uiParameters 		{domain: DoEfFormData			label:"UI parameters" }
     field paramTemplate 	{domain: DoEfFormTemplate 		label:"UI configuration template" }
     computed hasTemplate	{domain: DoEfBooleen			label:"Have configuration"
-    						 expression: "return getParamTemplate() != null && !getParamTemplate().getFields().isEmpty();"
+    						 expression: "return getParamTemplate() != null;"
     }
     sortField: "name"
     displayField: "label"
 }
 
-create DtDefinition DtEasyFormsFieldUi {
-    field fieldCode 		{domain: DoEfCode 					label:"Field code" 				cardinality:"1"}
-    field fieldType 		{domain: DoEfLabel 					label:"Field type"				cardinality:"1"}
-    field fieldTypeLabel 	{domain: DoEfLabel 					label:"Field type" 				}
-    field label 			{domain: DoEfLabel 					label:"Label" 					cardinality:"1"}
+create DtDefinition DtEasyFormsSectionUi {
+    field fieldCode 		{domain: DoEfCode 					label:"Code"	 				cardinality:"1"}
+    field title 			{domain: DoEfLabel 					label:"Title" 					cardinality:"1"}
+    field condition 		{domain: DoEfLabel 					label:"Display condition" 		}
+}
+
+create DtDefinition DtEasyFormsItemUi {
+    field type 				{domain: DoEfCode 					label:"Item type" 				}
+    field fieldCode 		{domain: DoEfCode 					label:"Field code" 				}
+    field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
+    field label 			{domain: DoEfLabel 					label:"Label" 					}
     field tooltip 			{domain: DoEfLabel 					label:"Tooltip" 				}
-    field isDefault 		{domain: DoEfBooleen 				label:"System field" 			cardinality:"1"}
-    field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				cardinality:"1"}
+    field isDefault 		{domain: DoEfBooleen 				label:"System field" 			}
+    field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				}
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
-    field fieldValidators 	{domain: DoEfFieldValidatorUiList	label:"Validators" 				}
     field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}
+    field condition 		{domain: DoEfLabel 					label:"Display condition" 		}				 /* for block items */
+    field text 				{domain: DoEfTextHtml 				label:"Text" 					}				 /* for static items */
 }
 
 create DtDefinition DtEasyFormsFieldValidatorTypeUi {
@@ -41,12 +48,4 @@ create DtDefinition DtEasyFormsFieldValidatorTypeUi {
     field fieldTypes 		{domain: DoEfText 				label:"Attached to fields" cardinality:"*" }
     sortField: "name"
     displayField: "label"
-}
-
-create DtDefinition DtEasyFormsTemplateFieldValidatorUi {
-    field validatorTypeName 	{domain: DoEfLabel 				label:"Validator type name" 	}
-    field label 				{domain: DoEfLabel 				label:"Label"					}
-    field parameterizedLabel 	{domain: DoEfLabel 				label:"Label"					}
-    field description 			{domain: DoEfText 				label:"Description" 			}
-    field parameters 			{domain: DoEfFormData			label:"Parameters JSON" 		}
 }

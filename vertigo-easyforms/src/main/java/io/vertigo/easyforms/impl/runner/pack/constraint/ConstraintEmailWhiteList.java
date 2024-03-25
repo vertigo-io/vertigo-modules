@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.impl.runner.library.constraint;
+package io.vertigo.easyforms.impl.runner.pack.constraint;
 
 import java.util.HashSet;
 import java.util.Locale;

@@ -19,9 +19,13 @@ package io.vertigo.easyforms.impl.designer.controllers;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -30,28 +34,41 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
+import io.vertigo.core.util.ClassUtil;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.designer.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldValidatorTypeUiFields;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsItemUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
-import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
-import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
+import io.vertigo.easyforms.domain.EasyFormsItemUi;
+import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.runner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
-import io.vertigo.easyforms.runner.model.template.EasyFormsData;
-import io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem.ItemType;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemStatic;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import io.vertigo.vega.webservice.stereotype.Validate;
+import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
+import io.vertigo.vega.webservice.validation.DefaultDtObjectValidator;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -61,10 +78,13 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private static final ViewContextKey<EasyForm> efoKey = ViewContextKey.of("efo");
 	private static final ViewContextKey<EasyFormsFieldTypeUi> fieldTypesKey = ViewContextKey.of("fieldTypes");
 	private static final ViewContextKey<Serializable> fieldTypesTemplateKey = ViewContextKey.of("fieldTypesTemplate");
+
+	private static final ViewContextKey<EasyFormsSectionUi> editSectionKey = ViewContextKey.of("editSection");
+	private static final ViewContextKey<EasyFormsItemUi> editItemKey = ViewContextKey.of("editItem");
+
 	private static final ViewContextKey<EasyFormsFieldValidatorTypeUi> fieldValidatorsKey = ViewContextKey.of("fieldValidators");
-	private static final ViewContextKey<EasyFormsFieldUi> fieldsKey = ViewContextKey.of("fields");
 	private static final ViewContextKey<EasyFormsFieldValidatorTypeUi> editFieldValidatorTypesKey = ViewContextKey.of("editFieldValidatorTypes");
-	private static final ViewContextKey<EasyFormsFieldUi> editFieldKey = ViewContextKey.of("editField");
+	private static final ViewContextKey<Serializable> validatorEfoLabelsKey = ViewContextKey.of("validatorEfoLabels");
 
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
@@ -90,149 +110,387 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 				.map(easyFormsRunnerServices::getEasyFormById)
 				.orElseGet(EasyForm::new);
 		viewContext.publishDto(efoKey, easyForm)
-				.publishDtList(fieldsKey, easyFormsDesignerServices.getFieldUiListByEasyForm(easyForm))
-				.publishDto(editFieldKey, buildFieldUi())
-
+				.publishDto(editItemKey, buildNewItemUi(ItemType.FIELD))
 				.publishRef(efoUiUtilKey, new EasyFormsUiUtil());
+		updateValidatorEfoLabels(viewContext, easyForm);
 	}
 
-	private static EasyFormsFieldUi buildFieldUi() {
-		final var fieldUi = new EasyFormsFieldUi();
-		fieldUi.setIsDefault(false);
-		fieldUi.setIsMandatory(false);
-		return fieldUi;
+	private static EasyFormsItemUi buildNewItemUi(final ItemType type) {
+		final var itemUi = new EasyFormsItemUi();
+		itemUi.setType(type.name());
+
+		switch (type) {
+			case FIELD:
+				itemUi.setIsDefault(false);
+				itemUi.setIsMandatory(false);
+				break;
+			default:
+				// noting
+		}
+
+		return itemUi;
+	}
+
+	private static EasyFormsItemUi toItemUi(final AbstractEasyFormsTemplateItem item) {
+		final EasyFormsItemUi itemUi = new EasyFormsItemUi();
+		itemUi.setType(item.getType());
+		if (item instanceof final EasyFormsTemplateItemField field) {
+			itemUi.setFieldCode(field.getCode());
+			itemUi.setFieldType(field.getFieldTypeName());
+			itemUi.setLabel(field.getLabel());
+			itemUi.setTooltip(field.getTooltip());
+			itemUi.setIsDefault(field.isDefault());
+			itemUi.setIsMandatory(field.isMandatory());
+
+			itemUi.setParameters(field.getParameters());
+			if (field.getValidators() != null) {
+				itemUi.setFieldValidatorSelection(field.getValidators().stream().map(EasyFormsTemplateFieldValidator::getName).toList());
+			}
+		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
+			itemUi.setCondition(block.getCondition());
+		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
+			itemUi.setText(staticItem.getLabel());
+		} else {
+			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
+		}
+		return itemUi;
+	}
+
+	private AbstractEasyFormsTemplateItem mergeUiToItem(final AbstractEasyFormsTemplateItem previousItem, final EasyFormsItemUi uiItem, final UiMessageStack uiMessageStack) {
+		final Class<? extends AbstractEasyFormsTemplateItem> itemClass = ItemType.getClassFromString(uiItem.getType());
+
+		final AbstractEasyFormsTemplateItem item;
+		if (previousItem == null) {
+			item = ClassUtil.newInstance(itemClass);
+		} else {
+			Assertion.check().isTrue(previousItem.getClass().equals(itemClass), "Class type mismatch");
+			item = previousItem;
+		}
+
+		if (item instanceof final EasyFormsTemplateItemField field) {
+			if (!field.isDefault()) {
+				// system fields are code and type fixed
+				field.setCode(uiItem.getFieldCode());
+				field.setFieldTypeName(uiItem.getFieldType());
+			}
+			field.setLabel(uiItem.getLabel());
+			field.setTooltip(uiItem.getTooltip());
+			field.setMandatory(uiItem.getIsMandatory());
+
+			final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(uiItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
+			if (fieldTypeDefinition.getParamTemplate() != null) {
+				easyFormsRunnerServices.formatAndCheckFormulaire(uiItem, uiItem.getParameters(), fieldTypeDefinition.getParamTemplate(), getUiMessageStack());
+				field.setParameters(uiItem.getParameters());
+			} else {
+				field.setParameters(null);
+			}
+
+			field.setValidators(uiItem.getFieldValidatorSelection().stream().map(EasyFormsTemplateFieldValidator::new).toList());
+		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
+			block.setCondition(uiItem.getCondition());
+		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
+			staticItem.setLabel(uiItem.getText());
+		} else {
+			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
+		}
+
+		return item;
+	}
+
+	// ****
+	// * Sections
+	// ****
+	@PostMapping("/_addSection")
+	public ViewContext addNewSection(final ViewContext viewContext) {
+		final var sectionUi = new EasyFormsItemUi();
+
+		viewContext.publishDto(editItemKey, sectionUi);
+		return viewContext;
+	}
+
+	@PostMapping("/_editSection")
+	public ViewContext editSection(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex) {
+
+		final var editedSection = efo.getTemplate().getSections().get(sectionIndex.intValue());
+		final var sectionUi = new EasyFormsItemUi();
+		sectionUi.setFieldCode(editedSection.getCode());
+		sectionUi.setLabel(editedSection.getLabel());
+		sectionUi.setCondition(editedSection.getCondition());
+
+		viewContext.publishDto(editItemKey, sectionUi);
+		return viewContext;
+	}
+
+	@PostMapping("/_deleteSection")
+	public ViewContext deleteSection(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex) {
+
+		efo.getTemplate().getSections().remove(sectionIndex.intValue());
+
+		viewContext.publishDto(efoKey, efo);
+		updateValidatorEfoLabels(viewContext, efo);
+		return viewContext;
+	}
+
+	@PostMapping("/_moveSection")
+	public ViewContext moveSection(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("fromSectionIndex") final Integer fromSectionIndex,
+			@RequestParam("toSectionIndex") final Integer toSectionIndex) {
+
+		final var sections = efo.getTemplate().getSections();
+
+		final var toMove = sections.remove(fromSectionIndex.intValue());
+		sections.add(toSectionIndex.intValue(), toMove);
+
+		viewContext.publishDto(efoKey, efo);
+		updateValidatorEfoLabels(viewContext, efo);
+		return viewContext;
+	}
+
+	@PostMapping("/_saveSection")
+	public ViewContext saveSection(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex,
+			@Validate({ DefaultDtObjectValidator.class, EditItemValidator.class }) @ViewAttribute("editItem") final EasyFormsItemUi editUiItem) {
+
+		final boolean isNew = sectionIndex == -1;
+		final EasyFormsTemplateSection section;
+		if (isNew) {
+			section = new EasyFormsTemplateSection();
+			efo.getTemplate().getSections().add(section);
+		} else {
+			section = efo.getTemplate().getSections().get(sectionIndex.intValue());
+		}
+
+		section.setCode(editUiItem.getFieldCode());
+		section.setLabel(editUiItem.getLabel());
+		section.setCondition(editUiItem.getCondition());
+
+		viewContext.publishDto(efoKey, efo);
+		return viewContext;
+
+	}
+
+	// ****
+	// * Items
+	// ****
+	@PostMapping("/_addItem")
+	public ViewContext addNewItem(final ViewContext viewContext, @RequestParam("type") final String typeString) {
+		final var type = ItemType.valueOf(typeString);
+
+		viewContext.publishDto(editItemKey, buildNewItemUi(type))
+				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
+		return viewContext;
 	}
 
 	@PostMapping("/_deleteItem")
 	public ViewContext deleteItem(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex,
 			@RequestParam("editIndex") final Integer editIndex,
-			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
+			@RequestParam("editIndex2") final Optional<Integer> editIndex2) {
 
-		fields.remove(editIndex.intValue());
-		viewContext.publishDtList(fieldsKey, fields);
+		final var sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
+		final var items = resolveLocalItems(editIndex, editIndex2, sectionItems);
+		items.remove(editIndex2.orElse(editIndex).intValue());
+
+		viewContext.publishDto(efoKey, efo);
+		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
 
-	@PostMapping("/_addItem")
-	public ViewContext addNewItem(final ViewContext viewContext) {
-		viewContext.publishDto(editFieldKey, buildFieldUi())
-				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
+	private static void updateValidatorEfoLabels(final ViewContext viewContext, final EasyForm efo) {
+		final Map<String, List<String>> validatorEfoLabels = new HashMap<>();
+		final var sections = efo.getTemplate().getSections();
+		for (int i = 0; i < sections.size(); i++) {
+			final var items = sections.get(i).getItems();
+			for (int j = 0; j < items.size(); j++) {
+				final var item = items.get(j);
+				if (item instanceof final EasyFormsTemplateItemField field && field.getValidators() != null) {
+					validatorEfoLabels.put(computeValidatorEfoLabelsKey(i, j, Optional.empty()), getValidatorsLabels(field));
+				} else if (item instanceof final EasyFormsTemplateItemBlock block) {
+					for (int k = 0; k < block.getItems().size(); k++) {
+						final var blocItem = block.getItems().get(k);
+						if (blocItem instanceof final EasyFormsTemplateItemField field && field.getValidators() != null) {
+							validatorEfoLabels.put(computeValidatorEfoLabelsKey(i, j, Optional.of(k)), getValidatorsLabels(field));
+						}
+					}
+				}
+			}
+		}
+		viewContext.publishRef(validatorEfoLabelsKey, (Serializable) validatorEfoLabels);
+	}
+
+	private static List<String> getValidatorsLabels(final EasyFormsTemplateItemField field) {
+		return field.getValidators().stream()
+				.map(validator -> {
+					final var validatorType = Node.getNode().getDefinitionSpace().resolve(validator.getName(), EasyFormsFieldValidatorTypeDefinition.class);
+					return validatorType.getParameterizedLabel(null);
+				})
+				.toList();
+	}
+
+	private static String computeValidatorEfoLabelsKey(final Integer sectionIndex, final Integer editIndex, final Optional<Integer> editIndex2) {
+		return sectionIndex + ";" + editIndex + editIndex2.map(e -> ";" + e).orElse("");
+	}
+
+	@PostMapping("/_moveItem")
+	public ViewContext moveItem(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex,
+			@RequestParam("fromIndex") final Integer fromIndex,
+			@RequestParam("fromIndex2") final Optional<Integer> fromIndex2,
+			@RequestParam("toIndex") final Integer toIndex,
+			@RequestParam("toIndex2") final Optional<Integer> toIndex2) {
+
+		final var sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
+
+		final var fromItems = resolveLocalItems(fromIndex, fromIndex2, sectionItems);
+		final var localFromIndex = fromIndex2.orElse(fromIndex).intValue();
+
+		final var toItems = resolveLocalItems(toIndex, toIndex2, sectionItems);
+		final var localToIndex = toIndex2.orElse(toIndex).intValue();
+
+		final var toMove = fromItems.remove(localFromIndex);
+		toItems.add(localToIndex, toMove);
+
+		viewContext.publishDto(efoKey, efo);
+		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
 
 	@PostMapping("/_editItem")
 	public ViewContext editItem(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex,
 			@RequestParam("editIndex") final Integer editIndex,
-			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
+			@RequestParam("editIndex2") final Optional<Integer> editIndex2) {
 
-		final var editedField = fields.get(editIndex);
-		editedField.setFieldValidatorSelection(editedField.getFieldValidators().stream().map(EasyFormsTemplateFieldValidatorUi::getValidatorTypeName).toList());
-
-		viewContext.publishDto(editFieldKey, editedField);
-		loadControlsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editedField);
-		return viewContext;
-	}
-
-	@PostMapping("/_refreshItem")
-	public ViewContext refreshItem(final ViewContext viewContext,
-			@RequestParam("fieldType") final String fieldType,
-			@ViewAttribute("editField") final EasyFormsFieldUi editField,
-			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
-
-		editField.setFieldType(fieldType);
-
-		// add default values for field type parameters
-		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(fieldType, EasyFormsFieldTypeDefinition.class);
-		if (fieldTypeDefinition.getParamTemplate() != null) {
-			final var fieldTypeParameters = new EasyFormsData();
-			for (final var paramField : fieldTypeDefinition.getParamTemplate().getFields()) {
-				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(paramField.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
-				if (paramFieldTypeDefinition.getDefaultValue() != null) {
-					fieldTypeParameters.put(paramField.getCode(), paramFieldTypeDefinition.getDefaultValue());
-				}
-			}
-			editField.setParameters(fieldTypeParameters);
+		var editedItem = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems().get(editIndex.intValue());
+		if (editIndex2.isPresent()) {
+			Assertion.check().isTrue(EasyFormsTemplateItemBlock.class.equals(editedItem.getClass()), "Type mismatch");
+			editedItem = ((EasyFormsTemplateItemBlock) editedItem).getItems().get(editIndex2.get());
 		}
 
-		loadControlsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editField);
-		editField.setFieldCode(computeDefaultFieldCode(fields, editField));
-		viewContext.publishDto(editFieldKey, editField);
+		final var editedItemUi = toItemUi(editedItem);
+		viewContext.publishDto(editItemKey, editedItemUi);
+		loadValidatorsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editedItemUi);
 		return viewContext;
 	}
 
-	@PostMapping("/_moveItem")
-	public ViewContext moveItem(final ViewContext viewContext,
-			@RequestParam("editIndex") final int editIndex,
-			@RequestParam("offset") final int offset,
-			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields) {
-		final var toMove = fields.remove(editIndex);
-		fields.add(editIndex + offset, toMove);
-		viewContext.publishDtList(fieldsKey, fields);
+	// ****
+	// * Item detail
+	// ****
+
+	@PostMapping("/_refreshItem") // when editing field, change field type
+	public ViewContext refreshItem(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex,
+			@RequestParam("doUpdateCode") final Boolean updateCode,
+			@Validate({}) @ViewAttribute("editItem") final EasyFormsItemUi editItem) { // do not validate editItem
+
+		final var section = efo.getTemplate().getSections().get(sectionIndex.intValue());
+
+		// set default code if not customized by user
+		if (Boolean.TRUE.equals(updateCode)) {
+			editItem.setFieldCode(computeDefaultFieldCode(section.getItems(), editItem));
+		}
+
+		// add possible validators
+		loadValidatorsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editItem);
+
+		// add default values for field type parameters
+		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(editItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
+		if (fieldTypeDefinition.getParamTemplate() != null) {
+			editItem.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate()));
+		}
+
+		viewContext.publishDto(editItemKey, editItem);
 		return viewContext;
 	}
 
 	@PostMapping("/_saveItem")
 	public ViewContext saveItem(final ViewContext viewContext,
+			@ViewAttribute("efo") final EasyForm efo,
+			@RequestParam("sectionIndex") final Integer sectionIndex,
 			@RequestParam("editIndex") final Integer editIndex,
-			@ViewAttribute("fields") final DtList<EasyFormsFieldUi> fields,
-			@ViewAttribute("editField") final EasyFormsFieldUi editField,
+			@RequestParam("editIndex2") final Optional<Integer> editIndex2,
+			@Validate({ DefaultDtObjectValidator.class, EditItemValidator.class }) @ViewAttribute("editItem") final EasyFormsItemUi editUiItem,
 			final UiMessageStack uiMessageStack) {
 
-		easyFormsDesignerServices.checkUpdateField(fields, editIndex, editField, uiMessageStack);
+		final List<AbstractEasyFormsTemplateItem> sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
+		// check code unicity in section
+		easyFormsDesignerServices.checkUpdateField(sectionItems, editIndex, editIndex2, editUiItem, uiMessageStack);
 
-		editField.setFieldTypeLabel(EasyFormsFieldTypeDefinition.resolve(editField.getFieldType()).getLabel());
+		final List<AbstractEasyFormsTemplateItem> items = resolveLocalItems(editIndex, editIndex2, sectionItems);
 
-		// Convert validator selection into real validator UI
-		// This is necessary beacause actual UI is a simple list of validators with no params
-		final var easyFormsTemplateFieldValidatorUiList = new EasyFormsTemplateFieldValidatorUiList(editField.getFieldValidatorSelection().size());
-		for (final var validatorName : editField.getFieldValidatorSelection()) {
-			final var validatorType = Node.getNode().getDefinitionSpace().resolve(validatorName, EasyFormsFieldValidatorTypeDefinition.class);
-			final var validator = new EasyFormsTemplateFieldValidatorUi();
-			validator.setValidatorTypeName(validatorName);
-			validator.setLabel(validatorType.getLabel());
-			validator.setParameterizedLabel(validatorType.getParameterizedLabel(validator.getParameters()));
-			validator.setDescription(validatorType.getDescription());
-			easyFormsTemplateFieldValidatorUiList.add(validator);
-		}
-		editField.setFieldValidators(easyFormsTemplateFieldValidatorUiList);
-
-		if (editIndex == -1) {
-			fields.add(editField);
+		AbstractEasyFormsTemplateItem editItem;
+		if (editIndex2.orElse(editIndex) == -1) {
+			editItem = mergeUiToItem(null, editUiItem, uiMessageStack);
+			items.add(editItem);
 		} else {
-			fields.set(editIndex, editField);
+			editItem = mergeUiToItem(items.get(editIndex2.orElse(editIndex)), editUiItem, uiMessageStack);
 		}
 
-		viewContext.publishDtList(fieldsKey, fields);
-		viewContext.publishDto(editFieldKey, buildFieldUi());
+		viewContext.publishDto(efoKey, efo);
+
+		updateValidatorEfoLabels(viewContext, efo);
+
 		return viewContext;
+	}
+
+	private List<AbstractEasyFormsTemplateItem> resolveLocalItems(final Integer editIndex, final Optional<Integer> editIndex2, final List<AbstractEasyFormsTemplateItem> sectionItems) {
+		final List<AbstractEasyFormsTemplateItem> items;
+		if (editIndex == -1 || editIndex2.isEmpty()) {
+			items = sectionItems;
+		} else {
+			final var item = sectionItems.get(editIndex);
+			Assertion.check().isTrue(EasyFormsTemplateItemBlock.class.equals(item.getClass()), "Type mismatch");
+			items = ((EasyFormsTemplateItemBlock) item).getItems();
+		}
+		return items;
 	}
 
 	public Long save(final ViewContext viewContext) {
 		final var efo = viewContext.readDto(efoKey, getUiMessageStack());
-		final var fields = viewContext.readDtList(fieldsKey, getUiMessageStack());
-		return easyFormsDesignerServices.saveNewForm(efo, fields);
+		return easyFormsDesignerServices.saveNewForm(efo);
 	}
 
-	protected static void loadControlsByType(final ViewContext viewContext,
+	protected static void loadValidatorsByType(final ViewContext viewContext,
 			final DtList<EasyFormsFieldValidatorTypeUi> fieldValidators,
-			final EasyFormsFieldUi editField) {
+			final EasyFormsItemUi editItem) {
 		final DtList<EasyFormsFieldValidatorTypeUi> fieldValidatorsByType = fieldValidators.stream()
-				.filter(c -> c.getFieldTypes().contains(editField.getFieldType()))
+				.filter(c -> c.getFieldTypes().contains(editItem.getFieldType()))
 				.collect(VCollectors.toDtList(EasyFormsFieldValidatorTypeUi.class));
 
 		viewContext.publishDtList(editFieldValidatorTypesKey, fieldValidatorsByType);
 	}
 
-	protected static String computeDefaultFieldCode(final DtList<EasyFormsFieldUi> fields, final EasyFormsFieldUi editedField) {
+	protected static String computeDefaultFieldCode(final List<AbstractEasyFormsTemplateItem> list, final EasyFormsItemUi editedField) {
 		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType().substring(5));
 		final var pattern = Pattern.compile("^" + prefixFieldCode + "[0-9]*$");
-		final Optional<Integer> lastMatchingOpt = fields.stream()
-				.filter(f -> pattern.matcher(f.getFieldCode()).matches())
+		// TODO : refacto : see EasyFormsUiUtil.getAllFieldsForSection
+		final var list1 = list.stream() // fields 1st level
+				.filter(EasyFormsTemplateItemField.class::isInstance)
+				.map(EasyFormsTemplateItemField.class::cast);
+		final var list2 = list.stream() // fields inside block
+				.filter(EasyFormsTemplateItemBlock.class::isInstance)
+				.map(EasyFormsTemplateItemBlock.class::cast)
+				.flatMap(b -> b.getItems().stream())
+				.filter(EasyFormsTemplateItemField.class::isInstance)
+				.map(EasyFormsTemplateItemField.class::cast);
+
+		final Optional<Integer> lastMatchingOpt = Stream.concat(list1, list2)
+				.filter(f -> pattern.matcher(f.getCode()).matches())
 				.map(f -> {
-					if (prefixFieldCode.length() == f.getFieldCode().length()) {
+					if (prefixFieldCode.length() == f.getCode().length()) {
 						return 1;
 					}
-					return Integer.valueOf(f.getFieldCode().substring(prefixFieldCode.length()));
+					return Integer.valueOf(f.getCode().substring(prefixFieldCode.length()));
 				})
 				.sorted(Comparator.reverseOrder())
 				.findFirst();
@@ -241,6 +499,30 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		} else {
 			return prefixFieldCode;
 		}
+	}
+
+	public static class EditItemValidator extends AbstractDtObjectValidator<EasyFormsItemUi> {
+
+		@Override
+		protected List<DataFieldName<EasyFormsItemUi>> getFieldsToNullCheck(final EasyFormsItemUi dtObject) {
+			if (dtObject.getType() == null) {// section
+				return List.of(EasyFormsItemUiFields.label,
+						EasyFormsItemUiFields.fieldCode);
+			}
+
+			switch (ItemType.valueOf(dtObject.getType())) {
+				case STATIC:
+					return List.of(EasyFormsItemUiFields.text);
+				case FIELD:
+					return List.of(EasyFormsItemUiFields.label,
+							EasyFormsItemUiFields.fieldCode,
+							EasyFormsItemUiFields.fieldType,
+							EasyFormsItemUiFields.isMandatory);
+				default:
+					return List.of();
+			}
+		}
+
 	}
 
 }

@@ -1,24 +1,28 @@
-package io.vertigo.easyforms.impl.runner.library.provider;
+package io.vertigo.easyforms.impl.runner.pack.provider;
 
 import java.util.List;
 
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.impl.runner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
+import io.vertigo.datamodel.smarttype.definitions.DtProperty;
+import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 
 public final class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponentDefinition> {
 
 	public enum UiComponentEnum implements EnumDefinition<EasyFormsUiComponentDefinition, UiComponentEnum> {
 
 		TEXT_FIELD(new TextFieldUiComponent()), //
-		TEXT_AREA, //
+		TEXT_AREA(new TextAreaUiComponent()), //
 
 		CHECKBOX(new RadioCheckUiComponent()), //
 		RADIO(new RadioCheckUiComponent()), //
+
+		NUMBER, //
 
 		DATE, //
 		DATE_TIME, //
@@ -71,9 +75,22 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 		public static final String AUTOCOMPLETE = "textFieldAutocomplete";
 
 		@Override
-		public List<EasyFormsTemplateField> getUiComponentParams() {
+		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 			return List.of(
-					new EasyFormsTemplateField(AUTOCOMPLETE, FieldTypeEnum.LABEL));
+					new EasyFormsTemplateItemField(AUTOCOMPLETE, FieldTypeEnum.CUSTOM_LIST_RADIO));
+		}
+
+	}
+
+	public static class TextAreaUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
+
+		public static final String AUTOGROW = "autogrow";
+
+		@Override
+		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
+			return List.of(
+					new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT),
+					new EasyFormsTemplateItemField(AUTOGROW, FieldTypeEnum.YES_NO));
 		}
 
 	}
@@ -83,10 +100,10 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 		public static final String LAYOUT = "layout";
 
 		@Override
-		public List<EasyFormsTemplateField> getUiComponentParams() {
+		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 			return List.of(
 					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new EasyFormsTemplateField(LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT));
+					new EasyFormsTemplateItemField(LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT));
 		}
 
 	}
@@ -96,10 +113,10 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 		public static final String SEARCHABLE = "selectSearchable";
 
 		@Override
-		public List<EasyFormsTemplateField> getUiComponentParams() {
+		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 			return List.of(
 					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new EasyFormsTemplateField(SEARCHABLE, FieldTypeEnum.YES_NO));
+					new EasyFormsTemplateItemField(SEARCHABLE, FieldTypeEnum.YES_NO));
 		}
 
 	}

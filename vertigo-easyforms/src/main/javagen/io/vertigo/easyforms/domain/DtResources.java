@@ -53,50 +53,6 @@ public enum DtResources implements LocaleMessageKey {
 	fldEasyFormsFieldTypeUi$hasTemplate,
 
 	/***********************************************************
-	 * EasyFormsFieldUi.
-	 **********************************************************/
-	/**
-	 * Field code.
-	 */
-	fldEasyFormsFieldUi$fieldCode,
-	/**
-	 * Field type.
-	 */
-	fldEasyFormsFieldUi$fieldType,
-	/**
-	 * Field type.
-	 */
-	fldEasyFormsFieldUi$fieldTypeLabel,
-	/**
-	 * Label.
-	 */
-	fldEasyFormsFieldUi$label,
-	/**
-	 * Tooltip.
-	 */
-	fldEasyFormsFieldUi$tooltip,
-	/**
-	 * System field.
-	 */
-	fldEasyFormsFieldUi$isDefault,
-	/**
-	 * Mandatory.
-	 */
-	fldEasyFormsFieldUi$isMandatory,
-	/**
-	 * Parameters.
-	 */
-	fldEasyFormsFieldUi$parameters,
-	/**
-	 * Validators.
-	 */
-	fldEasyFormsFieldUi$fieldValidators,
-	/**
-	 * Validators.
-	 */
-	fldEasyFormsFieldUi$fieldValidatorSelection,
-
-	/***********************************************************
 	 * EasyFormsFieldValidatorTypeUi.
 	 **********************************************************/
 	/**
@@ -121,26 +77,66 @@ public enum DtResources implements LocaleMessageKey {
 	fldEasyFormsFieldValidatorTypeUi$fieldTypes,
 
 	/***********************************************************
-	 * EasyFormsTemplateFieldValidatorUi.
+	 * EasyFormsItemUi.
 	 **********************************************************/
 	/**
-	 * Validator type name.
+	 * Item type.
 	 */
-	fldEasyFormsTemplateFieldValidatorUi$validatorTypeName,
+	fldEasyFormsItemUi$type,
+	/**
+	 * Field code.
+	 */
+	fldEasyFormsItemUi$fieldCode,
+	/**
+	 * Field type.
+	 */
+	fldEasyFormsItemUi$fieldType,
 	/**
 	 * Label.
 	 */
-	fldEasyFormsTemplateFieldValidatorUi$label,
+	fldEasyFormsItemUi$label,
 	/**
-	 * Label.
+	 * Tooltip.
 	 */
-	fldEasyFormsTemplateFieldValidatorUi$parameterizedLabel,
+	fldEasyFormsItemUi$tooltip,
 	/**
-	 * Description.
+	 * System field.
 	 */
-	fldEasyFormsTemplateFieldValidatorUi$description,
+	fldEasyFormsItemUi$isDefault,
 	/**
-	 * Parameters JSON.
+	 * Mandatory.
 	 */
-	fldEasyFormsTemplateFieldValidatorUi$parameters,
+	fldEasyFormsItemUi$isMandatory,
+	/**
+	 * Parameters.
+	 */
+	fldEasyFormsItemUi$parameters,
+	/**
+	 * Validators.
+	 */
+	fldEasyFormsItemUi$fieldValidatorSelection,
+	/**
+	 * Display condition.
+	 */
+	fldEasyFormsItemUi$condition,
+	/**
+	 * Text.
+	 */
+	fldEasyFormsItemUi$text,
+
+	/***********************************************************
+	 * EasyFormsSectionUi.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldEasyFormsSectionUi$fieldCode,
+	/**
+	 * Title.
+	 */
+	fldEasyFormsSectionUi$title,
+	/**
+	 * Display condition.
+	 */
+	fldEasyFormsSectionUi$condition,
 }

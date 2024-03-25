@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.impl.runner.library;
+package io.vertigo.easyforms.impl.runner.pack;
 
 import io.vertigo.core.locale.LocaleMessageKey;
 
@@ -24,7 +24,7 @@ import io.vertigo.core.locale.LocaleMessageKey;
  *
  * @author skerdudou
  */
-public enum EfLibraryResources implements LocaleMessageKey {
+public enum EfPackResources implements LocaleMessageKey {
 	EfTrue,
 	EfFalse,
 
@@ -39,7 +39,10 @@ public enum EfLibraryResources implements LocaleMessageKey {
 	EfFtyVisaLabel,
 	EfFtyNationalityLabel,
 	EfFtyPostalCodeLabel,
+	EfFtyTextLabel,
+	EfFtyText$maxLengthLabel,
 	EfFtyYesNoLabel,
+	EfFtyCountLabel,
 	EfFtyCustomListSelectLabel,
 	EfFtyCustomListRadioLabel,
 	EfFtyCustomListCheckboxLabel,

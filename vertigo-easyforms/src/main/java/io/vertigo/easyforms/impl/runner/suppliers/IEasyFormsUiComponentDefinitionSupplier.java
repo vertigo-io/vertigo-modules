@@ -4,8 +4,10 @@ import java.util.List;
 
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 
 @FunctionalInterface
 public interface IEasyFormsUiComponentDefinitionSupplier {
@@ -14,7 +16,7 @@ public interface IEasyFormsUiComponentDefinitionSupplier {
 
 	public static final String LIST_SUPPLIER = "uiListSupplier";
 	public static final String CUSTOM_LIST_ARG_NAME = "customList";
-	public static final EasyFormsTemplateField LIST_SUPPLIER_FIELD_PARAM = new EasyFormsTemplateField(LIST_SUPPLIER, "").withMandatory();
+	public static final EasyFormsTemplateItemField LIST_SUPPLIER_FIELD_PARAM = new EasyFormsTemplateItemField(LIST_SUPPLIER, "").withMandatory();
 
 	public static final String LIST_SUPPLIER_REF_PREFIX = "ref:";
 	public static final String LIST_SUPPLIER_CTX_PREFIX = "ctx:";
@@ -28,15 +30,18 @@ public interface IEasyFormsUiComponentDefinitionSupplier {
 		}
 
 		for (final var uiComponentParam : uiComponentParams) {
-			// default i18n label for ui component
-			uiComponentParam
-					.withLabel(definitionName + '$' + uiComponentParam.getCode() + "Label");
+			if (uiComponentParam instanceof final EasyFormsTemplateItemField field) {
+				// default i18n label for ui component
+				field
+						.withLabel(definitionName + '$' + field.getCode() + "Label");
+			}
 		}
 
-		return EasyFormsUiComponentDefinition.of(definitionName, new EasyFormsTemplate(uiComponentParams));
+		final var template = new EasyFormsTemplate(List.of(new EasyFormsTemplateSection(null, null, null, uiComponentParams))); // TODO
+		return EasyFormsUiComponentDefinition.of(definitionName, template);
 	}
 
-	public abstract List<EasyFormsTemplateField> getUiComponentParams();
+	public abstract List<AbstractEasyFormsTemplateItem> getUiComponentParams();
 
 	public static String getMdlSupplier(final Class<? extends Entity> clazz) {
 		return LIST_SUPPLIER_REF_PREFIX + clazz.getSimpleName();

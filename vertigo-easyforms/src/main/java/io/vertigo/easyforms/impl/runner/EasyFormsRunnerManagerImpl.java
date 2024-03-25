@@ -14,8 +14,8 @@ import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.ConstraintException;
 import io.vertigo.datamodel.smarttype.definitions.FormatterException;
-import io.vertigo.easyforms.impl.runner.library.EfLibraryResources;
-import io.vertigo.easyforms.impl.runner.library.constraint.EfConstraintResources;
+import io.vertigo.easyforms.impl.runner.pack.EfPackResources;
+import io.vertigo.easyforms.impl.runner.pack.constraint.EfConstraintResources;
 import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.data.EasyFormsDataDescriptor;
 
@@ -38,8 +38,8 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 	@Override
 	public void start() {
 		localeManager.add("io.vertigo.easyforms.runner.Resources", io.vertigo.easyforms.impl.runner.Resources.values());
-		localeManager.add("io.vertigo.easyforms.runner.library.EfLibraryResources", EfLibraryResources.values());
-		localeManager.add("io.vertigo.easyforms.runner.library.EfConstraintResources", EfConstraintResources.values());
+		localeManager.add("io.vertigo.easyforms.runner.pack.EfPackResources", EfPackResources.values());
+		localeManager.add("io.vertigo.easyforms.runner.pack.EfConstraintResources", EfConstraintResources.values());
 
 		localeManager.add("io.vertigo.easyforms.domain.DtResources", io.vertigo.easyforms.domain.DtResources.values());
 	}
@@ -83,7 +83,11 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 				return resolvedList;
 			case ONE:
 			case OPTIONAL_OR_NULLABLE:
-				return smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), inputValue.toString());
+				if (inputValue instanceof Map || inputValue instanceof List) {
+					return inputValue; // Eg : for custom list in admin section (EasyFormsData object)
+				} else {
+					return smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), inputValue.toString());
+				}
 			default:
 				throw new UnsupportedOperationException();
 		}

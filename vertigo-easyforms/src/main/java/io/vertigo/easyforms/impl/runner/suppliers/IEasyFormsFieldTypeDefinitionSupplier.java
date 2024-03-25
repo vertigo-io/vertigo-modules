@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
-import io.vertigo.easyforms.impl.runner.library.EasyFormsSmartTypes;
+import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 
 public interface IEasyFormsFieldTypeDefinitionSupplier {
 
@@ -22,11 +24,13 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 			template = null;
 		} else {
 			for (final var uiComponentParam : uiComponentParams) {
-				// default i18n label for fieldType
-				uiComponentParam
-						.withLabel(definitionName + '$' + uiComponentParam.getCode() + "Label");
+				if (uiComponentParam instanceof final EasyFormsTemplateItemField field) {
+					// default i18n label for fieldType
+					field
+							.withLabel(definitionName + '$' + field.getCode() + "Label");
+				}
 			}
-			template = new EasyFormsTemplate(uiComponentParams);
+			template = new EasyFormsTemplate(List.of(new EasyFormsTemplateSection(null, null, null, uiComponentParams))); // TODO
 		}
 
 		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList());
@@ -44,7 +48,7 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 		return Map.of();
 	}
 
-	public default List<EasyFormsTemplateField> getExposedComponentParams() {
+	public default List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
 		return List.of();
 	}
 

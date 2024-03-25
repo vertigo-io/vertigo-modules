@@ -45,6 +45,11 @@ create Domain DoEfText {
     storeType : "TEXT"
 }
 
+create Domain DoEfTextHtml {
+    dataType : String
+    storeType : "TEXT"
+}
+
 create Domain DoEfFormData {
     dataType : ValueObject
     type : "io.vertigo.easyforms.runner.model.template.EasyFormsData"

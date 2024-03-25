@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.impl.runner.library.provider;
+package io.vertigo.easyforms.impl.runner.pack.provider;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -7,12 +7,12 @@ import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintAgeMaximum;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintAgeMinimum;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintEmailBlackList;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintPhone;
-import io.vertigo.easyforms.impl.runner.library.constraint.ConstraintPhone.ConstraintPhoneEnum;
-import io.vertigo.easyforms.impl.runner.library.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintAgeMaximum;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintAgeMinimum;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintEmailBlackList;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintPhone;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintPhone.ConstraintPhoneEnum;
+import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 
 public final class FieldValidatorTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldValidatorTypeDefinition> {

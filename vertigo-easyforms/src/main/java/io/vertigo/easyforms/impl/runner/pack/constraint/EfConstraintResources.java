@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.impl.runner.library.constraint;
+package io.vertigo.easyforms.impl.runner.pack.constraint;
 
 import io.vertigo.core.locale.LocaleMessageKey;
 

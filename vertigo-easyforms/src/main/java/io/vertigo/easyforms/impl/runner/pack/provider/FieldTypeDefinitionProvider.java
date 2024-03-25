@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.impl.runner.library.provider;
+package io.vertigo.easyforms.impl.runner.pack.provider;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,16 +7,19 @@ import java.util.Map;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.impl.runner.library.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.runner.library.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
-import io.vertigo.easyforms.impl.runner.library.provider.UiComponentDefinitionProvider.RadioCheckUiComponent;
-import io.vertigo.easyforms.impl.runner.library.provider.UiComponentDefinitionProvider.TextFieldUiComponent;
-import io.vertigo.easyforms.impl.runner.library.provider.UiComponentDefinitionProvider.UiComponentEnum;
+import io.vertigo.datamodel.smarttype.definitions.DtProperty;
+import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
+import io.vertigo.easyforms.impl.runner.pack.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
+import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.RadioCheckUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.TextAreaUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.TextFieldUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.UiComponentEnum;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsFieldTypeDefinitionSupplier;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 
 public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsFieldTypeDefinition> {
@@ -44,7 +47,11 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 
 		POSTAL_CODE(new AutocompleteFieldType(EasyFormsSmartTypes.EfCodePostal, "postal-code")),
 
+		TEXT(new TextAreaType()),
+
 		YES_NO(new YesNoFieldType()),
+
+		COUNT(EasyFormsSmartTypes.EfCount, UiComponentEnum.NUMBER),
 
 		CUSTOM_LIST_SELECT(new CustomListFieldType(UiComponentEnum.SELECT)),
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
@@ -52,7 +59,7 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 
 		// internal use
 		INTERNAL_LAYOUT(new RadioLayoutFieldType()),
-		INTERNAL_MAP(null, EasyFormsSmartTypes.EfFormData, UiComponentEnum.INTERNAL_MAP), // null category to hide this item
+		INTERNAL_MAP(null, EasyFormsSmartTypes.EfIMapData, UiComponentEnum.INTERNAL_MAP), // null category to hide this item
 		;
 
 		// ---
@@ -153,6 +160,30 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		}
 	}
 
+	public static class TextAreaType implements IEasyFormsFieldTypeDefinitionSupplier {
+
+		@Override
+		public EasyFormsSmartTypes getSmartType() {
+			return EasyFormsSmartTypes.EfText;
+		}
+
+		@Override
+		public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
+			return UiComponentEnum.TEXT_AREA;
+		}
+
+		@Override
+		public List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
+			return List.of(new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT));
+		}
+
+		@Override
+		public Map<String, Object> getUiParams() {
+			return Map.of(TextAreaUiComponent.AUTOGROW, true);
+		}
+
+	}
+
 	public static class YesNoFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		@Override
 		public EasyFormsSmartTypes getSmartType() {
@@ -237,14 +268,14 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		}
 
 		@Override
-		public List<EasyFormsTemplateField> getExposedComponentParams() {
+		public List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
 			if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
 				return List.of(
-						new EasyFormsTemplateField(RadioCheckUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT)
+						new EasyFormsTemplateItemField(RadioCheckUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT)
 								.withParameters(Map.of(RadioCheckUiComponent.LAYOUT, "horizontal")),
-						new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+						new EasyFormsTemplateItemField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 			}
-			return List.of(new EasyFormsTemplateField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
+			return List.of(new EasyFormsTemplateItemField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 		}
 
 		@Override

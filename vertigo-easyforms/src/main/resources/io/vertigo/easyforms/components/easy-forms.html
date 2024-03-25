@@ -4,98 +4,136 @@
 	
 	<vu:include-data object="${object}" field="${field}" modifiable="true"/>
 	
-	<vui-easy-forms th:v-model="${model.util.vueDataKey(object, field, rowIndex)}" class="full-width" >
+	<vui-easy-forms th:v-model="${model.util.vueDataKey(object, field, rowIndex)}" class="col-12" >
 		<template v-slot:default="slotProps">
-			<div class="row q-col-gutter-md">
-				<th:block th:each="templateField : ${template.fields}"
-				          th:with="fieldType = ${model.efoUiUtil.getFieldTypeByName(templateField.fieldTypeName)}, fieldParameters = ${model.efoUiUtil.getParametersForField(templateField)}, fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${templateField.code}">
-				    <div th:attr="__${elem_attrs}__" class="col-12" >
-						<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})}|"
-						      th:switch="${fieldType.uiComponentName}">
-						    
-						    <vu:content></vu:content>
-						    
-							<div th:case="'EfUicInternalMap'">
-								<vu:label-edit object="${object}" field="|form_${templateField.code}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="false">
-									<vu:slot name="after_label_slot">
-										<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
-										<span th:if="${templateField.isMandatory}" class="v-block__required"></span>
-									</vu:slot>
-									<vui-ef-map th:v-model="|slotProps.formData['${templateField.code}']|"
-								            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
-								</vu:label-edit>
-							</div>
-							<div th:case="'EfUicRadio'">
-								<vu:label-edit object="${object}" field="|form_${templateField.code}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="${templateField.isMandatory}">
-									<q-option-group
-								    	th:v-model="|slotProps.formData['${templateField.code}']|"
-								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
-										th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
-								    	color="primary"
-								    ></q-option-group>
-								</vu:label-edit>
-							</div>
-							<div th:case="'EfUicCheckbox'">
-								<vu:label-edit object="${object}" field="|form_${templateField.code}|" th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}" required="false"
-											   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateField.code}']) { slotProps.formData['${templateField.code}'] = []}}|">
-									<vu:slot name="after_label_slot">
-										<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
-										<span th:if="${templateField.isMandatory}" class="v-block__required"></span>
-									</vu:slot>
-									<q-option-group
-								    	th:v-model="|slotProps.formData['${templateField.code}']|"
-								    	th::options="${model.efoUiUtil.getDynamicListForField(templateField)}"
-								    	type="checkbox"
-										th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
-								    	color="primary"
-								    ></q-option-group>
-								</vu:label-edit>
-							</div>
-							<div th:case="'EfUicSelect'"
-								 th:attr="objectKey=${model.vContext['componentStates'].addComponentState(fieldId).addPrimitive('searchValue','')}">
-								<q-select
-									th:v-model="|slotProps.formData['${templateField.code}']|"
-									fill-input map-options emit-value
-							        th::use-input="${fieldParameters['selectSearchable'] == true}" 
-							        th::hide-selected="${fieldParameters['selectSearchable'] == true}"
-							        th::options="${model.efoUiUtil.getDynamicListForField(templateField, fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? 'componentStates.'+fieldId+'.searchValue' : null)}"
-						            th:@filter="${fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? '(val, update, abort) => update(() => this.componentStates.'+fieldId+'.searchValue = val, ref => ref.setOptionIndex(0))' :null}"
-									th:label="${isI18nLabel != null && isI18nLabel ? '#{__${templateField.label}__}' : templateField.label}"
-									th:classappend="|${templateField.isMandatory?'v-field__required':''}|"
-						            th:aria-required="${templateField.isMandatory}"
-						            th::error="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
-									th::error-message="|getErrorMessage('${object}', 'form_${templateField.code}', ${rowIndex})|"
-									orientation="vertical"
-									stack-label>
-								</q-select>
-							</div>
-							<div th:case="*">
-								<q-input label-slot
-										th:v-autofocus="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|"
-										th:v-model="|slotProps.formData['${templateField.code}']|"
-										th::aria-describedby="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex}) ? 'text-input-${templateField.code}-desc-error' : null|"
-										th::aria-invalid="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
-										th:id="|text-input-${templateField.code}|"
-										th::error="|hasFieldsError('${object}', 'form_${templateField.code}', ${rowIndex})|" 
-										th::error-message="|getErrorMessage('${object}', 'form_${templateField.code}', ${rowIndex})|"
-										th:type="${fieldType.uiComponentName == 'textfield' ? 'text' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : 'text')}"
-										th:autocomplete="${fieldParameters['textFieldAutocomplete']}"
-										th:maxlength="${model.efoUiUtil.smartTypeMaxLength(templateField.fieldTypeName)}"
-										orientation="vertical"
-										stack-label
-										th:classappend="${templateField.isMandatory?'v-field__required':''}"
-										th:aria-required="${templateField.isMandatory}" >
-										<template v-slot:label>
-										  <div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
-										    <div vu:text="${templateField.label}" />
-										    <q-tooltip th:if="${templateField.tooltip}" class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]"><div vu:text="${templateField.tooltip}"/></q-tooltip>
-										  </div>
-										</template>
-								</q-input>
-							</div>
+			<div class="q-gutter-md">
+				<div th:each="templateSection: ${template.sections}"
+					 th:class="${template.useSections ? 'q-card bg-white':''}"
+					 th:with="currentBlockLevel=${currentBlockLevel != null ? currentBlockLevel+1 : 1}"
+					 >
+					<div th:if="${template.useSections}" class="q-card__section" >
+						<q-item>
+							<q-item-section>
+							    <h1 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 1}"></h1>
+								<h2 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 2}"></h2>
+								<h3 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 3}"></h3>
+								<h4 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 4}"></h4>
+								<h5 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 5}"></h5>
+								<h6 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 6}"></h6>
+							</q-item-section>
+						</q-item>
+					</div>
+					<div th:if="${template.useSections}"
+						 class="q-separator q-separator--horizontal"></div>
+					<div th:class="${template.useSections ? 'q-card__section q-pa-md':''}">
+						<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
+							<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
+								<th:block th:if="${templateItem.type == 'STATIC'}">
+			    					<div th:utext="${templateItem.label}"></div>
+			    				</th:block>
+			    				<th:block th:if="${templateItem.type == 'BLOCK'}"
+								          th:with="itemHolder = ${templateItem}"
+								          th:insert="~{:: itemListUi}">
+			    				</th:block>
+			    				<th:block th:if="${templateItem.type == 'FIELD'}"
+								          th:with="fieldModel = ${model.efoUiUtil.resolveModelName(template, templateSection, templateItem)},
+								                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
+								                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
+								                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
+								                   fieldLabel = ${isI18nLabel != null && isI18nLabel ? '__#{${templateItem.label}}__' : templateItem.label}">
+								    <div th:attr="__${elem_attrs}__" class="col-12" >
+										<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})}|"
+										      th:switch="${fieldType.uiComponentName}">
+										    
+										    <vu:content></vu:content>
+										    
+											<div th:case="'EfUicInternalMap'">
+												<vu:label-edit object="${object}" field="|form_${templateItem.code}|" th:label="${fieldLabel}" required="false">
+													<vu:slot name="after_label_slot">
+														<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
+														<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
+													</vu:slot>
+													<vui-ef-map th:v-model="${fieldModel}"
+												            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
+												</vu:label-edit>
+											</div>
+											<div th:case="'EfUicRadio'">
+												<vu:label-edit object="${object}" field="|form_${templateItem.code}|" th:label="${fieldLabel}" required="${templateItem.isMandatory}">
+													<q-option-group
+												    	th:v-model="${fieldModel}"
+												    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
+														th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
+												    	color="primary"
+												    ></q-option-group>
+												</vu:label-edit>
+											</div>
+											<div th:case="'EfUicCheckbox'">
+												<vu:label-edit object="${object}" field="|form_${templateItem.code}|" th:label="${fieldLabel}" required="false"
+															   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateItem.code}']) { slotProps.formData['${templateItem.code}'] = []}}|">
+													<vu:slot name="after_label_slot">
+														<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
+														<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
+													</vu:slot>
+													<q-option-group
+												    	th:v-model="${fieldModel}"
+												    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
+												    	type="checkbox"
+														th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
+												    	color="primary"
+												    ></q-option-group>
+												</vu:label-edit>
+											</div>
+											<div th:case="'EfUicSelect'"
+												 th:attr="objectKey=${model.vContext['componentStates'].addComponentState(fieldId).addPrimitive('searchValue','')}">
+												<q-select
+													th:v-model="${fieldModel}"
+													fill-input map-options emit-value
+											        th::use-input="${fieldParameters['selectSearchable'] == true}" 
+											        th::hide-selected="${fieldParameters['selectSearchable'] == true}"
+											        th::options="${model.efoUiUtil.getDynamicListForField(templateItem, fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? 'componentStates.'+fieldId+'.searchValue' : null)}"
+										            th:@filter="${fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? '(val, update, abort) => update(() => this.componentStates.'+fieldId+'.searchValue = val, ref => ref.setOptionIndex(0))' :null}"
+													th:label="${fieldLabel}"
+													th:classappend="|${templateItem.isMandatory?'v-field__required':''}|"
+										            th:aria-required="${templateItem.isMandatory}"
+										            th::error="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|" 
+													th::error-message="|getErrorMessage('${object}', 'form_${templateItem.code}', ${rowIndex})|"
+													orientation="vertical"
+													stack-label>
+												</q-select>
+											</div>
+											<div th:case="*">
+												<q-input label-slot
+														th:v-autofocus="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|"
+														th:v-model="${fieldModel}"
+														th::aria-describedby="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
+														th::aria-invalid="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|" 
+														th:id="|text-input-${templateItem.code}|"
+														th::error="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|" 
+														th::error-message="|getErrorMessage('${object}', 'form_${templateItem.code}', ${rowIndex})|"
+														th:type="${fieldType.uiComponentName == 'EfUicTextArea' ? 'textarea' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : (fieldType.uiComponentName == 'EfUicDateTime' ? 'datetime-local' : (fieldType.uiComponentName == 'EfUicNumber' ? 'number' : 'text')))}"
+														th::counter="${fieldType.uiComponentName == 'EfUicTextArea' ? 'true' : 'false'}"
+														th:autocomplete="${fieldParameters['textFieldAutocomplete']}"
+														th:maxlength="${model.efoUiUtil.maxLength(templateItem)}"
+														orientation="vertical"
+														stack-label
+														th:classappend="${templateItem.isMandatory?'v-field__required':''}"
+														th:aria-required="${templateItem.isMandatory}" >
+														<template v-slot:label>
+														  <div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
+														    <div vu:text="${fieldLabel}" />
+														    <q-tooltip th:if="${templateItem.tooltip}" class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]"><div vu:text="${templateItem.tooltip}"/></q-tooltip>
+														  </div>
+														</template>
+												</q-input>
+											</div>
+										</div>
+									</div>
+								</th:block>
+							</th:block>
 						</div>
 					</div>
-				</th:block>
+				</div>
+			</div>
 		</template>
 	</vui-easy-forms>
 	
@@ -105,14 +143,35 @@
 <th:block th:fragment="easy-forms-read(object, field, rowIndex, template, isI18nLabel, elem_attrs)" 
 	vu:alias="easy-forms" vu:selector="${viewMode=='read'}"
 	th:assert="${object} != null and ${field} != null and ${template} != null">
-	
-	<vu:include-data object="${object}" field="${field}"/>
-	
-	<div class="row q-col-gutter-md">
-		<div th:attr="__${elem_attrs}__" class="col-12" th:v-for="|(value, name) in ${model.efoUiUtil.getEasyFormRead(template, object, field, rowIndex)}|">
-	         <q-field :label="name" orientation="vertical" stack-label readonly borderless >
-	             {{ value }}
-	         </q-field>
+
+	<div class="col-12">
+		<div class="q-gutter-md">
+			<div th:each="sectionEntry : ${model.efoUiUtil.getEasyFormRead(template, object, field, rowIndex)}"
+				 th:class="${template.useSections ? 'q-card bg-white':''}"
+			     th:with="currentBlockLevel=${currentBlockLevel != null ? currentBlockLevel+1 : 1}"
+				 >
+				<div th:if="${template.useSections}" class="q-card__section">
+						<q-item>
+							<q-item-section>
+							    <h1 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 1}"></h1>
+								<h2 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 2}"></h2>
+								<h3 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 3}"></h3>
+								<h4 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 4}"></h4>
+								<h5 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 5}"></h5>
+								<h6 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 6}"></h6>
+							</q-item-section>
+						</q-item>
+				</div>
+				<div th:if="${template.useSections}"
+						 class="q-separator q-separator--horizontal"></div>
+				<div th:class="${template.useSections ? 'q-card__section q-pa-md':''}">
+					<div th:attr="__${elem_attrs}__" class="col-12" th:each="fieldEntry : ${sectionEntry.value}">
+						<q-field th:label="${fieldEntry.key}" orientation="vertical" stack-label readonly borderless >
+				             <div th:text="${fieldEntry.value}"></div>
+				         </q-field>
+					</div>
+				</div>
+			</div>
 	    </div>
     </div>
 </th:block>

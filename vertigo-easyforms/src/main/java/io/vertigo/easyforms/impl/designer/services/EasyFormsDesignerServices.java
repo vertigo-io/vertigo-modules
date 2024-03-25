@@ -1,8 +1,8 @@
 package io.vertigo.easyforms.impl.designer.services;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -14,18 +14,16 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.designer.services.IEasyFormsDesignerServices;
-import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsFieldUiFields;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsItemUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
-import io.vertigo.easyforms.domain.EasyFormsFieldUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
-import io.vertigo.easyforms.domain.EasyFormsTemplateFieldValidatorUi;
+import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
-import io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
@@ -70,56 +68,51 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				.collect(VCollectors.toDtList(EasyFormsFieldValidatorTypeUi.class));
 	}
 
-	@Override
-	public DtList<EasyFormsFieldUi> getFieldUiListByEasyForm(final EasyForm easyForm) {
-		return easyForm.getTemplate().getFields().stream()
-				.map(field -> {
-					final var fieldType = EasyFormsFieldTypeDefinition.resolve(field.getFieldTypeName());
-					final var fieldUi = new EasyFormsFieldUi();
-					fieldUi.setFieldCode(field.getCode());
-					fieldUi.setFieldType(fieldType.id().fullName());
-					fieldUi.setFieldTypeLabel(fieldType.getLabel());
-					fieldUi.setLabel(field.getLabel());
-					fieldUi.setTooltip(field.getTooltip());
-					fieldUi.setIsDefault(field.isDefault());
-					fieldUi.setParameters(field.getParameters());
-					fieldUi.setIsMandatory(field.isMandatory());
-					fieldUi.setFieldValidators(validatorToValidatorUi(field.getValidators()));
+	//	@Override
+	//	public DtList<EasyFormsItemUi> getFieldUiListByEasyForm(final EasyForm easyForm) {
+	//		return null;
+	/*
+	return easyForm.getTemplate().getFields().stream()
+	.map(field -> {
+		final var fieldType = EasyFormsFieldTypeDefinition.resolve(field.getFieldTypeName());
+		final var fieldUi = new EasyFormsFieldUi();
+		fieldUi.setFieldCode(field.getCode());
+		fieldUi.setFieldType(fieldType.id().fullName());
+		fieldUi.setFieldTypeLabel(fieldType.getLabel());
+		fieldUi.setLabel(field.getLabel());
+		fieldUi.setTooltip(field.getTooltip());
+		fieldUi.setIsDefault(field.isDefault());
+		fieldUi.setParameters(field.getParameters());
+		fieldUi.setIsMandatory(field.isMandatory());
+		fieldUi.setFieldValidators(validatorToValidatorUi(field.getValidators()));
 
-					return fieldUi;
-				})
-				.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
-	}
-
-	private EasyFormsTemplateFieldValidatorUiList validatorToValidatorUi(final List<EasyFormsTemplateFieldValidator> validators) {
-		if (validators == null) {
-			return new EasyFormsTemplateFieldValidatorUiList();
-		}
-
-		return new EasyFormsTemplateFieldValidatorUiList(
-				validators.stream()
-						.map(validator -> {
-							final var validatorUi = new EasyFormsTemplateFieldValidatorUi();
-							validatorUi.setValidatorTypeName(validator.getName());
-							validatorUi.setParameters(validator.getParameters());
-
-							final EasyFormsFieldValidatorTypeDefinition validatorType = Node.getNode().getDefinitionSpace().resolve(validator.getName(), EasyFormsFieldValidatorTypeDefinition.class);
-							validatorUi.setLabel(validatorType.getLabel());
-							validatorUi.setParameterizedLabel(validatorType.getParameterizedLabel(validator.getParameters()));
-							validatorUi.setDescription(validatorType.getDescription());
-
-							return validatorUi;
-						})
-						.toList());
-	}
+		return fieldUi;
+	})
+	.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
+	*/
+	//	}
 
 	@Override
-	public void checkUpdateField(final DtList<EasyFormsFieldUi> fields, final Integer editIndex, final EasyFormsFieldUi fieldEdit, final UiMessageStack uiMessageStack) {
-		for (int i = 0; i < fields.size(); i++) {
-			if (i != editIndex && fields.get(i).getFieldCode().equals(fieldEdit.getFieldCode())) {
+	public void checkUpdateField(final List<AbstractEasyFormsTemplateItem> items, final Integer editIndex, final Optional<Integer> editIndex2, final EasyFormsItemUi fieldEdit,
+			final UiMessageStack uiMessageStack) {
+		for (int i = 0; i < items.size(); i++) {
+			if (i != editIndex
+					&& items.get(i) instanceof final EasyFormsTemplateItemField field
+					&& field.getCode().equals(fieldEdit.getFieldCode())) {
 				//si le code n'est pas unique ce n'est pas bon.
-				throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans le formulaire."), // TODO i18n
-						fieldEdit, EasyFormsFieldUiFields.fieldCode);
+				throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans la section."), // TODO i18n
+						fieldEdit, EasyFormsItemUiFields.fieldCode);
+			} else if (items.get(i) instanceof final EasyFormsTemplateItemBlock block) {
+				final var blockItems = block.getItems();
+				for (int j = 0; j < blockItems.size(); j++) {
+					if ((editIndex2.isEmpty() || editIndex2.get() != j)
+							&& blockItems.get(j) instanceof final EasyFormsTemplateItemField field
+							&& field.getCode().equals(fieldEdit.getFieldCode())) {
+						//si le code n'est pas unique ce n'est pas bon.
+						throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans la section."), // TODO i18n
+								fieldEdit, EasyFormsItemUiFields.fieldCode);
+					}
+				}
 			}
 		}
 
@@ -139,34 +132,9 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	}
 
 	@Override
-	public Long saveNewForm(final EasyForm easyForm, final DtList<EasyFormsFieldUi> fields) {
-		final List<EasyFormsTemplateField> templateFields = new ArrayList<>();
-		for (final EasyFormsFieldUi fieldUi : fields) {
-			final EasyFormsFieldTypeDefinition fieldType = EasyFormsFieldTypeDefinition.resolve(fieldUi.getFieldType());
-			Assertion.check().isNotNull(fieldType, "Field type can't be null");
-
-			templateFields.add(new EasyFormsTemplateField(fieldUi.getFieldCode(), fieldType)
-					.withLabel(fieldUi.getLabel())
-					.withTooltip(fieldUi.getTooltip())
-					.withDefault(Boolean.TRUE.equals(fieldUi.getIsDefault()))
-					.withMandatory(Boolean.TRUE.equals(fieldUi.getIsMandatory()))
-					.withParameters(fieldUi.getParameters())
-					.withValidators(validatorUiToValidator(fieldUi.getFieldValidators())));
-		}
-		easyForm.setTemplate(new EasyFormsTemplate(templateFields));
+	public Long saveNewForm(final EasyForm easyForm) {
 		easyFormDAO.save(easyForm);
 		return easyForm.getEfoId();
-	}
-
-	private List<EasyFormsTemplateFieldValidator> validatorUiToValidator(final List<EasyFormsTemplateFieldValidatorUi> validatorsUi) {
-		if (validatorsUi == null) {
-			return List.of();
-		}
-
-		return validatorsUi.stream()
-				.map(validatorUi -> new EasyFormsTemplateFieldValidator(validatorUi.getValidatorTypeName())
-						.withParameters(validatorUi.getParameters()))
-				.toList();
 	}
 
 	@Override

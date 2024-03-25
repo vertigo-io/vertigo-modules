@@ -3,25 +3,28 @@ package io.vertigo.easyforms.impl.runner.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.stream.Stream;
 
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateField;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
@@ -33,27 +36,34 @@ public final class EasyFormsUiUtil implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Gson GSON = new GsonBuilder()
-			.serializeNulls()
-			.create();
-
 	public EasyFormsFieldTypeDefinition getFieldTypeByName(final String fieldTypeName) {
 		return Node.getNode().getDefinitionSpace().resolve(fieldTypeName, EasyFormsFieldTypeDefinition.class);
 	}
 
 	/**
-	 * @param fieldTypeName Name of the field type
+	 * @param item The template item
 	 * @return maxLength of the field
 	 */
-	public Integer smartTypeMaxLength(final String fieldTypeName) {
-		if (fieldTypeName != null) {
-			return Node.getNode().getDefinitionSpace().resolve(getFieldTypeByName(fieldTypeName).getSmartTypeName(), SmartTypeDefinition.class)
+	public Integer maxLength(final AbstractEasyFormsTemplateItem item) {
+		if (item instanceof final EasyFormsTemplateItemField field) {
+			final Integer smartTypeMaxLength = Node.getNode().getDefinitionSpace().resolve(getFieldTypeByName(field.getFieldTypeName()).getSmartTypeName(), SmartTypeDefinition.class)
 					.getProperties().getValue(DtProperty.MAX_LENGTH);
+			final Long fieldMaxLength = field.getParameters() == null ? null : (Long) field.getParameters().get(DtProperty.MAX_LENGTH.getName());
+			return min(smartTypeMaxLength, fieldMaxLength);
 		}
 		return null;
 	}
 
-	public String getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
+	private Integer min(final Integer int1, final Long int2) {
+		if (int2 == null) {
+			return int1;
+		} else if (int1 == null) {
+			return int2.intValue();
+		}
+		return Math.min(int1, int2.intValue());
+	}
+
+	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
 		final var object = UiRequestUtil.getCurrentViewContext().get(objectKey);
 		if (row == null && object instanceof final UiObject<?> uiObject) {
 			final EasyFormsData easyForm = uiObject.getTypedValue(field, EasyFormsData.class);
@@ -65,42 +75,98 @@ public final class EasyFormsUiUtil implements Serializable {
 		throw new VSystemException("Unsupported object for easy form data.");
 	}
 
-	public String getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
-		final var easyFormDisplay = new LinkedHashMap<String, Object>();
-		final Map<String, Object> outOfEasyFormData = new HashMap<>(easyForm);
+	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
+		final var easyFormDisplay = new LinkedHashMap<String, LinkedHashMap<String, Object>>();
+		final var outOfSections = new LinkedHashSet<>(easyForm.keySet());
 
-		for (final EasyFormsTemplateField field : easyFormsTemplate.getFields()) { // order is important
-			final var fieldCode = field.getCode();
+		// We use display order from template
+		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
 
-			final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
-			final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
-			final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
+			outOfSections.remove(section.getCode());
+			final var easyFormSectionData = (Map<String, Object>) easyForm.get(section.getCode());
 
-			final Object rawValue = outOfEasyFormData.get(fieldCode);
-			if (listSupplier == null) {
-				// basic value
-				easyFormDisplay.put(field.getLabel(), rawValue);
-			} else {
-				// value selected from list
-				if (rawValue instanceof final List<?> rawList) {
-					// multi-selection
-					easyFormDisplay.put(field.getLabel(),
-							rawList.stream()
-									.map(i -> getListDisplayValue(resolvedParameters, i))
-									.collect(Collectors.joining(", ")));
+			// TODO check section display condition or if contains actual data ?
+			// Idea : have an option to choose behavior (eg : display empty data if it is shown in edit mode)
+			if (easyFormSectionData != null) {
 
-				} else {
-					// single selection
-					easyFormDisplay.put(field.getLabel(), getListDisplayValue(resolvedParameters, rawValue));
+				final var sectionDisplay = new LinkedHashMap<String, Object>();
+				easyFormDisplay.put(section.getLabel(), sectionDisplay);
+				final var outOfSectionData = new HashMap<>(easyFormSectionData);
+
+				for (final EasyFormsTemplateItemField field : getAllFieldsForSection(section)) {
+					final var fieldCode = field.getCode();
+					final Object rawValue = easyFormSectionData.get(fieldCode);
+
+					// TODO check block display condition or if contains actual data ? (impact on getAllFieldsForSection to check block condition)
+					// Idea : have an option to choose behavior (eg : display empty data if it is shown in edit mode)
+					if (rawValue != null) {
+
+						final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
+						final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
+						final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
+
+						if (listSupplier == null) {
+							// basic value
+							final var smartType = Node.getNode().getDefinitionSpace().resolve(fieldType.getSmartTypeName(), SmartTypeDefinition.class);
+							final var smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
+							String displayValue;
+							if (rawValue instanceof final String str) {
+								displayValue = str;
+							} else {
+								displayValue = smartTypeManager.valueToString(smartType, rawValue);
+							}
+							sectionDisplay.put(field.getLabel(), displayValue);
+						} else {
+							// value selected from list
+							if (rawValue instanceof final List<?> rawList) {
+								// multi-selection
+								sectionDisplay.put(field.getLabel(),
+										rawList.stream()
+												.map(i -> getListDisplayValue(resolvedParameters, i))
+												.collect(Collectors.joining(", ")));
+
+							} else {
+								// single selection
+								sectionDisplay.put(field.getLabel(), getListDisplayValue(resolvedParameters, rawValue));
+							}
+						}
+						outOfSectionData.remove(fieldCode);
+					}
+				}
+
+				// add old section data (code + value)
+				for (final Entry<String, Object> champ : outOfSectionData.entrySet()) {
+					sectionDisplay.put(champ.getKey() + " (old)", champ.getValue());
 				}
 			}
-			outOfEasyFormData.remove(fieldCode);
 		}
-		for (final Entry<String, Object> champ : outOfEasyFormData.entrySet()) {
-			easyFormDisplay.put(champ.getKey() + " (old)", champ.getValue());
+		// add old sections
+		for (final String oldSection : outOfSections) {
+			final var oldSectionData = (Map<String, Object>) easyForm.get(oldSection);
+			final var sectionDisplay = new LinkedHashMap<String, Object>();
+			easyFormDisplay.put(oldSection + " (old)", sectionDisplay);
+
+			for (final Entry<String, Object> champ : oldSectionData.entrySet()) {
+				sectionDisplay.put(champ.getKey(), champ.getValue());
+			}
 		}
 
-		return GSON.toJson(easyFormDisplay);
+		return easyFormDisplay;
+	}
+
+	private List<EasyFormsTemplateItemField> getAllFieldsForSection(final EasyFormsTemplateSection section) {
+		// Refacto : see EasyFormsDesignerController.computeDefaultFieldCode
+		final var list1 = section.getItems().stream() // fields 1st level
+				.filter(EasyFormsTemplateItemField.class::isInstance)
+				.map(EasyFormsTemplateItemField.class::cast);
+		final var list2 = section.getItems().stream() // fields inside block
+				.filter(EasyFormsTemplateItemBlock.class::isInstance)
+				.map(EasyFormsTemplateItemBlock.class::cast)
+				.flatMap(b -> b.getItems().stream())
+				.filter(EasyFormsTemplateItemField.class::isInstance)
+				.map(EasyFormsTemplateItemField.class::cast);
+
+		return Stream.concat(list1, list2).toList();
 	}
 
 	private String getListDisplayValue(final EasyFormsData resolvedParameters, final Object rawValue) {
@@ -131,11 +197,11 @@ public final class EasyFormsUiUtil implements Serializable {
 		return uiList.getById(idField.name(), (Serializable) value).getSingleInputValue(displayField.name());
 	}
 
-	public String getDynamicListForField(final EasyFormsTemplateField field) {
+	public String getDynamicListForField(final EasyFormsTemplateItemField field) {
 		return getDynamicListForField(field, null);
 	}
 
-	public String getDynamicListForField(final EasyFormsTemplateField field, final String searchValue) {
+	public String getDynamicListForField(final EasyFormsTemplateItemField field, final String searchValue) {
 		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 
 		final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
@@ -167,9 +233,13 @@ public final class EasyFormsUiUtil implements Serializable {
 		return "transformListForSelection('" + ctxKeyName + "', '" + idField + "', '" + displayField + "', null, " + searchValue + ")";
 	}
 
-	public EasyFormsData getParametersForField(final EasyFormsTemplateField field) {
+	public EasyFormsData getParametersForField(final EasyFormsTemplateItemField field) {
 		final var fieldType = getFieldTypeByName(field.getFieldTypeName());
 		return EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
+	}
+
+	public String resolveModelName(final EasyFormsTemplate template, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field) {
+		return "slotProps.formData['" + (template.useSections() ? section.getCode() + "']['" : "") + field.getCode() + "']";
 	}
 
 }
