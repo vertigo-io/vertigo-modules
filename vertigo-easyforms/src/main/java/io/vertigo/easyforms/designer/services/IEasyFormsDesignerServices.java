@@ -9,7 +9,9 @@ import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
+import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 public interface IEasyFormsDesignerServices extends Component {
@@ -18,7 +20,7 @@ public interface IEasyFormsDesignerServices extends Component {
 
 	DtList<EasyFormsFieldValidatorTypeUi> getFieldValidatorTypeUiList();
 
-	//DtList<EasyFormsItemUi> getFieldUiListByEasyForm(EasyForm easyForm);
+	void checkUpdateSection(List<EasyFormsTemplateSection> sections, Integer editIndex, EasyFormsSectionUi sectionEdit, UiMessageStack uiMessageStack);
 
 	void checkUpdateField(List<AbstractEasyFormsTemplateItem> items, Integer editIndex, Optional<Integer> editIndex2, EasyFormsItemUi fieldEdit, UiMessageStack uiMessageStack);
 

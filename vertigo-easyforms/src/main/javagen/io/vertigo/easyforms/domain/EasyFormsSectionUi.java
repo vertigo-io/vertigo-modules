@@ -13,46 +13,46 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 public final class EasyFormsSectionUi implements DataObject {
 	private static final long serialVersionUID = 1L;
 
-	private String fieldCode;
-	private String title;
+	private String code;
+	private String label;
 	private String condition;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Code'.
-	 * @return String fieldCode <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Section code'.
+	 * @return String code <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
-	public String getFieldCode() {
-		return fieldCode;
+	@Field(smartType = "STyEfCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Section code")
+	public String getCode() {
+		return code;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Code'.
-	 * @param fieldCode String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Section code'.
+	 * @param code String <b>Obligatoire</b>
 	 */
-	public void setFieldCode(final String fieldCode) {
-		this.fieldCode = fieldCode;
+	public void setCode(final String code) {
+		this.code = code;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Title'.
-	 * @return String title <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Label'.
+	 * @return String label <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyEfLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title")
-	public String getTitle() {
-		return title;
+	@Field(smartType = "STyEfLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Label")
+	public String getLabel() {
+		return label;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Title'.
-	 * @param title String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Label'.
+	 * @param label String <b>Obligatoire</b>
 	 */
-	public void setTitle(final String title) {
-		this.title = title;
+	public void setLabel(final String label) {
+		this.label = label;
 	}
 	
 	/**

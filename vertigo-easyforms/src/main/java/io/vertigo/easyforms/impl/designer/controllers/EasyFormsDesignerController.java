@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.ClassUtil;
 import io.vertigo.core.util.StringUtil;
@@ -51,6 +52,7 @@ import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
+import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.impl.runner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
@@ -88,6 +90,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
+	private static final ViewContextKey<String> messageKey = ViewContextKey.of("message");
+
 	@Inject
 	private IEasyFormsDesignerServices easyFormsDesignerServices;
 
@@ -110,8 +114,10 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 				.map(easyFormsRunnerServices::getEasyFormById)
 				.orElseGet(EasyForm::new);
 		viewContext.publishDto(efoKey, easyForm)
+				.publishDto(editSectionKey, new EasyFormsSectionUi())
 				.publishDto(editItemKey, buildNewItemUi(ItemType.FIELD))
-				.publishRef(efoUiUtilKey, new EasyFormsUiUtil());
+				.publishRef(efoUiUtilKey, new EasyFormsUiUtil())
+				.publishRef(messageKey, "");
 		updateValidatorEfoLabels(viewContext, easyForm);
 	}
 
@@ -202,9 +208,9 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	// ****
 	@PostMapping("/_addSection")
 	public ViewContext addNewSection(final ViewContext viewContext) {
-		final var sectionUi = new EasyFormsItemUi();
+		final var sectionUi = new EasyFormsSectionUi();
 
-		viewContext.publishDto(editItemKey, sectionUi);
+		viewContext.publishDto(editSectionKey, sectionUi);
 		return viewContext;
 	}
 
@@ -214,12 +220,12 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			@RequestParam("sectionIndex") final Integer sectionIndex) {
 
 		final var editedSection = efo.getTemplate().getSections().get(sectionIndex.intValue());
-		final var sectionUi = new EasyFormsItemUi();
-		sectionUi.setFieldCode(editedSection.getCode());
+		final var sectionUi = new EasyFormsSectionUi();
+		sectionUi.setCode(editedSection.getCode());
 		sectionUi.setLabel(editedSection.getLabel());
 		sectionUi.setCondition(editedSection.getCondition());
 
-		viewContext.publishDto(editItemKey, sectionUi);
+		viewContext.publishDto(editSectionKey, sectionUi);
 		return viewContext;
 	}
 
@@ -230,7 +236,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		efo.getTemplate().getSections().remove(sectionIndex.intValue());
 
-		viewContext.publishDto(efoKey, efo);
+		viewContext.publishDto(efoKey, efo)
+				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerSectionDeleted).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
 		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
@@ -246,7 +253,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var toMove = sections.remove(fromSectionIndex.intValue());
 		sections.add(toSectionIndex.intValue(), toMove);
 
-		viewContext.publishDto(efoKey, efo);
+		viewContext.publishDto(efoKey, efo)
+				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerSectionMoved).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
 		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
@@ -255,7 +263,10 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	public ViewContext saveSection(final ViewContext viewContext,
 			@ViewAttribute("efo") final EasyForm efo,
 			@RequestParam("sectionIndex") final Integer sectionIndex,
-			@Validate({ DefaultDtObjectValidator.class, EditItemValidator.class }) @ViewAttribute("editItem") final EasyFormsItemUi editUiItem) {
+			@ViewAttribute("editSection") final EasyFormsSectionUi editSectionUi,
+			final UiMessageStack uiMessageStack) {
+
+		easyFormsDesignerServices.checkUpdateSection(efo.getTemplate().getSections(), sectionIndex, editSectionUi, uiMessageStack);
 
 		final boolean isNew = sectionIndex == -1;
 		final EasyFormsTemplateSection section;
@@ -266,11 +277,13 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			section = efo.getTemplate().getSections().get(sectionIndex.intValue());
 		}
 
-		section.setCode(editUiItem.getFieldCode());
-		section.setLabel(editUiItem.getLabel());
-		section.setCondition(editUiItem.getCondition());
+		section.setCode(editSectionUi.getCode());
+		section.setLabel(editSectionUi.getLabel());
+		section.setCondition(editSectionUi.getCondition());
 
-		viewContext.publishDto(efoKey, efo);
+		viewContext.publishDto(efoKey, efo)
+				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerSectionValidated).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
+
 		return viewContext;
 
 	}
@@ -298,7 +311,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var items = resolveLocalItems(editIndex, editIndex2, sectionItems);
 		items.remove(editIndex2.orElse(editIndex).intValue());
 
-		viewContext.publishDto(efoKey, efo);
+		viewContext.publishDto(efoKey, efo)
+				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemDeleted).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
 		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
@@ -358,7 +372,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var toMove = fromItems.remove(localFromIndex);
 		toItems.add(localToIndex, toMove);
 
-		viewContext.publishDto(efoKey, efo);
+		viewContext.publishDto(efoKey, efo)
+				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemMoved).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
 		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
@@ -436,8 +451,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			editItem = mergeUiToItem(items.get(editIndex2.orElse(editIndex)), editUiItem, uiMessageStack);
 		}
 
-		viewContext.publishDto(efoKey, efo);
-
+		viewContext.publishDto(efoKey, efo)
+				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemValidated).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
 		updateValidatorEfoLabels(viewContext, efo);
 
 		return viewContext;
@@ -505,11 +520,6 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		@Override
 		protected List<DataFieldName<EasyFormsItemUi>> getFieldsToNullCheck(final EasyFormsItemUi dtObject) {
-			if (dtObject.getType() == null) {// section
-				return List.of(EasyFormsItemUiFields.label,
-						EasyFormsItemUiFields.fieldCode);
-			}
-
 			switch (ItemType.valueOf(dtObject.getType())) {
 				case STATIC:
 					return List.of(EasyFormsItemUiFields.text);

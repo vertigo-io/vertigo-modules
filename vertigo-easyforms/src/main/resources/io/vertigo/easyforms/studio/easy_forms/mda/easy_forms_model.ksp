@@ -21,8 +21,8 @@ create DtDefinition DtEasyFormsFieldTypeUi {
 }
 
 create DtDefinition DtEasyFormsSectionUi {
-    field fieldCode 		{domain: DoEfCode 					label:"Code"	 				cardinality:"1"}
-    field title 			{domain: DoEfLabel 					label:"Title" 					cardinality:"1"}
+    field code 				{domain: DoEfCode 					label:"Section code"	 		cardinality:"1"}
+    field label 			{domain: DoEfLabel 					label:"Label" 					cardinality:"1"}
     field condition 		{domain: DoEfLabel 					label:"Display condition" 		}
 }
 

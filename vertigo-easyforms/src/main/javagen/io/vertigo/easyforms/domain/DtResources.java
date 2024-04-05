@@ -128,13 +128,13 @@ public enum DtResources implements LocaleMessageKey {
 	 * EasyFormsSectionUi.
 	 **********************************************************/
 	/**
-	 * Code.
+	 * Section code.
 	 */
-	fldEasyFormsSectionUi$fieldCode,
+	fldEasyFormsSectionUi$code,
 	/**
-	 * Title.
+	 * Label.
 	 */
-	fldEasyFormsSectionUi$title,
+	fldEasyFormsSectionUi$label,
 	/**
 	 * Display condition.
 	 */

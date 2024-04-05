@@ -1,192 +1,181 @@
-<th:block th:fragment="easy-forms-admin(id, title)">
-	
-	<div class="col-12" v-if-unsaved-updates>
-		<div th:if="${viewMode == 'edit'}" class="q-card bg-info text-white col">
-			<div class="q-card-main q-pa-md">
-				<div class="q-item-label" vu:text="#{EfDesignerPendingChanges}"></div>
-			</div>
-		</div>
-	</div>
-	
+<th:block th:fragment="easy-forms-admin()">
 	<vu:include-data object="efo" field="template" />
 	<vu:include-data-primitive key="validatorEfoLabels" />
+	<vu:include-data-primitive key="message" />
 	<vu:include-data object="fieldTypes" field="name" />
 	<vu:include-data object="fieldTypes" field="label" />
 	
-	<vu:block id="${id}" title="${title}">
-		<vui-easy-forms th:v-model="${model.util.vueDataKey('efo', 'template', null)}">
-			<template v-slot:default="slotProps">
-				<div class="q-gutter-md">
-					<q-card v-for="(section, index) in slotProps.formData.sections">
-				    	<q-card-section horizontal>
-				    		<q-item class="full-width">
-				    			<q-item-section avatar th:if="${viewMode != 'read'}" class="col_action q-gutter-xs">
-			    					<vu:button v-if="index > 0"
-										       size="sm" flat icon="fas fa-arrow-up"
-										       title="#{EfDesignerMoveSectionUp}"
-										       @click="efMoveSection(index, index-1)"/>
-									<vu:button v-if="index < slotProps.formData.sections.length - 1"
-									           size="sm" flat icon="fas fa-arrow-down"
-									           title="#{EfDesignerMoveSectionDown}"
-									           @click="efMoveSection(index, index+1)"/>
-			    				</q-item-section>
-				    			<q-item-section>
-				    				<div><b style="font-size: 1.2em;">{{section.label}}</b> ({{section.code}})</div>
-				    				<div class="q-pl-md row q-gutter-sm">
-				    					<q-icon size="sm" color="grey" name="mdi-folder-question-outline"></q-icon>
-				    					<div class="self-center">
-						    				<div v-if="section.condition == null"><i th:text="#{EfDesignerNoCondition}"></i></div>
-				    						<div v-else>{{ section.condition }}</div>
-				    					</div>
+	<vui-easy-forms th:v-model="${model.util.vueDataKey('efo', 'template', null)}">
+		<template v-slot:default="slotProps">
+			<div class="q-gutter-md">
+				<q-card v-for="(section, index) in slotProps.formData.sections">
+			    	<q-card-section horizontal>
+			    		<q-item class="full-width">
+			    			<q-item-section avatar th:if="${viewMode != 'read'}" class="col_action q-gutter-xs">
+		    					<vu:button v-if="index > 0"
+									       size="sm" flat icon="fas fa-arrow-up"
+									       title="#{EfDesignerMoveSectionUp}"
+									       @click="efMoveSection(index, index-1)"/>
+								<vu:button v-if="index < slotProps.formData.sections.length - 1"
+								           size="sm" flat icon="fas fa-arrow-down"
+								           title="#{EfDesignerMoveSectionDown}"
+								           @click="efMoveSection(index, index+1)"/>
+		    				</q-item-section>
+			    			<q-item-section>
+			    				<div><b style="font-size: 1.2em;">{{section.label}}</b> ({{section.code}})</div>
+			    				<div class="q-pl-md row q-gutter-sm">
+			    					<q-icon size="sm" color="grey" name="mdi-folder-question-outline"></q-icon>
+			    					<div class="self-center">
+					    				<div v-if="section.condition == null"><i th:text="#{EfDesignerNoCondition}"></i></div>
+			    						<div v-else>{{ section.condition }}</div>
 			    					</div>
-								</q-item-section>
-								<q-item-section side th:if="${viewMode != 'read'}">
-									<div class="row col_action no-wrap q-gutter-sm">
-										<vu:button size="md" flat icon="fas fa-pencil-alt"
-												   title="#{EfDesignerEditSection}"
-												   @click="efEditSection(index)"/>
-							    		<vu:button size="md" flat icon="fas fa-trash-alt"
-											       title="#{EfDesignerDeleteSection}"
-											       @click="efDeleteSection(index)" />
-						    		</div>
-								</q-item-section>
-							</q-item>
-				    	</q-card-section>
-				    	
-				    	<q-separator ></q-separator>
-				    	
-				    	<q-card-section th:with="itemHolder = 'section'">
-				    		<q-list bordered separator th:ref="itemListUi">
-				    			<q-item th:v-for="|(item, item_index${insideBlock != null ? '2':''}) in ${itemHolder}.items|" class="q-hoverable">
-				    				<span class="q-focus-helper" th:if="${viewMode != 'read'}"></span>
-				    				<q-item-section avatar th:if="${viewMode != 'read'}" class="col_action q-gutter-xs showButtonOnHover q-pr-sm">
-				    					<div class="showButtonOnHover q-mx-none" th:style="${insideBlock != null ? '' : 'width:70px'}">
-					    					<!-- up -->
-					    					<vu:button v-if="(item_index2 == null && item_index > 0) || item_index2 > 0"
-												       size="sm" flat icon="fas fa-arrow-up"
-												       title="#{EfDesignerMoveItemUp}"
-												       @click="efMoveItemRelative(index, item_index, item_index2, -1)"/>
-											<!-- up right -->
-											<vu:button v-if="item_index2 == null && item_index > 0 && item.type != 'BLOCK' && section.items[item_index - 1].type == 'BLOCK'"
-											           size="sm" flat icon="mdi-arrow-up-right-bold"
-											           title="#{EfDesignerMoveItemUpRight}"
-												       @click="efMoveItem(index, item_index, null, item_index - 1, section.items[item_index - 1].items.length)" />
-										</div>
-				    					<!-- up left -->
-										<vu:button v-if="item_index2 != null && item_index2 == 0"
-										           size="sm" flat icon="mdi-arrow-up-left-bold"
-										           title="#{EfDesignerMoveItemUpLeft}"
-											       @click="efMoveItem(index, item_index, item_index2, item_index, null)" />
-				    					<div class="showButtonOnHover q-mx-none" th:style="${insideBlock != null ? '' : 'width:70px'}">
-					    					<!-- down -->
-											<vu:button v-if="(item_index2 == null && item_index < section.items.length - 1) || (item_index2 != null && item_index2 < section.items[item_index].items.length - 1)"
-											           size="sm" flat icon="fas fa-arrow-down"
-											           title="#{EfDesignerMoveItemDown}"
-											           @click="efMoveItemRelative(index, item_index, item_index2, 1)"/>
-					    					<!-- down right -->
-											<vu:button v-if="item_index2 == null && item_index != section.items.length - 1 && item.type != 'BLOCK' && section.items[item_index + 1].type == 'BLOCK'"
-											           size="sm" flat icon="mdi-arrow-down-right-bold"
-											           title="#{EfDesignerMoveItemDownRight}"
-												       @click="efMoveItem(index, item_index, null, item_index + 1, 0)" />
-										</div>
-				    					<!-- down left -->
-										<vu:button v-if="item_index2 != null && item_index2 == section.items[item_index].items.length - 1"
-										           size="sm" flat icon="mdi-arrow-down-left-bold"
-										           title="#{EfDesignerMoveItemDownLeft}"
-											       @click="efMoveItem(index, item_index, item_index2, item_index + 1, null)" />
-				    				</q-item-section>
-				    				<q-item-section>
-				    					<div class="row q-gutter-md">
-						    				<template v-if="item.type === 'STATIC'">
-						    					<q-icon size="md" color="primary" name="mdi-format-text-variant"></q-icon>
-						    					<div class="col column justify-center">
-						    						<span v-html="item.label"></span>
-						    					</div>
-						    				</template>
-						    				<template v-else-if="item.type === 'BLOCK'" th:if="${insideBlock == null}">
-						    					<q-icon size="md" color="primary" name="mdi-select"></q-icon>
-						    					<div class="col column q-col-gutter-sm">
-						    						<div class="q-pl-md row q-gutter-sm">
-								    					<q-icon size="sm" color="grey" name="mdi-folder-question-outline"></q-icon>
-								    					<div class="self-center">
-										    				<div v-if="item.condition == null"><i th:text="#{EfDesignerNoCondition}"></i></div>
-								    						<div v-else>{{ item.condition }}</div>
-								    					</div>
+		    					</div>
+							</q-item-section>
+							<q-item-section side th:if="${viewMode != 'read'}">
+								<div class="row col_action no-wrap q-gutter-sm">
+									<vu:button size="md" flat icon="fas fa-pencil-alt"
+											   title="#{EfDesignerEditSection}"
+											   @click="efEditSection(index)"/>
+						    		<vu:button size="md" flat icon="fas fa-trash-alt"
+										       title="#{EfDesignerDeleteSection}"
+										       @click="efDeleteSection(index)" />
+					    		</div>
+							</q-item-section>
+						</q-item>
+			    	</q-card-section>
+			    	
+			    	<q-separator ></q-separator>
+			    	
+			    	<q-card-section th:with="itemHolder = 'section'">
+			    		<q-list bordered separator th:ref="itemListUi">
+			    			<q-item th:v-for="|(item, item_index${insideBlock != null ? '2':''}) in ${itemHolder}.items|" class="q-hoverable">
+			    				<span class="q-focus-helper" th:if="${viewMode != 'read'}"></span>
+			    				<q-item-section avatar th:if="${viewMode != 'read'}" class="col_action q-gutter-xs showButtonOnHover q-pr-sm">
+			    					<div class="showButtonOnHover q-mx-none" th:style="${insideBlock != null ? '' : 'width:70px'}">
+				    					<!-- up -->
+				    					<vu:button v-if="(item_index2 == null && item_index > 0) || item_index2 > 0"
+											       size="sm" flat icon="fas fa-arrow-up"
+											       title="#{EfDesignerMoveItemUp}"
+											       @click="efMoveItemRelative(index, item_index, item_index2, -1)"/>
+										<!-- up right -->
+										<vu:button v-if="item_index2 == null && item_index > 0 && item.type != 'BLOCK' && section.items[item_index - 1].type == 'BLOCK'"
+										           size="sm" flat icon="mdi-arrow-up-right-bold"
+										           title="#{EfDesignerMoveItemUpRight}"
+											       @click="efMoveItem(index, item_index, null, item_index - 1, section.items[item_index - 1].items.length)" />
+									</div>
+			    					<!-- up left -->
+									<vu:button v-if="item_index2 != null && item_index2 == 0"
+									           size="sm" flat icon="mdi-arrow-up-left-bold"
+									           title="#{EfDesignerMoveItemUpLeft}"
+										       @click="efMoveItem(index, item_index, item_index2, item_index, null)" />
+			    					<div class="showButtonOnHover q-mx-none" th:style="${insideBlock != null ? '' : 'width:70px'}">
+				    					<!-- down -->
+										<vu:button v-if="(item_index2 == null && item_index < section.items.length - 1) || (item_index2 != null && item_index2 < section.items[item_index].items.length - 1)"
+										           size="sm" flat icon="fas fa-arrow-down"
+										           title="#{EfDesignerMoveItemDown}"
+										           @click="efMoveItemRelative(index, item_index, item_index2, 1)"/>
+				    					<!-- down right -->
+										<vu:button v-if="item_index2 == null && item_index != section.items.length - 1 && item.type != 'BLOCK' && section.items[item_index + 1].type == 'BLOCK'"
+										           size="sm" flat icon="mdi-arrow-down-right-bold"
+										           title="#{EfDesignerMoveItemDownRight}"
+											       @click="efMoveItem(index, item_index, null, item_index + 1, 0)" />
+									</div>
+			    					<!-- down left -->
+									<vu:button v-if="item_index2 != null && item_index2 == section.items[item_index].items.length - 1"
+									           size="sm" flat icon="mdi-arrow-down-left-bold"
+									           title="#{EfDesignerMoveItemDownLeft}"
+										       @click="efMoveItem(index, item_index, item_index2, item_index + 1, null)" />
+			    				</q-item-section>
+			    				<q-item-section>
+			    					<div class="row q-gutter-md">
+					    				<template v-if="item.type === 'STATIC'">
+					    					<q-icon size="md" color="primary" name="mdi-format-text-variant"></q-icon>
+					    					<div class="col column justify-center">
+					    						<span v-html="item.label"></span>
+					    					</div>
+					    				</template>
+					    				<template v-else-if="item.type === 'BLOCK'" th:if="${insideBlock == null}">
+					    					<q-icon size="md" color="primary" name="mdi-select"></q-icon>
+					    					<div class="col column q-col-gutter-sm">
+					    						<div class="q-pl-md row q-gutter-sm">
+							    					<q-icon size="sm" color="grey" name="mdi-folder-question-outline"></q-icon>
+							    					<div class="self-center">
+									    				<div v-if="item.condition == null"><i th:text="#{EfDesignerNoCondition}"></i></div>
+							    						<div v-else>{{ item.condition }}</div>
 							    					</div>
-						    						<div th:with="insideBlock = true, itemHolder = 'item'" th:insert="~{:: itemListUi}"></div>
-						    						<div class="q-gutter-sm" th:if="${viewMode != 'read'}">
-											    		<vu:button size="md" icon="mdi-format-text-variant"
-											    				   label="#{EfDesignerAddStatic}"
-											    				   title="#{EfDesignerAddStatic}"
-											    				   @click="efAddItem('STATIC',index, item_index)" />
-											    		<vu:button size="md" icon="mdi-form-textbox"
-											    				   label="#{EfDesignerAddField}"
-											    				   title="#{EfDesignerAddField}"
-											    				   @click="efAddItem('FIELD',index, item_index)" />
-											    	</div>
 						    					</div>
-						    				</template>
-						    				<template v-else-if="item.type === 'FIELD'">
-						    					<q-icon size="md" color="primary" name="mdi-form-textbox"></q-icon>
-						    					<div class="col column justify-center">
-							    					<div :class="item.isMandatory?'v-block__required':''"><b style="font-size: 1.2em;">{{item.label}}</b> ({{item.code}})</div>
-							    					<div class="row q-gutter-sm q-pl-md">
-								    					<div>{{efResolveFieldTypeLabel(item.fieldTypeName)}}</div>
-								    				</div>
-								    			</div>
-						    					<q-icon v-if="item.validators && item.validators.length>0"
-						    							size="sm" color="primary" name="fas fa-file-shield"
-						    							class="self-center">
-													<span class="sr-only" vu:text="#{EfDesignerHasControl}"></span>
-													<q-badge color="secondary" rounded>{{item.validators.length}}</q-badge> 
-													<q-tooltip>
-														<span vu:text="#{EfDesignerHasControl}"></span> :<br />
-														<q-chip v-for="value in vueData.validatorEfoLabels[index + ';' + item_index + (item_index2 != null ? ';' + item_index2 : '')]">{{ value }}</q-chip>
-													</q-tooltip>
-											    </q-icon>
-						    				</template>
-						    			</div>
-				    				</q-item-section>
-				    				<q-item-section side th:if="${viewMode != 'read'}">
-				    					<div class="row showButtonOnHover col_action no-wrap q-gutter-sm" role="toolbar">
-											<vu:button size="md" flat icon="fas fa-pencil-alt"
-													   title="#{EfDesignerEditItem}"
-													   @click="efEditItem(index, item_index, item_index2)"/>
-											<vu:button :disabled="item.isDefault"
-											           size="md" flat icon="fas fa-trash-alt"
-											           v-title="|item.isDefault?'#{EfDesignerNoDeleteField}':'#{EfDesignerDeleteItem}'|"
-											           @click="efDeleteItem(index, item_index, item_index2)" />
-				    					</div>
-				    				</q-item-section>
-				    			</q-item>
-				    		</q-list>
-				    		<div class="q-pt-md q-gutter-sm" th:if="${viewMode != 'read'}">
-					    		<vu:button size="md" icon="mdi-format-text-variant"
-					    				   label="#{EfDesignerAddStatic}"
-					    				   title="#{EfDesignerAddStatic}"
-					    				   @click="efAddItem('STATIC',index)" />
-					    		<vu:button size="md" icon="mdi-form-textbox"
-					    				   label="#{EfDesignerAddField}"
-					    				   title="#{EfDesignerAddField}"
-					    				   @click="efAddItem('FIELD',index)" />
-					    		<vu:button size="md" icon="mdi-select"
-					    				   label="#{EfDesignerAddBlock}"
-					    				   title="#{EfDesignerAddBlock}"
-					    				   @click="efAddItem('BLOCK',index)" />
-					    	</div>
-				    	</q-card-section>
-				    </q-card>
-				    <div class="q-gutter-sm" th:if="${viewMode != 'read'}">
-			    		<vu:button size="md" icon="add"
-			    				   title="#{EfDesignerAddSection}"
-			    				   @click="efAddSection()"/>
-			    	</div>
-				</div>
-			</template>
-		</vui-easy-forms>
+					    						<div th:with="insideBlock = true, itemHolder = 'item'" th:insert="~{:: itemListUi}"></div>
+					    						<div class="q-gutter-sm" th:if="${viewMode != 'read'}">
+										    		<vu:button size="md" icon="mdi-format-text-variant"
+										    				   label="#{EfDesignerAddStatic}"
+										    				   title="#{EfDesignerAddStatic}"
+										    				   @click="efAddItem('STATIC',index, item_index)" />
+										    		<vu:button size="md" icon="mdi-form-textbox"
+										    				   label="#{EfDesignerAddField}"
+										    				   title="#{EfDesignerAddField}"
+										    				   @click="efAddItem('FIELD',index, item_index)" />
+										    	</div>
+					    					</div>
+					    				</template>
+					    				<template v-else-if="item.type === 'FIELD'">
+					    					<q-icon size="md" color="primary" name="mdi-form-textbox"></q-icon>
+					    					<div class="col column justify-center">
+						    					<div :class="item.isMandatory?'v-block__required':''"><b style="font-size: 1.2em;">{{item.label}}</b> ({{item.code}})</div>
+						    					<div class="row q-gutter-sm q-pl-md">
+							    					<div>{{efResolveFieldTypeLabel(item.fieldTypeName)}}</div>
+							    				</div>
+							    			</div>
+					    					<q-icon v-if="item.validators && item.validators.length>0"
+					    							size="sm" color="primary" name="fas fa-file-shield"
+					    							class="self-center">
+												<span class="sr-only" vu:text="#{EfDesignerHasControl}"></span>
+												<q-badge color="secondary" rounded>{{item.validators.length}}</q-badge> 
+												<q-tooltip>
+													<span vu:text="#{EfDesignerHasControl}"></span> :<br />
+													<q-chip v-for="value in vueData.validatorEfoLabels[index + ';' + item_index + (item_index2 != null ? ';' + item_index2 : '')]">{{ value }}</q-chip>
+												</q-tooltip>
+										    </q-icon>
+					    				</template>
+					    			</div>
+			    				</q-item-section>
+			    				<q-item-section side th:if="${viewMode != 'read'}">
+			    					<div class="row showButtonOnHover col_action no-wrap q-gutter-sm" role="toolbar">
+										<vu:button size="md" flat icon="fas fa-pencil-alt"
+												   title="#{EfDesignerEditItem}"
+												   @click="efEditItem(index, item_index, item_index2)"/>
+										<vu:button :disabled="item.isDefault"
+										           size="md" flat icon="fas fa-trash-alt"
+										           v-title="|item.isDefault?'#{EfDesignerNoDeleteField}':'#{EfDesignerDeleteItem}'|"
+										           @click="efDeleteItem(index, item_index, item_index2)" />
+			    					</div>
+			    				</q-item-section>
+			    			</q-item>
+			    		</q-list>
+			    		<div class="q-pt-md q-gutter-sm" th:if="${viewMode != 'read'}">
+				    		<vu:button size="md" icon="mdi-format-text-variant"
+				    				   label="#{EfDesignerAddStatic}"
+				    				   title="#{EfDesignerAddStatic}"
+				    				   @click="efAddItem('STATIC',index)" />
+				    		<vu:button size="md" icon="mdi-form-textbox"
+				    				   label="#{EfDesignerAddField}"
+				    				   title="#{EfDesignerAddField}"
+				    				   @click="efAddItem('FIELD',index)" />
+				    		<vu:button size="md" icon="mdi-select"
+				    				   label="#{EfDesignerAddBlock}"
+				    				   title="#{EfDesignerAddBlock}"
+				    				   @click="efAddItem('BLOCK',index)" />
+				    	</div>
+			    	</q-card-section>
+			    </q-card>
+			    <div class="q-gutter-sm" th:if="${viewMode != 'read'}">
+		    		<vu:button size="md" icon="add"
+		    				   title="#{EfDesignerAddSection}"
+		    				   @click="efAddSection()"/>
+		    	</div>
+			</div>
+		</template>
+	</vui-easy-forms>
 		
-	</vu:block>
-	
 	<th:block id="easyFormsModalEditItem" th:if="${viewMode != 'read'}"
 		th:attr="objectKey=${model.vContext['componentStates'].addComponentState('itemModal').addPrimitive('opened', false).addPrimitive('sectionIndex', null).addPrimitive('editIndex', null).addPrimitive('editIndex2', null).addPrimitive('codeModified', null)} ">
 		<vu:include-data object="fieldTypes" field="hasTemplate" />
@@ -290,15 +279,12 @@
 				<q-card-section class="q-layout-padding">
 					<vu:include-data object="editItem" field="type" />
 					<vu:grid>
-						<vu:text-field object="editItem" field="fieldCode" required="true"
-									   th::hint="|(vueData.editItem.isDefault === true)?`#{EfDesignerFieldCodeHint}`:``|" 
-									   title="#{EfDesignerRequiredNotModifiable}" aria-title="#{EfDesignerFieldAria}"
-									   autofocus />
+						<vu:text-field object="editSection" field="code" autofocus />
 		                <vu:grid-cell>
-						    <vu:text-field-edit object="editItem" field="label" required="true"/>
+						    <vu:text-field-edit object="editSection" field="label"/>
 						</vu:grid-cell>
 						<vu:grid-cell>
-					    	<vu:text-field-edit object="editItem" field="condition"/>
+					    	<vu:text-field-edit object="editSection" field="condition"/>
 				    	</vu:grid-cell>
 					</vu:grid>
 				</q-card-section>

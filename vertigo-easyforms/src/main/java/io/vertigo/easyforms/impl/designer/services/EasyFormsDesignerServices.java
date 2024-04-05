@@ -19,9 +19,12 @@ import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
+import io.vertigo.easyforms.domain.EasyFormsSectionUi;
+import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -68,39 +71,27 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				.collect(VCollectors.toDtList(EasyFormsFieldValidatorTypeUi.class));
 	}
 
-	//	@Override
-	//	public DtList<EasyFormsItemUi> getFieldUiListByEasyForm(final EasyForm easyForm) {
-	//		return null;
-	/*
-	return easyForm.getTemplate().getFields().stream()
-	.map(field -> {
-		final var fieldType = EasyFormsFieldTypeDefinition.resolve(field.getFieldTypeName());
-		final var fieldUi = new EasyFormsFieldUi();
-		fieldUi.setFieldCode(field.getCode());
-		fieldUi.setFieldType(fieldType.id().fullName());
-		fieldUi.setFieldTypeLabel(fieldType.getLabel());
-		fieldUi.setLabel(field.getLabel());
-		fieldUi.setTooltip(field.getTooltip());
-		fieldUi.setIsDefault(field.isDefault());
-		fieldUi.setParameters(field.getParameters());
-		fieldUi.setIsMandatory(field.isMandatory());
-		fieldUi.setFieldValidators(validatorToValidatorUi(field.getValidators()));
-
-		return fieldUi;
-	})
-	.collect(VCollectors.toDtList(EasyFormsFieldUi.class));
-	*/
-	//	}
+	@Override
+	public void checkUpdateSection(final List<EasyFormsTemplateSection> sections, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final UiMessageStack uiMessageStack) {
+		for (int i = 0; i < sections.size(); i++) {
+			if (i != editIndex
+					&& sections.get(i).getCode().equals(sectionEdit.getCode())) {
+				// section code must be unique
+				throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerSectionCodeUnicity),
+						sectionEdit, EasyFormsItemUiFields.fieldCode);
+			}
+		}
+	}
 
 	@Override
 	public void checkUpdateField(final List<AbstractEasyFormsTemplateItem> items, final Integer editIndex, final Optional<Integer> editIndex2, final EasyFormsItemUi fieldEdit,
 			final UiMessageStack uiMessageStack) {
+		// field code must be unique in section
 		for (int i = 0; i < items.size(); i++) {
 			if (i != editIndex
 					&& items.get(i) instanceof final EasyFormsTemplateItemField field
 					&& field.getCode().equals(fieldEdit.getFieldCode())) {
-				//si le code n'est pas unique ce n'est pas bon.
-				throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans la section."), // TODO i18n
+				throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity),
 						fieldEdit, EasyFormsItemUiFields.fieldCode);
 			} else if (items.get(i) instanceof final EasyFormsTemplateItemBlock block) {
 				final var blockItems = block.getItems();
@@ -108,8 +99,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 					if ((editIndex2.isEmpty() || editIndex2.get() != j)
 							&& blockItems.get(j) instanceof final EasyFormsTemplateItemField field
 							&& field.getCode().equals(fieldEdit.getFieldCode())) {
-						//si le code n'est pas unique ce n'est pas bon.
-						throw new ValidationUserException(LocaleMessageText.of("Le code du champ doit être unique dans la section."), // TODO i18n
+						throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity),
 								fieldEdit, EasyFormsItemUiFields.fieldCode);
 					}
 				}

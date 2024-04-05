@@ -117,10 +117,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de EasyFormsSectionUi.
 	 */
 	public enum EasyFormsSectionUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsSectionUi> {
-		/** Propriété 'Code'. */
-		fieldCode,
-		/** Propriété 'Title'. */
-		title,
+		/** Propriété 'Section code'. */
+		code,
+		/** Propriété 'Label'. */
+		label,
 		/** Propriété 'Display condition'. */
 		condition	}
 

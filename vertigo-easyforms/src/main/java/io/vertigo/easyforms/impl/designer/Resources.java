@@ -27,6 +27,9 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum Resources implements LocaleMessageKey {
 	EfDesignerMandatory,
 
+	EfDesignerSectionCodeUnicity,
+	EfDesignerFieldCodeUnicity,
+
 	EfDesignerPendingChanges,
 
 	EfDesignerNoCondition,
@@ -36,6 +39,10 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerMoveSectionDown,
 	EfDesignerEditSection,
 	EfDesignerDeleteSection,
+
+	EfDesignerSectionDeleted,
+	EfDesignerSectionMoved,
+	EfDesignerSectionValidated,
 
 	EfDesignerAddStatic,
 	EfDesignerAddBlock,
@@ -48,6 +55,11 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerMoveItemDownRight,
 	EfDesignerEditItem,
 	EfDesignerDeleteItem,
+
+	EfDesignerItemDeleted,
+	EfDesignerItemMoved,
+	EfDesignerItemValidated,
+
 	EfDesignerNoDeleteField,
 	EfDesignerIsDefaultField,
 	EfDesignerHasControl,

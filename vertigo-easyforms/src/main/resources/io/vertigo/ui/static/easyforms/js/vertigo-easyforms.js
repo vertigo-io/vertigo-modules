@@ -36,7 +36,7 @@ VUiExtensions.methods = {
     efDeleteSection : function(sectionIndex) {
         this.httpPostAjax(context + 'easyforms/designer/_deleteSection', {sectionIndex: sectionIndex }, {
             onSuccess: function(response) {
-                this.$q.notify({ message: 'Section supprimée', type: 'positive' });
+                this.$q.notify({ message: response.data.model.message, type: 'positive' });
             }.bind(this)
         });
     },
@@ -45,21 +45,18 @@ VUiExtensions.methods = {
         this.httpPostAjax(context + 'easyforms/designer/_moveSection', {fromSectionIndex: fromSectionIndex, toSectionIndex: toSectionIndex },
         {
             onSuccess: function(response) {
-                this.$q.notify({ message: 'Section déplacée', type: 'positive' });
+                this.$q.notify({ message: response.data.model.message, type: 'positive' });
             }.bind(this)
         });
     },
     
     efSaveEditSection : function() {
-        let formData = this.vueDataParams(['editItem']);
-        formData.delete('vContext[editItem][type]')//not modifiable
-		formData.delete('vContext[editItem][isDefault]')//not modifiable
-		
+        let formData = this.vueDataParams(['editSection']);
         formData.append('sectionIndex', this.$data.componentStates.sectionModal.sectionIndex);
         
         this.httpPostAjax(context + 'easyforms/designer/_saveSection', formData, {
             onSuccess: function(response) {
-                this.$q.notify({ message: 'Element validé', type: 'positive' });
+                this.$q.notify({ message: response.data.model.message , type: 'positive' });
                 this.$data.componentStates.sectionModal.opened = false
             }.bind(this)
         });
@@ -83,7 +80,7 @@ VUiExtensions.methods = {
     efDeleteItem : function(sectionIndex, editIndex, editIndex2) {
         this.httpPostAjax(context + 'easyforms/designer/_deleteItem', {sectionIndex: sectionIndex, editIndex: editIndex, editIndex2: editIndex2 }, {
             onSuccess: function(response) {
-                this.$q.notify({ message: 'Element supprimé', type: 'positive' });
+                this.$q.notify({ message: response.data.model.message, type: 'positive' });
             }.bind(this)
         });
     },
@@ -101,7 +98,7 @@ VUiExtensions.methods = {
                                                                      toIndex: toIndex, toIndex2: toIndex2 },
         {
             onSuccess: function(response) {
-                this.$q.notify({ message: 'Element déplacé', type: 'positive' });
+                this.$q.notify({ message: response.data.model.message, type: 'positive' });
             }.bind(this)
         });
     },
@@ -149,7 +146,7 @@ VUiExtensions.methods = {
         
         this.httpPostAjax(context + 'easyforms/designer/_saveItem', formData, {
             onSuccess: function(response) {
-                this.$q.notify({ message: 'Element validé', type: 'positive' });
+                this.$q.notify({ message: response.data.model.message, type: 'positive' });
                 this.$data.componentStates.itemModal.opened = false
             }.bind(this)
         });
