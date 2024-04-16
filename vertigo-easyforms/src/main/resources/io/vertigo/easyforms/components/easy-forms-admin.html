@@ -145,7 +145,7 @@
 												   @click="efEditItem(index, item_index, item_index2)"/>
 										<vu:button :disabled="item.isDefault"
 										           size="md" flat icon="fas fa-trash-alt"
-										           v-title="|item.isDefault?'#{EfDesignerNoDeleteField}':'#{EfDesignerDeleteItem}'|"
+										           v-title="|item.isDefault?`#{EfDesignerNoDeleteField}`:`#{EfDesignerDeleteItem}`|"
 										           @click="efDeleteItem(index, item_index, item_index2)" />
 			    					</div>
 			    				</q-item-section>
@@ -233,8 +233,8 @@
 								<vu:include-data object="editItem" field="isDefault" />
 								<vu:include-data object="editItem" field="isMandatory" modifiable="true" />
 								<q-toggle class="q-field" :disable="vueData.editItem.isDefault" v-model="vueData.editItem.isMandatory"
-									th::title="|vueData.editItem.isDefault?'#{EfDesignerRequiredNotModifiable}':''|"
-									th::aria-title="|vueData.editItem.isDefault?'#{EfDesignerRequiredNotModifiable}':''|"
+									th::title="|vueData.editItem.isDefault?`#{EfDesignerRequiredNotModifiable}`:''|"
+									th::aria-title="|vueData.editItem.isDefault?`#{EfDesignerRequiredNotModifiable}`:''|"
 									th:label="${model.util.label('editItem.isMandatory')}"></q-toggle>
 								<input type="hidden" name="vContext[editItem][isMandatory]" v-bind:value="vueData.editItem.isMandatory" />
 							</vu:grid-cell>
