@@ -34,6 +34,12 @@
             <artifactId>vertigo-stella</artifactId>
             <version>${vertigo.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.vertigo</groupId>
+            <artifactId>vertigo-orchestra</artifactId>
+            <version>${vertigo.version}</version>
+            <optional>true</optional>
+        </dependency>
 				
 	</dependencies>
 
