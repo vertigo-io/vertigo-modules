@@ -704,4 +704,29 @@ create Task TkInsertReservationsCreneau {
     in reservationsCreneau  {domain : DoDtReservationCreneau    cardinality: "*" }
 }
 
+/** Pour la purge des reservation_creneau, creneau, tranche_horaire, plage_horaire */
+create Task TkPurgePlageHoraireByDateLocale {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+        delete from creneau c
+        using tranche_horaire th, plage_horaire ph
+        where c.trh_id = th.trh_id
+        and th.plh_id = ph.plh_id
+        and ph.date_locale < #purgeDate#;
+        
+        delete from reservation_creneau rc
+        where rc.date_locale < #purgeDate#;
+        
+        delete from tranche_horaire th
+        using plage_horaire ph
+        where th.plh_id = ph.plh_id
+        and ph.date_locale < #purgeDate#;
+        
+        delete from plage_horaire ph
+        where ph.date_locale < #purgeDate#;
+    "
+    in  purgeDate       {domain : DoPLocalDate   cardinality: "1" }
+    out intSqlRowcount  {domain : DoPNombre      cardinality: "1" }
+}
+
 

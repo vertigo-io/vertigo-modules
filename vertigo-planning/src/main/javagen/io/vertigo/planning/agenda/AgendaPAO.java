@@ -4,12 +4,12 @@ import javax.inject.Inject;
 
 import java.util.Optional;
 import io.vertigo.core.node.Node;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.task.TaskManager;
 import io.vertigo.datamodel.task.definitions.TaskDefinition;
 import io.vertigo.datamodel.task.model.Task;
 import io.vertigo.datamodel.task.model.TaskBuilder;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.Generated;
 import io.vertigo.datastore.impl.dao.StoreServices;
 
 /**
@@ -733,6 +733,41 @@ public final class AgendaPAO implements StoreServices {
 				.addValue("instantPublication", instantPublication)
 				.build();
 		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkPurgePlageHoraireByDateLocale.
+	 * @param purgeDate LocalDate
+	 * @return Integer intSqlRowcount
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkPurgePlageHoraireByDateLocale",
+			request = """
+			delete from creneau c
+        using tranche_horaire th, plage_horaire ph
+        where c.trh_id = th.trh_id
+        and th.plh_id = ph.plh_id
+        and ph.date_locale < #purgeDate#;
+        
+        delete from reservation_creneau rc
+        where rc.date_locale < #purgeDate#;
+        
+        delete from tranche_horaire th
+        using plage_horaire ph
+        where th.plh_id = ph.plh_id
+        and ph.date_locale < #purgeDate#;
+        
+        delete from plage_horaire ph
+        where ph.date_locale < #purgeDate#;""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyPNombre", name = "intSqlRowcount")
+	public Integer purgePlageHoraireByDateLocale(@io.vertigo.datamodel.task.proxy.TaskInput(name = "purgeDate", smartType = "STyPLocalDate") final java.time.LocalDate purgeDate) {
+		final Task task = createTaskBuilder("TkPurgePlageHoraireByDateLocale")
+				.addValue("purgeDate", purgeDate)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 	/**

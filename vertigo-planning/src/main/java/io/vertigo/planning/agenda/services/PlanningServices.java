@@ -194,7 +194,7 @@ public class PlanningServices implements Component {
 	}
 
 	private static DtList<TrancheHoraire> createTrancheHoraires(final PlageHoraire plageHoraire, final int dureeTrancheMinute, final List<TrancheHoraire> closedTranchesHoraires) {
-		final var trancheHoraires = new DtList<TrancheHoraire>(TrancheHoraire.class);
+		final var trancheHoraires = new DtList<>(TrancheHoraire.class);
 		for (int i = plageHoraire.getMinutesDebut(); i < plageHoraire.getMinutesFin(); i += dureeTrancheMinute) {
 			boolean isClosed = false;
 			for (final TrancheHoraire closedTrancheHoraire : closedTranchesHoraires) {
@@ -283,8 +283,8 @@ public class PlanningServices implements Component {
 		final Map<DayOfWeek, List<TrancheHoraire>> mapClosedTranchesHorairesFromPerDayOfWeek = closedTranchesHorairesFrom.stream()
 				.collect(Collectors.groupingBy(trh -> trh.getDateLocale().getDayOfWeek()));
 
-		final var plageHorairesToCreate = new DtList<PlageHoraire>(PlageHoraire.class);
-		final var trancheHoraires = new DtList<TrancheHoraire>(TrancheHoraire.class);
+		final var plageHorairesToCreate = new DtList<>(PlageHoraire.class);
+		final var trancheHoraires = new DtList<>(TrancheHoraire.class);
 
 		final int dureeTrancheMinute = duplicationSemaineForm.getDureeCreneau();
 		for (var d = 0; d < dureeDuplicationJours + 1; ++d) { //+1 => date de fin incluse
@@ -625,6 +625,7 @@ public class PlanningServices implements Component {
 		//---
 		agendaPAO.supprimerReservationsCreneau(
 				recUids.stream()
+						.filter(id -> id != null) //protect against bad caller
 						.map(UID::getId)
 						.map(Long.class::cast)
 						.collect(Collectors.toList()));
@@ -677,6 +678,16 @@ public class PlanningServices implements Component {
 
 	public void deleteEmptyAgenda(final UID<Agenda> agendaUid) {
 		agendaDAO.delete(agendaUid);
+	}
+
+	/**
+	 * Purge agenda data linked to plage_horaire older than given date
+	 *
+	 * @param olderThan
+	 */
+	public int purgeAgendaOlderThan(final LocalDate olderThan) {
+		Assertion.check().isNotNull(olderThan);
+		return agendaPAO.purgePlageHoraireByDateLocale(olderThan);
 	}
 
 }
