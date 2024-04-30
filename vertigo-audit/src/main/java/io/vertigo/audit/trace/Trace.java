@@ -33,7 +33,7 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
  */
 @io.vertigo.datamodel.data.stereotype.DataSpace("audit")
 public final class Trace implements Entity {
-	private static final long serialVersionUID = 2280022920606418634L;
+	private static final long serialVersionUID = 1L;
 
 	@Field(type = "ID", smartType = "STyATraceId", cardinality = Cardinality.ONE, label = "traId")
 	private Long traId;
