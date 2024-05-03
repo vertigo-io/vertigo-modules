@@ -1,14 +1,16 @@
-package io.vertigo.easyforms.rules;
+package io.vertigo.easyforms.rules.term;
 
 import java.util.List;
 
-public enum Brackets implements ITermRule {
+import io.vertigo.easyforms.rules.ITermRule;
+
+public enum BracketsTerm implements ITermRule {
 	OPEN("("),
 	CLOSE(")");
 
 	private final String str;
 
-	Brackets(final String str) {
+	BracketsTerm(final String str) {
 		this.str = str;
 	}
 

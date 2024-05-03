@@ -24,7 +24,7 @@ public interface IEasyFormsDesignerServices extends Component {
 
 	void checkUpdateField(List<AbstractEasyFormsTemplateItem> items, Integer editIndex, Optional<Integer> editIndex2, EasyFormsItemUi fieldEdit, UiMessageStack uiMessageStack);
 
-	Long saveNewForm(EasyForm easyForm);
+	Long saveForm(EasyForm easyForm);
 
 	EasyForm createEasyForm(EasyForm easyForm);
 

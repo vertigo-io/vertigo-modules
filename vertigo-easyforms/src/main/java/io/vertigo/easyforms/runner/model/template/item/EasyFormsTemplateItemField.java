@@ -132,8 +132,8 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		return this;
 	}
 
-	public EasyFormsTemplateItemField withParameters(final Map<String, Object> parameters) {
-		return withParameters(new EasyFormsData(parameters));
+	public EasyFormsTemplateItemField withParameters(final Map<String, Object> myParameters) {
+		return withParameters(new EasyFormsData(myParameters));
 	}
 
 	public EasyFormsTemplateItemField withParameters(final EasyFormsData myParameters) {

@@ -21,6 +21,7 @@ import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
+import io.vertigo.easyforms.runner.model.data.EasyFormsContext;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
@@ -75,7 +76,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	public void checkUpdateSection(final List<EasyFormsTemplateSection> sections, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final UiMessageStack uiMessageStack) {
 		for (int i = 0; i < sections.size(); i++) {
 			if (i != editIndex
-					&& sections.get(i).getCode().equals(sectionEdit.getCode())) {
+					&& sections.get(i).getCode().equalsIgnoreCase(sectionEdit.getCode())) {
 				// section code must be unique
 				throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerSectionCodeUnicity),
 						sectionEdit, EasyFormsItemUiFields.fieldCode);
@@ -90,7 +91,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 		for (int i = 0; i < items.size(); i++) {
 			if (i != editIndex
 					&& items.get(i) instanceof final EasyFormsTemplateItemField field
-					&& field.getCode().equals(fieldEdit.getFieldCode())) {
+					&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
 				throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity),
 						fieldEdit, EasyFormsItemUiFields.fieldCode);
 			} else if (items.get(i) instanceof final EasyFormsTemplateItemBlock block) {
@@ -98,7 +99,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				for (int j = 0; j < blockItems.size(); j++) {
 					if ((editIndex2.isEmpty() || editIndex2.get() != j)
 							&& blockItems.get(j) instanceof final EasyFormsTemplateItemField field
-							&& field.getCode().equals(fieldEdit.getFieldCode())) {
+							&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
 						throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity),
 								fieldEdit, EasyFormsItemUiFields.fieldCode);
 					}
@@ -121,8 +122,13 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				*/
 	}
 
+	public boolean checkFormula(final EasyFormsContext context, final String formula) {
+		final var contextKeys = context.keySet();
+		return true;
+	}
+
 	@Override
-	public Long saveNewForm(final EasyForm easyForm) {
+	public Long saveForm(final EasyForm easyForm) {
 		easyFormDAO.save(easyForm);
 		return easyForm.getEfoId();
 	}

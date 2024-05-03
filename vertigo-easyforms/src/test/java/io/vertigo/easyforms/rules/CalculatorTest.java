@@ -15,24 +15,24 @@ import io.vertigo.commons.peg.PegWordRule;
 
 public class CalculatorTest {
 
-	private static final OperationRule<Integer, CalculatorOperator, Integer> CALCULATOR_RULE = new OperationRule<>(new TermRule(), Integer.class, CalculatorOperator.class);
+	private static final OperationRule<Integer, CalculatorOperator> CALCULATOR_RULE = new OperationRule<>(new TermRule(), CalculatorOperator.class, false);
 
 	@Test
 	public void testCalculatorRule() throws PegNoMatchFoundException {
 		final var result = CALCULATOR_RULE.parse("2*3");
-		Assertions.assertEquals(6, result.getValue().solve(a -> a));
+		Assertions.assertEquals(6, result.getValue());
 
 		final var result2 = CALCULATOR_RULE.parse("2+2*3");
-		Assertions.assertEquals(8, result2.getValue().solve(a -> a));
+		Assertions.assertEquals(8, result2.getValue());
 
 		final var result3 = CALCULATOR_RULE.parse("2*3+2");
-		Assertions.assertEquals(8, result3.getValue().solve(a -> a));
+		Assertions.assertEquals(8, result3.getValue());
 
 		final var result4 = CALCULATOR_RULE.parse("(2+2)*3");
-		Assertions.assertEquals(12, result4.getValue().solve(a -> a));
+		Assertions.assertEquals(12, result4.getValue());
 
-		final var result5 = CALCULATOR_RULE.parse("121 /   11");
-		Assertions.assertEquals(11, result5.getValue().solve(a -> a));
+		final var result5 = CALCULATOR_RULE.parse("121 /   11 ");
+		Assertions.assertEquals(11, result5.getValue());
 	}
 
 	@Test

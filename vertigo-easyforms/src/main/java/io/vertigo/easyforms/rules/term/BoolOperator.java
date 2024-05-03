@@ -1,15 +1,17 @@
-package io.vertigo.easyforms.rules;
+package io.vertigo.easyforms.rules.term;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
+import io.vertigo.easyforms.rules.IOperatorTerm;
+
 /**
  * All boolean operators.
  */
 public enum BoolOperator implements IOperatorTerm<Boolean> {
-	OR(1, (a, b) -> a || b, " OR ", " Or ", " or ", " || "),
-	AND(2, (a, b) -> a && b, " AND ", " And ", " and ", " && ");
+	OR(1, (a, b) -> a || b, "OR", "Or", "or", "||"),
+	AND(2, (a, b) -> a && b, "AND", "And", "and", "&&");
 
 	private final List<String> operators;
 	private final int priority;
