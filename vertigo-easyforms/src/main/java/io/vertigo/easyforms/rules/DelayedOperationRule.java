@@ -23,19 +23,22 @@ public class DelayedOperationRule<A, B extends Enum<B> & IOperatorTerm<R>, R> im
 	private static final PegRule<BracketsTerm> OPEN_BRACKET_RULE = EnumRuleHelper.getIndividualRuleSkipSpaces(BracketsTerm.OPEN);
 	private static final PegRule<BracketsTerm> CLOSE_BRACKET_RULE = EnumRuleHelper.getIndividualRuleSkipSpaces(BracketsTerm.CLOSE);
 
+	private final PegRule<A> operandRule;
+	private final PegRule<B> operatorRule;
+
 	private final PegRule<PegChoice> state0Rule;
 	private final PegRule<PegChoice> state1Rule;
 	private final Class<B> operatorClass;
 	private boolean matchAll;
 
 	public DelayedOperationRule(final PegRule<A> operandRule, final Class<B> operatorClass, final boolean isOperatorSpaced, final boolean matchAll) {
+		this.operandRule = operandRule;
+		operatorRule = isOperatorSpaced ? EnumRuleHelper.getSpacedGlobalRule(operatorClass) : EnumRuleHelper.getGlobalRule(operatorClass);
 		this.operatorClass = operatorClass;
 		this.matchAll = matchAll;
 
-		final var operatorRule = isOperatorSpaced ? EnumRuleHelper.getSpacedGlobalRule(operatorClass) : EnumRuleHelper.getGlobalRule(operatorClass);
-
-		state0Rule = PegRules.choice(operandRule, OPEN_BRACKET_RULE, SPACES_RULE);
-		state1Rule = PegRules.choice(operatorRule, CLOSE_BRACKET_RULE, SPACES_RULE);
+		state0Rule = PegRules.named(PegRules.choice(operandRule, OPEN_BRACKET_RULE, SPACES_RULE), "term or '('", "Expected {0}");
+		state1Rule = PegRules.named(PegRules.choice(operatorRule, CLOSE_BRACKET_RULE, SPACES_RULE), "operator or ')'", "Expected {0}");
 	}
 
 	public DelayedOperationRule(final PegRule<A> operandRule, final Class<B> operatorClass, final boolean isOperatorSpaced) {
@@ -44,7 +47,7 @@ public class DelayedOperationRule<A, B extends Enum<B> & IOperatorTerm<R>, R> im
 
 	@Override
 	public String getExpression() {
-		return "(" + state0Rule.getExpression() + " ~ " + state1Rule.getExpression() + ")";
+		return "(" + operandRule.getExpression() + " ~ " + operatorRule.getExpression() + ")";
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class DelayedOperationRule<A, B extends Enum<B> & IOperatorTerm<R>, R> im
 		state 1 :
 		 - operator => state 0
 		 - ) => state 1, brackets - 1
-
+		
 		spaces dont change state
 		*/
 		var state = 0;

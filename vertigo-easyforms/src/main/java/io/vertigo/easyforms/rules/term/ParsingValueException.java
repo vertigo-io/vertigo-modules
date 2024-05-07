@@ -1,14 +1,14 @@
 package io.vertigo.easyforms.rules.term;
 
-public class ParsingTypeException extends RuntimeException {
+public class ParsingValueException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public ParsingTypeException(final String message) {
+	public ParsingValueException(final String message) {
 		super(message);
 	}
 
-	public ParsingTypeException(final String message, final Object o1, final Object o2, final String operator) {
+	public ParsingValueException(final String message, final Object o1, final Object o2, final String operator) {
 		super(message + " : " + buildMessageDetail(o1, o2, operator));
 	}
 

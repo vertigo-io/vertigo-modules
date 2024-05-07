@@ -285,6 +285,7 @@
 						</vu:grid-cell>
 						<vu:grid-cell>
 					    	<vu:text-field-edit object="editSection" field="condition"/>
+					    	<pre v-html="uiMessageStack.objectFieldErrors?.editSection?.condition_detail[0]"></pre>
 				    	</vu:grid-cell>
 					</vu:grid>
 				</q-card-section>

@@ -28,6 +28,7 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerMandatory,
 
 	EfDesignerSectionCodeUnicity,
+	EfDesignerSectionConditionInvalid,
 	EfDesignerFieldCodeUnicity,
 
 	EfDesignerPendingChanges,

@@ -2,6 +2,7 @@ package io.vertigo.easyforms.impl.designer.services;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -10,17 +11,20 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.designer.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsItemUiFields;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsSectionUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
+import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.runner.model.data.EasyFormsContext;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
@@ -28,6 +32,7 @@ import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
+import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import io.vertigo.vega.webservice.validation.ValidationUserException;
 
@@ -74,14 +79,26 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 	@Override
 	public void checkUpdateSection(final List<EasyFormsTemplateSection> sections, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final UiMessageStack uiMessageStack) {
+		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
+
+		// check section code unicity
 		for (int i = 0; i < sections.size(); i++) {
 			if (i != editIndex
 					&& sections.get(i).getCode().equalsIgnoreCase(sectionEdit.getCode())) {
 				// section code must be unique
-				throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerSectionCodeUnicity),
-						sectionEdit, EasyFormsItemUiFields.fieldCode);
+				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.code, LocaleMessageText.of(Resources.EfDesignerSectionCodeUnicity));
 			}
 		}
+
+		if (!StringUtil.isBlank(sectionEdit.getCondition())) {
+			// check section condition
+			final var parseResult = EasyFormsRuleParser.parse(sectionEdit.getCondition(), Map.of());
+			if (!parseResult.isValid()) {
+				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
+				uiMessageStack.error(parseResult.getErrorMessage(), sectionEdit, EasyFormsSectionUiFields.condition + "_detail");
+			}
+		}
+		errorBuilder.throwUserExceptionIfErrors();
 	}
 
 	@Override

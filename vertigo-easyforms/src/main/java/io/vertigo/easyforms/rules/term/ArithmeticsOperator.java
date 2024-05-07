@@ -44,7 +44,7 @@ public enum ArithmeticsOperator implements IOperatorTerm<Object> {
 
 	private static Object doArithmetics(final Object left, final Object right, final ArithmeticsOperator operator) {
 		if (left.getClass() != right.getClass()) {
-			throw new ParsingTypeException("Cannot compute on different types", left, right, operator.getStrValues().get(0));
+			throw new ParsingValueException("Cannot compute on different types", left, right, operator.getStrValues().get(0));
 		}
 
 		if (left instanceof final Integer leftI && right instanceof final Integer rightI) {
@@ -71,6 +71,6 @@ public enum ArithmeticsOperator implements IOperatorTerm<Object> {
 			}
 		}
 		// TODO: handle other types (ex dates)
-		throw new ParsingTypeException("Type '" + left.getClass().getSimpleName() + "' not supported");
+		throw new ParsingValueException("Type '" + left.getClass().getSimpleName() + "' not supported");
 	}
 }

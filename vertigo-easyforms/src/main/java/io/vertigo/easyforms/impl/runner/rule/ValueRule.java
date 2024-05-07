@@ -39,7 +39,7 @@ class ValueRule extends AbstractRule<String, PegChoice> {
 					NUMBER_RULE,
 					VARIABLE_RULE,
 					BOOLEAN_RULE),
-			"value or variable");
+			"value or variable", "Expected {0}");
 
 	public ValueRule() {
 		super(VALUE_RULE);

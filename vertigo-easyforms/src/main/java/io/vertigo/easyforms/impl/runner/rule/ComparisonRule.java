@@ -20,7 +20,7 @@ public class ComparisonRule extends AbstractRule<Function<Function<String, Objec
 			PegRules.sequence(
 					TERM_RULE, // 0
 					PegRules.skipBlanks(),
-					EnumRuleHelper.getGlobalRule(CompareTerm.class), // 2
+					PegRules.named(EnumRuleHelper.getGlobalRule(CompareTerm.class), "comparator", "Expected {0}"), // 2
 					PegRules.skipBlanks(),
 					TERM_RULE), // 4
 			"term comparator term");

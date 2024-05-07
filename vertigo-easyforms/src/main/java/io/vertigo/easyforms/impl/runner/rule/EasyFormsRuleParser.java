@@ -9,7 +9,7 @@ import io.vertigo.commons.peg.PegNoMatchFoundException;
 import io.vertigo.easyforms.rules.DelayedOperationRule;
 import io.vertigo.easyforms.rules.OperationSolver;
 import io.vertigo.easyforms.rules.term.BoolOperator;
-import io.vertigo.easyforms.rules.term.ParsingTypeException;
+import io.vertigo.easyforms.rules.term.ParsingValueException;
 
 public class EasyFormsRuleParser {
 
@@ -28,7 +28,7 @@ public class EasyFormsRuleParser {
 		} else if (s.startsWith("#")) {
 			final var key = s.substring(1, s.length() - 1);
 			if (!m.containsKey(key)) {
-				throw new IllegalArgumentException("Variable " + key + " is not defined");
+				throw new ParsingValueException("Variable #" + key + "# is not defined");
 			}
 
 			return m.get(key);
@@ -67,7 +67,7 @@ public class EasyFormsRuleParser {
 				tmpResult = solver.solve(getResolveFunction(context));
 				tmpIsValid = true;
 				tmpErrorMessage = null;
-			} catch (final ParsingTypeException e) {
+			} catch (final ParsingValueException e) {
 				tmpResult = false;
 				tmpIsValid = false;
 				tmpErrorMessage = e.getMessage();
@@ -80,7 +80,7 @@ public class EasyFormsRuleParser {
 		private ParseResult(final PegNoMatchFoundException e) {
 			isValid = false;
 			result = false;
-			errorMessage = e.getMessage();
+			errorMessage = e.getRootMessage();
 		}
 
 		public boolean isValid() {

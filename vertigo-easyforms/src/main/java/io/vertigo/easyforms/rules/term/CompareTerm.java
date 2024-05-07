@@ -36,18 +36,18 @@ public enum CompareTerm implements ITermRule {
 
 	public static Boolean doCompare(final Object left, final Object right, final CompareTerm operator) {
 		if (left.getClass() != right.getClass()) {
-			throw new ParsingTypeException("Cannot compare different types", left, right, operator.str);
+			throw new ParsingValueException("Cannot compare different types", left, right, operator.str);
 		}
 
 		if (left instanceof String && operator != EQ && operator != NEQ) {
-			throw new ParsingTypeException("Operator '" + operator.str + "' not supported for String");
+			throw new ParsingValueException("Operator '" + operator.str + "' not supported for String", left, right, operator.str);
 		}
 
 		final int compareResult;
 		if (left instanceof final Comparable leftC && right instanceof final Comparable rightC) {
 			compareResult = leftC.compareTo(rightC);
 		} else {
-			throw new ParsingTypeException("Type '" + left.getClass() + "' not supported");
+			throw new ParsingValueException("Type '" + left.getClass() + "' not supported");
 		}
 
 		switch (operator) {
@@ -64,7 +64,7 @@ public enum CompareTerm implements ITermRule {
 			case GT:
 				return compareResult > 0;
 			default:
-				throw new ParsingTypeException("Operator '" + operator.str + "' not supported");
+				throw new ParsingValueException("Operator '" + operator.str + "' not supported");
 		}
 
 	}
