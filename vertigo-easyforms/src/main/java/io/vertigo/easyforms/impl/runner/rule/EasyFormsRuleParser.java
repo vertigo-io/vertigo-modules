@@ -36,6 +36,12 @@ public class EasyFormsRuleParser {
 		return Integer.parseInt(s);
 	});
 
+	/**
+	 * Get a function that resolves a string to an object, using the context.
+	 *
+	 * @param context Context to use
+	 * @return The function
+	 */
 	private static Function<Function<Function<String, Object>, Boolean>, Boolean> getResolveFunction(final Map<String, Object> context) {
 		return r -> GENERIC_RESOLVE_FUNCTION.apply(r, context);
 	}

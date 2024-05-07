@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.easyforms.rules.term.CompareTerm;
+import io.vertigo.easyforms.rules.term.ParsingTypeException;
 
 public class CompareTest {
 
@@ -19,7 +20,7 @@ public class CompareTest {
 
 		final var s12 = "12";
 		final var s13 = "13";
-		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+		Assertions.assertThrows(ParsingTypeException.class, () -> {
 			CompareTerm.doCompare(s12, s13, CompareTerm.LT);
 		});
 		Assertions.assertTrue(CompareTerm.doCompare(s12, s12, CompareTerm.EQ));
@@ -28,7 +29,7 @@ public class CompareTest {
 		Assertions.assertFalse(CompareTerm.doCompare(s12, s13, CompareTerm.EQ));
 		Assertions.assertTrue(CompareTerm.doCompare(s12, s13, CompareTerm.NEQ));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+		Assertions.assertThrows(ParsingTypeException.class, () -> {
 			CompareTerm.doCompare(i12, s13, CompareTerm.EQ);
 		});
 	}

@@ -11,33 +11,21 @@ public class EasyFormsRuleParserTest {
 
 	@Test
 	public void complexRuleTest() {
-		final var result = EasyFormsRuleParser.parse(" (150  > (8+2)  *   2 or  10 < 8) and 2 != 3 ", Map.of());
-		Assertions.assertTrue(result.isValid());
-		Assertions.assertTrue(result.getResult());
+		checkResult(" (150 + 2)  > (8+2)  *   2 or  10 < 8 and 2 != 3 ", true);
 
-		final var result2 = EasyFormsRuleParser.parse(" \"test\" != \"test2\" && \"test2\" = \"test2\"", Map.of());
-		Assertions.assertTrue(result2.isValid());
-		Assertions.assertTrue(result2.getResult());
+		checkResult(" (150  > (8+2)  *   2 or  10 < 8) and 2 != 3 ", true);
 
-		final var result3 = EasyFormsRuleParser.parse("10.2>10.3", Map.of());
-		Assertions.assertTrue(result3.isValid());
-		Assertions.assertFalse(result3.getResult());
+		checkResult(" \"test\" != \"test2\" && \"test2\" = \"test2\"", true);
 
-		final var result4 = EasyFormsRuleParser.parse("10.2 + 1.0 > 10.3", Map.of());
-		Assertions.assertTrue(result4.isValid());
-		Assertions.assertTrue(result4.getResult());
+		checkResult("10.2>10.3", false);
 
-		final var result5 = EasyFormsRuleParser.parse("true = true", Map.of());
-		Assertions.assertTrue(result5.isValid());
-		Assertions.assertTrue(result5.getResult());
+		checkResult("10.2 + 1.0 > 10.3", true);
 
-		final var result6 = EasyFormsRuleParser.parse("#var1# = true", Map.of("var1", Boolean.TRUE));
-		Assertions.assertTrue(result6.isValid());
-		Assertions.assertTrue(result6.getResult());
+		checkResult("true = true", true);
 
-		final var result7 = EasyFormsRuleParser.parse("#var1# < #var2#", Map.of("var1", 12, "var2", 13));
-		Assertions.assertTrue(result7.isValid());
-		Assertions.assertTrue(result7.getResult());
+		checkResult("#var1# = true", Map.of("var1", Boolean.TRUE), true);
+
+		checkResult("#var1# < #var2#", Map.of("var1", 12, "var2", 13), true);
 
 		// syntax errors
 		final var resultErrSyntax = EasyFormsRuleParser.parse(" \"test  ", Map.of()); // string never ends
@@ -52,5 +40,15 @@ public class EasyFormsRuleParserTest {
 
 		final var resultErrType3 = EasyFormsRuleParser.parse(" 12 + true < 12", Map.of());
 		Assertions.assertFalse(resultErrType3.isValid());
+	}
+
+	private void checkResult(final String expression, final boolean result) {
+		checkResult(expression, Map.of(), result);
+	}
+
+	private void checkResult(final String expression, final Map<String, Object> context, final boolean result) {
+		final var res = EasyFormsRuleParser.parse(expression, context);
+		Assertions.assertTrue(res.isValid(), "Parse error");
+		Assertions.assertEquals(result, res.getResult());
 	}
 }

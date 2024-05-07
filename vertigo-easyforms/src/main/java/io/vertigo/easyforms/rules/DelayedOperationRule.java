@@ -34,8 +34,8 @@ public class DelayedOperationRule<A, B extends Enum<B> & IOperatorTerm<R>, R> im
 
 		final var operatorRule = isOperatorSpaced ? EnumRuleHelper.getSpacedGlobalRule(operatorClass) : EnumRuleHelper.getGlobalRule(operatorClass);
 
-		state0Rule = PegRules.choice(OPEN_BRACKET_RULE, operandRule, SPACES_RULE);
-		state1Rule = PegRules.choice(CLOSE_BRACKET_RULE, operatorRule, SPACES_RULE);
+		state0Rule = PegRules.choice(operandRule, OPEN_BRACKET_RULE, SPACES_RULE);
+		state1Rule = PegRules.choice(operatorRule, CLOSE_BRACKET_RULE, SPACES_RULE);
 	}
 
 	public DelayedOperationRule(final PegRule<A> operandRule, final Class<B> operatorClass, final boolean isOperatorSpaced) {
@@ -56,7 +56,7 @@ public class DelayedOperationRule<A, B extends Enum<B> & IOperatorTerm<R>, R> im
 		state 1 :
 		 - operator => state 0
 		 - ) => state 1, brackets - 1
-		
+
 		spaces dont change state
 		*/
 		var state = 0;

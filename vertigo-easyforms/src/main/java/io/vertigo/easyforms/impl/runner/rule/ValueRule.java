@@ -13,27 +13,33 @@ class ValueRule extends AbstractRule<String, PegChoice> {
 
 	private static final PegRule<List<Object>> STRING_RULE = PegRules.sequence(
 			PegRules.term("\""),
-			PegRules.word(true, "\"", PegWordRule.Mode.REJECT, "^\"*"),
+			PegRules.named(PegRules.word(true, "\"", PegWordRule.Mode.REJECT, "^\"*"), "string"),
 			PegRules.term("\""));
 
-	private static final PegRule<List<Object>> NUMBER_RULE = PegRules.sequence(
-			PegRules.word(false, "0123456789", PegWordRule.Mode.ACCEPT, "0-9"),
-			PegRules.optional(PegRules.sequence(
-					PegRules.term("."),
-					PegRules.word(false, "0123456789", PegWordRule.Mode.ACCEPT, "0-9"))));
+	private static final PegRule<List<Object>> NUMBER_RULE = PegRules.named(
+			PegRules.sequence(
+					PegRules.word(false, "0123456789", PegWordRule.Mode.ACCEPT, "0-9"),
+					PegRules.optional(PegRules.sequence(
+							PegRules.term("."),
+							PegRules.word(false, "0123456789", PegWordRule.Mode.ACCEPT, "0-9")))),
+			"number");
 
 	private static final PegRule<PegChoice> BOOLEAN_RULE = PegRules.choice(PegRules.term("true"), PegRules.term("false"));
 
-	private static final PegRule<List<Object>> VARIABLE_RULE = PegRules.sequence(
-			PegRules.term("#"),
-			PegRules.word(false, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.", PegWordRule.Mode.ACCEPT, "a-zA-Z."),
-			PegRules.term("#"));
+	private static final PegRule<List<Object>> VARIABLE_RULE = PegRules.named(
+			PegRules.sequence(
+					PegRules.term("#"),
+					PegRules.word(false, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.", PegWordRule.Mode.ACCEPT, "a-zA-Z."),
+					PegRules.term("#")),
+			"variable");
 
-	private static final PegRule<PegChoice> VALUE_RULE = PegRules.choice(
-			STRING_RULE,
-			NUMBER_RULE,
-			VARIABLE_RULE,
-			BOOLEAN_RULE);
+	private static final PegRule<PegChoice> VALUE_RULE = PegRules.named(
+			PegRules.choice(
+					STRING_RULE,
+					NUMBER_RULE,
+					VARIABLE_RULE,
+					BOOLEAN_RULE),
+			"value or variable");
 
 	public ValueRule() {
 		super(VALUE_RULE);

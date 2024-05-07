@@ -91,9 +91,12 @@ public class EnumRuleHelper {
 	 * @return the rule
 	 */
 	public static <B extends Enum<B> & ITermRule> PegRule<B> getIndividualRuleSkipSpaces(final B element) {
-		final var rule = PegRules.sequence(
-				PegRules.skipBlanks(),
-				getIndividualRule(element));
+		final PegRule<B> mainRule = getIndividualRule(element);
+		final var rule = PegRules.named(
+				PegRules.sequence(
+						PegRules.skipBlanks(),
+						mainRule),
+				mainRule.getExpression());
 
 		return new AbstractRule<>(rule) {
 			@Override
