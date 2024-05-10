@@ -10,25 +10,13 @@
 	<artifactId>vertigo-quarto</artifactId>
 	<packaging>jar</packaging>
 	<name>vertigo-quarto</name>
-
-	<dependencies>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-core</artifactId>
-			<version>${vertigo.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-datastore</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!--Export dependencies -->
-		<dependency>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
 			<version>2.1.7</version> <!-- dernière version en license LGPL/MPL -->
-			<optional>true</optional>
 			<exclusions>
 				<!-- BouncyCastle est utilisé pour ouvrir les pdf sécurisés Donc non 
 					utilisé pour les générations. -->
@@ -51,7 +39,6 @@
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext-rtf</artifactId>
 			<version>2.1.7</version>
-			<optional>true</optional>
 			<exclusions>
 				<exclusion>
 					<groupId>bouncycastle</groupId>
@@ -72,14 +59,12 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>5.2.4</version>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.4</version> <!-- pour le plugin XDocReportConverterPlugin -->
-			<optional>true</optional>
 			<exclusions>
 				<!-- STAX comes with Java 1.6 -->
 				<exclusion>
@@ -94,25 +79,21 @@
 			<groupId>org.openoffice</groupId>
 			<artifactId>juh</artifactId>
 			<version>4.1.2</version>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.openoffice</groupId>
 			<artifactId>jurt</artifactId>
 			<version>4.1.2</version>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.openoffice</groupId>
 			<artifactId>ridl</artifactId>
 			<version>4.1.2</version>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.openoffice</groupId>
 			<artifactId>unoil</artifactId>
 			<version>4.1.2</version>
-			<optional>true</optional>
 		</dependency>
 		<!--/Open Office dependencies -->
 
@@ -121,14 +102,12 @@
 		    <groupId>com.github.miachm.sods</groupId>
 		    <artifactId>SODS</artifactId>
 		    <version>1.6.4</version>
-            <optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId> <!-- pour le plugin XDocReportConverterPlugin -->
 			<artifactId>fr.opensagres.xdocreport.converter.odt.odfdom</artifactId>
 			<version>2.0.4</version>
-			<optional>true</optional>
 			<exclusions>
 				<exclusion>
 					<groupId>xml-apis</groupId>
@@ -141,6 +120,86 @@
 			<groupId>fr.opensagres.xdocreport</groupId> <!-- pour le plugin XDocReportConverterPlugin -->
 			<artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
 			<version>2.0.4</version>
+		</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-core</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-datastore</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!--Export dependencies -->
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext-rtf</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!--Open Office dependencies -->
+		<dependency>
+			<groupId>org.openoffice</groupId>
+			<artifactId>juh</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.openoffice</groupId>
+			<artifactId>jurt</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.openoffice</groupId>
+			<artifactId>ridl</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.openoffice</groupId>
+			<artifactId>unoil</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!--/Open Office dependencies -->
+
+        <!-- ODSExporter -->
+		<dependency>
+		    <groupId>com.github.miachm.sods</groupId>
+		    <artifactId>SODS</artifactId>
+            <optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId> <!-- pour le plugin XDocReportConverterPlugin -->
+			<artifactId>fr.opensagres.xdocreport.converter.odt.odfdom</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId> <!-- pour le plugin XDocReportConverterPlugin -->
+			<artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>

@@ -25,16 +25,28 @@
       </repository>
     </repositories>
     
+    <dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>2.3.32</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-vega</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+    
 	<dependencies>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-vega</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.32</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
@@ -52,6 +64,10 @@
 			<version>${vertigo.version}</version>
 			<optional>true</optional>
 		</dependency> 
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
 		
 		<dependency>
 			<groupId>jakarta.servlet</groupId>

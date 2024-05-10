@@ -10,26 +10,25 @@
 	<artifactId>vertigo-audit</artifactId>
 	<packaging>jar</packaging>
 	<name>vertigo-audit</name>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.web3j</groupId>
+				<artifactId>core</artifactId>
+				<version>5.0.0</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-datastore</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-core</artifactId>
-			<version>${vertigo.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-commons</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-datamodel</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
 		<dependency>
             <groupId>io.vertigo</groupId>
             <artifactId>vertigo-datastore</artifactId>

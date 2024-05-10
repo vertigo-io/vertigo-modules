@@ -12,32 +12,8 @@
 	<name>vertigo-social</name>
 
 	<dependencies>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-core</artifactId>
-			<version>${vertigo.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-commons</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-redis-connector</artifactId>
-			<version>${vertigo.version}</version>
-			<optional>true</optional> <!-- For Redis Notifications, Comments and Handles -->
-		</dependency>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-datamodel</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-account</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+		
+
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-vega</artifactId>
@@ -50,14 +26,19 @@
 			<artifactId>vertigo-mail-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-		<!-- /Mail -->
 		<!-- SMS/OVH -->
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-httpclient-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-		<!-- /SMS/OVH -->
+		<!-- redis -->
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-redis-connector</artifactId>
+			<version>${vertigo.version}</version>
+			<optional>true</optional> <!-- For Redis Notifications, Comments and Handles -->
+		</dependency>
 		
 		<!-- Tests -->
 		<!-- For Rest Webservice testing -->
