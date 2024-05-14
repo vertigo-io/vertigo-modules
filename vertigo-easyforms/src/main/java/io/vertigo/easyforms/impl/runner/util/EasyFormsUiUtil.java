@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
@@ -154,7 +155,7 @@ public final class EasyFormsUiUtil implements Serializable {
 		return easyFormDisplay;
 	}
 
-	private List<EasyFormsTemplateItemField> getAllFieldsForSection(final EasyFormsTemplateSection section) {
+	public static List<EasyFormsTemplateItemField> getAllFieldsForSection(final EasyFormsTemplateSection section) {
 		// Refacto : see EasyFormsDesignerController.computeDefaultFieldCode
 		final var list1 = section.getItems().stream() // fields 1st level
 				.filter(EasyFormsTemplateItemField.class::isInstance)
@@ -182,7 +183,7 @@ public final class EasyFormsUiUtil implements Serializable {
 			return EasyFormsListItem.ofCollection(resolvedParameters.getOrDefault(listSupplier, List.of()))
 					.stream()
 					.filter(item -> Objects.equals(item.value(), rawValue))
-					.map(EasyFormsListItem::label)
+					.map(EasyFormsListItem::getDisplayLabel)
 					.findFirst()
 					.orElse(rawValue.toString());
 		}
@@ -240,6 +241,17 @@ public final class EasyFormsUiUtil implements Serializable {
 
 	public String resolveModelName(final EasyFormsTemplate template, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field) {
 		return "slotProps.formData['" + (template.useSections() ? section.getCode() + "']['" : "") + field.getCode() + "']";
+	}
+
+	public String convertConditionToJs(final String context, final String condition) {
+		if (StringUtil.isBlank(condition)) {
+			return "true";
+		}
+		return condition.replaceAll("#([a-zA-Z0-9_\\-\\.]+)#", context + ".$1")
+				.replaceAll("(?i) and ", " && ")
+				.replaceAll("(?i) or ", " || ")
+				.replaceAll("([^!><])=", "$1===")
+				.replaceAll("!=", "!==");
 	}
 
 }

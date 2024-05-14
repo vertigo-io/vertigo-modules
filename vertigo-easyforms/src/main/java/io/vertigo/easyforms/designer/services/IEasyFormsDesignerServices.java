@@ -11,7 +11,7 @@ import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 public interface IEasyFormsDesignerServices extends Component {
@@ -20,9 +20,10 @@ public interface IEasyFormsDesignerServices extends Component {
 
 	DtList<EasyFormsFieldValidatorTypeUi> getFieldValidatorTypeUiList();
 
-	void checkUpdateSection(List<EasyFormsTemplateSection> sections, Integer editIndex, EasyFormsSectionUi sectionEdit, UiMessageStack uiMessageStack);
+	void checkUpdateSection(EasyFormsTemplate easyFormsTemplate, Integer editIndex, EasyFormsSectionUi sectionEdit, UiMessageStack uiMessageStack);
 
-	void checkUpdateField(List<AbstractEasyFormsTemplateItem> items, Integer editIndex, Optional<Integer> editIndex2, EasyFormsItemUi fieldEdit, UiMessageStack uiMessageStack);
+	void checkUpdateField(EasyFormsTemplate easyFormsTemplate, List<AbstractEasyFormsTemplateItem> items, Integer editIndex, Optional<Integer> editIndex2, EasyFormsItemUi fieldEdit,
+			UiMessageStack uiMessageStack);
 
 	Long saveForm(EasyForm easyForm);
 

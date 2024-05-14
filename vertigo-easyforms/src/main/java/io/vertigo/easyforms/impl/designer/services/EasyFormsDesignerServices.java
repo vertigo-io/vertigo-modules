@@ -2,7 +2,6 @@ package io.vertigo.easyforms.impl.designer.services;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -25,19 +24,21 @@ import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
-import io.vertigo.easyforms.runner.model.data.EasyFormsContext;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
+import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Transactional
 public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
+
+	@Inject
+	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
 	@Inject
 	private EasyFormDAO easyFormDAO;
@@ -78,9 +79,10 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	}
 
 	@Override
-	public void checkUpdateSection(final List<EasyFormsTemplateSection> sections, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final UiMessageStack uiMessageStack) {
+	public void checkUpdateSection(final EasyFormsTemplate easyFormsTemplate, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final UiMessageStack uiMessageStack) {
 		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
 
+		final var sections = easyFormsTemplate.getSections();
 		// check section code unicity
 		for (int i = 0; i < sections.size(); i++) {
 			if (i != editIndex
@@ -92,7 +94,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 		if (!StringUtil.isBlank(sectionEdit.getCondition())) {
 			// check section condition
-			final var parseResult = EasyFormsRuleParser.parse(sectionEdit.getCondition(), Map.of());
+			final var parseResult = EasyFormsRuleParser.parse(sectionEdit.getCondition(), easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true));
 			if (!parseResult.isValid()) {
 				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 				uiMessageStack.error(parseResult.getErrorMessage(), sectionEdit, EasyFormsSectionUiFields.condition + "_detail");
@@ -102,27 +104,40 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	}
 
 	@Override
-	public void checkUpdateField(final List<AbstractEasyFormsTemplateItem> items, final Integer editIndex, final Optional<Integer> editIndex2, final EasyFormsItemUi fieldEdit,
-			final UiMessageStack uiMessageStack) {
+	public void checkUpdateField(final EasyFormsTemplate easyFormsTemplate, final List<AbstractEasyFormsTemplateItem> items, final Integer editIndex, final Optional<Integer> editIndex2,
+			final EasyFormsItemUi fieldEdit, final UiMessageStack uiMessageStack) {
+		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
+
 		// field code must be unique in section
 		for (int i = 0; i < items.size(); i++) {
 			if (i != editIndex
 					&& items.get(i) instanceof final EasyFormsTemplateItemField field
 					&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
-				throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity),
-						fieldEdit, EasyFormsItemUiFields.fieldCode);
+				errorBuilder.addError(fieldEdit, EasyFormsItemUiFields.fieldCode, LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity));
+				break;
 			} else if (items.get(i) instanceof final EasyFormsTemplateItemBlock block) {
 				final var blockItems = block.getItems();
 				for (int j = 0; j < blockItems.size(); j++) {
 					if ((editIndex2.isEmpty() || editIndex2.get() != j)
 							&& blockItems.get(j) instanceof final EasyFormsTemplateItemField field
 							&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
-						throw new ValidationUserException(LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity),
-								fieldEdit, EasyFormsItemUiFields.fieldCode);
+						errorBuilder.addError(fieldEdit, EasyFormsItemUiFields.fieldCode, LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity));
+						break;
 					}
 				}
 			}
 		}
+
+		if (!StringUtil.isBlank(fieldEdit.getCondition())) {
+			// check section condition
+			final var parseResult = EasyFormsRuleParser.parse(fieldEdit.getCondition(), easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true));
+			if (!parseResult.isValid()) {
+				errorBuilder.addError(fieldEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
+				uiMessageStack.error(parseResult.getErrorMessage(), fieldEdit, EasyFormsItemUiFields.condition + "_detail");
+			}
+		}
+
+		errorBuilder.throwUserExceptionIfErrors();
 
 		/*
 		 * TODO: Example of multi-field parameter constraint that should be parametrable by project (via manager ?)
@@ -137,11 +152,6 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 					}
 				}
 				*/
-	}
-
-	public boolean checkFormula(final EasyFormsContext context, final String formula) {
-		final var contextKeys = context.keySet();
-		return true;
 	}
 
 	@Override

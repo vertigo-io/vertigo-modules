@@ -208,6 +208,7 @@
 						<vu:grid>
 			                <vu:grid-cell>
 						    	<vu:text-field-edit object="editItem" field="condition" autofocus/>
+   						    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editItem?.condition_detail?.[0]}}</pre>
 					    	</vu:grid-cell>
 						</vu:grid>
 					</template>
@@ -285,7 +286,7 @@
 						</vu:grid-cell>
 						<vu:grid-cell>
 					    	<vu:text-field-edit object="editSection" field="condition"/>
-					    	<pre v-html="uiMessageStack.objectFieldErrors?.editSection?.condition_detail[0]"></pre>
+					    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editSection?.condition_detail?.[0]}}</pre>
 				    	</vu:grid-cell>
 					</vu:grid>
 				</q-card-section>

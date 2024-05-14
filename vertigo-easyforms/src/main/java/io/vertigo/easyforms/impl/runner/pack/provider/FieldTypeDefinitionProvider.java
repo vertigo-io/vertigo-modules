@@ -201,8 +201,8 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 					IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 					(Serializable) List.of(
-							new EasyFormsListItem("true", "#{EfTrue}"),
-							new EasyFormsListItem("false", "#{EfFalse}")));
+							new EasyFormsListItem(true, "#{EfTrue}"),
+							new EasyFormsListItem(false, "#{EfFalse}")));
 		}
 	}
 

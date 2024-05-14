@@ -29,7 +29,7 @@ class ValueRule extends AbstractRule<String, PegChoice> {
 	private static final PegRule<List<Object>> VARIABLE_RULE = PegRules.named(
 			PegRules.sequence(
 					PegRules.term("#"),
-					PegRules.word(false, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.", PegWordRule.Mode.ACCEPT, "a-zA-Z."),
+					PegRules.word(false, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._-", PegWordRule.Mode.ACCEPT, "a-zA-Z._-"),
 					PegRules.term("#")),
 			"variable");
 

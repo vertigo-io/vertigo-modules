@@ -53,7 +53,6 @@ import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
-import io.vertigo.easyforms.impl.runner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
@@ -64,6 +63,7 @@ import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemStatic;
+import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -96,7 +96,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private IEasyFormsDesignerServices easyFormsDesignerServices;
 
 	@Inject
-	private EasyFormsRunnerServices easyFormsRunnerServices;
+	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt) {
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
@@ -266,7 +266,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			@ViewAttribute("editSection") final EasyFormsSectionUi editSectionUi,
 			final UiMessageStack uiMessageStack) {
 
-		easyFormsDesignerServices.checkUpdateSection(efo.getTemplate().getSections(), sectionIndex, editSectionUi, uiMessageStack);
+		easyFormsDesignerServices.checkUpdateSection(efo.getTemplate(), sectionIndex, editSectionUi, uiMessageStack);
 
 		final boolean isNew = sectionIndex == -1;
 		final EasyFormsTemplateSection section;
@@ -421,7 +421,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		// add default values for field type parameters
 		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(editItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
 		if (fieldTypeDefinition.getParamTemplate() != null) {
-			editItem.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate()));
+			editItem.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate(), false));
 		}
 
 		viewContext.publishDto(editItemKey, editItem);
@@ -439,7 +439,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		final List<AbstractEasyFormsTemplateItem> sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
 		// check code unicity in section
-		easyFormsDesignerServices.checkUpdateField(sectionItems, editIndex, editIndex2, editUiItem, uiMessageStack);
+		easyFormsDesignerServices.checkUpdateField(efo.getTemplate(), sectionItems, editIndex, editIndex2, editUiItem, uiMessageStack);
 
 		final List<AbstractEasyFormsTemplateItem> items = resolveLocalItems(editIndex, editIndex2, sectionItems);
 

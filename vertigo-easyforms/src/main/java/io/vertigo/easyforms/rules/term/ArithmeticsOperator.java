@@ -16,20 +16,20 @@ public enum ArithmeticsOperator implements IOperatorTerm<Object> {
 	MULTIPLY(2, "*"),
 	DIVIDE(2, "/");
 
-	private final List<String> operators;
+	private final String str;
 	private final int priority;
 	private final BinaryOperator<Object> binaryOperator;
 
-	ArithmeticsOperator(final int priority, final String... operators) {
+	ArithmeticsOperator(final int priority, final String str) {
 		this.priority = priority;
-		this.operators = Arrays.asList(operators);
+		this.str = str;
 
 		binaryOperator = (a, b) -> doArithmetics(a, b, this);
 	}
 
 	@Override
 	public List<String> getStrValues() {
-		return operators;
+		return Arrays.asList(str);
 	}
 
 	@Override
@@ -47,7 +47,12 @@ public enum ArithmeticsOperator implements IOperatorTerm<Object> {
 			throw new ParsingValueException("Cannot compute on different types", left, right, operator.getStrValues().get(0));
 		}
 
-		if (left instanceof final Integer leftI && right instanceof final Integer rightI) {
+		if (left instanceof final String leftStr && right instanceof final String rightStr) {
+			if (operator != PLUS) {
+				throw new ParsingValueException("Operator '" + operator.str + "' not supported for String", left, right, operator.str);
+			}
+			return leftStr + rightStr;
+		} else if (left instanceof final Integer leftI && right instanceof final Integer rightI) {
 			switch (operator) {
 				case PLUS:
 					return leftI + rightI;
