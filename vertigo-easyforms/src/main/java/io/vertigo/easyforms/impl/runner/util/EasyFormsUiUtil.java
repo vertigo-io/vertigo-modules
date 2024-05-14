@@ -18,6 +18,7 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
+import io.vertigo.easyforms.impl.designer.services.EasyFormsDesignerServices;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
@@ -247,7 +248,10 @@ public final class EasyFormsUiUtil implements Serializable {
 		if (StringUtil.isBlank(condition)) {
 			return "true";
 		}
-		return condition.replaceAll("#([a-zA-Z0-9_\\-\\.]+)#", context + ".$1")
+
+		return condition
+				.replaceAll("#" + EasyFormsDesignerServices.FORM_INTERNAL_CTX_NAME + "\\.([a-zA-Z0-9_\\-\\.]+)#", "vueData.$1") // #ctx.xxx# => vueData.xxx
+				.replaceAll("#([a-zA-Z0-9_\\-\\.]+)#", context + ".$1") // #xxx# => vueData.object.field.xxx
 				.replaceAll("(?i) and ", " && ")
 				.replaceAll("(?i) or ", " || ")
 				.replaceAll("([^!><])=", "$1===")

@@ -1,6 +1,8 @@
 package io.vertigo.easyforms.designer.services;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import io.vertigo.core.node.component.Component;
@@ -20,10 +22,10 @@ public interface IEasyFormsDesignerServices extends Component {
 
 	DtList<EasyFormsFieldValidatorTypeUi> getFieldValidatorTypeUiList();
 
-	void checkUpdateSection(EasyFormsTemplate easyFormsTemplate, Integer editIndex, EasyFormsSectionUi sectionEdit, UiMessageStack uiMessageStack);
+	void checkUpdateSection(EasyFormsTemplate easyFormsTemplate, Integer editIndex, EasyFormsSectionUi sectionEdit, Map<String, Serializable> additionalContext, UiMessageStack uiMessageStack);
 
 	void checkUpdateField(EasyFormsTemplate easyFormsTemplate, List<AbstractEasyFormsTemplateItem> items, Integer editIndex, Optional<Integer> editIndex2, EasyFormsItemUi fieldEdit,
-			UiMessageStack uiMessageStack);
+			final Map<String, Serializable> additionalContext, UiMessageStack uiMessageStack);
 
 	Long saveForm(EasyForm easyForm);
 

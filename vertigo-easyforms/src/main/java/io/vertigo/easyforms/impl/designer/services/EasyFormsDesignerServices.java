@@ -1,7 +1,9 @@
 package io.vertigo.easyforms.impl.designer.services;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
@@ -36,6 +39,8 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Transactional
 public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
+
+	public static final String FORM_INTERNAL_CTX_NAME = "ctx";
 
 	@Inject
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
@@ -79,8 +84,13 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	}
 
 	@Override
-	public void checkUpdateSection(final EasyFormsTemplate easyFormsTemplate, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final UiMessageStack uiMessageStack) {
+	public void checkUpdateSection(final EasyFormsTemplate easyFormsTemplate, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final Map<String, Serializable> additionalContext,
+			final UiMessageStack uiMessageStack) {
 		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
+
+		if (sectionEdit.getCode().equalsIgnoreCase(FORM_INTERNAL_CTX_NAME)) {
+			errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.code, LocaleMessageText.of(Resources.EfDesignerReservedCode));
+		}
 
 		final var sections = easyFormsTemplate.getSections();
 		// check section code unicity
@@ -94,7 +104,9 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 		if (!StringUtil.isBlank(sectionEdit.getCondition())) {
 			// check section condition
-			final var parseResult = EasyFormsRuleParser.parse(sectionEdit.getCondition(), easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true));
+			final EasyFormsData formContext = easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true);
+			formContext.put(FORM_INTERNAL_CTX_NAME, additionalContext);
+			final var parseResult = EasyFormsRuleParser.parse(sectionEdit.getCondition(), formContext);
 			if (!parseResult.isValid()) {
 				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 				uiMessageStack.error(parseResult.getErrorMessage(), sectionEdit, EasyFormsSectionUiFields.condition + "_detail");
@@ -105,7 +117,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 	@Override
 	public void checkUpdateField(final EasyFormsTemplate easyFormsTemplate, final List<AbstractEasyFormsTemplateItem> items, final Integer editIndex, final Optional<Integer> editIndex2,
-			final EasyFormsItemUi fieldEdit, final UiMessageStack uiMessageStack) {
+			final EasyFormsItemUi fieldEdit, final Map<String, Serializable> additionalContext, final UiMessageStack uiMessageStack) {
 		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
 
 		// field code must be unique in section
@@ -130,7 +142,9 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 		if (!StringUtil.isBlank(fieldEdit.getCondition())) {
 			// check section condition
-			final var parseResult = EasyFormsRuleParser.parse(fieldEdit.getCondition(), easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true));
+			final EasyFormsData formContext = easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true);
+			formContext.put(FORM_INTERNAL_CTX_NAME, additionalContext);
+			final var parseResult = EasyFormsRuleParser.parse(fieldEdit.getCondition(), formContext);
 			if (!parseResult.isValid()) {
 				errorBuilder.addError(fieldEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 				uiMessageStack.error(parseResult.getErrorMessage(), fieldEdit, EasyFormsItemUiFields.condition + "_detail");

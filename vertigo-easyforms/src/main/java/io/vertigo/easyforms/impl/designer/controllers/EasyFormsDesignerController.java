@@ -88,6 +88,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private static final ViewContextKey<EasyFormsFieldValidatorTypeUi> editFieldValidatorTypesKey = ViewContextKey.of("editFieldValidatorTypes");
 	private static final ViewContextKey<Serializable> validatorEfoLabelsKey = ViewContextKey.of("validatorEfoLabels");
 
+	private static final ViewContextKey<Serializable> additionalContextKey = ViewContextKey.of("additionalContext");
+
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
 	private static final ViewContextKey<String> messageKey = ViewContextKey.of("message");
@@ -98,11 +100,12 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	@Inject
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
-	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt) {
+	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt, final Map<String, Serializable> additionalContext) {
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
 
-		viewContext.publishDtList(fieldTypesKey, fieldTypeUiList)
+		viewContext.publishRef(additionalContextKey, (Serializable) additionalContext)
+				.publishDtList(fieldTypesKey, fieldTypeUiList)
 				.publishRef(fieldTypesTemplateKey,
 						(Serializable) fieldTypeUiList.stream()
 								.filter(EasyFormsFieldTypeUi::getHasTemplate)
@@ -264,9 +267,10 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			@ViewAttribute("efo") final EasyForm efo,
 			@RequestParam("sectionIndex") final Integer sectionIndex,
 			@ViewAttribute("editSection") final EasyFormsSectionUi editSectionUi,
+			@ViewAttribute("additionalContext") final Map<String, Serializable> additionalContext,
 			final UiMessageStack uiMessageStack) {
 
-		easyFormsDesignerServices.checkUpdateSection(efo.getTemplate(), sectionIndex, editSectionUi, uiMessageStack);
+		easyFormsDesignerServices.checkUpdateSection(efo.getTemplate(), sectionIndex, editSectionUi, additionalContext, uiMessageStack);
 
 		final boolean isNew = sectionIndex == -1;
 		final EasyFormsTemplateSection section;
@@ -435,11 +439,12 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			@RequestParam("editIndex") final Integer editIndex,
 			@RequestParam("editIndex2") final Optional<Integer> editIndex2,
 			@Validate({ DefaultDtObjectValidator.class, EditItemValidator.class }) @ViewAttribute("editItem") final EasyFormsItemUi editUiItem,
+			@ViewAttribute("additionalContext") final Map<String, Serializable> additionalContext,
 			final UiMessageStack uiMessageStack) {
 
 		final List<AbstractEasyFormsTemplateItem> sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
 		// check code unicity in section
-		easyFormsDesignerServices.checkUpdateField(efo.getTemplate(), sectionItems, editIndex, editIndex2, editUiItem, uiMessageStack);
+		easyFormsDesignerServices.checkUpdateField(efo.getTemplate(), sectionItems, editIndex, editIndex2, editUiItem, additionalContext, uiMessageStack);
 
 		final List<AbstractEasyFormsTemplateItem> items = resolveLocalItems(editIndex, editIndex2, sectionItems);
 

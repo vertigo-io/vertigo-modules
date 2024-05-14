@@ -27,6 +27,7 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum Resources implements LocaleMessageKey {
 	EfDesignerMandatory,
 
+	EfDesignerReservedCode,
 	EfDesignerSectionCodeUnicity,
 	EfDesignerSectionConditionInvalid,
 	EfDesignerFieldCodeUnicity,
