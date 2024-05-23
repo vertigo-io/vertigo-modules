@@ -100,7 +100,7 @@ public final class EasyFormsRunnerController {
 	public EasyFormsData getDefaultDataValues(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
 
-		return easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, false);
+		return easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate);
 	}
 
 	private void addListToFrontCtx(final ViewContext viewContext, final String ctxKey) {

@@ -210,6 +210,12 @@
 						    	<vu:text-field-edit object="editItem" field="condition" autofocus/>
    						    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editItem?.condition_detail?.[0]}}</pre>
 					    	</vu:grid-cell>
+					    	<vu:grid-cell>
+								Actual context usable in display condition:
+						    	<vu:include-data-primitive key="contextTree" />
+						    	<q-tree :nodes="vueData.contextTree.children" node-key="label" >
+					    		</q-tree>
+				    		</vu:grid-cell>
 						</vu:grid>
 					</template>
 					<template v-if="vueData.editItem.type === 'FIELD'">
@@ -288,6 +294,13 @@
 					    	<vu:text-field-edit object="editSection" field="condition"/>
 					    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editSection?.condition_detail?.[0]}}</pre>
 				    	</vu:grid-cell>
+
+						<vu:grid-cell>
+							Actual context usable in display condition:
+					    	<vu:include-data-primitive key="contextTree" />
+					    	<q-tree :nodes="vueData.contextTree.children" node-key="label" >
+				    		</q-tree>
+			    		</vu:grid-cell>
 					</vu:grid>
 				</q-card-section>
 				<q-card-section class="flex justify-end">

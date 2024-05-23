@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
@@ -25,9 +24,9 @@ import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
-import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
+import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.ui.impl.springmvc.util.UiUtil;
@@ -157,18 +156,8 @@ public final class EasyFormsUiUtil implements Serializable {
 	}
 
 	public static List<EasyFormsTemplateItemField> getAllFieldsForSection(final EasyFormsTemplateSection section) {
-		// Refacto : see EasyFormsDesignerController.computeDefaultFieldCode
-		final var list1 = section.getItems().stream() // fields 1st level
-				.filter(EasyFormsTemplateItemField.class::isInstance)
-				.map(EasyFormsTemplateItemField.class::cast);
-		final var list2 = section.getItems().stream() // fields inside block
-				.filter(EasyFormsTemplateItemBlock.class::isInstance)
-				.map(EasyFormsTemplateItemBlock.class::cast)
-				.flatMap(b -> b.getItems().stream())
-				.filter(EasyFormsTemplateItemField.class::isInstance)
-				.map(EasyFormsTemplateItemField.class::cast);
-
-		return Stream.concat(list1, list2).toList();
+		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(IEasyFormsRunnerServices.class);
+		return easyFormsRunnerServices.getAllFieldsFromSection(section);
 	}
 
 	private String getListDisplayValue(final EasyFormsData resolvedParameters, final Object rawValue) {

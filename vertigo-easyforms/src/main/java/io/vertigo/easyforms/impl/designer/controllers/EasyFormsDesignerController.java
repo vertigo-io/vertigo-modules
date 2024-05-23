@@ -22,10 +22,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -66,6 +66,8 @@ import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemStat
 import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.quasar.tree.Tree;
+import io.vertigo.ui.impl.quasar.tree.TreeNode;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.Validate;
@@ -89,6 +91,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private static final ViewContextKey<Serializable> validatorEfoLabelsKey = ViewContextKey.of("validatorEfoLabels");
 
 	private static final ViewContextKey<Serializable> additionalContextKey = ViewContextKey.of("additionalContext");
+	private static final ViewContextKey<Tree> contextTreeKey = ViewContextKey.of("contextTree");
 
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
@@ -101,26 +104,27 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt, final Map<String, Serializable> additionalContext) {
+		final EasyForm easyForm = efoIdOpt
+				.map(easyFormsRunnerServices::getEasyFormById)
+				.orElseGet(EasyForm::new);
+
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
 
-		viewContext.publishRef(additionalContextKey, (Serializable) additionalContext)
+		viewContext.publishDto(efoKey, easyForm)
+				.publishRef(additionalContextKey, (Serializable) additionalContext)
 				.publishDtList(fieldTypesKey, fieldTypeUiList)
 				.publishRef(fieldTypesTemplateKey,
 						(Serializable) fieldTypeUiList.stream()
 								.filter(EasyFormsFieldTypeUi::getHasTemplate)
 								.collect(Collectors.toMap(EasyFormsFieldTypeUi::getName, EasyFormsFieldTypeUi::getParamTemplate)))
 				.publishDtList(fieldValidatorsKey, EasyFormsFieldValidatorTypeUiFields.name, easyFormsDesignerServices.getFieldValidatorTypeUiList())
-				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
-		//---
-		final EasyForm easyForm = efoIdOpt
-				.map(easyFormsRunnerServices::getEasyFormById)
-				.orElseGet(EasyForm::new);
-		viewContext.publishDto(efoKey, easyForm)
+				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class))
 				.publishDto(editSectionKey, new EasyFormsSectionUi())
 				.publishDto(editItemKey, buildNewItemUi(ItemType.FIELD))
 				.publishRef(efoUiUtilKey, new EasyFormsUiUtil())
 				.publishRef(messageKey, "");
+		updateFormContext(viewContext, easyForm, additionalContext);
 		updateValidatorEfoLabels(viewContext, easyForm);
 	}
 
@@ -235,12 +239,14 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	@PostMapping("/_deleteSection")
 	public ViewContext deleteSection(final ViewContext viewContext,
 			@ViewAttribute("efo") final EasyForm efo,
+			@ViewAttribute("additionalContext") final Map<String, Serializable> additionalContext,
 			@RequestParam("sectionIndex") final Integer sectionIndex) {
 
 		efo.getTemplate().getSections().remove(sectionIndex.intValue());
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerSectionDeleted).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
+		updateFormContext(viewContext, efo, additionalContext);
 		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
@@ -287,9 +293,48 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerSectionValidated).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
+		updateFormContext(viewContext, efo, additionalContext);
 
 		return viewContext;
 
+	}
+
+	private void updateFormContext(final ViewContext viewContext, final EasyForm efo, final Map<String, Serializable> additionalContext) {
+		final var contextDescription = easyFormsDesignerServices.buildContextDescription(efo.getTemplate(), additionalContext);
+
+		final var tree = new Tree();
+		contextDescription.getContextMap().entrySet().stream()
+				.sorted(Comparator.comparing(Entry::getKey))
+				.forEach(entry -> {
+					addKeyToNodes(tree.getChildren(), entry.getKey(), entry.getValue());
+				});
+
+		viewContext.publishRef(contextTreeKey, tree);
+	}
+
+	private void addKeyToNodes(final List<TreeNode> nodes, final String key, final Class<?> clazz) {
+		if (!key.contains(".")) {
+			final var newNode = new TreeNode();
+			newNode.setLabel(key + " (" + clazz.getSimpleName() + ")");
+			nodes.add(newNode);
+		} else {
+			final var keySplit = key.split("\\.", 2);
+			final var newNode = getOrCreateNode(nodes, keySplit[0]);
+			addKeyToNodes(newNode.getChildren(), keySplit[1], clazz);
+		}
+	}
+
+	private TreeNode getOrCreateNode(final List<TreeNode> nodes, final String key) {
+		for (final TreeNode node : nodes) {
+			if (node.getLabel().equals(key)) {
+				return node;
+			}
+		}
+		final var node = new TreeNode();
+		node.setLabel(key);
+		node.setExpandable(true);
+		nodes.add(node);
+		return node;
 	}
 
 	// ****
@@ -307,6 +352,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	@PostMapping("/_deleteItem")
 	public ViewContext deleteItem(final ViewContext viewContext,
 			@ViewAttribute("efo") final EasyForm efo,
+			@ViewAttribute("additionalContext") final Map<String, Serializable> additionalContext,
 			@RequestParam("sectionIndex") final Integer sectionIndex,
 			@RequestParam("editIndex") final Integer editIndex,
 			@RequestParam("editIndex2") final Optional<Integer> editIndex2) {
@@ -317,6 +363,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemDeleted).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
+		updateFormContext(viewContext, efo, additionalContext);
 		updateValidatorEfoLabels(viewContext, efo);
 		return viewContext;
 	}
@@ -416,7 +463,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		// set default code if not customized by user
 		if (Boolean.TRUE.equals(updateCode)) {
-			editItem.setFieldCode(computeDefaultFieldCode(section.getItems(), editItem));
+			editItem.setFieldCode(computeDefaultFieldCode(section, editItem));
 		}
 
 		// add possible validators
@@ -425,7 +472,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		// add default values for field type parameters
 		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(editItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
 		if (fieldTypeDefinition.getParamTemplate() != null) {
-			editItem.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate(), false));
+			editItem.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate()));
 		}
 
 		viewContext.publishDto(editItemKey, editItem);
@@ -458,6 +505,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemValidated).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
+		updateFormContext(viewContext, efo, additionalContext);
 		updateValidatorEfoLabels(viewContext, efo);
 
 		return viewContext;
@@ -490,21 +538,11 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		viewContext.publishDtList(editFieldValidatorTypesKey, fieldValidatorsByType);
 	}
 
-	protected static String computeDefaultFieldCode(final List<AbstractEasyFormsTemplateItem> list, final EasyFormsItemUi editedField) {
+	protected String computeDefaultFieldCode(final EasyFormsTemplateSection section, final EasyFormsItemUi editedField) {
 		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType().substring(5));
 		final var pattern = Pattern.compile("^" + prefixFieldCode + "[0-9]*$");
-		// TODO : refacto : see EasyFormsUiUtil.getAllFieldsForSection
-		final var list1 = list.stream() // fields 1st level
-				.filter(EasyFormsTemplateItemField.class::isInstance)
-				.map(EasyFormsTemplateItemField.class::cast);
-		final var list2 = list.stream() // fields inside block
-				.filter(EasyFormsTemplateItemBlock.class::isInstance)
-				.map(EasyFormsTemplateItemBlock.class::cast)
-				.flatMap(b -> b.getItems().stream())
-				.filter(EasyFormsTemplateItemField.class::isInstance)
-				.map(EasyFormsTemplateItemField.class::cast);
 
-		final Optional<Integer> lastMatchingOpt = Stream.concat(list1, list2)
+		final Optional<Integer> lastMatchingOpt = easyFormsRunnerServices.getAllFieldsFromSection(section).stream()
 				.filter(f -> pattern.matcher(f.getCode()).matches())
 				.map(f -> {
 					if (prefixFieldCode.length() == f.getCode().length()) {

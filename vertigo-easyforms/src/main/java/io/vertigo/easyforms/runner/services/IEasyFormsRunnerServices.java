@@ -20,6 +20,6 @@ public interface IEasyFormsRunnerServices extends Component {
 
 	List<EasyFormsTemplateItemField> getAllFieldsFromSection(EasyFormsTemplateSection section);
 
-	EasyFormsData getDefaultDataValues(EasyFormsTemplate easyFormsTemplate, boolean fillWithDummies);
+	EasyFormsData getDefaultDataValues(EasyFormsTemplate easyFormsTemplate);
 
 }

@@ -1,8 +1,5 @@
 package io.vertigo.easyforms.impl.runner.services;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +12,6 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.node.Node;
-import io.vertigo.core.util.ClassUtil;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.UID;
@@ -187,7 +183,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	}
 
 	@Override
-	public EasyFormsData getDefaultDataValues(final EasyFormsTemplate easyFormsTemplate, final boolean fillWithDummies) {
+	public EasyFormsData getDefaultDataValues(final EasyFormsTemplate easyFormsTemplate) {
 		final var templateDefaultData = new EasyFormsData();
 
 		for (final var section : easyFormsTemplate.getSections()) {
@@ -203,39 +199,6 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 				if (paramFieldTypeDefinition.getDefaultValue() != null) {
 					sectionData.put(field.getCode(), paramFieldTypeDefinition.getDefaultValue());
-				} else if (fillWithDummies) {
-					final var smartType = Node.getNode().getDefinitionSpace().resolve(paramFieldTypeDefinition.getSmartTypeName(), SmartTypeDefinition.class);
-					final Object emptyValue;
-					switch (smartType.getBasicType()) {
-						case Integer:
-							emptyValue = Integer.valueOf(0);
-							break;
-						case Double:
-							emptyValue = Double.valueOf(0.0);
-							break;
-						case Boolean:
-							emptyValue = Boolean.FALSE;
-							break;
-						case String:
-							emptyValue = section.getCode() + "." + field.getCode();
-							break;
-						case LocalDate:
-							emptyValue = LocalDate.now();
-							break;
-						case Instant:
-							emptyValue = Instant.now();
-							break;
-						case BigDecimal:
-							emptyValue = BigDecimal.ZERO;
-							break;
-						case Long:
-							emptyValue = 0L;
-							break;
-						default:
-							emptyValue = ClassUtil.newInstance(smartType.getJavaClass());
-							break;
-					}
-					sectionData.put(field.getCode(), emptyValue);
 				}
 			}
 		}

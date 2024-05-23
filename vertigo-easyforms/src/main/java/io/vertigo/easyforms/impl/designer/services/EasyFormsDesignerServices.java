@@ -13,8 +13,11 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datamodel.data.util.VCollectors;
+import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.designer.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsItemUiFields;
@@ -26,10 +29,10 @@ import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
+import io.vertigo.easyforms.impl.runner.rule.FormContextDescription;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
-import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
@@ -104,15 +107,59 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 		if (!StringUtil.isBlank(sectionEdit.getCondition())) {
 			// check section condition
-			final EasyFormsData formContext = easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true);
-			formContext.put(FORM_INTERNAL_CTX_NAME, additionalContext);
-			final var parseResult = EasyFormsRuleParser.parse(sectionEdit.getCondition(), formContext);
+			final var formContextDescription = buildContextDescription(easyFormsTemplate, additionalContext);
+			final var parseResult = EasyFormsRuleParser.parseTest(sectionEdit.getCondition(), formContextDescription);
 			if (!parseResult.isValid()) {
 				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 				uiMessageStack.error(parseResult.getErrorMessage(), sectionEdit, EasyFormsSectionUiFields.condition + "_detail");
 			}
 		}
 		errorBuilder.throwUserExceptionIfErrors();
+	}
+
+	@Override
+	public FormContextDescription buildContextDescription(final EasyFormsTemplate easyFormsTemplate, final Map<String, Serializable> additionalContext) {
+		final var contextDescription = new FormContextDescription();
+
+		// add fields from this form to context
+		for (final var section : easyFormsTemplate.getSections()) {
+			String prefix;
+			if (easyFormsTemplate.useSections()) {
+				prefix = section.getCode() + ".";
+			} else {
+				prefix = "";
+			}
+
+			for (final var field : easyFormsRunnerServices.getAllFieldsFromSection(section)) {
+				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
+				final var smartType = Node.getNode().getDefinitionSpace().resolve(paramFieldTypeDefinition.getSmartTypeName(), SmartTypeDefinition.class);
+
+				contextDescription.add(prefix + field.getCode(), smartType.getBasicType().getJavaClass());
+			}
+		}
+
+		// add additional fields to context
+		for (final var entry : additionalContext.entrySet()) {
+			addValues("ctx", entry.getKey(), entry.getValue(), contextDescription);
+		}
+
+		return contextDescription;
+	}
+
+	private void addValues(final String prefix, final String key, final Object value, final FormContextDescription contextDescription) {
+		final String newKey = prefix + "." + key;
+		if (value instanceof final Map<?, ?> map) {
+			for (final var entry : map.entrySet()) {
+				addValues(newKey, entry.getKey().toString(), entry.getValue(), contextDescription);
+			}
+		} else if (value instanceof final DataObject dto) {
+			final var dtDefinition = DataModelUtil.findDataDefinition(dto);
+			dtDefinition.getFields().forEach(field -> {
+				contextDescription.add(newKey + "." + field.name(), field.getTargetJavaClass());
+			});
+		} else {
+			contextDescription.add(newKey, value.getClass());
+		}
 	}
 
 	@Override
@@ -142,9 +189,8 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 		if (!StringUtil.isBlank(fieldEdit.getCondition())) {
 			// check section condition
-			final EasyFormsData formContext = easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, true);
-			formContext.put(FORM_INTERNAL_CTX_NAME, additionalContext);
-			final var parseResult = EasyFormsRuleParser.parse(fieldEdit.getCondition(), formContext);
+			final var formContextDescription = buildContextDescription(easyFormsTemplate, additionalContext);
+			final var parseResult = EasyFormsRuleParser.parseTest(fieldEdit.getCondition(), formContextDescription);
 			if (!parseResult.isValid()) {
 				errorBuilder.addError(fieldEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 				uiMessageStack.error(parseResult.getErrorMessage(), fieldEdit, EasyFormsItemUiFields.condition + "_detail");

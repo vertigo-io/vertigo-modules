@@ -6,13 +6,14 @@ import java.util.function.Function;
 import io.vertigo.commons.peg.AbstractRule;
 import io.vertigo.commons.peg.PegRule;
 import io.vertigo.commons.peg.PegRules;
+import io.vertigo.easyforms.impl.runner.rule.ComparisonRule.ComparisonRuleSolver;
 import io.vertigo.easyforms.rules.DelayedOperationRule;
 import io.vertigo.easyforms.rules.EnumRuleHelper;
 import io.vertigo.easyforms.rules.OperationSolver;
 import io.vertigo.easyforms.rules.term.ArithmeticsOperator;
 import io.vertigo.easyforms.rules.term.CompareTerm;
 
-public class ComparisonRule extends AbstractRule<Function<Function<String, Object>, Boolean>, List<Object>> {
+public class ComparisonRule extends AbstractRule<ComparisonRuleSolver, List<Object>> {
 
 	private static final DelayedOperationRule<String, ArithmeticsOperator, Object> TERM_RULE = new DelayedOperationRule<>(new ValueRule(), ArithmeticsOperator.class, false, false);
 
@@ -30,7 +31,7 @@ public class ComparisonRule extends AbstractRule<Function<Function<String, Objec
 	}
 
 	@Override
-	protected Function<Function<String, Object>, Boolean> handle(final List<Object> elements) {
+	protected ComparisonRuleSolver handle(final List<Object> elements) {
 		return f -> {
 			final var leftVal = ((OperationSolver<String, ArithmeticsOperator, Object>) elements.get(0)).solve(f);
 			final var rightVal = ((OperationSolver<String, ArithmeticsOperator, Object>) elements.get(4)).solve(f);
@@ -38,5 +39,8 @@ public class ComparisonRule extends AbstractRule<Function<Function<String, Objec
 			return CompareTerm.doCompare(leftVal, rightVal, (CompareTerm) elements.get(2));
 		};
 	}
+
+	public static interface ComparisonRuleSolver extends Function<Function<String, Object>, Boolean> {
+	};
 
 }
