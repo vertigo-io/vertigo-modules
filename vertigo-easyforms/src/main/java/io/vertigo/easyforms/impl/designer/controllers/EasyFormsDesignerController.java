@@ -306,21 +306,22 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		contextDescription.getContextMap().entrySet().stream()
 				.sorted(Comparator.comparing(Entry::getKey))
 				.forEach(entry -> {
-					addKeyToNodes(tree.getChildren(), entry.getKey(), entry.getValue());
+					addKeyToNodes(tree.getChildren(), entry.getKey(), entry.getKey(), entry.getValue());
 				});
 
 		viewContext.publishRef(contextTreeKey, tree);
 	}
 
-	private void addKeyToNodes(final List<TreeNode> nodes, final String key, final Class<?> clazz) {
+	private void addKeyToNodes(final List<TreeNode> nodes, final String fullKey, final String key, final Class<?> clazz) {
 		if (!key.contains(".")) {
 			final var newNode = new TreeNode();
 			newNode.setLabel(key + " (" + clazz.getSimpleName() + ")");
+			newNode.setValue("#" + fullKey + "#");
 			nodes.add(newNode);
 		} else {
 			final var keySplit = key.split("\\.", 2);
 			final var newNode = getOrCreateNode(nodes, keySplit[0]);
-			addKeyToNodes(newNode.getChildren(), keySplit[1], clazz);
+			addKeyToNodes(newNode.getChildren(), fullKey, keySplit[1], clazz);
 		}
 	}
 

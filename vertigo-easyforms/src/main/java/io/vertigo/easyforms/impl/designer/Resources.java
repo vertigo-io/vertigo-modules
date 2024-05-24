@@ -75,6 +75,8 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerFieldAria,
 	EfDesignerRequiredNotModifiable,
 
+	EfDesignerContextDump,
+
 	EfUicMap$value,
 	EfUicMap$label,
 }

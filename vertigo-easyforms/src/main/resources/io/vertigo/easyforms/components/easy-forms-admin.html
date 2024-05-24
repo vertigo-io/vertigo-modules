@@ -211,9 +211,17 @@
    						    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editItem?.condition_detail?.[0]}}</pre>
 					    	</vu:grid-cell>
 					    	<vu:grid-cell>
-								Actual context usable in display condition:
+								<div th:text="#{EfDesignerContextDump}"></div>
 						    	<vu:include-data-primitive key="contextTree" />
-						    	<q-tree :nodes="vueData.contextTree.children" node-key="label" >
+						    	<q-tree :nodes="vueData.contextTree.children" node-key="label" dense>
+									<template v-slot:default-header="prop">
+										<div>{{ prop.node.label }}</div>
+										<q-btn v-if="!!prop.node.value"
+										       class="q-ml-sm"
+										       icon="mdi-content-copy"
+										       flat dense size="xs"
+										       @click="Quasar.copyToClipboard(prop.node.value)"></q-btn>
+									</template>
 					    		</q-tree>
 				    		</vu:grid-cell>
 						</vu:grid>
@@ -296,9 +304,17 @@
 				    	</vu:grid-cell>
 
 						<vu:grid-cell>
-							Actual context usable in display condition:
+							<div th:text="#{EfDesignerContextDump}"></div>
 					    	<vu:include-data-primitive key="contextTree" />
-					    	<q-tree :nodes="vueData.contextTree.children" node-key="label" >
+					    	<q-tree :nodes="vueData.contextTree.children" node-key="label" dense>
+								<template v-slot:default-header="prop">
+									<div>{{ prop.node.label }}</div>
+									<q-btn v-if="!!prop.node.value"
+									       class="q-ml-sm"
+									       icon="mdi-content-copy"
+									       flat dense size="xs"
+									       @click="Quasar.copyToClipboard(prop.node.value)"></q-btn>
+								</template>
 				    		</q-tree>
 			    		</vu:grid-cell>
 					</vu:grid>
