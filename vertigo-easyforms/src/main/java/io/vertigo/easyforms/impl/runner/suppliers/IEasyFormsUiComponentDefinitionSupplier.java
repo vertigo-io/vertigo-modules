@@ -1,6 +1,7 @@
 package io.vertigo.easyforms.impl.runner.suppliers;
 
 import java.util.List;
+import java.util.Map;
 
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
@@ -33,7 +34,7 @@ public interface IEasyFormsUiComponentDefinitionSupplier {
 			if (uiComponentParam instanceof final EasyFormsTemplateItemField field) {
 				// default i18n label for ui component
 				field
-						.withLabel(definitionName + '$' + field.getCode() + "Label");
+						.withLabel(Map.of("i18n", definitionName + '$' + field.getCode() + "Label"));
 			}
 		}
 

@@ -51,7 +51,7 @@ VUiExtensions.methods = {
     },
     
     efSaveEditSection : function() {
-        let formData = this.vueDataParams(['editSection']);
+        let formData = this.vueDataParams(['editSection','editLabelText.label']);
         formData.append('sectionIndex', this.$data.componentStates.sectionModal.sectionIndex);
         
         this.httpPostAjax(context + 'easyforms/designer/_saveSection', formData, {
@@ -133,7 +133,7 @@ VUiExtensions.methods = {
 
 
     efSaveEditItem : function() {
-        let formData = this.vueDataParams(['editItem']);
+        let formData = this.vueDataParams(['editItem','editLabelText.label','editLabelText.text']);
         formData.delete('vContext[editItem][type]')//not modifiable
         formData.delete('vContext[editItem][isDefault]')//not modifiable
        

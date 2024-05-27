@@ -3,11 +3,12 @@ package io.vertigo.easyforms.runner.model.template;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class EasyFormsTemplateSection implements Serializable {
 
 	private String code;
-	private String label;
+	private Map<String, String> label;
 	private String condition;
 
 	private final List<AbstractEasyFormsTemplateItem> items;
@@ -18,7 +19,7 @@ public final class EasyFormsTemplateSection implements Serializable {
 		items = new ArrayList<>();
 	}
 
-	public EasyFormsTemplateSection(final String code, final String label, final String condition, final List<AbstractEasyFormsTemplateItem> items) {
+	public EasyFormsTemplateSection(final String code, final Map<String, String> label, final String condition, final List<AbstractEasyFormsTemplateItem> items) {
 		this.code = code;
 		this.label = label;
 		this.condition = condition;
@@ -33,11 +34,22 @@ public final class EasyFormsTemplateSection implements Serializable {
 		this.code = code;
 	}
 
-	public String getLabel() {
+	public Map<String, String> getLabel() {
 		return label;
 	}
 
-	public void setLabel(final String label) {
+	public String getUserLabel(final String lang) {
+		var value = label.get(lang);
+		if (value == null) {
+			value = label.get("fr");
+		}
+		if (value == null) {
+			value = label.get("i18n");
+		}
+		return value;
+	}
+
+	public void setLabel(final Map<String, String> label) {
 		this.label = label;
 	}
 

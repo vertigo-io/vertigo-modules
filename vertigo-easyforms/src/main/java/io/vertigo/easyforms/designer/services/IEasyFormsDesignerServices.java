@@ -11,6 +11,7 @@ import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
+import io.vertigo.easyforms.domain.EasyFormsLabelUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.runner.rule.FormContextDescription;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
@@ -23,12 +24,13 @@ public interface IEasyFormsDesignerServices extends Component {
 
 	DtList<EasyFormsFieldValidatorTypeUi> getFieldValidatorTypeUiList();
 
-	void checkUpdateSection(EasyFormsTemplate easyFormsTemplate, Integer editIndex, EasyFormsSectionUi sectionEdit, Map<String, Serializable> additionalContext, UiMessageStack uiMessageStack);
+	void checkUpdateSection(EasyFormsTemplate easyFormsTemplate, Integer editIndex, EasyFormsSectionUi sectionEdit, DtList<EasyFormsLabelUi> labels, Map<String, Serializable> additionalContext,
+			UiMessageStack uiMessageStack);
 
 	FormContextDescription buildContextDescription(EasyFormsTemplate easyFormsTemplate, Map<String, Serializable> additionalContext);
 
 	void checkUpdateField(EasyFormsTemplate easyFormsTemplate, List<AbstractEasyFormsTemplateItem> items, Integer editIndex, Optional<Integer> editIndex2, EasyFormsItemUi fieldEdit,
-			final Map<String, Serializable> additionalContext, UiMessageStack uiMessageStack);
+			DtList<EasyFormsLabelUi> labels, final Map<String, Serializable> additionalContext, UiMessageStack uiMessageStack);
 
 	Long saveForm(EasyForm easyForm);
 

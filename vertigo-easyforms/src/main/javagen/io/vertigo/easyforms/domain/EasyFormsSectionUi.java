@@ -14,7 +14,6 @@ public final class EasyFormsSectionUi implements DataObject {
 	private static final long serialVersionUID = 1L;
 
 	private String code;
-	private String label;
 	private String condition;
 	
 	/**
@@ -34,25 +33,6 @@ public final class EasyFormsSectionUi implements DataObject {
 	 */
 	public void setCode(final String code) {
 		this.code = code;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Label'.
-	 * @return String label <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyEfLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Label")
-	public String getLabel() {
-		return label;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Label'.
-	 * @param label String <b>Obligatoire</b>
-	 */
-	public void setLabel(final String label) {
-		this.label = label;
 	}
 	
 	/**

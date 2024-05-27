@@ -5,13 +5,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.vertigo.account.security.UserSession;
+import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
@@ -76,13 +80,20 @@ public final class EasyFormsUiUtil implements Serializable {
 		throw new VSystemException("Unsupported object for easy form data.");
 	}
 
+	public String getUserLang() {
+		final var securityManager = Node.getNode().getComponentSpace().resolve(VSecurityManager.class);
+		return securityManager.getCurrentUserSession().map(UserSession::getLocale).map(Locale::getLanguage).orElse("fr");
+	}
+
 	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
+		final var smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
+		final var userLang = getUserLang();
+
 		final var easyFormDisplay = new LinkedHashMap<String, LinkedHashMap<String, Object>>();
 		final var outOfSections = new LinkedHashSet<>(easyForm.keySet());
 
 		// We use display order from template
 		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
-
 			outOfSections.remove(section.getCode());
 			final var easyFormSectionData = (Map<String, Object>) easyForm.get(section.getCode());
 
@@ -91,7 +102,7 @@ public final class EasyFormsUiUtil implements Serializable {
 			if (easyFormSectionData != null) {
 
 				final var sectionDisplay = new LinkedHashMap<String, Object>();
-				easyFormDisplay.put(section.getLabel(), sectionDisplay);
+				easyFormDisplay.put(section.getUserLabel(userLang), sectionDisplay);
 				final var outOfSectionData = new HashMap<>(easyFormSectionData);
 
 				for (final EasyFormsTemplateItemField field : getAllFieldsForSection(section)) {
@@ -109,26 +120,25 @@ public final class EasyFormsUiUtil implements Serializable {
 						if (listSupplier == null) {
 							// basic value
 							final var smartType = Node.getNode().getDefinitionSpace().resolve(fieldType.getSmartTypeName(), SmartTypeDefinition.class);
-							final var smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
 							String displayValue;
 							if (rawValue instanceof final String str) {
 								displayValue = str;
 							} else {
 								displayValue = smartTypeManager.valueToString(smartType, rawValue);
 							}
-							sectionDisplay.put(field.getLabel(), displayValue);
+							sectionDisplay.put(field.getUserLabel(userLang), displayValue);
 						} else {
 							// value selected from list
 							if (rawValue instanceof final List<?> rawList) {
 								// multi-selection
-								sectionDisplay.put(field.getLabel(),
+								sectionDisplay.put(field.getUserLabel(userLang),
 										rawList.stream()
 												.map(i -> getListDisplayValue(resolvedParameters, i))
 												.collect(Collectors.joining(", ")));
 
 							} else {
 								// single selection
-								sectionDisplay.put(field.getLabel(), getListDisplayValue(resolvedParameters, rawValue));
+								sectionDisplay.put(field.getUserLabel(userLang), getListDisplayValue(resolvedParameters, rawValue));
 							}
 						}
 						outOfSectionData.remove(fieldCode);
@@ -245,6 +255,19 @@ public final class EasyFormsUiUtil implements Serializable {
 				.replaceAll("(?i) or ", " || ")
 				.replaceAll("([^!><])=", "$1===")
 				.replaceAll("!=", "!==");
+	}
+
+	public String resolveLabel(final Map<String, String> labels, final List<String> supportedLang, final Boolean isI18n) {
+		if (Boolean.TRUE.equals(isI18n)) {
+			return LocaleMessageText.of(() -> labels.get("i18n")).getDisplay();
+		}
+
+		final var lang = getUserLang();
+		final var label = labels.get(lang);
+		if (label != null) {
+			return label;
+		}
+		return labels.get(supportedLang.get(0)); // default is first supported lang
 	}
 
 }

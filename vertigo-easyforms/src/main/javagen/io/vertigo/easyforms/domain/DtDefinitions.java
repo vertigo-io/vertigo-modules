@@ -25,6 +25,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		EasyFormsFieldValidatorTypeUi(io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi.class),
 		/** Objet de données EasyFormsItemUi. */
 		EasyFormsItemUi(io.vertigo.easyforms.domain.EasyFormsItemUi.class),
+		/** Objet de données EasyFormsLabelUi. */
+		EasyFormsLabelUi(io.vertigo.easyforms.domain.EasyFormsLabelUi.class),
 		/** Objet de données EasyFormsSectionUi. */
 		EasyFormsSectionUi(io.vertigo.easyforms.domain.EasyFormsSectionUi.class)		;
 
@@ -96,8 +98,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fieldCode,
 		/** Propriété 'Field type'. */
 		fieldType,
-		/** Propriété 'Label'. */
-		label,
 		/** Propriété 'Tooltip'. */
 		tooltip,
 		/** Propriété 'System field'. */
@@ -109,7 +109,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Validators'. */
 		fieldValidatorSelection,
 		/** Propriété 'Display condition'. */
-		condition,
+		condition	}
+
+	/**
+	 * Enumération des champs de EasyFormsLabelUi.
+	 */
+	public enum EasyFormsLabelUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsLabelUi> {
+		/** Propriété 'Language'. */
+		lang,
+		/** Propriété 'Label'. */
+		label,
 		/** Propriété 'Text'. */
 		text	}
 
@@ -119,8 +128,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum EasyFormsSectionUiFields implements DataFieldName<io.vertigo.easyforms.domain.EasyFormsSectionUi> {
 		/** Propriété 'Section code'. */
 		code,
-		/** Propriété 'Label'. */
-		label,
 		/** Propriété 'Display condition'. */
 		condition	}
 

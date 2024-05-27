@@ -1,5 +1,7 @@
 package io.vertigo.easyforms.impl.runner.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,22 +34,30 @@ public final class EasyFormsRunnerController {
 
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
-	public void initReadContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
+	private static final ViewContextKey<ArrayList<String>> efoSupportedLang = ViewContextKey.of("efoAllLang");
+
+	public void initReadContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final List<String> supportedLang, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
+		final ArrayList<String> supportedLangSerialisable = new ArrayList<>(supportedLang); // needed to be serializable
+
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
-				.publishRef(templateKey, easyForm.getTemplate());
+				.publishRef(templateKey, easyForm.getTemplate())
+				.publishRef(efoSupportedLang, supportedLangSerialisable);
 
 		addRequiredContext(viewContext, easyForm, false);
 	}
 
-	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
+	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final List<String> supportedLang, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
+		final ArrayList<String> supportedLangSerialisable = new ArrayList<>(supportedLang); // needed to be serializable
+
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
-				.publishRef(templateKey, easyForm.getTemplate());
+				.publishRef(templateKey, easyForm.getTemplate())
+				.publishRef(efoSupportedLang, supportedLangSerialisable);
 
 		// Add master data list needed for fields to context
 		addRequiredContext(viewContext, easyForm, true);

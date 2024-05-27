@@ -2,6 +2,7 @@ package io.vertigo.easyforms.impl.runner.pack;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import io.vertigo.basics.constraint.ConstraintIntegerLength;
 import io.vertigo.basics.constraint.ConstraintNumberMinimum;
@@ -46,6 +47,11 @@ public enum EasyFormsSmartTypes {
 	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
 	@SmartTypeProperty(property = "indexType", value = "text_fr:facetable:sortable")
 	EfLabel,
+
+	@SmartTypeDefinition(Map.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
+	EfMultiLabel,
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)

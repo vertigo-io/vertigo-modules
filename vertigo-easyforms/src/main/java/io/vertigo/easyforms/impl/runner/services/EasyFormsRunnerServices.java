@@ -40,7 +40,7 @@ import io.vertigo.vega.webservice.validation.ValidationUserException;
 @Transactional
 public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
-	private static final String FORM_PREFIX = "form_";
+	private static final String FORM_PREFIX = "form$";
 
 	@Inject
 	private EasyFormsRunnerManager easyFormsRunnerManager;

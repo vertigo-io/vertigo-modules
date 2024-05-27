@@ -16,14 +16,12 @@ public final class EasyFormsItemUi implements DataObject {
 	private String type;
 	private String fieldCode;
 	private String fieldType;
-	private String label;
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
 	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
 	private java.util.List<String> fieldValidatorSelection = new java.util.ArrayList<>();
 	private String condition;
-	private String text;
 	
 	/**
 	 * Champ : DATA.
@@ -80,25 +78,6 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setFieldType(final String fieldType) {
 		this.fieldType = fieldType;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Label'.
-	 * @return String label
-	 */
-	@Field(smartType = "STyEfLabel", label = "Label")
-	public String getLabel() {
-		return label;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Label'.
-	 * @param label String
-	 */
-	public void setLabel(final String label) {
-		this.label = label;
 	}
 	
 	/**
@@ -215,25 +194,6 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setCondition(final String condition) {
 		this.condition = condition;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Text'.
-	 * @return String text
-	 */
-	@Field(smartType = "STyEfTextHtml", label = "Text")
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Text'.
-	 * @param text String
-	 */
-	public void setText(final String text) {
-		this.text = text;
 	}
 	
 	/** {@inheritDoc} */

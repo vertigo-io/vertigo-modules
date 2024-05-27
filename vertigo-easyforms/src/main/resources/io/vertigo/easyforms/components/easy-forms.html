@@ -15,12 +15,12 @@
 						<div th:if="${template.useSections}" class="q-card__section" >
 							<q-item>
 								<q-item-section>
-								    <h1 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 1}"></h1>
-									<h2 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 2}"></h2>
-									<h3 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 3}"></h3>
-									<h4 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 4}"></h4>
-									<h5 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 5}"></h5>
-									<h6 class="text-h6 q-ma-none" vu:text="${templateSection.label}" th:if="${currentBlockLevel == 6}"></h6>
+								    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
+									<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
+									<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
+									<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
+									<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
+									<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
 								</q-item-section>
 							</q-item>
 						</div>
@@ -30,7 +30,7 @@
 							<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
 								<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
 									<th:block th:if="${templateItem.type == 'STATIC'}">
-				    					<div th:utext="${templateItem.label}"></div>
+				    					<div th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, model.efoAllLang, isI18nLabel)}"></div>
 				    				</th:block>
 				    				<template th:if="${templateItem.type == 'BLOCK'}"
 				    						  th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.condition)}">
@@ -42,15 +42,15 @@
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
 									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
-									                   fieldLabel = ${isI18nLabel != null && isI18nLabel ? '__#{${templateItem.label}}__' : templateItem.label}">
+									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
-											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})}|"
+											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">
 											    
 											    <vu:content></vu:content>
 											    
 												<div th:case="'EfUicInternalMap'">
-													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" th:label="${fieldLabel}" required="false">
+													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" label="|${fieldLabel}|" required="false">
 														<vu:slot name="after_label_slot">
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
@@ -60,7 +60,7 @@
 													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicRadio'">
-													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" th:label="${fieldLabel}" required="${templateItem.isMandatory}">
+													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
 														<q-option-group
 													    	th:v-model="${fieldModel}"
 													    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
@@ -97,21 +97,21 @@
 														th:label="${fieldLabel}"
 														th:classappend="|${templateItem.isMandatory?'v-field__required':''}|"
 											            th:aria-required="${templateItem.isMandatory}"
-											            th::error="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|" 
-														th::error-message="|getErrorMessage('${object}', 'form_${templateItem.code}', ${rowIndex})|"
+											            th::error="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|" 
+														th::error-message="|getErrorMessage('${object}', 'form$${templateItem.code}', ${rowIndex})|"
 														orientation="vertical"
 														stack-label>
 													</q-select>
 												</div>
 												<div th:case="*">
 													<q-input label-slot
-															th:v-autofocus="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|"
+															th:v-autofocus="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|"
 															th:v-model="${fieldModel}"
-															th::aria-describedby="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
-															th::aria-invalid="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|" 
+															th::aria-describedby="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
+															th::aria-invalid="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|" 
 															th:id="|text-input-${templateItem.code}|"
-															th::error="|hasFieldsError('${object}', 'form_${templateItem.code}', ${rowIndex})|" 
-															th::error-message="|getErrorMessage('${object}', 'form_${templateItem.code}', ${rowIndex})|"
+															th::error="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|" 
+															th::error-message="|getErrorMessage('${object}', 'form$${templateItem.code}', ${rowIndex})|"
 															th:type="${fieldType.uiComponentName == 'EfUicTextArea' ? 'textarea' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : (fieldType.uiComponentName == 'EfUicDateTime' ? 'datetime-local' : (fieldType.uiComponentName == 'EfUicNumber' ? 'number' : 'text')))}"
 															th::counter="${fieldType.uiComponentName == 'EfUicTextArea' ? 'true' : 'false'}"
 															th:autocomplete="${fieldParameters['textFieldAutocomplete']}"

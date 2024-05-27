@@ -14,7 +14,7 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 
 	private String code;
 	private String fieldTypeName;
-	private String label;
+	private Map<String, String> label;
 	private String tooltip;
 	private boolean isDefault;
 	private boolean isMandatory;
@@ -28,7 +28,7 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 	public EasyFormsTemplateItemField(final String code, final String fieldTypeName) {
 		this.code = code;
 		this.fieldTypeName = fieldTypeName;
-		label = code;
+		label = Map.of("fr", code);
 	}
 
 	public EasyFormsTemplateItemField(final String code, final EasyFormsFieldTypeDefinition fieldType) {
@@ -55,11 +55,22 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		this.fieldTypeName = fieldTypeName;
 	}
 
-	public String getLabel() {
+	public Map<String, String> getLabel() {
 		return label;
 	}
 
-	public void setLabel(final String label) {
+	public String getUserLabel(final String lang) {
+		var value = label.get(lang);
+		if (value == null) {
+			value = label.get("fr");
+		}
+		if (value == null) {
+			value = label.get("i18n");
+		}
+		return value;
+	}
+
+	public void setLabel(final Map<String, String> label) {
 		this.label = label;
 	}
 
@@ -104,7 +115,7 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 	}
 
 	// below shoud be refactored into a proper builder
-	public EasyFormsTemplateItemField withLabel(final String myLabel) {
+	public EasyFormsTemplateItemField withLabel(final Map<String, String> myLabel) {
 		label = myLabel;
 		return this;
 	}

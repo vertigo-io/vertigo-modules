@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -17,15 +18,18 @@ import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datamodel.data.util.VCollectors;
+import io.vertigo.datamodel.smarttype.SmarttypeResources;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.designer.services.IEasyFormsDesignerServices;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsItemUiFields;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsLabelUiFields;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsSectionUiFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.domain.EasyFormsFieldTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
+import io.vertigo.easyforms.domain.EasyFormsLabelUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
@@ -33,6 +37,7 @@ import io.vertigo.easyforms.impl.runner.rule.FormContextDescription;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
+import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem.ItemType;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
@@ -44,6 +49,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 	public static final String FORM_INTERNAL_CTX_NAME = "ctx";
+	private static final Pattern EMPTY_HTML_PATTERN = Pattern.compile("^( |&nbsp;|<br */?>|</?div>)*$");
 
 	@Inject
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
@@ -87,8 +93,8 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	}
 
 	@Override
-	public void checkUpdateSection(final EasyFormsTemplate easyFormsTemplate, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final Map<String, Serializable> additionalContext,
-			final UiMessageStack uiMessageStack) {
+	public void checkUpdateSection(final EasyFormsTemplate easyFormsTemplate, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final DtList<EasyFormsLabelUi> labels,
+			final Map<String, Serializable> additionalContext, final UiMessageStack uiMessageStack) {
 		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
 
 		if (sectionEdit.getCode().equalsIgnoreCase(FORM_INTERNAL_CTX_NAME)) {
@@ -103,6 +109,10 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				// section code must be unique
 				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.code, LocaleMessageText.of(Resources.EfDesignerSectionCodeUnicity));
 			}
+		}
+
+		if (StringUtil.isBlank(labels.get(0).getLabel())) {
+			errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.label, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
 		}
 
 		if (!StringUtil.isBlank(sectionEdit.getCondition())) {
@@ -164,37 +174,51 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 	@Override
 	public void checkUpdateField(final EasyFormsTemplate easyFormsTemplate, final List<AbstractEasyFormsTemplateItem> items, final Integer editIndex, final Optional<Integer> editIndex2,
-			final EasyFormsItemUi fieldEdit, final Map<String, Serializable> additionalContext, final UiMessageStack uiMessageStack) {
+			final EasyFormsItemUi fieldEdit, final DtList<EasyFormsLabelUi> labels, final Map<String, Serializable> additionalContext, final UiMessageStack uiMessageStack) {
 		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
 
-		// field code must be unique in section
-		for (int i = 0; i < items.size(); i++) {
-			if (i != editIndex
-					&& items.get(i) instanceof final EasyFormsTemplateItemField field
-					&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
-				errorBuilder.addError(fieldEdit, EasyFormsItemUiFields.fieldCode, LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity));
-				break;
-			} else if (items.get(i) instanceof final EasyFormsTemplateItemBlock block) {
-				final var blockItems = block.getItems();
-				for (int j = 0; j < blockItems.size(); j++) {
-					if ((editIndex2.isEmpty() || editIndex2.get() != j)
-							&& blockItems.get(j) instanceof final EasyFormsTemplateItemField field
+		switch (ItemType.valueOf(fieldEdit.getType())) {
+			case FIELD:
+				// field code must be unique in section
+				for (int i = 0; i < items.size(); i++) {
+					if (i != editIndex
+							&& items.get(i) instanceof final EasyFormsTemplateItemField field
 							&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
 						errorBuilder.addError(fieldEdit, EasyFormsItemUiFields.fieldCode, LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity));
 						break;
+					} else if (items.get(i) instanceof final EasyFormsTemplateItemBlock block) {
+						final var blockItems = block.getItems();
+						for (int j = 0; j < blockItems.size(); j++) {
+							if ((editIndex2.isEmpty() || editIndex2.get() != j)
+									&& blockItems.get(j) instanceof final EasyFormsTemplateItemField field
+									&& field.getCode().equalsIgnoreCase(fieldEdit.getFieldCode())) {
+								errorBuilder.addError(fieldEdit, EasyFormsItemUiFields.fieldCode, LocaleMessageText.of(Resources.EfDesignerFieldCodeUnicity));
+								break;
+							}
+						}
 					}
 				}
-			}
-		}
 
-		if (!StringUtil.isBlank(fieldEdit.getCondition())) {
-			// check section condition
-			final var formContextDescription = buildContextDescription(easyFormsTemplate, additionalContext);
-			final var parseResult = EasyFormsRuleParser.parseTest(fieldEdit.getCondition(), formContextDescription);
-			if (!parseResult.isValid()) {
-				errorBuilder.addError(fieldEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
-				uiMessageStack.error(parseResult.getErrorMessage(), fieldEdit, EasyFormsItemUiFields.condition + "_detail");
-			}
+				if (StringUtil.isBlank(labels.get(0).getLabel())) {
+					errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.label, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
+				}
+				break;
+			case STATIC:
+				if (StringUtil.isBlank(labels.get(0).getText()) || isHtmlEmpty(labels.get(0).getText())) {
+					errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.text, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
+				}
+				break;
+			case BLOCK:
+				if (!StringUtil.isBlank(fieldEdit.getCondition())) {
+					// check section condition
+					final var formContextDescription = buildContextDescription(easyFormsTemplate, additionalContext);
+					final var parseResult = EasyFormsRuleParser.parseTest(fieldEdit.getCondition(), formContextDescription);
+					if (!parseResult.isValid()) {
+						errorBuilder.addError(fieldEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
+						uiMessageStack.error(parseResult.getErrorMessage(), fieldEdit, EasyFormsItemUiFields.condition + "_detail");
+					}
+				}
+				break;
 		}
 
 		errorBuilder.throwUserExceptionIfErrors();
@@ -212,6 +236,10 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 					}
 				}
 				*/
+	}
+
+	private boolean isHtmlEmpty(final String str) {
+		return EMPTY_HTML_PATTERN.matcher(str).matches();
 	}
 
 	@Override

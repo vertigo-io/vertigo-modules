@@ -27,7 +27,7 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 				if (uiComponentParam instanceof final EasyFormsTemplateItemField field) {
 					// default i18n label for fieldType
 					field
-							.withLabel(definitionName + '$' + field.getCode() + "Label");
+							.withLabel(Map.of("i18n", definitionName + '$' + field.getCode() + "Label"));
 				}
 			}
 			template = new EasyFormsTemplate(List.of(new EasyFormsTemplateSection(null, null, null, uiComponentParams))); // TODO

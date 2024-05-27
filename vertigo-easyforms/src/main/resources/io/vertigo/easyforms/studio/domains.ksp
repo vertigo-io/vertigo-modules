@@ -10,6 +10,12 @@ create Domain DoEfLabel {
 	storeType : "VARCHAR(100)"
 }
 
+create Domain DoEfMultiLabel {
+    dataType : ValueObject
+    type : "java.util.Map<String, String>"
+	storeType : "JSONB"
+}
+
 create Domain DoEfNombre {
 	dataType : Integer
 	storeType : "NUMERIC"

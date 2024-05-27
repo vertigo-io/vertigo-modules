@@ -22,7 +22,6 @@ create DtDefinition DtEasyFormsFieldTypeUi {
 
 create DtDefinition DtEasyFormsSectionUi {
     field code 				{domain: DoEfCode 					label:"Section code"	 		cardinality:"1"}
-    field label 			{domain: DoEfLabel 					label:"Label" 					cardinality:"1"}
     field condition 		{domain: DoEfLabel 					label:"Display condition" 		}
 }
 
@@ -30,14 +29,12 @@ create DtDefinition DtEasyFormsItemUi {
     field type 				{domain: DoEfCode 					label:"Item type" 				}
     field fieldCode 		{domain: DoEfCode 					label:"Field code" 				}
     field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
-    field label 			{domain: DoEfLabel 					label:"Label" 					}
     field tooltip 			{domain: DoEfLabel 					label:"Tooltip" 				}
     field isDefault 		{domain: DoEfBooleen 				label:"System field" 			}
     field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				}
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
     field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}
     field condition 		{domain: DoEfLabel 					label:"Display condition" 		}				 /* for block items */
-    field text 				{domain: DoEfTextHtml 				label:"Text" 					}				 /* for static items */
 }
 
 create DtDefinition DtEasyFormsFieldValidatorTypeUi {
@@ -48,4 +45,10 @@ create DtDefinition DtEasyFormsFieldValidatorTypeUi {
     field fieldTypes 		{domain: DoEfText 				label:"Attached to fields" cardinality:"*" }
     sortField: "name"
     displayField: "label"
+}
+
+create DtDefinition DtEasyFormsLabelUi {
+	field lang 				{domain: DoEfLabel 				label:"Language" }
+	field label 			{domain: DoEfLabel 				label:"Label" }
+	field text 				{domain: DoEfTextHtml           label:"Text" }
 }

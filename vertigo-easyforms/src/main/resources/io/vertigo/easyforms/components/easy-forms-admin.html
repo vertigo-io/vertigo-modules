@@ -1,5 +1,7 @@
 <th:block th:fragment="easy-forms-admin()">
 	<vu:include-data object="efo" field="template" />
+	<vu:include-data-primitive key="efoLang" />
+	<vu:include-data-primitive key="efoAllLang" />
 	<vu:include-data-primitive key="validatorEfoLabels" />
 	<vu:include-data-primitive key="message" />
 	<vu:include-data object="fieldTypes" field="name" />
@@ -22,7 +24,7 @@
 								           @click="efMoveSection(index, index+1)"/>
 		    				</q-item-section>
 			    			<q-item-section>
-			    				<div><b style="font-size: 1.2em;">{{section.label}}</b> ({{section.code}})</div>
+			    				<div><b style="font-size: 1.2em;">{{section.label[vueData.efoLang]}}</b> ({{section.code}})</div>
 			    				<div class="q-pl-md row q-gutter-sm">
 			    					<q-icon size="sm" color="grey" name="mdi-folder-question-outline"></q-icon>
 			    					<div class="self-center">
@@ -91,7 +93,7 @@
 					    				<template v-if="item.type === 'STATIC'">
 					    					<q-icon size="md" color="primary" name="mdi-format-text-variant"></q-icon>
 					    					<div class="col column justify-center">
-					    						<span v-html="item.label"></span>
+					    						<span v-html="item.text[vueData.efoLang]"></span>
 					    					</div>
 					    				</template>
 					    				<template v-else-if="item.type === 'BLOCK'" th:if="${insideBlock == null}">
@@ -120,7 +122,7 @@
 					    				<template v-else-if="item.type === 'FIELD'">
 					    					<q-icon size="md" color="primary" name="mdi-form-textbox"></q-icon>
 					    					<div class="col column justify-center">
-						    					<div :class="item.isMandatory?'v-block__required':''"><b style="font-size: 1.2em;">{{item.label}}</b> ({{item.code}})</div>
+						    					<div :class="item.isMandatory?'v-block__required':''"><b style="font-size: 1.2em;">{{item.label[vueData.efoLang]}}</b> ({{item.code}})</div>
 						    					<div class="row q-gutter-sm q-pl-md">
 							    					<div>{{efResolveFieldTypeLabel(item.fieldTypeName)}}</div>
 							    				</div>
@@ -191,9 +193,13 @@
 					<template v-if="vueData.editItem.type === 'STATIC'">
 						<vu:grid>
 							<vu:grid-cell>
-								<vu:label-edit object="editItem" field="text" required="true">
-								    <vu:text-editor-edit object="editItem" field="text"
-								    		autofocus
+								<vu:label-edit th:each="labelUi, stat : ${model.editLabelText}"
+												object="editLabelText" rowIndex="${stat.index}" field="text" required="${stat.first}"
+												label="${model.util.label('editLabelText.text')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}">
+						                        
+								    <vu:text-editor-edit 
+								    		object="editLabelText" rowIndex="${stat.index}" field="text"
+								    		autofocus="${stat.first}"
 								    		:toolbar="[['bold','italic','underline'],
 								    		           ['link'],
 								    		           ['unordered', 'ordered', 'outdent', 'indent'],
@@ -239,7 +245,9 @@
 										   :disable="vueData.editItem.isDefault === true"
 										   @update:model-value="componentStates.itemModal.codeModified = (vueData.editItem.fieldCode != '')" />
 							<vu:grid-cell>
-							    <vu:text-field-edit object="editItem" field="label" required="true"/>
+							    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
+						                        label="${model.util.label('editLabelText.label')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"
+						                        required="${stat.first}"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
 								<vu:text-field-edit object="editItem" field="tooltip"/>
@@ -296,7 +304,9 @@
 					<vu:grid>
 						<vu:text-field object="editSection" field="code" autofocus />
 		                <vu:grid-cell>
-						    <vu:text-field-edit object="editSection" field="label"/>
+						    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
+						                        label="${model.util.label('editLabelText.label')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"
+						                        required="${stat.first}"/>
 						</vu:grid-cell>
 						<vu:grid-cell>
 					    	<vu:text-field-edit object="editSection" field="condition"/>
