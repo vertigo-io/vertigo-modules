@@ -41,6 +41,5 @@ public class ComparisonRule extends AbstractRule<ComparisonRuleSolver, List<Obje
 	}
 
 	public static interface ComparisonRuleSolver extends Function<Function<String, Object>, Boolean> {
-	};
-
+	}
 }

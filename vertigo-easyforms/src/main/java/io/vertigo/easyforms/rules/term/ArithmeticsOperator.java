@@ -53,27 +53,19 @@ public enum ArithmeticsOperator implements IOperatorTerm<Object> {
 			}
 			return leftStr + rightStr;
 		} else if (left instanceof final Integer leftI && right instanceof final Integer rightI) {
-			switch (operator) {
-				case PLUS:
-					return leftI + rightI;
-				case MINUS:
-					return leftI - rightI;
-				case MULTIPLY:
-					return leftI * rightI;
-				case DIVIDE:
-					return leftI / rightI;
-			}
+			return switch (operator) {
+				case PLUS -> leftI + rightI;
+				case MINUS -> leftI - rightI;
+				case MULTIPLY -> leftI * rightI;
+				case DIVIDE -> leftI / rightI;
+			};
 		} else if (left instanceof final BigDecimal leftD && right instanceof final BigDecimal rightD) {
-			switch (operator) {
-				case PLUS:
-					return leftD.add(rightD);
-				case MINUS:
-					return leftD.subtract(rightD);
-				case MULTIPLY:
-					return leftD.multiply(rightD);
-				case DIVIDE:
-					return leftD.divide(rightD);
-			}
+			return switch (operator) {
+				case PLUS -> leftD.add(rightD);
+				case MINUS -> leftD.subtract(rightD);
+				case MULTIPLY -> leftD.multiply(rightD);
+				case DIVIDE -> leftD.divide(rightD);
+			};
 		}
 		// TODO: handle other types (ex dates)
 		throw new ParsingValueException("Type '" + left.getClass().getSimpleName() + "' not supported");
