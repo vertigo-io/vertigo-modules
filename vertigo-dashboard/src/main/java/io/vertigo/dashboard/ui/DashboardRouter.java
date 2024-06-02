@@ -38,7 +38,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.javalin.Javalin;
 import io.vertigo.core.node.Node;
-import io.vertigo.core.util.FileUtil;
 import io.vertigo.core.util.InjectorUtil;
 import io.vertigo.dashboard.ui.commons.CommonsDashboardControler;
 import io.vertigo.dashboard.ui.dynamo.DynamoDashboardControler;
@@ -88,7 +87,7 @@ public final class DashboardRouter {
 		javalin.get("/dashboard/static/{fileName}", (ctx) -> {
 			try (InputStream inputStream = DashboardRouter.class.getResource("/static/" + ctx.pathParam("{fileName}")).openStream()) {
 				try (final OutputStream output = ctx.res().getOutputStream()) {
-					FileUtil.copy(inputStream, output);
+					inputStream.transferTo(output);
 				}
 			}
 		});
