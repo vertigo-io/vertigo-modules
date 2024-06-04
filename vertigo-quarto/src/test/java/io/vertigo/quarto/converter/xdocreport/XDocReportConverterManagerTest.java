@@ -111,7 +111,7 @@ public final class XDocReportConverterManagerTest {
 		try (final InputStream in = baseClass.getResourceAsStream(fileName)) {
 			Assertion.check().isNotNull(in, "fichier non trouvé : {0}", fileName);
 			final String fileExtension = FileUtil.getFileExtension(fileName);
-			final File file = new TempFile("tmpTest", '.' + fileExtension);
+			final File file = TempFile.of("tmpTest", '.' + fileExtension);
 			FileUtil.copy(in, file);
 
 			final String mimeType;

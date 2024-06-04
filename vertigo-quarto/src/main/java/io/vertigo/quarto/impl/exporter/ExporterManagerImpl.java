@@ -96,7 +96,7 @@ public final class ExporterManagerImpl implements ExporterManager {
 	private VFile generateFile(final Export export) throws Exception {
 		final ExporterPlugin exporterPlugin = getExporterPlugin(export.format());
 
-		final File file = new TempFile("csvGenerated", "." + export.format().name().toLowerCase(Locale.ENGLISH));
+		final File file = TempFile.of("csvGenerated", "." + export.format().name().toLowerCase(Locale.ENGLISH));
 		try (final OutputStream fileOutputStream = Files.newOutputStream(file.toPath())) {
 			exporterPlugin.exportData(export, fileOutputStream);
 		} catch (final Exception e) {

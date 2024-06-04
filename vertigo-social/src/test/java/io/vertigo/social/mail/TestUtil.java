@@ -51,7 +51,7 @@ public final class TestUtil {
 	public static VFile createVFile(final String fileName, final Class<?> baseClass) {
 		try (final InputStream in = baseClass.getResourceAsStream(fileName)) {
 			Assertion.check().isNotNull(in, "fichier non trouvé : {0}", fileName);
-			final File file = new TempFile("tmp", '.' + FileUtil.getFileExtension(fileName));
+			final File file = TempFile.of("tmp", '.' + FileUtil.getFileExtension(fileName));
 			FileUtil.copy(in, file);
 			return FSFile.of(file.toPath());
 		} catch (final IOException e) {

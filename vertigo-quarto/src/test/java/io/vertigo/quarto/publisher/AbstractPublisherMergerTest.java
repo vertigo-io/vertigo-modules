@@ -367,7 +367,7 @@ public abstract class AbstractPublisherMergerTest {
 		try (final InputStream in = baseClass.getResourceAsStream(fileName)) {
 			Assertion.check().isNotNull(in, "fichier non trouvé : {0}", fileName);
 			final String fileExtension = FileUtil.getFileExtension(fileName);
-			final File file = new TempFile("tmp", '.' + fileExtension);
+			final File file = TempFile.of("tmp", '.' + fileExtension);
 			FileUtil.copy(in, file);
 
 			final String mimeType;

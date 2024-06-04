@@ -17,6 +17,7 @@
  */
 package io.vertigo.quarto.plugins.converter.xdocreport;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -74,7 +75,7 @@ public final class XDocReportConverterPlugin implements ConverterPlugin {
 			if (lastPeriod > -1) {
 				fileName = fileName.substring(0, lastPeriod);
 			}
-			final TempFile resultFile = new TempFile(fileName, '.' + targetFormat.toLowerCase(Locale.ENGLISH));
+			final File resultFile = TempFile.of(fileName, '.' + targetFormat.toLowerCase(Locale.ENGLISH));
 			try (final OutputStream out = Files.newOutputStream(resultFile.toPath())) {
 				converter.convert(in, out, options);
 			}

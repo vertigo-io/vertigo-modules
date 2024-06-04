@@ -94,7 +94,7 @@ final class ODTUtil {
 	 * @throws IOException Si une IOException a lieu
 	 */
 	static File createODT(final ZipFile odtFile, final String contentXml, final String stylesXml, final Map<String, VFile> newImagesMap) throws IOException {
-		final File resultFile = new TempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
+		final File resultFile = TempFile.of(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
 		try (final ZipOutputStream outputFichierOdt = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(resultFile.toPath())))) {
 			for (final ZipEntry zipEntry : Collections.list(odtFile.entries())) {
 				final String entryName = zipEntry.getName();

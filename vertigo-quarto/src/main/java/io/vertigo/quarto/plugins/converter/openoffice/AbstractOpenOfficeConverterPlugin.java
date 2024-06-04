@@ -136,7 +136,7 @@ abstract class AbstractOpenOfficeConverterPlugin implements ConverterPlugin, Act
 				refreshDocument(xDoc);
 				LOGGER.debug("Document source chargé");
 
-				final File targetFile = new TempFile("edition", '.' + targetFormat.name());
+				final File targetFile = TempFile.of("edition", '.' + targetFormat.name());
 				storeDocument(targetFile, xDoc, targetFormat, openOfficeConnection);
 				LOGGER.debug("Conversion réussie");
 				return targetFile;
