@@ -7,7 +7,9 @@ import java.util.Map;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
+import io.vertigo.datamodel.smarttype.definitions.Property;
 import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.RadioCheckUiComponent;
@@ -35,9 +37,7 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 
 		DATE(EasyFormsSmartTypes.EfDate, UiComponentEnum.DATE),
 
-		BIRTH_DATE(EasyFormsSmartTypes.EfDatePassee, UiComponentEnum.DATE
-		// , Map.of(TextFieldUiComponent.AUTOCOMPLETE, "bday") // TODO check on input if it is used
-		),
+		BIRTH_DATE(EasyFormsSmartTypes.EfDatePassee, UiComponentEnum.DATE),
 
 		PHONE(new AutocompleteFieldType(EasyFormsSmartTypes.EfTelephone, "tel")),
 
@@ -57,9 +57,13 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
+		FILE(new CustomFileFieldType()),
+
 		// internal use
 		INTERNAL_LAYOUT(new RadioLayoutFieldType()),
 		INTERNAL_MAP(null, EasyFormsSmartTypes.EfIMapData, UiComponentEnum.INTERNAL_MAP), // null category to hide this item
+		INTERNAL_EXTENSIONS(null, EasyFormsSmartTypes.EfIExtList, UiComponentEnum.TEXT_FIELD), // used by file upload
+		COUNT_STRICT(null, EasyFormsSmartTypes.EfCountStrict, UiComponentEnum.NUMBER),
 		;
 
 		// ---
@@ -100,6 +104,20 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 	@Override
 	public Class<FieldTypeEnum> getEnumClass() {
 		return FieldTypeEnum.class;
+	}
+
+	public static interface EasyFormsConstraint<J, D> extends Constraint<J, D> {
+
+		@Override
+		default Property getProperty() {
+			return null;
+		}
+
+		@Override
+		default J getPropertyValue() {
+			return null;
+		}
+
 	}
 
 	// ---
@@ -174,7 +192,7 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 
 		@Override
 		public List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
-			return List.of(new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT));
+			return List.of(new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT_STRICT));
 		}
 
 		@Override

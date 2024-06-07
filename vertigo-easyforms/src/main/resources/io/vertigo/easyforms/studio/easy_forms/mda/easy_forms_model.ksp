@@ -32,6 +32,8 @@ create DtDefinition DtEasyFormsItemUi {
     field tooltip 			{domain: DoEfLabel 					label:"Tooltip" 				}
     field isDefault 		{domain: DoEfBooleen 				label:"System field" 			}
     field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				}
+    field isList 			{domain: DoEfBooleen 				label:"Is list" 				}
+    field maxItems 			{domain: DoEfCountStrict			label:"Maximum number of items" }
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
     field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}
     field condition 		{domain: DoEfLabel 					label:"Display condition" 		}				 /* for block items */

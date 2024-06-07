@@ -20,9 +20,10 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 	private boolean isMandatory;
 	private EasyFormsData parameters; // Field type parameters
 	private List<EasyFormsTemplateFieldValidator> validators;
+	private Integer maxItems; // When is list, provide maximum number of elements
 
 	public EasyFormsTemplateItemField() {
-		// empty constructor needed
+		// empty constructor needed for json deserialization
 	}
 
 	public EasyFormsTemplateItemField(final String code, final String fieldTypeName) {
@@ -114,6 +115,14 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		this.validators = validators;
 	}
 
+	public Integer getMaxItems() {
+		return maxItems;
+	}
+
+	public void setMaxItems(final Integer maxItems) {
+		this.maxItems = maxItems;
+	}
+
 	// below shoud be refactored into a proper builder
 	public EasyFormsTemplateItemField withLabel(final Map<String, String> myLabel) {
 		label = myLabel;
@@ -154,6 +163,11 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 
 	public EasyFormsTemplateItemField withValidators(final List<EasyFormsTemplateFieldValidator> myValidators) {
 		validators = myValidators;
+		return this;
+	}
+
+	public EasyFormsTemplateItemField withMaxItems(final Integer myMaxItems) {
+		maxItems = myMaxItems;
 		return this;
 	}
 

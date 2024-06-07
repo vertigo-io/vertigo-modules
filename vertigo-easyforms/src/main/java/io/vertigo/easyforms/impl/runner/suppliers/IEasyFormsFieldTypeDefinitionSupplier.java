@@ -2,8 +2,10 @@ package io.vertigo.easyforms.impl.runner.suppliers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
+import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
@@ -33,7 +35,8 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 			template = new EasyFormsTemplate(List.of(new EasyFormsTemplateSection(null, null, null, uiComponentParams))); // TODO
 		}
 
-		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList());
+		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList(),
+				getConstraintsProvider());
 	}
 
 	public default String getCategory() {
@@ -58,6 +61,10 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 
 	public default boolean isList() {
 		return false;
+	}
+
+	public default Function<EasyFormsTemplateItemField, List<Constraint>> getConstraintsProvider() {
+		return null;
 	}
 
 }

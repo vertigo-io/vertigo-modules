@@ -62,6 +62,11 @@ public enum EfPackResources implements LocaleMessageKey {
 	EfFtyCustomListCheckbox$layoutVerticalLabel,
 	EfFtyCustomListCheckbox$layoutHorizontalLabel,
 
+	EfFtyFileLabel,
+	EfFtyFile$maxFileSizeLabel,
+	EfFtyFile$maxSizeLabel,
+	EfFtyFile$acceptLabel,
+
 	// Validators
 	EfFvaEmailNotInBlacklistLabel,
 	EfFvaEmailNotInBlacklistDescription,

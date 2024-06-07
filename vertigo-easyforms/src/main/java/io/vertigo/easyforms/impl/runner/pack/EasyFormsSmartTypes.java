@@ -2,7 +2,6 @@ package io.vertigo.easyforms.impl.runner.pack;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import io.vertigo.basics.constraint.ConstraintIntegerLength;
 import io.vertigo.basics.constraint.ConstraintNumberMinimum;
@@ -18,12 +17,15 @@ import io.vertigo.datamodel.smarttype.annotations.Constraint;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMaximum;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMinimum;
+import io.vertigo.easyforms.impl.runner.pack.formatter.FormatterExtensions;
 import io.vertigo.easyforms.runner.model.EasyFormsJsonAdapter;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
+import io.vertigo.ui.core.FileInfoURIAdapter;
 
 public enum EasyFormsSmartTypes {
 
@@ -48,16 +50,17 @@ public enum EasyFormsSmartTypes {
 	@SmartTypeProperty(property = "indexType", value = "text_fr:facetable:sortable")
 	EfLabel,
 
-	@SmartTypeDefinition(Map.class)
-	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
-	EfMultiLabel,
-
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9", msg = "")
 	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "0", msg = "")
 	EfCount,
+
+	@SmartTypeDefinition(Integer.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9", msg = "")
+	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "1", msg = "")
+	EfCountStrict,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
@@ -127,6 +130,8 @@ public enum EasyFormsSmartTypes {
 	@Constraint(clazz = ConstraintStringLength.class, arg = "5", msg = "")
 	EfCodePostal,
 
+	// INTERNALS
+
 	@SmartTypeDefinition(EasyFormsData.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
@@ -138,6 +143,10 @@ public enum EasyFormsSmartTypes {
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
 	EfIMapData,
 
+	@SmartTypeDefinition(String.class)
+	@Formatter(clazz = FormatterExtensions.class)
+	EfIExtList, // used by file upload
+
 	@SmartTypeDefinition(EasyFormsTemplate.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
@@ -147,5 +156,10 @@ public enum EasyFormsSmartTypes {
 	@Formatter(clazz = FormatterDefault.class)
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
 	EfFieldValidator,
+
+	@SmartTypeDefinition(FileInfoURI.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Adapter(clazz = FileInfoURIAdapter.class, targetBasicType = BasicType.String)
+	EfFileInfoURI,
 
 }

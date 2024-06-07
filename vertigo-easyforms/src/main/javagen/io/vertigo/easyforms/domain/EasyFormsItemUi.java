@@ -19,6 +19,8 @@ public final class EasyFormsItemUi implements DataObject {
 	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
+	private Boolean isList;
+	private Integer maxItems;
 	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
 	private java.util.List<String> fieldValidatorSelection = new java.util.ArrayList<>();
 	private String condition;
@@ -135,6 +137,44 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setIsMandatory(final Boolean isMandatory) {
 		this.isMandatory = isMandatory;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Is list'.
+	 * @return Boolean isList
+	 */
+	@Field(smartType = "STyEfBooleen", label = "Is list")
+	public Boolean getIsList() {
+		return isList;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Is list'.
+	 * @param isList Boolean
+	 */
+	public void setIsList(final Boolean isList) {
+		this.isList = isList;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Maximum number of items'.
+	 * @return Integer maxItems
+	 */
+	@Field(smartType = "STyEfCountStrict", label = "Maximum number of items")
+	public Integer getMaxItems() {
+		return maxItems;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Maximum number of items'.
+	 * @param maxItems Integer
+	 */
+	public void setMaxItems(final Integer maxItems) {
+		this.maxItems = maxItems;
 	}
 	
 	/**

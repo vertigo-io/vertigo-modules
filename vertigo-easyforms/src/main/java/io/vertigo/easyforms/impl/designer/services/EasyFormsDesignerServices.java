@@ -144,7 +144,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 				final var smartType = Node.getNode().getDefinitionSpace().resolve(paramFieldTypeDefinition.getSmartTypeName(), SmartTypeDefinition.class);
 
-				contextDescription.add(prefix + field.getCode(), smartType.getBasicType().getJavaClass());
+				contextDescription.add(prefix + field.getCode(), smartType.getJavaClass());
 			}
 		}
 

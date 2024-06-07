@@ -3,22 +3,34 @@ package io.vertigo.easyforms.impl.runner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import io.vertigo.core.analytics.AnalyticsManager;
+import io.vertigo.core.lang.Cardinality;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.LocaleMessageText;
+import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.config.discovery.NotDiscoverable;
+import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.ConstraintException;
 import io.vertigo.datamodel.smarttype.definitions.FormatterException;
+import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
+import io.vertigo.datastore.filestore.model.FileInfo;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.impl.filestore.model.AbstractFileInfo;
 import io.vertigo.easyforms.impl.runner.pack.EfPackResources;
 import io.vertigo.easyforms.impl.runner.pack.constraint.EfConstraintResources;
+import io.vertigo.easyforms.impl.runner.pack.formatter.EfFormatterResources;
 import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.data.EasyFormsDataDescriptor;
 
+@NotDiscoverable
 public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager, Activeable {
 
 	private static final String FORMAT_ERROR_MEASURE = "formatError";
@@ -28,18 +40,35 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 	private final AnalyticsManager analyticsManager;
 	private final SmartTypeManager smartTypeManager;
 
+	private final String filestoreName;
+	private final String tmpFilestoreName;
+
+	private FileInfoDefinition stdFileInfoDefinition;
+	private FileInfoDefinition tmpFileInfoDefinition;
+
 	@Inject
-	public EasyFormsRunnerManagerImpl(final LocaleManager localeManager, final AnalyticsManager analyticsManager, final SmartTypeManager smartTypeManager) {
+	public EasyFormsRunnerManagerImpl(final LocaleManager localeManager, final AnalyticsManager analyticsManager, final SmartTypeManager smartTypeManager,
+			@ParamValue("filestore.persist") final Optional<String> filestoreNameOpt, @ParamValue("filestore.tmp") final Optional<String> tmpFilestoreNameOpt) {
 		this.localeManager = localeManager;
 		this.analyticsManager = analyticsManager;
 		this.smartTypeManager = smartTypeManager;
+
+		filestoreName = filestoreNameOpt.orElse("main");
+		tmpFilestoreName = tmpFilestoreNameOpt.orElse("main");
 	}
 
 	@Override
 	public void start() {
+		final var fiDefList = Node.getNode().getDefinitionSpace().getAll(FileInfoDefinition.class);
+		stdFileInfoDefinition = fiDefList.stream().filter(d -> d.getStoreName().equals(filestoreName)).findAny()
+				.orElseThrow(() -> new VSystemException("No filestore found with name {0}", filestoreName));
+		tmpFileInfoDefinition = fiDefList.stream().filter(d -> d.getStoreName().equals(tmpFilestoreName)).findAny()
+				.orElseThrow(() -> new VSystemException("No filestore found with name {0}", tmpFilestoreName));
+
 		localeManager.add("io.vertigo.easyforms.runner.Resources", io.vertigo.easyforms.impl.runner.Resources.values());
 		localeManager.add("io.vertigo.easyforms.runner.pack.EfPackResources", EfPackResources.values());
-		localeManager.add("io.vertigo.easyforms.runner.pack.EfConstraintResources", EfConstraintResources.values());
+		localeManager.add("io.vertigo.easyforms.runner.pack.constraint.EfConstraintResources", EfConstraintResources.values());
+		localeManager.add("io.vertigo.easyforms.runner.pack.formatter.EfFormatterResources", EfFormatterResources.values());
 
 		localeManager.add("io.vertigo.easyforms.domain.DtResources", io.vertigo.easyforms.domain.DtResources.values());
 	}
@@ -49,6 +78,54 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 		// Nothing
 	}
 
+	@Override
+	public FileInfo createStdFileInfo(final VFile vFile) {
+		return new EasyFormStdFileInfo(vFile);
+	}
+
+	@Override
+	public FileInfo createTmpFileInfo(final VFile vFile) {
+		return new EasyFormTmpFileInfo(vFile);
+	}
+
+	@Override
+	public boolean isTmpFileInfo(final FileInfoDefinition fileInfoDefinition) {
+		return fileInfoDefinition.equals(tmpFileInfoDefinition);
+	}
+
+	@Override
+	public boolean isStdFileInfo(final FileInfoDefinition fileInfoDefinition) {
+		return fileInfoDefinition.equals(stdFileInfoDefinition);
+	}
+
+	public final class EasyFormStdFileInfo extends AbstractFileInfo {
+		/** SerialVersionUID. */
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * Default constructor.
+		 *
+		 * @param vFile Data of the file
+		 */
+		public EasyFormStdFileInfo(final VFile vFile) {
+			super(stdFileInfoDefinition, vFile);
+		}
+	}
+
+	public final class EasyFormTmpFileInfo extends AbstractFileInfo {
+		/** SerialVersionUID. */
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * Default constructor.
+		 *
+		 * @param vFile Data of the file
+		 */
+		public EasyFormTmpFileInfo(final VFile vFile) {
+			super(tmpFileInfoDefinition, vFile);
+		}
+	}
+
 	// *****
 	// *** Methods below could be part of a global (non easy form specific) validation manager (or dataManager ?)
 	// *****
@@ -56,6 +133,9 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 	@Override
 	public Object formatField(final EasyFormsDataDescriptor fieldDescriptor, final Object inputValue) throws FormatterException {
 		if (inputValue == null) {
+			if (Cardinality.MANY.equals(fieldDescriptor.cardinality())) {
+				return List.of();
+			}
 			return null;
 		}
 
@@ -78,7 +158,7 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 				final var inputCollection = (List) inputValue;
 				final List<Object> resolvedList = new ArrayList<>(inputCollection.size());
 				for (final var elem : inputCollection) {
-					resolvedList.add(smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), elem.toString()));
+					resolvedList.add(doFormatValue(fieldDescriptor, elem.toString()));
 				}
 				return resolvedList;
 			case ONE:
@@ -86,10 +166,23 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 				if (inputValue instanceof Map || inputValue instanceof List) {
 					return inputValue; // Eg : for custom list in admin section (EasyFormsData object)
 				} else {
-					return smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), inputValue.toString());
+					return doFormatValue(fieldDescriptor, inputValue.toString());
 				}
 			default:
 				throw new UnsupportedOperationException();
+		}
+	}
+
+	private Object doFormatValue(final EasyFormsDataDescriptor fieldDescriptor, final String inputValue) throws FormatterException {
+		final var targetJavaClass = fieldDescriptor.smartTypeDefinition().getJavaClass();
+		var adapter = smartTypeManager.getTypeAdapters("easyForm").get(targetJavaClass);
+		if (adapter == null) {
+			adapter = smartTypeManager.getTypeAdapters("ui").get(targetJavaClass);
+		}
+		if (adapter != null) {
+			return adapter.toJava(inputValue, targetJavaClass);
+		} else {
+			return smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), inputValue);
 		}
 	}
 
@@ -113,6 +206,13 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 
 		// If ok, validate data intention (business rules)
 		final List<String> errors = doValidateField(fieldDescriptor, value, context);
+
+		for (final var fieldConstraint : fieldDescriptor.getFieldConstraints()) {
+			if (fieldConstraint != null && !fieldConstraint.checkConstraint(value)) {
+				errors.add(fieldConstraint.getErrorMessage().getDisplay());
+			}
+		}
+
 		if (!errors.isEmpty()) {
 			analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
 					.incMeasure(VALIDATION_ERROR_MEASURE, 1));

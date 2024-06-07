@@ -39,18 +39,19 @@
 				    				</template>
 				    				<th:block th:if="${templateItem.type == 'FIELD'}"
 									          th:with="fieldModel = ${model.efoUiUtil.resolveModelName(template, templateSection, templateItem)},
+									                   fieldCode = ${model.efoUiUtil.resolveCodeName(template, templateSection, templateItem)},
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
 									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
 									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
-											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})}|"
+											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">
 											    
 											    <vu:content></vu:content>
 											    
 												<div th:case="'EfUicInternalMap'">
-													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" label="|${fieldLabel}|" required="false">
+													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="false">
 														<vu:slot name="after_label_slot">
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
@@ -59,8 +60,28 @@
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
+												<div th:case="'EfUicFile'">
+													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+														<v-file-upload 
+														    th::ref="|'uploader_${object}_form$${fieldCode}'|"
+															class="q-mt-md"
+												            th:url="@{/easyforms/form/upload}" field-name="file"  
+												            :simple="false" :multiple="true"
+												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
+												            th:accept="${fieldParameters['accept']}"
+												            th:@rejected="|errors => {efAlertRejected(errors, '#{EfUploadAccept(${fieldParameters['accept']})}', '#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}');}|"
+												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
+												            th:@update:file-info-uris="|(newFileInfoUris) => {${fieldModel} = newFileInfoUris;
+												            												  efCheckUploadConstraints('${object}','form$${fieldCode}',
+												            												                           ${fieldModel}?.length, ${templateItem.maxItems}, '#{EfUplaodMaxCount(${templateItem.maxItems})}',
+												            												                           $refs.uploader_${object}_form$${fieldCode}.getGlobalSize(), ${fieldParameters['maxSize']}, '#{EfUploadMaxSize(${fieldParameters['maxSize']})}');
+												            												 }|"
+												            th:@download-file="|(fileUri) => goTo('@{/easyforms/form/upload/download/}' + fileUri)|"
+											            ></v-file-upload>
+	         									   </vu:label-edit>
+												</div>
 												<div th:case="'EfUicRadio'">
-													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
 														<q-option-group
 													    	th:v-model="${fieldModel}"
 													    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
@@ -70,7 +91,7 @@
 													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicCheckbox'">
-													<vu:label-edit object="${object}" field="|form_${templateItem.code}|" th:label="${fieldLabel}" required="false"
+													<vu:label-edit object="${object}" field="|form$${fieldCode}|" th:label="${fieldLabel}" required="false"
 																   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateItem.code}']) { slotProps.formData['${templateItem.code}'] = []}}|">
 														<vu:slot name="after_label_slot">
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
@@ -97,21 +118,21 @@
 														th:label="${fieldLabel}"
 														th:classappend="|${templateItem.isMandatory?'v-field__required':''}|"
 											            th:aria-required="${templateItem.isMandatory}"
-											            th::error="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|" 
-														th::error-message="|getErrorMessage('${object}', 'form$${templateItem.code}', ${rowIndex})|"
+											            th::error="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
+														th::error-message="|getErrorMessage('${object}', 'form$${fieldCode}', ${rowIndex})|"
 														orientation="vertical"
 														stack-label>
 													</q-select>
 												</div>
 												<div th:case="*">
 													<q-input label-slot
-															th:v-autofocus="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|"
+															th:v-autofocus="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|"
 															th:v-model="${fieldModel}"
-															th::aria-describedby="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
-															th::aria-invalid="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|" 
+															th::aria-describedby="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
+															th::aria-invalid="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
 															th:id="|text-input-${templateItem.code}|"
-															th::error="|hasFieldsError('${object}', 'form$${templateItem.code}', ${rowIndex})|" 
-															th::error-message="|getErrorMessage('${object}', 'form$${templateItem.code}', ${rowIndex})|"
+															th::error="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
+															th::error-message="|getErrorMessage('${object}', 'form$${fieldCode}', ${rowIndex})|"
 															th:type="${fieldType.uiComponentName == 'EfUicTextArea' ? 'textarea' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : (fieldType.uiComponentName == 'EfUicDateTime' ? 'datetime-local' : (fieldType.uiComponentName == 'EfUicNumber' ? 'number' : 'text')))}"
 															th::counter="${fieldType.uiComponentName == 'EfUicTextArea' ? 'true' : 'false'}"
 															th:autocomplete="${fieldParameters['textFieldAutocomplete']}"
@@ -169,8 +190,19 @@
 						 class="q-separator q-separator--horizontal"></div>
 				<div th:class="${template.useSections ? 'q-card__section q-pa-md':''}">
 					<div th:attr="__${elem_attrs}__" class="col-12" th:each="fieldEntry : ${sectionEntry.value}">
-						<q-field th:label="${fieldEntry.key}" orientation="vertical" stack-label readonly borderless >
-				             <div th:text="${fieldEntry.value}"></div>
+						<q-field th:label="${fieldEntry.key}" orientation="vertical" stack-label readonly borderless
+								 th:with="value=${fieldEntry.value}">
+							<div th:if="${value instanceof T(java.util.List)}">
+								<div th:each="item : ${value}">
+									<th:block th:ref="itemDisplay">
+										<div th:if="${item[urn] != null}"><a th:href="@{/easyforms/form/upload/download/{uri}(uri=${item[urn]})}" th:text="${item[label]}"></a></div>
+										<div th:unless="${item[urn] != null}" th:text="${item[label]}"></div>
+									</th:block>
+								</div>
+								<div th:if="${value.size() == 0}" th:text="#{EfNoValue}" class="text-caption text-italic"></div>
+							</div>
+				            <div th:unless="${value instanceof T(java.util.List)}" th:with="item=${value}" th:insert="~{:: itemDisplay}"></div>
+				            
 				         </q-field>
 					</div>
 				</div>

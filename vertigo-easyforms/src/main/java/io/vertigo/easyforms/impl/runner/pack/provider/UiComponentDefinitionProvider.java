@@ -31,6 +31,8 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 
 		SELECT(new SelectUiComponent()), //
 
+		FILE(new FileUiComponent()), //
+
 		// Internal use
 		INTERNAL_MAP,//
 		;
@@ -89,7 +91,7 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 		@Override
 		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 			return List.of(
-					new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT),
+					new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT_STRICT),
 					new EasyFormsTemplateItemField(AUTOGROW, FieldTypeEnum.YES_NO));
 		}
 
@@ -117,6 +119,21 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 			return List.of(
 					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
 					new EasyFormsTemplateItemField(SEARCHABLE, FieldTypeEnum.YES_NO));
+		}
+
+	}
+
+	public static class FileUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
+
+		public static final String MAX_SIZE = "maxSize";
+		public static final String MAX_FILE_SIZE = "maxFileSize";
+		public static final String ACCEPT = "accept";
+
+		@Override
+		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
+			return List.of(
+					new EasyFormsTemplateItemField(MAX_SIZE, FieldTypeEnum.COUNT_STRICT),
+					new EasyFormsTemplateItemField(ACCEPT, FieldTypeEnum.INTERNAL_EXTENSIONS));
 		}
 
 	}

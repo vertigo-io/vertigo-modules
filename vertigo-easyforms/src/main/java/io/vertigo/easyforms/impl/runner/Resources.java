@@ -28,4 +28,11 @@ public enum Resources implements LocaleMessageKey {
 
 	EfMinListSize,
 	EfMaxListSize,
+
+	EfUploadMaxSize,
+	EfUploadMaxFileSize,
+	EfUploadAccept,
+	EfUplaodMaxCount,
+
+	EfNoValue,
 }

@@ -22,12 +22,16 @@ import java.util.List;
 import org.springframework.context.annotation.Configuration;
 
 import io.vertigo.core.node.config.DefinitionProviderConfig;
+import io.vertigo.core.node.config.Feature;
+import io.vertigo.core.param.Param;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.easyforms.domain.DtDefinitions;
+import io.vertigo.easyforms.impl.runner.EasyFormsRunnerManagerImpl;
 import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldValidatorTypeDefinitionProvider;
 import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider;
+import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.ui.impl.springmvc.config.DefaultUiModuleFeatures;
 
 @Configuration
@@ -40,6 +44,13 @@ public final class EasyFormsFeatures extends DefaultUiModuleFeatures<EasyFormsFe
 	@Override
 	protected String getPackageRoot() {
 		return this.getClass().getPackage().getName();
+	}
+
+	@Feature("easyforms")
+	public EasyFormsFeatures withConfig(final Param... params) {
+		getModuleConfigBuilder()
+				.addComponent(EasyFormsRunnerManager.class, EasyFormsRunnerManagerImpl.class, params);
+		return this;
 	}
 
 	@Override

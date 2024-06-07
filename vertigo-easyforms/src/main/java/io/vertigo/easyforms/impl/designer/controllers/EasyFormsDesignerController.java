@@ -158,6 +158,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			case FIELD:
 				itemUi.setIsDefault(false);
 				itemUi.setIsMandatory(false);
+				itemUi.setIsList(false);
 				break;
 			default:
 				// noting
@@ -166,7 +167,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		return itemUi;
 	}
 
-	private static EasyFormsItemUi toItemUi(final AbstractEasyFormsTemplateItem item) {
+	private EasyFormsItemUi toItemUi(final AbstractEasyFormsTemplateItem item) {
 		final EasyFormsItemUi itemUi = new EasyFormsItemUi();
 		itemUi.setType(item.getType());
 		if (item instanceof final EasyFormsTemplateItemField field) {
@@ -175,6 +176,10 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			itemUi.setTooltip(field.getTooltip());
 			itemUi.setIsDefault(field.isDefault());
 			itemUi.setIsMandatory(field.isMandatory());
+
+			itemUi.setMaxItems(field.getMaxItems());
+
+			updateItemForType(itemUi);
 
 			itemUi.setParameters(field.getParameters());
 			if (field.getValidators() != null) {
@@ -211,6 +216,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			field.setLabel(getFromEditLabelText(labels, false));
 			field.setTooltip(uiItem.getTooltip());
 			field.setMandatory(uiItem.getIsMandatory());
+			field.setMaxItems(uiItem.getMaxItems());
 
 			final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(uiItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
 			if (fieldTypeDefinition.getParamTemplate() != null) {
@@ -538,14 +544,21 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		// add possible validators
 		loadValidatorsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editItem);
 
-		// add default values for field type parameters
-		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(editItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
-		if (fieldTypeDefinition.getParamTemplate() != null) {
-			editItem.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate()));
-		}
+		updateItemForType(editItem);
 
 		viewContext.publishDto(editItemKey, editItem);
 		return viewContext;
+	}
+
+	private void updateItemForType(final EasyFormsItemUi itemUi) {
+		final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(itemUi.getFieldType(), EasyFormsFieldTypeDefinition.class);
+
+		itemUi.setIsList(fieldTypeDefinition.isList());
+
+		// add default values for field type parameters
+		if (fieldTypeDefinition.getParamTemplate() != null) {
+			itemUi.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate()));
+		}
 	}
 
 	@PostMapping("/_saveItem")
