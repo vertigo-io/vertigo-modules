@@ -269,7 +269,7 @@ public final class CommentWebServicesTest {
 	}*/
 
 	private static String convertDate(final Instant instant) {
-		return instant == null ? null : UTCDateUtil.formatInstant(instant);
+		return instant == null ? null : UTCDateUtil.formatInstantISO8601(instant);
 	}
 
 	private static Map<String, Object> commentToMap(final Comment comment) {
