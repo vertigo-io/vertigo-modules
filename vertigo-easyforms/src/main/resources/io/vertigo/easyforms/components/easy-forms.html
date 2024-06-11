@@ -43,7 +43,8 @@
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
 									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
-									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)}">
+									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)},
+									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, model.efoAllLang, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
 											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">
@@ -56,7 +57,7 @@
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
 														</vu:slot>
-														<vui-ef-map th:v-model="${fieldModel}"
+														<vui-ef-map th:v-model="${fieldModel}" :languages="vueData.efoAllLang"
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
@@ -144,7 +145,7 @@
 															<template v-slot:label>
 															  <div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
 															    <div vu:text="${fieldLabel}" />
-															    <q-tooltip th:if="${templateItem.tooltip}" class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]"><div vu:text="${templateItem.tooltip}"/></q-tooltip>
+															    <q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]"><div vu:text="${fieldTooltip}"/></q-tooltip>
 															  </div>
 															</template>
 													</q-input>

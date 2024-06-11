@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.impl.runner.pack.provider;
+package io.vertigo.easyforms.impl.runner.pack.provider.fieldtype;
 
 import java.util.List;
 import java.util.function.Function;
@@ -11,10 +11,10 @@ import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.easyforms.impl.runner.Resources;
 import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
-import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider.EasyFormsConstraint;
+import io.vertigo.easyforms.impl.runner.pack.constraint.EasyFormsConstraint;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
-import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.FileUiComponent;
 import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.UiComponentEnum;
+import io.vertigo.easyforms.impl.runner.pack.provider.uicomponent.FileUiComponent;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsFieldTypeDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;

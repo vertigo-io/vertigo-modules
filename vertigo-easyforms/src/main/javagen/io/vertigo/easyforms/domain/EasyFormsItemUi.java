@@ -16,7 +16,6 @@ public final class EasyFormsItemUi implements DataObject {
 	private String type;
 	private String fieldCode;
 	private String fieldType;
-	private String tooltip;
 	private Boolean isDefault;
 	private Boolean isMandatory;
 	private Boolean isList;
@@ -80,25 +79,6 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setFieldType(final String fieldType) {
 		this.fieldType = fieldType;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Tooltip'.
-	 * @return String tooltip
-	 */
-	@Field(smartType = "STyEfLabel", label = "Tooltip")
-	public String getTooltip() {
-		return tooltip;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Tooltip'.
-	 * @param tooltip String
-	 */
-	public void setTooltip(final String tooltip) {
-		this.tooltip = tooltip;
 	}
 	
 	/**

@@ -13,6 +13,7 @@ import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.impl.designer.services.EasyFormsDesignerServices;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
+import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
@@ -130,18 +131,17 @@ public final class EasyFormsUiUtil implements Serializable {
 	}
 
 	public String resolveLabel(final Map<String, String> labels, final List<String> supportedLang, final Boolean isI18n) {
+		if (labels == null) {
+			return null;
+		}
 		if (Boolean.TRUE.equals(isI18n)) {
 			return LocaleMessageText.of(() -> labels.get("i18n")).getDisplay();
 		}
 
-		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(IEasyFormsRunnerServices.class);
-
-		final var lang = easyFormsRunnerServices.getUserLang();
-		final var label = labels.get(lang);
-		if (label != null) {
-			return label;
-		}
-		return labels.get(supportedLang.get(0)); // default is first supported lang
+		return getEasyFormsRunnerManager().resolveTextForUserlang(labels);
 	}
 
+	private EasyFormsRunnerManager getEasyFormsRunnerManager() {
+		return Node.getNode().getComponentSpace().resolve(EasyFormsRunnerManager.class);
+	}
 }

@@ -95,13 +95,6 @@ public interface IEasyFormsRunnerServices extends Component {
 	Optional<String> resolveCtxName(String listSupplier);
 
 	/**
-	 * Retrieves the language of the user.
-	 *
-	 * @return The language of the user.
-	 */
-	String getUserLang();
-
-	/**
 	 * Persists the files from the new form data and removes any files from the old form data that are not present in the new form data.
 	 *
 	 * @param oldDataOpt The old form data.

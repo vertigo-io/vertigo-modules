@@ -165,7 +165,7 @@ VUiExtensions.methods = {
 
 
     efSaveEditItem : function() {
-        let formData = this.vueDataParams(['editItem','editLabelText.label','editLabelText.text']);
+        let formData = this.vueDataParams(['editItem','editLabelText.label','editLabelText.tooltip','editLabelText.text']);
         formData.delete('vContext[editItem][type]')//not modifiable
         formData.delete('vContext[editItem][isDefault]')//not modifiable
         formData.delete('vContext[editItem][isList]')//not modifiable
@@ -235,18 +235,10 @@ window.addEventListener('vui-before-plugins', function(event) {
     // * Map type input. Eg : Configure custom lists
     // ****
     
-    // Function to test if last item is empty
-    let isLastEmpty = o => {
-        if (o == null) {
-            return false;
-        }
-        const lastElem = o.slice(-1)[0];
-        return !(lastElem.label?.length > 0 || lastElem.value?.length > 0);
-    };
-    
     let vuiEasyFormsMap = Vue.defineComponent({
         props: {
             modelValue: { type: Object, required: true },
+            languages: { type: Array, default: () => [] },
             valueLabel: { type: String, default: 'Value'},
             labelLabel: { type: String, default: 'Label'},
         },
@@ -258,14 +250,18 @@ window.addEventListener('vui-before-plugins', function(event) {
         template: `
             <div>
                 <div v-for="param in modelValue" class="row q-col-gutter-md">
-                    <q-input label-slot stack-label orientation="vertical" class="col-5"
+                    <q-input label-slot stack-label orientation="vertical" class="col-5" :class="!isEmpty(param)?'v-field__required':''"
                             :label="valueLabel"
                             v-model="param.value"
                         ></q-input>
-                    <q-input label-slot stack-label orientation="vertical" class="col-7"
-                            :label="labelLabel"
-                            v-model="param.label"
+                    <span class="col-7">
+                        <q-input v-for="(lang, index) in languages" 
+                            label-slot stack-label orientation="vertical" 
+                            :label="labelLabel + (languages.length > 1 ? ' (' + lang + ')' : '')"
+                            :class="index === 0 && !isEmpty(param)?'v-field__required':''"
+                            v-model="param.label[lang]"
                         ></q-input>
+                    </span>
                 </div>
             </div>
         `
@@ -274,33 +270,56 @@ window.addEventListener('vui-before-plugins', function(event) {
         created: function() {
             if(this.$props.modelValue) {
                 this.$data.internalModel = this.$props.modelValue;
-                if (!isLastEmpty(this.$props.modelValue)) {
-                    this.$data.internalModel.push({});
+                if (!this.isLastEmpty(this.$props.modelValue)) {
+                    this.$data.internalModel.push({label: {}, value: ''});
                 }
             } else {
-                this.$data.internalModel = [{}];
+                this.$data.internalModel = [{label: {}, value: ''}];
             }
         },
         watch: {
             modelValue: function(newVal) {
                 if(this.$props.modelValue) {
                     this.$data.internalModel = this.$props.modelValue;
-                    if (!isLastEmpty(this.$props.modelValue)) {
-                        this.$data.internalModel.push({});
+                    if (!this.isLastEmpty(this.$props.modelValue)) {
+                        this.$data.internalModel.push({label: {}, value: ''});
                     }
                 } else {
-                    this.$data.internalModel = [{}];
+                    this.$data.internalModel = [{label: {}, value: ''}];
                 }
             },
             internalModel: {
                 handler: function(newVal) {
-                    if (!isLastEmpty(this.$data.internalModel)) {
-                        this.$data.internalModel.push({});
-                    }
+                    if (!this.isLastEmpty(this.$data.internalModel)) {
+                        this.$data.internalModel.push({label: {}, value: ''});
+                    } else {
+						// keep only one empty at the end
+						while (this.$data.internalModel.length > 1 &&
+						       this.isEmpty(this.$data.internalModel[this.$data.internalModel.length - 2])) {
+						    this.$data.internalModel = this.$data.internalModel.slice(0, -1);
+						}
+					}
                     this.$emit('update:modelValue', this.$data.internalModel);
                 },
                 deep: true
             },
+        },
+        methods: {
+            // Function to test if last item is empty
+            isLastEmpty: function(o) {
+                if (o == null || o.length === 0) {
+                    return false;
+                }
+                const lastElem = o.slice(-1)[0];
+                return this.isEmpty(lastElem);
+            },
+            isEmpty: function(o) {
+                if (o.value?.length > 0) return false;
+                for (let lang in o.label) {
+                    if (o.label[lang].length > 0) return false;    
+                }
+                return true;
+            }
         }
     });
     

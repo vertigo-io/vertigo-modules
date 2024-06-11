@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,7 @@ import io.vertigo.easyforms.domain.EasyFormsLabelUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
+import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
@@ -113,13 +115,12 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
 	@Inject
+	private EasyFormsRunnerManager easyFormsRunnerManager;
+
+	@Inject
 	private VSecurityManager securityManager;
 
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt, final Map<String, Serializable> additionalContext) {
-		initContext(viewContext, efoIdOpt, additionalContext, List.of("fr"));
-	}
-
-	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt, final Map<String, Serializable> additionalContext, final List<String> supportedLang) {
 		final EasyForm easyForm = efoIdOpt
 				.map(easyFormsRunnerServices::getEasyFormById)
 				.orElseGet(EasyForm::new);
@@ -127,12 +128,12 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
 
-		final ArrayList<String> supportedLangSerialisable = new ArrayList<>(supportedLang); // needed to be serializable
+		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
 		final var userLang = securityManager.getCurrentUserSession().map(UserSession::getLocale).map(Locale::getLanguage).orElse("fr");
 
 		viewContext.publishDto(efoKey, easyForm)
 				.publishRef(efoCurrentLang, userLang)
-				.publishRef(efoSupportedLang, supportedLangSerialisable)
+				.publishRef(efoSupportedLang, supportedLang)
 				.publishRef(additionalContextKey, (Serializable) additionalContext)
 				.publishDtList(fieldTypesKey, fieldTypeUiList)
 				.publishRef(fieldTypesTemplateKey,
@@ -147,7 +148,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 				.publishRef(messageKey, "");
 		updateFormContext(viewContext, easyForm, additionalContext);
 		updateValidatorEfoLabels(viewContext, easyForm);
-		setEditLabelText(viewContext, supportedLang, Map.of(), false);
+		setEmptyEditLabelText(viewContext, supportedLang);
 	}
 
 	private static EasyFormsItemUi buildNewItemUi(final ItemType type) {
@@ -173,7 +174,6 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		if (item instanceof final EasyFormsTemplateItemField field) {
 			itemUi.setFieldCode(field.getCode());
 			itemUi.setFieldType(field.getFieldTypeName());
-			itemUi.setTooltip(field.getTooltip());
 			itemUi.setIsDefault(field.isDefault());
 			itemUi.setIsMandatory(field.isMandatory());
 
@@ -213,8 +213,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 				field.setCode(uiItem.getFieldCode());
 				field.setFieldTypeName(uiItem.getFieldType());
 			}
-			field.setLabel(getFromEditLabelText(labels, false));
-			field.setTooltip(uiItem.getTooltip());
+			field.setLabel(getFromEditLabelText(labels, EasyFormsLabelUi::getLabel));
+			field.setTooltip(getFromEditLabelText(labels, EasyFormsLabelUi::getTooltip));
 			field.setMandatory(uiItem.getIsMandatory());
 			field.setMaxItems(uiItem.getMaxItems());
 
@@ -230,7 +230,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			block.setCondition(uiItem.getCondition());
 		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
-			staticItem.setText(getFromEditLabelText(labels, true));
+			staticItem.setText(getFromEditLabelText(labels, EasyFormsLabelUi::getText));
 		} else {
 			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
 		}
@@ -238,29 +238,59 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		return item;
 	}
 
-	private void setEditLabelText(final ViewContext viewContext, final List<String> supportedLang, final Map<String, String> labels, final boolean isText) {
+	private void setEmptyEditLabelText(final ViewContext viewContext, final List<String> supportedLang) {
 		final var list = new DtList<>(EasyFormsLabelUi.class);
 		for (final String lang : supportedLang) {
 			final var newLabel = new EasyFormsLabelUi();
 			newLabel.setLang(lang);
-			if (isText) {
-				newLabel.setText(labels.get(lang));
-			} else {
-				newLabel.setLabel(labels.get(lang));
-			}
 			list.add(newLabel);
 		}
 		viewContext.publishDtListModifiable(editLabelTextKey, list);
 	}
 
-	private Map<String, String> getFromEditLabelText(final DtList<EasyFormsLabelUi> list, final boolean isText) {
+	private void setSectionEditLabelText(final ViewContext viewContext, final List<String> supportedLang, final EasyFormsTemplateSection section) {
+		final var list = new DtList<>(EasyFormsLabelUi.class);
+		final var labels = section.getLabel();
+		for (final String lang : supportedLang) {
+			final var newLabel = new EasyFormsLabelUi();
+			newLabel.setLang(lang);
+			newLabel.setLabel(labels.get(lang));
+			list.add(newLabel);
+		}
+		viewContext.publishDtListModifiable(editLabelTextKey, list);
+	}
+
+	private void setItemEditLabelText(final ViewContext viewContext, final List<String> supportedLang, final AbstractEasyFormsTemplateItem item) {
+		final var list = new DtList<>(EasyFormsLabelUi.class);
+		if (item instanceof final EasyFormsTemplateItemField field) {
+			final var labels = field.getLabel();
+			final var tooltips = field.getTooltip();
+			for (final String lang : supportedLang) {
+				final var newLabel = new EasyFormsLabelUi();
+				newLabel.setLang(lang);
+				newLabel.setLabel(labels.get(lang));
+				if (tooltips != null) {
+					newLabel.setTooltip(tooltips.get(lang));
+				}
+				list.add(newLabel);
+			}
+		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
+			final var labels = staticItem.getText();
+			for (final String lang : supportedLang) {
+				final var newLabel = new EasyFormsLabelUi();
+				newLabel.setLang(lang);
+				newLabel.setText(labels.get(lang));
+				list.add(newLabel);
+			}
+		}
+
+		viewContext.publishDtListModifiable(editLabelTextKey, list);
+	}
+
+	private Map<String, String> getFromEditLabelText(final DtList<EasyFormsLabelUi> list, final Function<EasyFormsLabelUi, String> fieldAccessor) {
 		final var labels = new HashMap<String, String>();
 		for (final EasyFormsLabelUi label : list) {
-			if (isText) {
-				labels.put(label.getLang(), label.getText());
-			} else {
-				labels.put(label.getLang(), label.getLabel());
-			}
+			labels.put(label.getLang(), fieldAccessor.apply(label));
 		}
 		return labels;
 	}
@@ -275,7 +305,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var sectionUi = new EasyFormsSectionUi();
 
 		viewContext.publishDto(editSectionKey, sectionUi);
-		setEditLabelText(viewContext, supportedLang, Map.of(), false);
+		setEmptyEditLabelText(viewContext, supportedLang);
 		return viewContext;
 	}
 
@@ -292,7 +322,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		sectionUi.setCondition(editedSection.getCondition());
 
 		viewContext.publishDto(editSectionKey, sectionUi);
-		setEditLabelText(viewContext, supportedLang, editedSection.getLabel(), false);
+		setSectionEditLabelText(viewContext, supportedLang, editedSection);
 		return viewContext;
 	}
 
@@ -349,7 +379,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		}
 
 		section.setCode(editSectionUi.getCode());
-		section.setLabel(getFromEditLabelText(labels, false));
+		section.setLabel(getFromEditLabelText(labels, EasyFormsLabelUi::getLabel));
 		section.setCondition(editSectionUi.getCondition());
 
 		viewContext.publishDto(efoKey, efo)
@@ -412,7 +442,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		viewContext.publishDto(editItemKey, buildNewItemUi(type))
 				.publishDtList(editFieldValidatorTypesKey, new DtList<>(EasyFormsFieldValidatorTypeUi.class));
-		setEditLabelText(viewContext, supportedLang, Map.of(), false);
+		setEmptyEditLabelText(viewContext, supportedLang);
 		return viewContext;
 	}
 
@@ -513,12 +543,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var editedItemUi = toItemUi(editedItem);
 		viewContext.publishDto(editItemKey, editedItemUi);
 		loadValidatorsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editedItemUi);
-
-		if (editedItem instanceof final EasyFormsTemplateItemField field) {
-			setEditLabelText(viewContext, supportedLang, field.getLabel(), false);
-		} else if (editedItem instanceof final EasyFormsTemplateItemStatic staticItem) {
-			setEditLabelText(viewContext, supportedLang, staticItem.getText(), true);
-		}
+		setItemEditLabelText(viewContext, supportedLang, editedItem);
 
 		return viewContext;
 	}

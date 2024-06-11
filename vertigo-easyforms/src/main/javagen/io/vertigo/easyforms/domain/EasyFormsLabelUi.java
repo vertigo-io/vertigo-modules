@@ -15,6 +15,7 @@ public final class EasyFormsLabelUi implements DataObject {
 
 	private String lang;
 	private String label;
+	private String tooltip;
 	private String text;
 	
 	/**
@@ -53,6 +54,25 @@ public final class EasyFormsLabelUi implements DataObject {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Tooltip'.
+	 * @return String tooltip
+	 */
+	@Field(smartType = "STyEfLabel", label = "Tooltip")
+	public String getTooltip() {
+		return tooltip;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Tooltip'.
+	 * @param tooltip String
+	 */
+	public void setTooltip(final String tooltip) {
+		this.tooltip = tooltip;
 	}
 	
 	/**

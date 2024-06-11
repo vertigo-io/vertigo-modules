@@ -15,7 +15,7 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 	private String code;
 	private String fieldTypeName;
 	private Map<String, String> label;
-	private String tooltip;
+	private Map<String, String> tooltip;
 	private boolean isDefault;
 	private boolean isMandatory;
 	private EasyFormsData parameters; // Field type parameters
@@ -60,26 +60,15 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		return label;
 	}
 
-	public String getUserLabel(final String lang) {
-		var value = label.get(lang);
-		if (value == null) {
-			value = label.get("fr");
-		}
-		if (value == null) {
-			value = label.get("i18n");
-		}
-		return value;
-	}
-
 	public void setLabel(final Map<String, String> label) {
 		this.label = label;
 	}
 
-	public String getTooltip() {
+	public Map<String, String> getTooltip() {
 		return tooltip;
 	}
 
-	public void setTooltip(final String tooltip) {
+	public void setTooltip(final Map<String, String> tooltip) {
 		this.tooltip = tooltip;
 	}
 
@@ -129,7 +118,7 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		return this;
 	}
 
-	public EasyFormsTemplateItemField withTooltip(final String myTooltip) {
+	public EasyFormsTemplateItemField withTooltip(final Map<String, String> myTooltip) {
 		tooltip = myTooltip;
 		return this;
 	}

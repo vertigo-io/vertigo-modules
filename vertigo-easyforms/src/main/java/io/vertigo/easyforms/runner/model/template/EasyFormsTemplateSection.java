@@ -38,17 +38,6 @@ public final class EasyFormsTemplateSection implements Serializable {
 		return label;
 	}
 
-	public String getUserLabel(final String lang) {
-		var value = label.get(lang);
-		if (value == null) {
-			value = label.get("fr");
-		}
-		if (value == null) {
-			value = label.get("i18n");
-		}
-		return value;
-	}
-
 	public void setLabel(final Map<String, String> label) {
 		this.label = label;
 	}

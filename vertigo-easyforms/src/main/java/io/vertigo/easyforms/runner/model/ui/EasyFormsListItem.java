@@ -11,6 +11,8 @@ import com.google.gson.GsonBuilder;
 
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleMessageText;
+import io.vertigo.core.node.Node;
+import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 
 public record EasyFormsListItem(
 		Object value,
@@ -47,14 +49,16 @@ public record EasyFormsListItem(
 				final var entry = map.entrySet().iterator().next();
 				return new EasyFormsListItem(entry.getKey(), entry.getValue().toString());
 			} else if (map.size() == 2 && map.containsKey("label") && map.containsKey("value")) {
-				return new EasyFormsListItem(map.get("value"), map.get("label").toString());
+				final var easyFormsRunnerManager = Node.getNode().getComponentSpace().resolve(EasyFormsRunnerManager.class);
+				final var labels = (Map<String, String>) map.get("label");
+				return new EasyFormsListItem(map.get("value"), easyFormsRunnerManager.resolveTextForUserlang(labels));
 			}
 		}
 		throw new VSystemException("Argument is not a valid representation of EasyFormsListItem.");
 	}
 
 	public String getDisplayLabel() {
-		if (label.startsWith("#{")) {
+		if (label != null && label.startsWith("#{")) {
 			return LocaleMessageText.of(() -> label.substring(2, label.length() - 1)).getDisplay();
 		}
 		return label;

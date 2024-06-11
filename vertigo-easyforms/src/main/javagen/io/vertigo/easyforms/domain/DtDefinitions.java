@@ -98,8 +98,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fieldCode,
 		/** Propriété 'Field type'. */
 		fieldType,
-		/** Propriété 'Tooltip'. */
-		tooltip,
 		/** Propriété 'System field'. */
 		isDefault,
 		/** Propriété 'Mandatory'. */
@@ -123,6 +121,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		lang,
 		/** Propriété 'Label'. */
 		label,
+		/** Propriété 'Tooltip'. */
+		tooltip,
 		/** Propriété 'Text'. */
 		text	}
 

@@ -92,10 +92,6 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldEasyFormsItemUi$fieldType,
 	/**
-	 * Tooltip.
-	 */
-	fldEasyFormsItemUi$tooltip,
-	/**
 	 * System field.
 	 */
 	fldEasyFormsItemUi$isDefault,
@@ -135,6 +131,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Label.
 	 */
 	fldEasyFormsLabelUi$label,
+	/**
+	 * Tooltip.
+	 */
+	fldEasyFormsLabelUi$tooltip,
 	/**
 	 * Text.
 	 */

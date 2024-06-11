@@ -2,12 +2,16 @@ package io.vertigo.easyforms.impl.runner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.account.security.UserSession;
+import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.core.analytics.AnalyticsManager;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleManager;
@@ -16,6 +20,7 @@ import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
 import io.vertigo.core.param.ParamValue;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.ConstraintException;
@@ -39,22 +44,44 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 	private final LocaleManager localeManager;
 	private final AnalyticsManager analyticsManager;
 	private final SmartTypeManager smartTypeManager;
+	private final VSecurityManager securityManager;
 
 	private final String filestoreName;
 	private final String tmpFilestoreName;
+
+	private final List<String> languages;
 
 	private FileInfoDefinition stdFileInfoDefinition;
 	private FileInfoDefinition tmpFileInfoDefinition;
 
 	@Inject
-	public EasyFormsRunnerManagerImpl(final LocaleManager localeManager, final AnalyticsManager analyticsManager, final SmartTypeManager smartTypeManager,
-			@ParamValue("filestore.persist") final Optional<String> filestoreNameOpt, @ParamValue("filestore.tmp") final Optional<String> tmpFilestoreNameOpt) {
+	public EasyFormsRunnerManagerImpl(
+			final LocaleManager localeManager,
+			final AnalyticsManager analyticsManager,
+			final SmartTypeManager smartTypeManager,
+			final VSecurityManager securityManager,
+			@ParamValue("filestore.persist") final Optional<String> filestoreNameOpt,
+			@ParamValue("filestore.tmp") final Optional<String> tmpFilestoreNameOpt,
+			@ParamValue("languages") final Optional<String> languagesOpt) {
+
+		Assertion.check()
+				.isNotNull(localeManager)
+				.isNotNull(analyticsManager)
+				.isNotNull(smartTypeManager)
+				.isNotNull(securityManager)
+				.isNotNull(filestoreNameOpt)
+				.isNotNull(tmpFilestoreNameOpt)
+				.isNotNull(languagesOpt);
+
 		this.localeManager = localeManager;
 		this.analyticsManager = analyticsManager;
 		this.smartTypeManager = smartTypeManager;
+		this.securityManager = securityManager;
 
 		filestoreName = filestoreNameOpt.orElse("main");
 		tmpFilestoreName = tmpFilestoreNameOpt.orElse("main");
+
+		languages = List.of(languagesOpt.orElse("fr").trim().split("\\s*,\\s*"));
 	}
 
 	@Override
@@ -76,6 +103,27 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 	@Override
 	public void stop() {
 		// Nothing
+	}
+
+	@Override
+	public List<String> getSupportedLang() {
+		return languages;
+	}
+
+	@Override
+	public String resolveTextForUserlang(final Map<String, String> labels) {
+		final var userLang = securityManager.getCurrentUserSession().map(UserSession::getLocale).map(Locale::getLanguage).orElse("fr");
+		if (labels == null) {
+			return null;
+		}
+		var value = labels.get(userLang);
+		if (value == null) {
+			value = labels.get(getSupportedLang().get(0)); // first lang by default
+		}
+		if (value == null) {
+			value = labels.get("i18n");
+		}
+		return value;
 	}
 
 	@Override
@@ -163,14 +211,43 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 				return resolvedList;
 			case ONE:
 			case OPTIONAL_OR_NULLABLE:
-				if (inputValue instanceof Map || inputValue instanceof List) {
-					return inputValue; // Eg : for custom list in admin section (EasyFormsData object)
+				if (inputValue instanceof final List<?> inputList) { // for IntenalMap (formatter and adapter does not fit for this case)
+					return formatInternalMap((List<Map<String, Object>>) inputList);
 				} else {
 					return doFormatValue(fieldDescriptor, inputValue.toString());
 				}
 			default:
 				throw new UnsupportedOperationException();
 		}
+	}
+
+	private List<Map<String, Object>> formatInternalMap(final List<Map<String, Object>> data) {
+		// clear empty values
+		data.removeIf(item -> isEmptyCustomValue(item));
+		// trim all values
+		data.forEach(value -> {
+			value.put("value", ((String) value.get("value")).trim());
+			final var labels = (Map<String, String>) value.get("label");
+			for (final var labelEntry : labels.entrySet()) {
+				labelEntry.setValue(labelEntry.getValue().trim());
+			}
+		});
+		return data;
+	}
+
+	private boolean isEmptyCustomValue(final Map<String, Object> entry) {
+		if (!StringUtil.isBlank((String) entry.get("value"))) {
+			return false;
+		}
+
+		final var labels = (Map<String, String>) entry.get("label");
+		for (final String label : labels.values()) {
+			if (!StringUtil.isBlank(label)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private Object doFormatValue(final EasyFormsDataDescriptor fieldDescriptor, final String inputValue) throws FormatterException {

@@ -35,4 +35,8 @@ public enum Resources implements LocaleMessageKey {
 	EfUplaodMaxCount,
 
 	EfNoValue,
+
+	// Internal
+	EfIMapMandatory,
+	EfIMapDuplicateValue,
 }

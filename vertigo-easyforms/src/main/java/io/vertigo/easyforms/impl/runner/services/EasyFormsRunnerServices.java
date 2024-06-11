@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.account.security.UserSession;
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -306,17 +304,16 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	@Override
 	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
-		final var userLang = getUserLang();
 		final var easyFormDisplay = new LinkedHashMap<String, LinkedHashMap<String, Object>>();
 		final var outOfSections = new LinkedHashSet<>(easyForm.keySet());
 
-		processSections(easyFormsTemplate, easyForm, userLang, easyFormDisplay, outOfSections);
+		processSections(easyFormsTemplate, easyForm, easyFormDisplay, outOfSections);
 		processOldSections(easyForm, easyFormDisplay, outOfSections);
 
 		return easyFormDisplay;
 	}
 
-	private void processSections(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final String userLang,
+	private void processSections(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm,
 			final LinkedHashMap<String, LinkedHashMap<String, Object>> easyFormDisplay, final Set<String> outOfSections) {
 		// We use display order from template
 		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
@@ -327,16 +324,16 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			// Idea : have an option to choose behavior (eg : display empty data if it is shown in edit mode)
 			if (easyFormSectionData != null) {
 				final var sectionDisplay = new LinkedHashMap<String, Object>();
-				easyFormDisplay.put(section.getUserLabel(userLang), sectionDisplay);
+				easyFormDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(section.getLabel()), sectionDisplay);
 				final var outOfSectionData = new HashMap<>(easyFormSectionData);
 
-				processFieldsInSection(section, easyFormSectionData, userLang, sectionDisplay, outOfSectionData);
+				processFieldsInSection(section, easyFormSectionData, sectionDisplay, outOfSectionData);
 				processOldSectionData(outOfSectionData, sectionDisplay);
 			}
 		}
 	}
 
-	private void processFieldsInSection(final EasyFormsTemplateSection section, final Map<String, Object> easyFormSectionData, final String userLang,
+	private void processFieldsInSection(final EasyFormsTemplateSection section, final Map<String, Object> easyFormSectionData,
 			final LinkedHashMap<String, Object> sectionDisplay, final Map<String, Object> outOfSectionData) {
 		for (final EasyFormsTemplateItemField field : getAllFieldsForSection(section)) {
 			final var fieldCode = field.getCode();
@@ -345,51 +342,50 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			// TODO check block display condition or if contains actual data ? (impact on getAllFieldsForSection to check block condition)
 			// Idea : have an option to choose behavior (eg : display empty data if it is shown in edit mode)
 			if (rawValue != null) {
-				processField(field, rawValue, userLang, sectionDisplay);
+				processField(field, rawValue, sectionDisplay);
 				outOfSectionData.remove(fieldCode);
 			}
 		}
 	}
 
-	private void processField(final EasyFormsTemplateItemField field, final Object rawValue, final String userLang,
-			final LinkedHashMap<String, Object> sectionDisplay) {
+	private void processField(final EasyFormsTemplateItemField field, final Object rawValue, final LinkedHashMap<String, Object> sectionDisplay) {
 		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 		final var resolvedParameters = EasyFormsData.combine(fieldType.getUiParameters(), field.getParameters());
 		final String listSupplier = (String) resolvedParameters.get(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER);
 
 		if (listSupplier == null) {
-			processBasicValue(field, rawValue, userLang, sectionDisplay, fieldType);
+			processBasicValue(field, rawValue, sectionDisplay, fieldType);
 		} else {
-			processValueSelectedFromList(field, rawValue, userLang, sectionDisplay, resolvedParameters);
+			processValueSelectedFromList(field, rawValue, sectionDisplay, resolvedParameters);
 		}
 	}
 
-	private void processBasicValue(final EasyFormsTemplateItemField field, final Object rawValue, final String userLang,
+	private void processBasicValue(final EasyFormsTemplateItemField field, final Object rawValue,
 			final LinkedHashMap<String, Object> sectionDisplay, final EasyFormsFieldTypeDefinition fieldType) {
 		final var smartType = Node.getNode().getDefinitionSpace().resolve(fieldType.getSmartTypeName(), SmartTypeDefinition.class);
 		if (rawValue instanceof final List<?> rawList) {
 			final var displayList = new ArrayList<>(rawList.size());
 			for (final var raw : rawList) {
-				final String displayValue = valueToString(smartType, raw, smartTypeManager);
+				final String displayValue = valueToString(smartType, raw);
 				if (raw instanceof final FileInfoURI fileInfoURI) {
 					displayList.add(getFileObj(displayValue, fileInfoURI));
 				} else {
 					displayList.add(getStrObj(displayValue));
 				}
 			}
-			sectionDisplay.put(field.getUserLabel(userLang), displayList);
+			sectionDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(field.getLabel()), displayList);
 		} else {
-			final String displayValue = valueToString(smartType, rawValue, smartTypeManager);
-			sectionDisplay.put(field.getUserLabel(userLang), getStrObj(displayValue));
+			final String displayValue = valueToString(smartType, rawValue);
+			sectionDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(field.getLabel()), getStrObj(displayValue));
 		}
 	}
 
-	private void processValueSelectedFromList(final EasyFormsTemplateItemField field, final Object rawValue, final String userLang,
+	private void processValueSelectedFromList(final EasyFormsTemplateItemField field, final Object rawValue,
 			final LinkedHashMap<String, Object> sectionDisplay, final EasyFormsData resolvedParameters) {
 		if (rawValue instanceof final List<?> rawList) {
 			// multi-selection
 			sectionDisplay.put(
-					field.getUserLabel(userLang),
+					easyFormsRunnerManager.resolveTextForUserlang(field.getLabel()),
 					getStrObj(
 							rawList.stream()
 									.map(i -> getListDisplayValue(resolvedParameters, i))
@@ -397,7 +393,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 		} else {
 			// single selection
-			sectionDisplay.put(field.getUserLabel(userLang),
+			sectionDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(field.getLabel()),
 					getStrObj(getListDisplayValue(resolvedParameters, rawValue)));
 		}
 	}
@@ -432,7 +428,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		return Map.of("label", fileInfo.getVFile().getFileName(), "urn", urn);
 	}
 
-	private static String valueToString(final SmartTypeDefinition smartType, final Object inputValue, final SmartTypeManager smartTypeManager) {
+	private String valueToString(final SmartTypeDefinition smartType, final Object inputValue) {
 		final var targetJavaClass = smartType.getJavaClass();
 		var adapter = smartTypeManager.getTypeAdapters("easyForm").get(targetJavaClass);
 		if (adapter == null) {
@@ -489,8 +485,4 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		return uiList.getById(idField.name(), (Serializable) value).getSingleInputValue(displayField.name());
 	}
 
-	@Override
-	public String getUserLang() {
-		return securityManager.getCurrentUserSession().map(UserSession::getLocale).map(Locale::getLanguage).orElse("fr");
-	}
 }

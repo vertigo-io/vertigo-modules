@@ -250,7 +250,8 @@
 						                        required="${stat.first}"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
-								<vu:text-field-edit object="editItem" field="tooltip"/>
+								<vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="tooltip"
+						                        label="${model.util.label('editLabelText.tooltip')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
 								<vu:include-data object="editItem" field="isDefault" />

@@ -1,16 +1,15 @@
 package io.vertigo.easyforms.impl.runner.pack.provider;
 
-import java.util.List;
-
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.smarttype.definitions.DtProperty;
-import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
+import io.vertigo.easyforms.impl.runner.pack.provider.uicomponent.FileUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.uicomponent.RadioCheckUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.uicomponent.SelectUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.uicomponent.TextAreaUiComponent;
+import io.vertigo.easyforms.impl.runner.pack.provider.uicomponent.TextFieldUiComponent;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
-import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
-import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 
 public final class UiComponentDefinitionProvider implements SimpleEnumDefinitionProvider<EasyFormsUiComponentDefinition> {
 
@@ -70,72 +69,6 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 	@Override
 	public Class<UiComponentEnum> getEnumClass() {
 		return UiComponentEnum.class;
-	}
-
-	public static class TextFieldUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
-
-		public static final String AUTOCOMPLETE = "textFieldAutocomplete";
-
-		@Override
-		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
-			return List.of(
-					new EasyFormsTemplateItemField(AUTOCOMPLETE, FieldTypeEnum.CUSTOM_LIST_RADIO));
-		}
-
-	}
-
-	public static class TextAreaUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
-
-		public static final String AUTOGROW = "autogrow";
-
-		@Override
-		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
-			return List.of(
-					new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT_STRICT),
-					new EasyFormsTemplateItemField(AUTOGROW, FieldTypeEnum.YES_NO));
-		}
-
-	}
-
-	public static class RadioCheckUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
-
-		public static final String LAYOUT = "layout";
-
-		@Override
-		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
-			return List.of(
-					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new EasyFormsTemplateItemField(LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT));
-		}
-
-	}
-
-	public static class SelectUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
-
-		public static final String SEARCHABLE = "selectSearchable";
-
-		@Override
-		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
-			return List.of(
-					IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER_FIELD_PARAM,
-					new EasyFormsTemplateItemField(SEARCHABLE, FieldTypeEnum.YES_NO));
-		}
-
-	}
-
-	public static class FileUiComponent implements IEasyFormsUiComponentDefinitionSupplier {
-
-		public static final String MAX_SIZE = "maxSize";
-		public static final String MAX_FILE_SIZE = "maxFileSize";
-		public static final String ACCEPT = "accept";
-
-		@Override
-		public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
-			return List.of(
-					new EasyFormsTemplateItemField(MAX_SIZE, FieldTypeEnum.COUNT_STRICT),
-					new EasyFormsTemplateItemField(ACCEPT, FieldTypeEnum.INTERNAL_EXTENSIONS));
-		}
-
 	}
 
 }
