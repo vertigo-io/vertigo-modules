@@ -10,6 +10,11 @@ create Domain DoEfLabel {
 	storeType : "VARCHAR(100)"
 }
 
+create Domain DoEfLongLabel {
+	dataType : String
+	storeType : "VARCHAR(1000)"
+}
+
 create Domain DoEfCount {
 	dataType : Integer
 	storeType : "NUMERIC"
@@ -25,7 +30,7 @@ create Domain DoEfSort {
     storeType : "NUMERIC"
 }
 
-create Domain DoEfBooleen {
+create Domain DoEfBoolean {
 	dataType : Boolean
 	storeType : "BOOLEAN"
 }

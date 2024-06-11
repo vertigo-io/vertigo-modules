@@ -63,6 +63,11 @@
 												</div>
 												<div th:case="'EfUicFile'">
 													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+												        <vu:slot name="after_label_slot">
+															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+															</q-icon>
+												        </vu:slot>
 														<v-file-upload 
 														    th::ref="|'uploader_${object}_form$${fieldCode}'|"
 															class="q-mt-md"
@@ -83,6 +88,12 @@
 												</div>
 												<div th:case="'EfUicRadio'">
 													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+												        <vu:slot name="after_label_slot">
+															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+															</q-icon>
+												        </vu:slot>
+												        
 														<q-option-group
 													    	th:v-model="${fieldModel}"
 													    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
@@ -95,6 +106,9 @@
 													<vu:label-edit object="${object}" field="|form$${fieldCode}|" th:label="${fieldLabel}" required="false"
 																   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateItem.code}']) { slotProps.formData['${templateItem.code}'] = []}}|">
 														<vu:slot name="after_label_slot">
+															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+															</q-icon>
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
 														</vu:slot>
@@ -122,11 +136,20 @@
 											            th::error="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
 														th::error-message="|getErrorMessage('${object}', 'form$${fieldCode}', ${rowIndex})|"
 														orientation="vertical"
-														stack-label>
+														stack-label
+														label-slot>
+														<template v-slot:label>
+															<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
+																<span vu:text="${fieldLabel}" />
+																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+																</q-icon>
+															</div>
+														</template>
 													</q-select>
 												</div>
 												<div th:case="*">
-													<q-input label-slot
+													<q-input 
 															th:v-autofocus="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|"
 															th:v-model="${fieldModel}"
 															th::aria-describedby="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
@@ -141,13 +164,16 @@
 															orientation="vertical"
 															stack-label
 															th:classappend="${templateItem.isMandatory?'v-field__required':''}"
-															th:aria-required="${templateItem.isMandatory}" >
-															<template v-slot:label>
-															  <div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
-															    <div vu:text="${fieldLabel}" />
-															    <q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]"><div vu:text="${fieldTooltip}"/></q-tooltip>
-															  </div>
-															</template>
+															th:aria-required="${templateItem.isMandatory}"
+															label-slot >
+														<template v-slot:label>
+															<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
+																<span vu:text="${fieldLabel}" />
+																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+																</q-icon>
+															</div>
+														</template>
 													</q-input>
 												</div>
 											</div>

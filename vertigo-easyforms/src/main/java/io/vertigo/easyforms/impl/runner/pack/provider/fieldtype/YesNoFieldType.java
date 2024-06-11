@@ -15,7 +15,7 @@ import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 public class YesNoFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 	@Override
 	public EasyFormsSmartTypes getSmartType() {
-		return EasyFormsSmartTypes.EfBooleen;
+		return EasyFormsSmartTypes.EfBoolean;
 	}
 
 	@Override

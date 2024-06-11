@@ -13,7 +13,7 @@ create DtDefinition DtEasyFormsFieldTypeUi {
     field uiComponentName 	{domain: DoEfLabel 				label:"UI component name" }
     field uiParameters 		{domain: DoEfFormData			label:"UI parameters" }
     field paramTemplate 	{domain: DoEfFormTemplate 		label:"UI configuration template" }
-    computed hasTemplate	{domain: DoEfBooleen			label:"Have configuration"
+    computed hasTemplate	{domain: DoEfBoolean			label:"Have configuration"
     						 expression: "return getParamTemplate() != null;"
     }
     sortField: "name"
@@ -29,9 +29,9 @@ create DtDefinition DtEasyFormsItemUi {
     field type 				{domain: DoEfCode 					label:"Item type" 				}
     field fieldCode 		{domain: DoEfCode 					label:"Field code" 				}
     field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
-    field isDefault 		{domain: DoEfBooleen 				label:"System field" 			}
-    field isMandatory 		{domain: DoEfBooleen 				label:"Mandatory" 				}
-    field isList 			{domain: DoEfBooleen 				label:"Is list" 				}
+    field isDefault 		{domain: DoEfBoolean 				label:"System field" 			}
+    field isMandatory 		{domain: DoEfBoolean 				label:"Mandatory" 				}
+    field isList 			{domain: DoEfBoolean 				label:"Is list" 				}
     field maxItems 			{domain: DoEfCountStrict			label:"Maximum number of items" }
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
     field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}
@@ -51,6 +51,6 @@ create DtDefinition DtEasyFormsFieldValidatorTypeUi {
 create DtDefinition DtEasyFormsLabelUi {
 	field lang 				{domain: DoEfLabel 				label:"Language"		}
 	field label 			{domain: DoEfLabel 				label:"Label"			}
-	field tooltip 			{domain: DoEfLabel 				label:"Tooltip" 		}
+	field tooltip 			{domain: DoEfLongLabel 			label:"Tooltip" 		}
 	field text 				{domain: DoEfTextHtml           label:"Text" 			}
 }

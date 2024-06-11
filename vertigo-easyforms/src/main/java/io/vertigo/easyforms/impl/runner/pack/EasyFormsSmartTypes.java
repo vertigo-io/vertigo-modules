@@ -35,7 +35,7 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(Boolean.class)
 	@Formatter(clazz = FormatterDefault.class)
-	EfBooleen,
+	EfBoolean,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
@@ -49,6 +49,11 @@ public enum EasyFormsSmartTypes {
 	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
 	@SmartTypeProperty(property = "indexType", value = "text_fr:facetable:sortable")
 	EfLabel,
+
+	@SmartTypeDefinition(String.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Constraint(clazz = ConstraintStringLength.class, arg = "1000", msg = "")
+	EfLongLabel,
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)

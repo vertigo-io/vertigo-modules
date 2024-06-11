@@ -141,7 +141,7 @@ public final class EasyFormsFieldTypeUi implements DataObject {
 	 * Récupère la valeur de la propriété calculée 'Have configuration'.
 	 * @return Boolean hasTemplate
 	 */
-	@Field(smartType = "STyEfBooleen", type = "COMPUTED", persistent = false, label = "Have configuration")
+	@Field(smartType = "STyEfBoolean", type = "COMPUTED", persistent = false, label = "Have configuration")
 	public Boolean getHasTemplate() {
 		return getParamTemplate() != null;
 	}

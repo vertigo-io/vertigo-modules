@@ -61,7 +61,7 @@ public final class EasyFormsLabelUi implements DataObject {
 	 * Récupère la valeur de la propriété 'Tooltip'.
 	 * @return String tooltip
 	 */
-	@Field(smartType = "STyEfLabel", label = "Tooltip")
+	@Field(smartType = "STyEfLongLabel", label = "Tooltip")
 	public String getTooltip() {
 		return tooltip;
 	}

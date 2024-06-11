@@ -86,7 +86,7 @@ public final class EasyFormsItemUi implements DataObject {
 	 * Récupère la valeur de la propriété 'System field'.
 	 * @return Boolean isDefault
 	 */
-	@Field(smartType = "STyEfBooleen", label = "System field")
+	@Field(smartType = "STyEfBoolean", label = "System field")
 	public Boolean getIsDefault() {
 		return isDefault;
 	}
@@ -105,7 +105,7 @@ public final class EasyFormsItemUi implements DataObject {
 	 * Récupère la valeur de la propriété 'Mandatory'.
 	 * @return Boolean isMandatory
 	 */
-	@Field(smartType = "STyEfBooleen", label = "Mandatory")
+	@Field(smartType = "STyEfBoolean", label = "Mandatory")
 	public Boolean getIsMandatory() {
 		return isMandatory;
 	}
@@ -124,7 +124,7 @@ public final class EasyFormsItemUi implements DataObject {
 	 * Récupère la valeur de la propriété 'Is list'.
 	 * @return Boolean isList
 	 */
-	@Field(smartType = "STyEfBooleen", label = "Is list")
+	@Field(smartType = "STyEfBoolean", label = "Is list")
 	public Boolean getIsList() {
 		return isList;
 	}
