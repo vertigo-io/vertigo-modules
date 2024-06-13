@@ -100,6 +100,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldEasyFormsItemUi$isMandatory,
 	/**
+	 * Default value.
+	 */
+	fldEasyFormsItemUi$defaultValue,
+	/**
 	 * Is list.
 	 */
 	fldEasyFormsItemUi$isList,

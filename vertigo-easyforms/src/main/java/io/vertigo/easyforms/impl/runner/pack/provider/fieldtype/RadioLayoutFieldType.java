@@ -35,7 +35,7 @@ public class RadioLayoutFieldType implements IEasyFormsFieldTypeDefinitionSuppli
 				IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 				IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
 				(Serializable) List.of(
-						new EasyFormsListItem("", "#{EfFtyCustomListRadio$layoutVerticalLabel}"),
+						new EasyFormsListItem("vertical", "#{EfFtyCustomListRadio$layoutVerticalLabel}"),
 						new EasyFormsListItem("horizontal", "#{EfFtyCustomListRadio$layoutHorizontalLabel}")));
 	}
 

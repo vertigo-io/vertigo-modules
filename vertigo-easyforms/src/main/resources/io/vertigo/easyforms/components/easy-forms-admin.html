@@ -264,6 +264,10 @@
 							</vu:grid-cell>
 							<vu:grid-cell>
 								<vu:include-data object="editItem" field="isList" />
+								<vu:text-field-edit object="editItem" field="defaultValue" v-if="!vueData.editItem.isList"/>
+							</vu:grid-cell>
+							<vu:grid-cell>
+								<vu:include-data object="editItem" field="isList" />
 								<vu:text-field-edit object="editItem" field="maxItems" type="number" v-if="vueData.editItem.isList"/>
 							</vu:grid-cell>
 							<vu:grid-cell>

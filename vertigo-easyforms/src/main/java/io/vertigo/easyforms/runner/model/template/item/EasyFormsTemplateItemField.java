@@ -16,8 +16,9 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 	private String fieldTypeName;
 	private Map<String, String> label;
 	private Map<String, String> tooltip;
-	private boolean isDefault;
+	private boolean isDefault; // system field, code not modifiable
 	private boolean isMandatory;
+	private Object defaultValue;
 	private EasyFormsData parameters; // Field type parameters
 	private List<EasyFormsTemplateFieldValidator> validators;
 	private Integer maxItems; // When is list, provide maximum number of elements
@@ -88,6 +89,14 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		this.isMandatory = isMandatory;
 	}
 
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(final Object defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 	public EasyFormsData getParameters() {
 		return parameters;
 	}
@@ -138,6 +147,11 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 
 	public EasyFormsTemplateItemField withMandatory(final boolean myMandatory) {
 		isMandatory = myMandatory;
+		return this;
+	}
+
+	public EasyFormsTemplateItemField withDefaultValue(final Object myDefaultValue) {
+		defaultValue = myDefaultValue;
 		return this;
 	}
 

@@ -18,6 +18,7 @@ public final class EasyFormsItemUi implements DataObject {
 	private String fieldType;
 	private Boolean isDefault;
 	private Boolean isMandatory;
+	private String defaultValue;
 	private Boolean isList;
 	private Integer maxItems;
 	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
@@ -117,6 +118,25 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setIsMandatory(final Boolean isMandatory) {
 		this.isMandatory = isMandatory;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Default value'.
+	 * @return String defaultValue
+	 */
+	@Field(smartType = "STyEfLabel", label = "Default value")
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Default value'.
+	 * @param defaultValue String
+	 */
+	public void setDefaultValue(final String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 	
 	/**

@@ -81,6 +81,7 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DefaultDtObjectValidator;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Controller
 @RequestMapping("/easyforms/designer")
@@ -176,6 +177,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			itemUi.setFieldType(field.getFieldTypeName());
 			itemUi.setIsDefault(field.isDefault());
 			itemUi.setIsMandatory(field.isMandatory());
+			itemUi.setDefaultValue(field.getDefaultValue() == null ? null : field.getDefaultValue().toString());
 
 			itemUi.setMaxItems(field.getMaxItems());
 
@@ -227,6 +229,16 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			}
 
 			field.setValidators(uiItem.getFieldValidatorSelection().stream().map(EasyFormsTemplateFieldValidator::new).toList());
+
+			// handle default value, all previous configuration is used to check the default value validity (except for mandatory, we skip verification if default value is empty)
+			if (!uiItem.getIsList() && !StringUtil.isBlank(uiItem.getDefaultValue())) {
+				field.setDefaultValue(easyFormsRunnerServices.formatAndCheckSingleField(uiItem, EasyFormsItemUiFields.defaultValue.name(), field, uiItem.getDefaultValue(), uiMessageStack));
+				if (uiMessageStack.hasErrors()) {
+					throw new ValidationUserException();
+				}
+			} else {
+				field.setDefaultValue(null);
+			}
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			block.setCondition(uiItem.getCondition());
 		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {

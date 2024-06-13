@@ -31,6 +31,7 @@ create DtDefinition DtEasyFormsItemUi {
     field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
     field isDefault 		{domain: DoEfBoolean 				label:"System field" 			}
     field isMandatory 		{domain: DoEfBoolean 				label:"Mandatory" 				}
+    field defaultValue 		{domain: DoEfLabel 					label:"Default value" 			}
     field isList 			{domain: DoEfBoolean 				label:"Is list" 				}
     field maxItems 			{domain: DoEfCountStrict			label:"Maximum number of items" }
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}

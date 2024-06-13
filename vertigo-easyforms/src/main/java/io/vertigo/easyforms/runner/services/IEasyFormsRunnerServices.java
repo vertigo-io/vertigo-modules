@@ -38,6 +38,18 @@ public interface IEasyFormsRunnerServices extends Component {
 	void formatAndCheckFormulaire(DataObject formOwner, EasyFormsData formData, EasyFormsTemplate formTempalte, UiMessageStack uiMessageStack);
 
 	/**
+	 * Formats and checks a single field of the form data.
+	 *
+	 * @param formOwner The owner of the form.
+	 * @param fieldCode The code of the field.
+	 * @param field The field to format and check.
+	 * @param inputValue The value of the field.
+	 * @param uiMessageStack The stack of UI messages.
+	 * @return The formatted and checked value of the field.
+	 */
+	Object formatAndCheckSingleField(DataObject formOwner, String fieldCode, EasyFormsTemplateItemField field, Object inputValue, UiMessageStack uiMessageStack);
+
+	/**
 	 * Retrieves all fields from a given section of the form.
 	 *
 	 * @param section The section of the form.

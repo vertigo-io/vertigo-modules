@@ -11,6 +11,9 @@ public class RadioCheckUiComponent implements IEasyFormsUiComponentDefinitionSup
 
 	public static final String LAYOUT = "layout";
 
+	public static final String VALUE_VERTICAL = "vertical";
+	public static final String VALUE_HORIZONTAL = "horizontal";
+
 	@Override
 	public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 		return List.of(

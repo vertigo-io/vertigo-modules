@@ -102,6 +102,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isDefault,
 		/** Propriété 'Mandatory'. */
 		isMandatory,
+		/** Propriété 'Default value'. */
+		defaultValue,
 		/** Propriété 'Is list'. */
 		isList,
 		/** Propriété 'Maximum number of items'. */

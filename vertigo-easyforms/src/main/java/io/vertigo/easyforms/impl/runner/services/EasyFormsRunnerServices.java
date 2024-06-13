@@ -142,25 +142,32 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	private Object formatAndCheckField(final EasyFormsTemplate formTempalte, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field, final EasyFormsData formData,
 			final DataObject formOwner, final UiMessageStack uiMessageStack) {
-		final EasyFormsDataDescriptor fieldDescriptor = fieldToDataDescriptor(field);
-		final var fieldCode = (formTempalte.useSections() ? section.getCode() + "$" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
+
+		final var fieldCode = FORM_PREFIX + (formTempalte.useSections() ? section.getCode() + "$" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
 
 		// format field (eg: Put last name in upper case)
 		final var inputValue = formData.get(field.getCode());
+		final Object typedValue = formatAndCheckSingleField(formOwner, fieldCode, field, inputValue, uiMessageStack);
+
+		return typedValue;
+	}
+
+	@Override
+	public Object formatAndCheckSingleField(final DataObject formOwner, final String fieldCode, final EasyFormsTemplateItemField field, final Object inputValue, final UiMessageStack uiMessageStack) {
+		final EasyFormsDataDescriptor fieldDescriptor = fieldToDataDescriptor(field);
 		Object typedValue;
 		try {
 			typedValue = easyFormsRunnerManager.formatField(fieldDescriptor, inputValue);
 		} catch (final FormatterException e) {
-			uiMessageStack.error(e.getMessageText().getDisplay(), formOwner, FORM_PREFIX + fieldCode);
+			uiMessageStack.error(e.getMessageText().getDisplay(), formOwner, fieldCode);
 			return inputValue;
 		}
 
 		// if formatter succeed, validate constraints
 		final var errors = easyFormsRunnerManager.validateField(fieldDescriptor, typedValue, Map.of());
 		for (final var error : errors) {
-			uiMessageStack.error(error, formOwner, FORM_PREFIX + fieldCode);
+			uiMessageStack.error(error, formOwner, fieldCode);
 		}
-
 		return typedValue;
 	}
 
@@ -276,9 +283,15 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			}
 
 			for (final var field : getAllFieldsForSection(section)) {
-				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
-				if (paramFieldTypeDefinition.getDefaultValue() != null) {
-					sectionData.put(field.getCode(), paramFieldTypeDefinition.getDefaultValue());
+				if (field.getDefaultValue() != null) {
+					// default value is set on field
+					sectionData.put(field.getCode(), field.getDefaultValue());
+				} else {
+					// default value is set on field type
+					final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
+					if (paramFieldTypeDefinition.getDefaultValue() != null) {
+						sectionData.put(field.getCode(), paramFieldTypeDefinition.getDefaultValue());
+					}
 				}
 			}
 		}

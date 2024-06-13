@@ -36,7 +36,7 @@ public class CustomListFieldType implements IEasyFormsFieldTypeDefinitionSupplie
 	public Map<String, Object> getUiParams() {
 		if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
 			return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
-					RadioCheckUiComponent.LAYOUT, "horizontal");
+					RadioCheckUiComponent.LAYOUT, RadioCheckUiComponent.VALUE_HORIZONTAL);
 		}
 		return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME);
 	}
@@ -46,7 +46,9 @@ public class CustomListFieldType implements IEasyFormsFieldTypeDefinitionSupplie
 		if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
 			return List.of(
 					new EasyFormsTemplateItemField(RadioCheckUiComponent.LAYOUT, FieldTypeEnum.INTERNAL_LAYOUT)
-							.withParameters(Map.of(RadioCheckUiComponent.LAYOUT, "horizontal")),
+							.withParameters(Map.of(RadioCheckUiComponent.LAYOUT, RadioCheckUiComponent.VALUE_HORIZONTAL))
+							.withDefaultValue(RadioCheckUiComponent.VALUE_VERTICAL)
+							.withMandatory(),
 					new EasyFormsTemplateItemField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
 		}
 		return List.of(new EasyFormsTemplateItemField(IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME, FieldTypeEnum.INTERNAL_MAP).withMandatory());
