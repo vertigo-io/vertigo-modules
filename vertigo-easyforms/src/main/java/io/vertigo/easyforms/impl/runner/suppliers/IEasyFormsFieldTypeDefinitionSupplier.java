@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
-import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
@@ -43,7 +42,7 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 		return DEFAULT_CATEGORY;
 	}
 
-	public abstract EasyFormsSmartTypes getSmartType();
+	public abstract Enum<?> getSmartType();
 
 	public abstract EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent();
 
