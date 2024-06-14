@@ -2,6 +2,7 @@ package io.vertigo.easyforms.impl.runner.services;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,13 +17,15 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
@@ -33,6 +36,7 @@ import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.easyforms.dao.EasyFormDAO;
+import io.vertigo.easyforms.domain.DtDefinitions.EasyFormFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
@@ -71,14 +75,21 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	@Inject
 	private SmartTypeManager smartTypeManager;
 
-	@Inject
-	private VSecurityManager securityManager;
-
 	@Override
 	public EasyForm getEasyFormById(final UID<EasyForm> efoUid) {
 		Assertion.check().isNotNull(efoUid);
 		//---
 		return easyFormDAO.get(efoUid);
+	}
+
+	@Override
+	public DtList<EasyForm> getEasyFormListByIds(final Collection<UID<EasyForm>> efoUids) {
+		Assertion.check().isNotNull(efoUids);
+		//---
+		final var ids = efoUids.stream()
+				.map(UID::getId)
+				.toArray(Long[]::new);
+		return easyFormDAO.findAll(Criterions.in(EasyFormFields.efoId, (Serializable[]) ids), DtListState.of(null));
 	}
 
 	@Override
@@ -426,7 +437,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			easyFormDisplay.put(oldSection + " (old)", sectionDisplay);
 
 			for (final Entry<String, Object> champ : oldSectionData.entrySet()) {
-				sectionDisplay.put(champ.getKey(), getStrObj(String.valueOf(champ.getValue())));
+				sectionDisplay.put(champ.getKey(), getStrObj(String.valueOf(champ.getValue()))); // TODO manage FileInfoURI
 			}
 		}
 	}

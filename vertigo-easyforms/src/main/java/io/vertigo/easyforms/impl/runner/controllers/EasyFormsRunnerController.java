@@ -1,7 +1,7 @@
 package io.vertigo.easyforms.impl.runner.controllers;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,6 +17,7 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
+import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
@@ -32,32 +33,53 @@ public final class EasyFormsRunnerController {
 	@Inject
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
+	@Inject
+	private EasyFormsRunnerManager easyFormsRunnerManager;
+
 	private static final ViewContextKey<EasyFormsUiUtil> efoUiUtilKey = ViewContextKey.of("efoUiUtil");
 
 	private static final ViewContextKey<ArrayList<String>> efoSupportedLang = ViewContextKey.of("efoAllLang");
 
-	public void initReadContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final List<String> supportedLang, final ViewContextKey<EasyFormsTemplate> templateKey) {
+	public void initReadContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
-		final ArrayList<String> supportedLangSerialisable = new ArrayList<>(supportedLang); // needed to be serializable
+		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
 
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
 				.publishRef(templateKey, easyForm.getTemplate())
-				.publishRef(efoSupportedLang, supportedLangSerialisable);
+				.publishRef(efoSupportedLang, supportedLang);
 
 		addRequiredContext(viewContext, easyForm, false);
 	}
 
-	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final List<String> supportedLang, final ViewContextKey<EasyFormsTemplate> templateKey) {
+	public void initMultipleReadContext(final ViewContext viewContext, final Collection<UID<EasyForm>> efoUidList, final ViewContextKey<ArrayList<EasyFormsTemplate>> templateKey) {
+		final var easyFormsUiUtil = new EasyFormsUiUtil();
+		final var easyForms = easyFormsRunnerServices.getEasyFormListByIds(efoUidList);
+		final var templates = easyForms.stream()
+				.map(EasyForm::getTemplate)
+				.toList();
+
+		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
+
+		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
+				.publishRef(templateKey, new ArrayList<>(templates))
+				.publishRef(efoSupportedLang, supportedLang);
+
+		for (final var easyForm : easyForms) {
+			addRequiredContext(viewContext, easyForm, false);
+		}
+	}
+
+	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
-		final ArrayList<String> supportedLangSerialisable = new ArrayList<>(supportedLang); // needed to be serializable
+		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
 
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
 				.publishRef(templateKey, easyForm.getTemplate())
-				.publishRef(efoSupportedLang, supportedLangSerialisable);
+				.publishRef(efoSupportedLang, supportedLang);
 
 		// Add master data list needed for fields to context
 		addRequiredContext(viewContext, easyForm, true);

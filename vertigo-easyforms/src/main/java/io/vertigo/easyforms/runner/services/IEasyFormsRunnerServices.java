@@ -1,11 +1,13 @@
 package io.vertigo.easyforms.runner.services;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -26,6 +28,14 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * @return The EasyForm associated with the given unique identifier.
 	 */
 	EasyForm getEasyFormById(UID<EasyForm> efoUid);
+
+	/**
+	 * Retrieves a list of EasyForms by their unique identifiers.
+	 *
+	 * @param efoUids The unique identifiers of the EasyForms.
+	 * @return A list of EasyForms associated with the given unique identifiers.
+	 */
+	DtList<EasyForm> getEasyFormListByIds(Collection<UID<EasyForm>> efoUids);
 
 	/**
 	 * Formats and checks the form data.
