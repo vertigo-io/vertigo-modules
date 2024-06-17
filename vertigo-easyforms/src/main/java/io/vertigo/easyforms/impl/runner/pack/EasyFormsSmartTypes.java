@@ -21,7 +21,8 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMaximum;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMinimum;
 import io.vertigo.easyforms.impl.runner.pack.formatter.FormatterExtensions;
-import io.vertigo.easyforms.runner.model.EasyFormsJsonAdapter;
+import io.vertigo.easyforms.runner.model.adapter.EasyFormsJsonAdapter;
+import io.vertigo.easyforms.runner.model.adapter.EasyFormsMapInputAdapter;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
@@ -146,6 +147,7 @@ public enum EasyFormsSmartTypes {
 	@SmartTypeDefinition(List.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
+	@Adapter(clazz = EasyFormsMapInputAdapter.class, targetBasicType = BasicType.String, type = "easyForm")
 	EfIMapData,
 
 	@SmartTypeDefinition(String.class)

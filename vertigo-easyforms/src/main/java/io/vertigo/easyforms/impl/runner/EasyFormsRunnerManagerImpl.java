@@ -20,7 +20,6 @@ import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
 import io.vertigo.core.param.ParamValue;
-import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.ConstraintException;
@@ -206,51 +205,18 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 				final var inputCollection = (List) inputValue;
 				final List<Object> resolvedList = new ArrayList<>(inputCollection.size());
 				for (final var elem : inputCollection) {
-					resolvedList.add(doFormatValue(fieldDescriptor, elem.toString()));
+					resolvedList.add(doFormatValue(fieldDescriptor, elem));
 				}
 				return resolvedList;
 			case ONE:
 			case OPTIONAL_OR_NULLABLE:
-				if (inputValue instanceof final List<?> inputList) { // for IntenalMap (formatter and adapter does not fit for this case)
-					return formatInternalMap((List<Map<String, Object>>) inputList);
-				} else {
-					return doFormatValue(fieldDescriptor, inputValue.toString());
-				}
+				return doFormatValue(fieldDescriptor, inputValue);
 			default:
 				throw new UnsupportedOperationException();
 		}
 	}
 
-	private List<Map<String, Object>> formatInternalMap(final List<Map<String, Object>> data) {
-		// clear empty values
-		data.removeIf(item -> isEmptyCustomValue(item));
-		// trim all values
-		data.forEach(value -> {
-			value.put("value", ((String) value.get("value")).trim());
-			final var labels = (Map<String, String>) value.get("label");
-			for (final var labelEntry : labels.entrySet()) {
-				labelEntry.setValue(labelEntry.getValue().trim());
-			}
-		});
-		return data;
-	}
-
-	private boolean isEmptyCustomValue(final Map<String, Object> entry) {
-		if (!StringUtil.isBlank((String) entry.get("value"))) {
-			return false;
-		}
-
-		final var labels = (Map<String, String>) entry.get("label");
-		for (final String label : labels.values()) {
-			if (!StringUtil.isBlank(label)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private Object doFormatValue(final EasyFormsDataDescriptor fieldDescriptor, final String inputValue) throws FormatterException {
+	private Object doFormatValue(final EasyFormsDataDescriptor fieldDescriptor, final Object inputValue) throws FormatterException {
 		final var targetJavaClass = fieldDescriptor.smartTypeDefinition().getJavaClass();
 		var adapter = smartTypeManager.getTypeAdapters("easyForm").get(targetJavaClass);
 		if (adapter == null) {
@@ -259,7 +225,7 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 		if (adapter != null) {
 			return adapter.toJava(inputValue, targetJavaClass);
 		} else {
-			return smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), inputValue);
+			return smartTypeManager.stringToValue(fieldDescriptor.smartTypeDefinition(), inputValue.toString());
 		}
 	}
 

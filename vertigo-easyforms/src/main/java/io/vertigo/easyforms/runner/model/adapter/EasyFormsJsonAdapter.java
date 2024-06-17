@@ -1,4 +1,4 @@
-package io.vertigo.easyforms.runner.model;
+package io.vertigo.easyforms.runner.model.adapter;
 
 import java.io.IOException;
 import java.util.List;
