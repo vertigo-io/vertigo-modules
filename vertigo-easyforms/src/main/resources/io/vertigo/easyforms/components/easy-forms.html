@@ -61,7 +61,7 @@
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
-												<div th:case="'EfUicFile'">
+												<div th:case="'EfUicFile'" th:with="ref=|'uploader_${object}_form$${fieldCode}'|">
 													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
 												        <vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
@@ -69,7 +69,7 @@
 															</q-icon>
 												        </vu:slot>
 														<v-file-upload 
-														    th::ref="|'uploader_${object}_form$${fieldCode}'|"
+														    th::ref="${ref}"
 															class="q-mt-md"
 												            th:url="@{/easyforms/form/upload}" field-name="file"  
 												            :simple="false" :multiple="true"
@@ -80,7 +80,7 @@
 												            th:@update:file-info-uris="|(newFileInfoUris) => {${fieldModel} = newFileInfoUris;
 												            												  efCheckUploadConstraints('${object}','form$${fieldCode}',
 												            												                           ${fieldModel}?.length, ${templateItem.maxItems}, `#{EfUplaodMaxCount(${templateItem.maxItems})}`,
-												            												                           $refs.uploader_${object}_form$${fieldCode}.getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
+												            												                           $refs[${ref}].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
 												            												 }|"
 												            th:@download-file="|(fileUri) => goTo('@{/easyforms/form/upload/download/}' + fileUri)|"
 											            ></v-file-upload>
