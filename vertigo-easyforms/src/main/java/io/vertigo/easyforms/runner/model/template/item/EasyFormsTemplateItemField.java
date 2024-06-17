@@ -16,7 +16,7 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 	private String fieldTypeName;
 	private Map<String, String> label;
 	private Map<String, String> tooltip;
-	private boolean isDefault; // system field, code not modifiable
+	private boolean isSystem; // system field, code not modifiable
 	private boolean isMandatory;
 	private Object defaultValue;
 	private EasyFormsData parameters; // Field type parameters
@@ -73,12 +73,12 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		this.tooltip = tooltip;
 	}
 
-	public boolean isDefault() {
-		return isDefault;
+	public boolean isSystem() {
+		return isSystem;
 	}
 
-	public void setDefault(final boolean isDefault) {
-		this.isDefault = isDefault;
+	public void setSystem(final boolean isSystem) {
+		this.isSystem = isSystem;
 	}
 
 	public boolean isMandatory() {
@@ -132,12 +132,12 @@ public final class EasyFormsTemplateItemField extends AbstractEasyFormsTemplateI
 		return this;
 	}
 
-	public EasyFormsTemplateItemField withDefault() {
-		return withDefault(true);
+	public EasyFormsTemplateItemField withSystem() {
+		return withSystem(true);
 	}
 
-	public EasyFormsTemplateItemField withDefault(final boolean myDefault) {
-		isDefault = myDefault;
+	public EasyFormsTemplateItemField withSystem(final boolean mySystem) {
+		isSystem = mySystem;
 		return this;
 	}
 

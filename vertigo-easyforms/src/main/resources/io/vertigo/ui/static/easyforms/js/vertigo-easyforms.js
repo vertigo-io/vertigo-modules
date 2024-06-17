@@ -64,6 +64,15 @@ VUiExtensions.methods = {
         });
     },
     
+    efSectionCanDelete : function(section) {
+        for (let item of section.items) {
+			if (!this.efItemCanDelete(item)) {
+				return false;
+			}
+        }
+        return true;
+    },
+    
     efDeleteSection : function(sectionIndex) {
         this.httpPostAjax(context + 'easyforms/designer/_deleteSection', {sectionIndex: sectionIndex }, {
             onSuccess: function(response) {
@@ -83,6 +92,8 @@ VUiExtensions.methods = {
     
     efSaveEditSection : function() {
         let formData = this.vueDataParams(['editSection','editLabelText.label']);
+        formData.delete('vContext[editSection][haveSystemField]')//not modifiable
+
         formData.append('sectionIndex', this.$data.componentStates.sectionModal.sectionIndex);
         
         this.httpPostAjax(context + 'easyforms/designer/_saveSection', formData, {
@@ -106,6 +117,19 @@ VUiExtensions.methods = {
                 this.$data.componentStates.itemModal.opened = true
             }.bind(this)
         });
+    },
+    
+    efItemCanDelete : function(item) {
+        if (item.type === 'FIELD') {
+            return item.isSystem === false;
+        } else if (item.type === 'BLOCK') {
+			for (let subItem of item.items) {
+				if (!this.efItemCanDelete(subItem)) {
+					return false;
+				}
+			}
+        }
+        return true;
     },
     
     efDeleteItem : function(sectionIndex, editIndex, editIndex2) {
@@ -154,7 +178,7 @@ VUiExtensions.methods = {
     efRefreshItem : function() {
         let formData = this.vueDataParams(['editItem']);
         formData.delete('vContext[editItem][type]')//not modifiable
-        formData.delete('vContext[editItem][isDefault]')//not modifiable
+        formData.delete('vContext[editItem][isSystem]')//not modifiable
         formData.delete('vContext[editItem][isList]')//not modifiable
         
         formData.append('sectionIndex', this.$data.componentStates.itemModal.sectionIndex);
@@ -167,7 +191,7 @@ VUiExtensions.methods = {
     efSaveEditItem : function() {
         let formData = this.vueDataParams(['editItem','editLabelText.label','editLabelText.tooltip','editLabelText.text']);
         formData.delete('vContext[editItem][type]')//not modifiable
-        formData.delete('vContext[editItem][isDefault]')//not modifiable
+        formData.delete('vContext[editItem][isSystem]')//not modifiable
         formData.delete('vContext[editItem][isList]')//not modifiable
        
         formData.delete('vContext[editItem][parameters]') // specific field, need to be in json format
@@ -293,12 +317,12 @@ window.addEventListener('vui-before-plugins', function(event) {
                     if (!this.isLastEmpty(this.$data.internalModel)) {
                         this.$data.internalModel.push({label: {}, value: ''});
                     } else {
-						// keep only one empty at the end
-						while (this.$data.internalModel.length > 1 &&
-						       this.isEmpty(this.$data.internalModel[this.$data.internalModel.length - 2])) {
-						    this.$data.internalModel = this.$data.internalModel.slice(0, -1);
-						}
-					}
+                        // keep only one empty at the end
+                        while (this.$data.internalModel.length > 1 &&
+                               this.isEmpty(this.$data.internalModel[this.$data.internalModel.length - 2])) {
+                            this.$data.internalModel = this.$data.internalModel.slice(0, -1);
+                        }
+                    }
                     this.$emit('update:modelValue', this.$data.internalModel);
                 },
                 deep: true

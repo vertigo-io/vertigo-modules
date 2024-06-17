@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
+import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
+
 public final class EasyFormsTemplateSection implements Serializable {
 
 	private String code;
@@ -52,6 +55,29 @@ public final class EasyFormsTemplateSection implements Serializable {
 
 	public List<AbstractEasyFormsTemplateItem> getItems() {
 		return items;
+	}
+
+	public List<EasyFormsTemplateItemField> getAllFields() {
+		final List<EasyFormsTemplateItemField> list = new ArrayList<>();
+		for (final var item : getItems()) {
+			addFieldsForItem(list, item);
+		}
+		return list;
+	}
+
+	private static void addFieldsForItem(final List<EasyFormsTemplateItemField> list, final AbstractEasyFormsTemplateItem item) {
+		if (item instanceof final EasyFormsTemplateItemField field) {
+			list.add(field);
+		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
+			for (final var blockElem : block.getItems()) {
+				addFieldsForItem(list, blockElem);
+			}
+		}
+	}
+
+	public boolean haveSystemField() {
+		return getAllFields().stream()
+				.anyMatch(EasyFormsTemplateItemField::isSystem);
 	}
 
 }

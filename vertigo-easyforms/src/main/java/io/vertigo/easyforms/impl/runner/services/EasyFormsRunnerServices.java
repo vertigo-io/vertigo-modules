@@ -44,7 +44,6 @@ import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.data.EasyFormsDataDescriptor;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
-import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
@@ -262,25 +261,6 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	}
 
 	@Override
-	public List<EasyFormsTemplateItemField> getAllFieldsFromSection(final EasyFormsTemplateSection section) {
-		final List<EasyFormsTemplateItemField> list = new ArrayList<>();
-		for (final var item : section.getItems()) {
-			addFieldsForItem(list, item);
-		}
-		return list;
-	}
-
-	private void addFieldsForItem(final List<EasyFormsTemplateItemField> list, final AbstractEasyFormsTemplateItem item) {
-		if (item instanceof final EasyFormsTemplateItemField field) {
-			list.add(field);
-		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
-			for (final var blockElem : block.getItems()) {
-				addFieldsForItem(list, blockElem);
-			}
-		}
-	}
-
-	@Override
 	public EasyFormsData getDefaultDataValues(final EasyFormsTemplate easyFormsTemplate) {
 		final var templateDefaultData = new EasyFormsData();
 
@@ -293,7 +273,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 				sectionData = templateDefaultData;
 			}
 
-			for (final var field : getAllFieldsForSection(section)) {
+			for (final var field : section.getAllFields()) {
 				if (field.getDefaultValue() != null) {
 					// default value is set on field
 					sectionData.put(field.getCode(), field.getDefaultValue());
@@ -359,7 +339,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	private void processFieldsInSection(final EasyFormsTemplateSection section, final Map<String, Object> easyFormSectionData,
 			final LinkedHashMap<String, Object> sectionDisplay, final Map<String, Object> outOfSectionData) {
-		for (final EasyFormsTemplateItemField field : getAllFieldsForSection(section)) {
+		for (final EasyFormsTemplateItemField field : section.getAllFields()) {
 			final var fieldCode = field.getCode();
 			final Object rawValue = easyFormSectionData.get(fieldCode);
 
@@ -463,11 +443,6 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		} else {
 			return smartTypeManager.valueToString(smartType, inputValue);
 		}
-	}
-
-	private List<EasyFormsTemplateItemField> getAllFieldsForSection(final EasyFormsTemplateSection section) {
-		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(IEasyFormsRunnerServices.class);
-		return easyFormsRunnerServices.getAllFieldsFromSection(section);
 	}
 
 	private String getListDisplayValue(final EasyFormsData resolvedParameters, final Object rawValue) {

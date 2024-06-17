@@ -39,4 +39,12 @@ public final class EasyFormsTemplateItemBlock extends AbstractEasyFormsTemplateI
 		this.items = items;
 	}
 
+	public boolean haveSystemField() {
+		for (final var item : items) {
+			if (item instanceof final EasyFormsTemplateItemField field && field.isSystem()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

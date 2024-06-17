@@ -23,13 +23,14 @@ create DtDefinition DtEasyFormsFieldTypeUi {
 create DtDefinition DtEasyFormsSectionUi {
     field code 				{domain: DoEfCode 					label:"Section code"	 		cardinality:"1"}
     field condition 		{domain: DoEfLabel 					label:"Display condition" 		}
+    field haveSystemField	{domain: DoEfBoolean 				label:"Have system field" 		}
 }
 
 create DtDefinition DtEasyFormsItemUi {
     field type 				{domain: DoEfCode 					label:"Item type" 				}
     field fieldCode 		{domain: DoEfCode 					label:"Field code" 				}
     field fieldType 		{domain: DoEfLabel 					label:"Field type"				}
-    field isDefault 		{domain: DoEfBoolean 				label:"System field" 			}
+    field isSystem 			{domain: DoEfBoolean 				label:"System field" 			}
     field isMandatory 		{domain: DoEfBoolean 				label:"Mandatory" 				}
     field defaultValue 		{domain: DoEfLabel 					label:"Default value" 			}
     field isList 			{domain: DoEfBoolean 				label:"Is list" 				}

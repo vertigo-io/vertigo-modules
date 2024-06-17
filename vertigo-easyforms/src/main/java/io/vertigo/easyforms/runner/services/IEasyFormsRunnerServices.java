@@ -2,7 +2,6 @@ package io.vertigo.easyforms.runner.services;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Optional;
 
 import io.vertigo.core.node.component.Component;
@@ -15,7 +14,6 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
-import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
@@ -58,14 +56,6 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * @return The formatted and checked value of the field.
 	 */
 	Object formatAndCheckSingleField(DataObject formOwner, String fieldCode, EasyFormsTemplateItemField field, Object inputValue, UiMessageStack uiMessageStack);
-
-	/**
-	 * Retrieves all fields from a given section of the form.
-	 *
-	 * @param section The section of the form.
-	 * @return A list of all fields in the given section.
-	 */
-	List<EasyFormsTemplateItemField> getAllFieldsFromSection(EasyFormsTemplateSection section);
 
 	/**
 	 * Retrieves the default data values for a given form template.

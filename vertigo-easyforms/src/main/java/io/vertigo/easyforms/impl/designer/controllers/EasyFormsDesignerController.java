@@ -41,6 +41,7 @@ import io.vertigo.account.security.UserSession;
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.ClassUtil;
@@ -158,7 +159,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		switch (type) {
 			case FIELD:
-				itemUi.setIsDefault(false);
+				itemUi.setIsSystem(false);
 				itemUi.setIsMandatory(false);
 				itemUi.setIsList(false);
 				break;
@@ -175,7 +176,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		if (item instanceof final EasyFormsTemplateItemField field) {
 			itemUi.setFieldCode(field.getCode());
 			itemUi.setFieldType(field.getFieldTypeName());
-			itemUi.setIsDefault(field.isDefault());
+			itemUi.setIsSystem(field.isSystem());
 			itemUi.setIsMandatory(field.isMandatory());
 			itemUi.setDefaultValue(field.getDefaultValue() == null ? null : field.getDefaultValue().toString());
 
@@ -210,7 +211,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		}
 
 		if (item instanceof final EasyFormsTemplateItemField field) {
-			if (!field.isDefault()) {
+			if (!field.isSystem()) {
 				// system fields are code and type fixed
 				field.setCode(uiItem.getFieldCode());
 				field.setFieldTypeName(uiItem.getFieldType());
@@ -330,8 +331,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var editedSection = efo.getTemplate().getSections().get(sectionIndex.intValue());
 		final var sectionUi = new EasyFormsSectionUi();
 		sectionUi.setCode(editedSection.getCode());
-		//sectionUi.setLabel(editedSection.getLabel());
 		sectionUi.setCondition(editedSection.getCondition());
+		sectionUi.setHaveSystemField(editedSection.haveSystemField());
 
 		viewContext.publishDto(editSectionKey, sectionUi);
 		setSectionEditLabelText(viewContext, supportedLang, editedSection);
@@ -344,7 +345,10 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			@ViewAttribute("additionalContext") final Map<String, Serializable> additionalContext,
 			@RequestParam("sectionIndex") final Integer sectionIndex) {
 
-		efo.getTemplate().getSections().remove(sectionIndex.intValue());
+		final var removed = efo.getTemplate().getSections().remove(sectionIndex.intValue());
+		if (removed.haveSystemField()) {
+			throw new VUserException("Cannot delete section with system field");
+		}
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerSectionDeleted).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
@@ -468,7 +472,13 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		final var sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
 		final var items = resolveLocalItems(editIndex, editIndex2, sectionItems);
-		items.remove(editIndex2.orElse(editIndex).intValue());
+		final var removed = items.remove(editIndex2.orElse(editIndex).intValue());
+
+		if (removed instanceof final EasyFormsTemplateItemField removedField && removedField.isSystem()) {
+			throw new VUserException("Cannot delete system field");
+		} else if (removed instanceof final EasyFormsTemplateItemBlock removedBlock && removedBlock.haveSystemField()) {
+			throw new VUserException("Cannot delete block with system field");
+		}
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemDeleted).getDisplay()); // Vertigo should handle flash messages through uiMessageStack
@@ -662,7 +672,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType().substring(5));
 		final var pattern = Pattern.compile("^" + prefixFieldCode + "[0-9]*$");
 
-		final Optional<Integer> lastMatchingOpt = easyFormsRunnerServices.getAllFieldsFromSection(section).stream()
+		final Optional<Integer> lastMatchingOpt = section.getAllFields().stream()
 				.filter(f -> pattern.matcher(f.getCode()).matches())
 				.map(f -> {
 					if (prefixFieldCode.length() == f.getCode().length()) {

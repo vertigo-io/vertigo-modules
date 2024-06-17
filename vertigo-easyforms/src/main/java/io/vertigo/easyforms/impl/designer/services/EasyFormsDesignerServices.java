@@ -140,7 +140,7 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 				prefix = "";
 			}
 
-			for (final var field : easyFormsRunnerServices.getAllFieldsFromSection(section)) {
+			for (final var field : section.getAllFields()) {
 				final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 				final var smartType = Node.getNode().getDefinitionSpace().resolve(paramFieldTypeDefinition.getSmartTypeName(), SmartTypeDefinition.class);
 

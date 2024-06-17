@@ -39,7 +39,8 @@
 											   title="#{EfDesignerEditSection}"
 											   @click="efEditSection(index)"/>
 						    		<vu:button size="md" flat icon="fas fa-trash-alt"
-										       title="#{EfDesignerDeleteSection}"
+						    		           :disabled="!efSectionCanDelete(section)"
+						    		           v-title="|!efSectionCanDelete(section)?`#{EfDesignerNoDeleteField}`:`#{EfDesignerDeleteSection}`|"
 										       @click="efDeleteSection(index)" />
 					    		</div>
 							</q-item-section>
@@ -145,9 +146,9 @@
 										<vu:button size="md" flat icon="fas fa-pencil-alt"
 												   title="#{EfDesignerEditItem}"
 												   @click="efEditItem(index, item_index, item_index2)"/>
-										<vu:button :disabled="item.isDefault"
+										<vu:button :disabled="!efItemCanDelete(item)"
 										           size="md" flat icon="fas fa-trash-alt"
-										           v-title="|item.isDefault?`#{EfDesignerNoDeleteField}`:`#{EfDesignerDeleteItem}`|"
+										           v-title="|!efItemCanDelete(item)?`#{EfDesignerNoDeleteField}`:`#{EfDesignerDeleteItem}`|"
 										           @click="efDeleteItem(index, item_index, item_index2)" />
 			    					</div>
 			    				</q-item-section>
@@ -236,13 +237,13 @@
 						<vu:grid>
 							<vu:select object="editItem" field="fieldType" required="true"
 									   list="fieldTypes" valueField="name" labelField="label"
-									   :disable="vueData.editItem.isDefault === true" 
+									   :disable="vueData.editItem.isSystem === true" 
 									   searchable="true" @update:model-value="efRefreshItem()" />
 							
 							<vu:text-field object="editItem" field="fieldCode" required="true"
-										   th::hint="|(vueData.editItem.isDefault === true)?`#{EfDesignerFieldCodeHint}`:``|" 
+										   th::hint="|(vueData.editItem.isSystem !== true)?`#{EfDesignerFieldCodeHint}`:``|" 
 										   title="#{EfDesignerRequiredNotModifiable}" aria-title="#{EfDesignerFieldAria}"
-										   :disable="vueData.editItem.isDefault === true"
+										   :disable="vueData.editItem.isSystem === true"
 										   @update:model-value="componentStates.itemModal.codeModified = (vueData.editItem.fieldCode != '')" />
 							<vu:grid-cell>
 							    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
@@ -254,11 +255,11 @@
 						                        label="${model.util.label('editLabelText.tooltip')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
-								<vu:include-data object="editItem" field="isDefault" />
+								<vu:include-data object="editItem" field="isSystem" />
 								<vu:include-data object="editItem" field="isMandatory" modifiable="true" />
-								<q-toggle class="q-field" :disable="vueData.editItem.isDefault" v-model="vueData.editItem.isMandatory"
-									th::title="|vueData.editItem.isDefault?`#{EfDesignerRequiredNotModifiable}`:''|"
-									th::aria-title="|vueData.editItem.isDefault?`#{EfDesignerRequiredNotModifiable}`:''|"
+								<q-toggle class="q-field" :disable="vueData.editItem.isSystem" v-model="vueData.editItem.isMandatory"
+									th::title="|vueData.editItem.isSystem?`#{EfDesignerRequiredNotModifiable}`:''|"
+									th::aria-title="|vueData.editItem.isSystem?`#{EfDesignerRequiredNotModifiable}`:''|"
 									th:label="${model.util.label('editItem.isMandatory')}"></q-toggle>
 								<input type="hidden" name="vContext[editItem][isMandatory]" v-bind:value="vueData.editItem.isMandatory" />
 							</vu:grid-cell>
@@ -309,9 +310,10 @@
 					<q-toolbar-title vu:text="#{EfDesignerPopupSectionTitle}" class="text-white"></q-toolbar-title>
 				</q-toolbar>
 				<q-card-section class="q-layout-padding">
-					<vu:include-data object="editItem" field="type" />
+					<vu:include-data object="editSection" field="haveSystemField" />
 					<vu:grid>
-						<vu:text-field object="editSection" field="code" autofocus />
+						<vu:text-field object="editSection" field="code" autofocus
+						               :disable="vueData.editSection.haveSystemField === true" />
 		                <vu:grid-cell>
 						    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
 						                        label="${model.util.label('editLabelText.label')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"

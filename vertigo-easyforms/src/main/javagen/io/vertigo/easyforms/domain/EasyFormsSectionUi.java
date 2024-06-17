@@ -15,6 +15,7 @@ public final class EasyFormsSectionUi implements DataObject {
 
 	private String code;
 	private String condition;
+	private Boolean haveSystemField;
 	
 	/**
 	 * Champ : DATA.
@@ -52,6 +53,25 @@ public final class EasyFormsSectionUi implements DataObject {
 	 */
 	public void setCondition(final String condition) {
 		this.condition = condition;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Have system field'.
+	 * @return Boolean haveSystemField
+	 */
+	@Field(smartType = "STyEfBoolean", label = "Have system field")
+	public Boolean getHaveSystemField() {
+		return haveSystemField;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Have system field'.
+	 * @param haveSystemField Boolean
+	 */
+	public void setHaveSystemField(final Boolean haveSystemField) {
+		this.haveSystemField = haveSystemField;
 	}
 	
 	/** {@inheritDoc} */

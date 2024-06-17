@@ -99,7 +99,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Field type'. */
 		fieldType,
 		/** Propriété 'System field'. */
-		isDefault,
+		isSystem,
 		/** Propriété 'Mandatory'. */
 		isMandatory,
 		/** Propriété 'Default value'. */
@@ -135,7 +135,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Section code'. */
 		code,
 		/** Propriété 'Display condition'. */
-		condition	}
+		condition,
+		/** Propriété 'Have system field'. */
+		haveSystemField	}
 
 	/** {@inheritDoc} */
 	@Override

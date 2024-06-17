@@ -94,7 +94,7 @@ public enum DtResources implements LocaleMessageKey {
 	/**
 	 * System field.
 	 */
-	fldEasyFormsItemUi$isDefault,
+	fldEasyFormsItemUi$isSystem,
 	/**
 	 * Mandatory.
 	 */
@@ -155,4 +155,8 @@ public enum DtResources implements LocaleMessageKey {
 	 * Display condition.
 	 */
 	fldEasyFormsSectionUi$condition,
+	/**
+	 * Have system field.
+	 */
+	fldEasyFormsSectionUi$haveSystemField,
 }

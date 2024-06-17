@@ -88,7 +88,7 @@ public final class EasyFormsRunnerController {
 	private void addRequiredContext(final ViewContext viewContext, final EasyForm easyForm, final boolean pushToFront) {
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final Set<String> listSuppliers = easyForm.getTemplate().getSections().stream()
-				.flatMap(s -> easyFormsRunnerServices.getAllFieldsFromSection(s).stream())
+				.flatMap(s -> s.getAllFields().stream())
 				.map(easyFormsUiUtil::getParametersForField)
 				.flatMap(p -> p.entrySet().stream()) // stream all parameters for all fields
 				.filter(p -> IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER.equals(p.getKey())) // get custom list configuration

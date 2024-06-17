@@ -16,7 +16,7 @@ public final class EasyFormsItemUi implements DataObject {
 	private String type;
 	private String fieldCode;
 	private String fieldType;
-	private Boolean isDefault;
+	private Boolean isSystem;
 	private Boolean isMandatory;
 	private String defaultValue;
 	private Boolean isList;
@@ -85,20 +85,20 @@ public final class EasyFormsItemUi implements DataObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'System field'.
-	 * @return Boolean isDefault
+	 * @return Boolean isSystem
 	 */
 	@Field(smartType = "STyEfBoolean", label = "System field")
-	public Boolean getIsDefault() {
-		return isDefault;
+	public Boolean getIsSystem() {
+		return isSystem;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'System field'.
-	 * @param isDefault Boolean
+	 * @param isSystem Boolean
 	 */
-	public void setIsDefault(final Boolean isDefault) {
-		this.isDefault = isDefault;
+	public void setIsSystem(final Boolean isSystem) {
+		this.isSystem = isSystem;
 	}
 	
 	/**
