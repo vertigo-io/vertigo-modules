@@ -65,10 +65,12 @@ VUiExtensions.methods = {
     },
     
     efSectionCanDelete : function(section) {
-        for (let item of section.items) {
-			if (!this.efItemCanDelete(item)) {
-				return false;
-			}
+        if (section?.items) {
+            for (let item of section.items) {
+                if (!this.efItemCanDelete(item)) {
+                    return false;
+                }
+            }
         }
         return true;
     },
@@ -123,11 +125,11 @@ VUiExtensions.methods = {
         if (item.type === 'FIELD') {
             return item.isSystem === false;
         } else if (item.type === 'BLOCK') {
-			for (let subItem of item.items) {
-				if (!this.efItemCanDelete(subItem)) {
-					return false;
-				}
-			}
+            for (let subItem of item.items) {
+                if (!this.efItemCanDelete(subItem)) {
+                    return false;
+                }
+            }
         }
         return true;
     },

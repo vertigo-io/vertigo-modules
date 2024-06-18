@@ -41,7 +41,6 @@ import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem.
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
-import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
@@ -50,9 +49,6 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 
 	public static final String FORM_INTERNAL_CTX_NAME = "ctx";
 	private static final Pattern EMPTY_HTML_PATTERN = Pattern.compile("^( |&nbsp;|<br */?>|</?div>)*$");
-
-	@Inject
-	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
 	@Inject
 	private EasyFormDAO easyFormDAO;
