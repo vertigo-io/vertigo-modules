@@ -104,7 +104,7 @@
 												</div>
 												<div th:case="'EfUicCheckbox'">
 													<vu:label-edit object="${object}" field="|form$${fieldCode}|" th:label="${fieldLabel}" required="false"
-																   th:@vue:before-mount="|function() { if (!slotProps.formData['${templateItem.code}']) { slotProps.formData['${templateItem.code}'] = []}}|">
+																   th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|">
 														<vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
