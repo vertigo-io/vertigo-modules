@@ -124,7 +124,7 @@ VUiExtensions.methods = {
     efItemCanDelete : function(item) {
         if (item.type === 'FIELD') {
             return item.isSystem === false;
-        } else if (item.type === 'BLOCK') {
+        } else if (item.type === 'BLOCK' && item?.items) {
             for (let subItem of item.items) {
                 if (!this.efItemCanDelete(subItem)) {
                     return false;
