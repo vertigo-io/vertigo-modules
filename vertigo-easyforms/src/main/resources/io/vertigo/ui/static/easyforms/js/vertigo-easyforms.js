@@ -93,7 +93,7 @@ VUiExtensions.methods = {
     },
     
     efSaveEditSection : function() {
-        let formData = this.vueDataParams(['editSection','editLabelText.label']);
+        let formData = this.vueDataParams(['editSection','editLabelText.longLabel']);
         formData.delete('vContext[editSection][haveSystemField]')//not modifiable
 
         formData.append('sectionIndex', this.$data.componentStates.sectionModal.sectionIndex);

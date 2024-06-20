@@ -136,6 +136,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldEasyFormsLabelUi$label,
 	/**
+	 * Label.
+	 */
+	fldEasyFormsLabelUi$longLabel,
+	/**
 	 * Tooltip.
 	 */
 	fldEasyFormsLabelUi$tooltip,

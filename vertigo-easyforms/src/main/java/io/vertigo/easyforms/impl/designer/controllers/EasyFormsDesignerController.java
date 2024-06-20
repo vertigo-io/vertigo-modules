@@ -267,7 +267,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		for (final String lang : supportedLang) {
 			final var newLabel = new EasyFormsLabelUi();
 			newLabel.setLang(lang);
-			newLabel.setLabel(labels.get(lang));
+			newLabel.setLongLabel(labels.get(lang));
 			list.add(newLabel);
 		}
 		viewContext.publishDtListModifiable(editLabelTextKey, list);
@@ -395,7 +395,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		}
 
 		section.setCode(editSectionUi.getCode());
-		section.setLabel(getFromEditLabelText(labels, EasyFormsLabelUi::getLabel));
+		section.setLabel(getFromEditLabelText(labels, EasyFormsLabelUi::getLongLabel));
 		section.setCondition(editSectionUi.getCondition());
 
 		viewContext.publishDto(efoKey, efo)

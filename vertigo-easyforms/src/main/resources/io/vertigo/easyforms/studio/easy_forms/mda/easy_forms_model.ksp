@@ -53,6 +53,7 @@ create DtDefinition DtEasyFormsFieldValidatorTypeUi {
 create DtDefinition DtEasyFormsLabelUi {
 	field lang 				{domain: DoEfLabel 				label:"Language"		}
 	field label 			{domain: DoEfLabel 				label:"Label"			}
+	field longLabel			{domain: DoEfLongLabel			label:"Label"			}
 	field tooltip 			{domain: DoEfLongLabel 			label:"Tooltip" 		}
 	field text 				{domain: DoEfTextHtml           label:"Text" 			}
 }

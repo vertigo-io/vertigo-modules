@@ -107,8 +107,8 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 			}
 		}
 
-		if (StringUtil.isBlank(labels.get(0).getLabel())) {
-			errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.label, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
+		if (StringUtil.isBlank(labels.get(0).getLongLabel())) {
+			errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.longLabel, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
 		}
 
 		if (!StringUtil.isBlank(sectionEdit.getCondition())) {

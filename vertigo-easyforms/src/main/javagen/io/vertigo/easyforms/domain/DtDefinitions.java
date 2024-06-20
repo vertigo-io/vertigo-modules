@@ -123,6 +123,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		lang,
 		/** Propriété 'Label'. */
 		label,
+		/** Propriété 'Label'. */
+		longLabel,
 		/** Propriété 'Tooltip'. */
 		tooltip,
 		/** Propriété 'Text'. */

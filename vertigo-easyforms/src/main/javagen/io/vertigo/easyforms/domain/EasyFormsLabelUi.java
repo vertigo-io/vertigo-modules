@@ -15,6 +15,7 @@ public final class EasyFormsLabelUi implements DataObject {
 
 	private String lang;
 	private String label;
+	private String longLabel;
 	private String tooltip;
 	private String text;
 	
@@ -54,6 +55,25 @@ public final class EasyFormsLabelUi implements DataObject {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Label'.
+	 * @return String longLabel
+	 */
+	@Field(smartType = "STyEfLongLabel", label = "Label")
+	public String getLongLabel() {
+		return longLabel;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Label'.
+	 * @param longLabel String
+	 */
+	public void setLongLabel(final String longLabel) {
+		this.longLabel = longLabel;
 	}
 	
 	/**

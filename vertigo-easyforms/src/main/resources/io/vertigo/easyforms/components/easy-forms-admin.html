@@ -315,8 +315,8 @@
 						<vu:text-field object="editSection" field="code" autofocus
 						               :disable="vueData.editSection.haveSystemField === true" />
 		                <vu:grid-cell>
-						    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
-						                        label="${model.util.label('editLabelText.label')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"
+						    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="longLabel"
+						                        label="${model.util.label('editLabelText.longLabel')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"
 						                        required="${stat.first}"/>
 						</vu:grid-cell>
 						<vu:grid-cell>
