@@ -74,9 +74,9 @@ public class OperationSolver<A, B extends IOperatorTerm<R>, R> {
 		final var inStack = resolveValues(operandResolver);
 		final var workingStack = new Stack<R>();
 
-		// stack is in reserve polish notation, just apply the operators on the 2 last operands
+		// stack is in reverse polish notation, just apply the operators on the 2 last operands
 		for (final var element : inStack) {
-			if (operatorClass.isAssignableFrom(element.getClass())) {
+			if (element != null && operatorClass.isAssignableFrom(element.getClass())) {
 				final var operator = operatorClass.cast(element);
 				final var right = workingStack.pop();
 				final var left = workingStack.pop();

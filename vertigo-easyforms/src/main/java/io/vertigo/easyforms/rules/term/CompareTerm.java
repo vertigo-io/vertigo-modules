@@ -35,12 +35,22 @@ public enum CompareTerm implements ITermRule {
 	}
 
 	public static Boolean doCompare(final Object left, final Object right, final CompareTerm operator) {
-		if (left.getClass() != right.getClass()) {
+		if (left != null && right != null && left.getClass() != right.getClass()) {
 			throw new ParsingValueException("Cannot compare different types", left, right, operator.str);
 		}
 
 		if (left instanceof String && operator != EQ && operator != NEQ) {
 			throw new ParsingValueException("Operator '" + operator.str + "' not supported for String", left, right, operator.str);
+		}
+
+		if (left == null || right == null) {
+			if (operator == EQ) {
+				return left == right;
+			} else if (operator == NEQ) {
+				return left != right;
+			} else {
+				return false;
+			}
 		}
 
 		final int compareResult;
