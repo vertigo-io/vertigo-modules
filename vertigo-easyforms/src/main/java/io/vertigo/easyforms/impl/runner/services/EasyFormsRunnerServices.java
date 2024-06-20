@@ -123,7 +123,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 					// test block condition, else continue;
 					if (!StringUtil.isBlank(block.getCondition())) {
 						final var result = EasyFormsRuleParser.parse(block.getCondition(), formattedFormData);
-						if (result.isValid() && !result.getResult()) {
+						if (!result.isValid() || !result.getResult()) {
 							continue;
 						}
 					}

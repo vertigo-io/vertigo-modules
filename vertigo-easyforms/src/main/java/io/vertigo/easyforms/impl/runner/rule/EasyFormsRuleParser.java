@@ -86,7 +86,7 @@ public class EasyFormsRuleParser {
 		final String prefix = keys[0];
 		final var currentGlobalKey = (parsedKey == "" ? "" : parsedKey + ".") + prefix;
 		if (!containsKey(data, prefix)) {
-			throw new ParsingValueException("Variable #" + initialKey + "# not found (" + currentGlobalKey + " is not defined)");
+			return null;
 		}
 
 		if (keys.length == 1) {
