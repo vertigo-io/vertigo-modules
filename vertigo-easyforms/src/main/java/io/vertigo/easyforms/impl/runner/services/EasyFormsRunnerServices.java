@@ -433,6 +433,16 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	}
 
 	private String valueToString(final SmartTypeDefinition smartType, final Object inputValue) {
+		if (smartType.getScope().isBasicType()) {
+			switch (smartType.getBasicType()) {
+				case LocalDate:
+				case Instant:
+					return (String) inputValue; // date are already formatted in json
+				default:
+					// use formatter (code after this switch)
+			}
+		}
+
 		final var targetJavaClass = smartType.getJavaClass();
 		var adapter = smartTypeManager.getTypeAdapters("easyForm").get(targetJavaClass);
 		if (adapter == null) {
