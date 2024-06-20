@@ -140,7 +140,8 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(EasyFormsData.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "ui")
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
 	@SmartTypeProperty(property = "indexType", value = "text_fr")
 	EfFormData,
 
