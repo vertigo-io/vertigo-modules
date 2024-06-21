@@ -222,7 +222,7 @@ public final class EasyFormsItemUi implements DataObject {
 	 * Récupère la valeur de la propriété 'Display condition'.
 	 * @return String condition
 	 */
-	@Field(smartType = "STyEfLabel", label = "Display condition")
+	@Field(smartType = "STyEfLongLabel", label = "Display condition")
 	public String getCondition() {
 		return condition;
 	}

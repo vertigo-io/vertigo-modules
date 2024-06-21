@@ -40,7 +40,7 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[_a-zA-Z0-9-]+$", msg = "Le code n'est pas valide, seuls les lettres, chiffres, _ et - sont autorisés.")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[a-zA-Z0-9]+$", msg = "Le code n'est pas valide, seuls les lettres et les chiffres sont autorisés.")
 	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
 	@SmartTypeProperty(property = "indexType", value = "code:keyword")
 	EfCode,
