@@ -165,8 +165,7 @@
 															stack-label
 															th:classappend="${templateItem.isMandatory?'v-field__required':''}"
 															th:aria-required="${templateItem.isMandatory}"
-															label-slot
-															th:style="${fieldType.uiComponentName == 'EfUicDate' ? 'max-width: 300px' : ''}" >
+															label-slot >
 														<template v-slot:label>
 															<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
 																<span vu:text="${fieldLabel}" />
