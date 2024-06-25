@@ -220,7 +220,7 @@
 					    	<vu:grid-cell>
 								<div th:text="#{EfDesignerContextDump}"></div>
 						    	<vu:include-data-primitive key="contextTree" />
-						    	<q-tree :nodes="vueData.contextTree.children" node-key="label" dense>
+						    	<q-tree :nodes="vueData.contextTree.children" node-key="key" dense>
 									<template v-slot:default-header="prop">
 										<div>{{ prop.node.label }}</div>
 										<q-btn v-if="!!prop.node.value"

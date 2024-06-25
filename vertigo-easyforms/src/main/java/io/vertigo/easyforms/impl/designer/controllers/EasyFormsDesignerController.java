@@ -414,32 +414,36 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		contextDescription.getContextMap().entrySet().stream()
 				.sorted(Comparator.comparing(Entry::getKey))
 				.forEach(entry -> {
-					addKeyToNodes(tree.getChildren(), entry.getKey(), entry.getKey(), entry.getValue());
+					addKeyToNodes(tree.getChildren(), null, entry.getKey(), entry.getValue());
 				});
 
 		viewContext.publishRef(contextTreeKey, tree);
 	}
 
-	private void addKeyToNodes(final List<TreeNode> nodes, final String fullKey, final String key, final Class<?> clazz) {
+	private void addKeyToNodes(final List<TreeNode> nodes, final String prevKey, final String key, final Class<?> clazz) {
 		if (!key.contains(".")) {
+			final var fullKey = prevKey == null ? key : prevKey + "." + key;
 			final var newNode = new TreeNode();
+			newNode.setKey(fullKey);
 			newNode.setLabel(key + " (" + clazz.getSimpleName() + ")");
 			newNode.setValue("#" + fullKey + "#");
 			nodes.add(newNode);
 		} else {
 			final var keySplit = key.split("\\.", 2);
-			final var newNode = getOrCreateNode(nodes, keySplit[0]);
+			final var fullKey = prevKey == null ? keySplit[0] : prevKey + "." + keySplit[0];
+			final var newNode = getOrCreateNode(nodes, fullKey, keySplit[0]);
 			addKeyToNodes(newNode.getChildren(), fullKey, keySplit[1], clazz);
 		}
 	}
 
-	private TreeNode getOrCreateNode(final List<TreeNode> nodes, final String key) {
+	private TreeNode getOrCreateNode(final List<TreeNode> nodes, final String fullKey, final String key) {
 		for (final TreeNode node : nodes) {
 			if (node.getLabel().equals(key)) {
 				return node;
 			}
 		}
 		final var node = new TreeNode();
+		node.setKey(fullKey);
 		node.setLabel(key);
 		node.setExpandable(true);
 		nodes.add(node);
