@@ -31,7 +31,7 @@ import io.vertigo.ui.core.FileInfoURIAdapter;
 public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(Long.class)
-	@Formatter(clazz = FormatterId.class, arg = "")
+	@Formatter(clazz = FormatterId.class)
 	EfId,
 
 	@SmartTypeDefinition(Boolean.class)
@@ -40,38 +40,38 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[a-zA-Z0-9]+$", msg = "Le code n'est pas valide, seuls les lettres et les chiffres sont autorisés.")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[a-zA-Z0-9]+$", resourceMsg = "EfInvalidCode")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
 	@SmartTypeProperty(property = "indexType", value = "code:keyword")
 	EfCode,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
 	@SmartTypeProperty(property = "indexType", value = "text_fr:facetable:sortable")
 	EfLabel,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "1000", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "1000")
 	EfLongLabel,
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9", msg = "")
-	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "0", msg = "")
+	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9")
+	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "0")
 	EfCount,
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9", msg = "")
-	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "1", msg = "")
+	@Constraint(clazz = ConstraintIntegerLength.class, arg = "9")
+	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "1")
 	EfCountStrict,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "10000", msg = "Le texte est trop long")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", msg = "Les caractères < > & et \" ne sont pas acceptés")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "10000")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", resourceMsg = "EfInvalidSpecialChars")
 	EfText,
 
 	@SmartTypeDefinition(String.class)
@@ -80,32 +80,32 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "UPPER")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "80", msg = "Le nom est trop long")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", msg = "Les caractères < > & et \" ne sont pas acceptés")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "80")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", resourceMsg = "EfInvalidSpecialChars")
 	EfNom,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "UPPER_FIRST")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "80", msg = "Le prénom est trop long")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", msg = "Les caractères < > & et \" ne sont pas acceptés")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "80")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", resourceMsg = "EfInvalidSpecialChars")
 	EfPrenom,
 
 	@SmartTypeDefinition(LocalDate.class)
 	@Formatter(clazz = FormatterDate.class, arg = "yyyy-MM-dd")
-	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now+100y", msg = "La date est trop loin dans le futur")
-	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-100y", msg = "La date est trop loin dans le passé")
+	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now+100y", resourceMsg = "EfDateTooLate")
+	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-100y", resourceMsg = "EfDateTooEarly")
 	EfDate,
 
 	@SmartTypeDefinition(LocalDate.class)
 	@Formatter(clazz = FormatterDate.class, arg = "yyyy-MM-dd")
-	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now", msg = "La date n'est pas valide")
-	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-120y", msg = "La date n'est pas valide")
+	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now", resourceMsg = "EfDateInvalid")
+	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-120y", resourceMsg = "EfDateInvalid")
 	EfDatePassee,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "LOWER")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9-]{2,3})+$", msg = "L'email n'est pas valide")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "80", msg = "L'email est trop long")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9-]{2,3})+$", resourceMsg = "EfInvalidEmail")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "80")
 	EfEmail,
 
 	@SmartTypeDefinition(String.class)
@@ -114,26 +114,26 @@ public enum EasyFormsSmartTypes {
 			//vérifie un numéro international avec +XX ou 00XX ou un numéro francais.
 			//Pour l'international seul le prefix 17 est filtré (pas d'autre commencant pas 1), et entre 2 et 13 chiffres après le prefix (la reco UIT-T limite à 15 le total)
 			//pour la france vérifie qu'on a +33 ou 0033 ou 0 + 9 chiffres . peut avoir des () des . ou des espaces. doit finir par 2 chiffres consécutifs
-			arg = "^((?:\\+|00)([17]|[245689]\\d|3[0-24-9]\\d)(?:\\W*\\d){2,13}\\d)|((((?:\\+|00)33\\W*)|0)[1-9](?:\\W*\\d){7}\\d)$", msg = "Le numéro de téléphone n'est pas valide. Utilisez un numéro français à 10 chiffres, ou indiquez un numéro au format international avec le préfixe du pays (exemple: +33 pour la France)")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "20", msg = "Le numéro de téléphone est trop long")
+			arg = "^((?:\\+|00)([17]|[245689]\\d|3[0-24-9]\\d)(?:\\W*\\d){2,13}\\d)|((((?:\\+|00)33\\W*)|0)[1-9](?:\\W*\\d){7}\\d)$", resourceMsg = "EfInvalidPhoneNumber")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "20")
 	EfTelephone,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintRegex.class, arg = "^(?:D|[A-Z]{3})[0-9]{9}$", msg = "Le numéro de visa n'est pas valide. Il doit être au format XXX123456789 : code pays puis 9 chiffres")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "12", msg = "Le numéro de visa n'est pas valide. Il doit être au format XXX123456789 : code pays puis 9 chiffres")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^(?:D|[A-Z]{3})[0-9]{9}$", resourceMsg = "EfInvalidVisa")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "12", resourceMsg = "EfInvalidVisa")
 	EfVisa,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "UPPER_FIRST")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "80", msg = "La nationalité est trop longue")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", msg = "Les caractères < > & et \" ne sont pas acceptés")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "80")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", resourceMsg = "EfInvalidSpecialChars")
 	EfNationalite,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintRegex.class, arg = "[0-9]{5}", msg = "Un code postal doit contenir 5 chiffres")
-	@Constraint(clazz = ConstraintStringLength.class, arg = "5", msg = "")
+	@Constraint(clazz = ConstraintRegex.class, arg = "[0-9]{5}", resourceMsg = "EfInvalidPostalCode")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "5")
 	EfCodePostal,
 
 	// INTERNALS
