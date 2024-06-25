@@ -1,5 +1,6 @@
 package io.vertigo.easyforms.impl.runner.rule;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -9,7 +10,8 @@ import java.util.Map;
 
 import io.vertigo.core.util.ClassUtil;
 
-public class FormContextDescription {
+public class FormContextDescription implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private final Map<String, Class<?>> contextMap = new HashMap<>();
 

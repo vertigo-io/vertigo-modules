@@ -124,6 +124,11 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	}
 
 	@Override
+	public FormContextDescription buildContextDescription(final EasyFormsTemplate easyFormsTemplate) {
+		return buildContextDescription(easyFormsTemplate, Map.of());
+	}
+
+	@Override
 	public FormContextDescription buildContextDescription(final EasyFormsTemplate easyFormsTemplate, final Map<String, Serializable> additionalContext) {
 		final var contextDescription = new FormContextDescription();
 
@@ -163,6 +168,8 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 			dtDefinition.getFields().forEach(field -> {
 				contextDescription.add(newKey + "." + field.name(), field.getTargetJavaClass());
 			});
+		} else if (value instanceof final FormContextDescription description) {
+			description.getContextMap().forEach((k, v) -> contextDescription.add(newKey + "." + k, v));
 		} else {
 			contextDescription.add(newKey, value.getClass());
 		}
