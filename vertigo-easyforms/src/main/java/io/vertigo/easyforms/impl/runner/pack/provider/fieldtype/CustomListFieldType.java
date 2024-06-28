@@ -34,10 +34,6 @@ public class CustomListFieldType implements IEasyFormsFieldTypeDefinitionSupplie
 
 	@Override
 	public Map<String, Object> getUiParams() {
-		if (uiComponent == UiComponentEnum.RADIO || uiComponent == UiComponentEnum.CHECKBOX) {
-			return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
-					RadioCheckUiComponent.LAYOUT, RadioCheckUiComponent.VALUE_HORIZONTAL);
-		}
 		return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME);
 	}
 

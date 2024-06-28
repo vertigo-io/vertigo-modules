@@ -20,7 +20,7 @@ import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinit
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 
-public class CustomFileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
+public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 
 	@Override
 	public EasyFormsSmartTypes getSmartType() {

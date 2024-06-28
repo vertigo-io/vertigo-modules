@@ -7,7 +7,7 @@ import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.UiComponentEnum;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.AutocompleteFieldType;
-import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.CustomFileFieldType;
+import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.FileFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.CustomListFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.InternalMapFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.RadioLayoutFieldType;
@@ -51,7 +51,7 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
-		FILE(new CustomFileFieldType()),
+		FILE(new FileFieldType()),
 
 		// internal use (null category means "hidden")
 		INTERNAL_LAYOUT(new RadioLayoutFieldType()),

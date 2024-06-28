@@ -60,6 +60,7 @@ import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsLabelUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.designer.Resources;
+import io.vertigo.easyforms.impl.runner.util.EasyFormsControllerUtil;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
 import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
@@ -129,6 +130,13 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
+
+		// add required context for field types parameters (add needed mdl and push context to front)
+		fieldTypeUiList.stream()
+				.filter(EasyFormsFieldTypeUi::getHasTemplate)
+				.forEach(fieldTypeUi -> {
+					EasyFormsControllerUtil.addRequiredContext(viewContext, fieldTypeUi.getParamTemplate(), true);
+				});
 
 		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
 		final var userLang = securityManager.getCurrentUserSession().map(UserSession::getLocale).map(Locale::getLanguage).orElse("fr");
