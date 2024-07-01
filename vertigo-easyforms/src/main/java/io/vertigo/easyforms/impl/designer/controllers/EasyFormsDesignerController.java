@@ -198,7 +198,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			}
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			itemUi.setCondition(block.getCondition());
-		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
+		} else if (item instanceof EasyFormsTemplateItemStatic) {
 			// nothing (text is handled outside this method)
 		} else {
 			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
