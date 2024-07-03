@@ -16,6 +16,7 @@ public interface IEasyFormsUiComponentDefinitionSupplier {
 	public static final IEasyFormsUiComponentDefinitionSupplier NO_PARAM = List::of;
 
 	public static final String ON_CHANGE = "onChange";
+	public static final String OTHER_UI_ATTRS = "otherUiAttrs";
 
 	public static final String LIST_SUPPLIER = "uiListSupplier";
 	public static final String CUSTOM_LIST_ARG_NAME = "customList";

@@ -7,8 +7,9 @@ import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldValidatorTypeDefinitionProvider.FieldValidatorEnum;
 import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.UiComponentEnum;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.AutocompleteFieldType;
-import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.FileFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.CustomListFieldType;
+import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.DateType;
+import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.FileFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.InternalMapFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.RadioLayoutFieldType;
 import io.vertigo.easyforms.impl.runner.pack.provider.fieldtype.SimpleFieldType;
@@ -29,7 +30,7 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 
 		EMAIL(new AutocompleteFieldType(EasyFormsSmartTypes.EfEmail, "email")),
 
-		DATE(EasyFormsSmartTypes.EfDate, UiComponentEnum.DATE),
+		DATE(new DateType()),
 
 		BIRTH_DATE(EasyFormsSmartTypes.EfDatePassee, UiComponentEnum.DATE),
 
