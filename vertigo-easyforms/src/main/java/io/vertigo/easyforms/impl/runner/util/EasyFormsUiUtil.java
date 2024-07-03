@@ -124,10 +124,9 @@ public final class EasyFormsUiUtil implements Serializable {
 		return condition
 				.replaceAll("#" + EasyFormsDesignerServices.FORM_INTERNAL_CTX_NAME + "\\.([a-zA-Z0-9_\\-\\.]+)#", "vueData.$1") // #ctx.xxx# => vueData.xxx
 				.replaceAll("#([a-zA-Z0-9_\\-\\.]+)#", context + ".$1") // #xxx# => vueData.object.field.xxx
-				.replaceAll("(?i) and ", " && ")
-				.replaceAll("(?i) or ", " || ")
-				.replaceAll("([^!><])=", "$1===")
-				.replaceAll("!=", "!==");
+				.replaceAll("(?i) and ", " && ") // and => &&
+				.replaceAll("(?i) or ", " || ") // or => ||
+				.replaceAll("([^!><])=", "$1=="); // = => ==
 	}
 
 	public String resolveLabel(final Map<String, String> labels, final List<String> supportedLang, final Boolean isI18n) {

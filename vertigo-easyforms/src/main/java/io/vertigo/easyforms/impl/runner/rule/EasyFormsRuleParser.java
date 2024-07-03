@@ -26,6 +26,8 @@ public class EasyFormsRuleParser {
 			return true;
 		} else if (s.equalsIgnoreCase("false")) {
 			return false;
+		} else if (s.equalsIgnoreCase("null")) {
+			return null;
 		}
 		return Integer.parseInt(s);
 	};

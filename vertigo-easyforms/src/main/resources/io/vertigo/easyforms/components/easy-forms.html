@@ -96,6 +96,7 @@
 												        
 														<q-option-group
 													    	th:v-model="${fieldModel}"
+													    	th:@update:model-value="__${fieldParameters['onChange']}__"
 													    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
 															th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
 													    	color="primary"
@@ -114,6 +115,7 @@
 														</vu:slot>
 														<q-option-group
 													    	th:v-model="${fieldModel}"
+													    	th:@update:model-value="__${fieldParameters['onChange']}__"
 													    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
 													    	type="checkbox"
 															th::inline="${(fieldParameters['layout'] != null && fieldParameters['layout'] == 'horizontal') ? true : false }"
@@ -126,6 +128,7 @@
 													<q-select
 														th:v-model="${fieldModel}"
 														fill-input map-options emit-value
+														th:@update:model-value="__${fieldParameters['onChange']}__"
 												        th::use-input="${fieldParameters['selectSearchable'] == true}" 
 												        th::hide-selected="${fieldParameters['selectSearchable'] == true}"
 												        th::options="${model.efoUiUtil.getDynamicListForField(templateItem, fieldParameters['selectSearchable'] != null && fieldParameters['selectSearchable'] ? 'componentStates.'+fieldId+'.searchValue' : null)}"

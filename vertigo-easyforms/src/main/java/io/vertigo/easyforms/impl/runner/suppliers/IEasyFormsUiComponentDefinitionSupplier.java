@@ -15,6 +15,8 @@ public interface IEasyFormsUiComponentDefinitionSupplier {
 
 	public static final IEasyFormsUiComponentDefinitionSupplier NO_PARAM = List::of;
 
+	public static final String ON_CHANGE = "onChange";
+
 	public static final String LIST_SUPPLIER = "uiListSupplier";
 	public static final String CUSTOM_LIST_ARG_NAME = "customList";
 	public static final EasyFormsTemplateItemField LIST_SUPPLIER_FIELD_PARAM = new EasyFormsTemplateItemField(LIST_SUPPLIER, "").withMandatory();

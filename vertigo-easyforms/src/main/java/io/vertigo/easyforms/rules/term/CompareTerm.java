@@ -35,29 +35,32 @@ public enum CompareTerm implements ITermRule {
 	}
 
 	public static Boolean doCompare(final Object left, final Object right, final CompareTerm operator) {
-		if (left != null && right != null && left.getClass() != right.getClass()) {
-			throw new ParsingValueException("Cannot compare different types", left, right, operator.str);
+		final Object leftResolved = convertIntegerToLong(left);
+		final Object rightResolved = convertIntegerToLong(right);
+
+		if (leftResolved != null && rightResolved != null && leftResolved.getClass() != rightResolved.getClass()) {
+			throw new ParsingValueException("Cannot compare different types", leftResolved, rightResolved, operator.str);
 		}
 
-		if (left instanceof String && operator != EQ && operator != NEQ) {
-			throw new ParsingValueException("Operator '" + operator.str + "' not supported for String", left, right, operator.str);
+		if (leftResolved instanceof String && operator != EQ && operator != NEQ) {
+			throw new ParsingValueException("Operator '" + operator.str + "' not supported for String", leftResolved, rightResolved, operator.str);
 		}
 
-		if (left == null || right == null) {
+		if (leftResolved == null || rightResolved == null) {
 			if (operator == EQ) {
-				return left == right;
+				return leftResolved == rightResolved;
 			} else if (operator == NEQ) {
-				return left != right;
+				return leftResolved != rightResolved;
 			} else {
 				return false;
 			}
 		}
 
 		final int compareResult;
-		if (left instanceof final Comparable leftC && right instanceof final Comparable rightC) {
-			compareResult = leftC.compareTo(rightC);
+		if (leftResolved instanceof final Comparable leftResolvedC && rightResolved instanceof final Comparable rightResolvedC) {
+			compareResult = leftResolvedC.compareTo(rightResolvedC);
 		} else {
-			throw new ParsingValueException("Type '" + left.getClass() + "' not supported");
+			throw new ParsingValueException("Type '" + leftResolved.getClass() + "' not supported");
 		}
 
 		switch (operator) {
@@ -77,6 +80,13 @@ public enum CompareTerm implements ITermRule {
 				throw new ParsingValueException("Operator '" + operator.str + "' not supported");
 		}
 
+	}
+
+	private static Object convertIntegerToLong(final Object o) {
+		if (o instanceof final Integer i) {
+			return Long.valueOf(i.longValue());
+		}
+		return o;
 	}
 
 }

@@ -47,7 +47,7 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "200")
 	@SmartTypeProperty(property = "indexType", value = "text_fr:facetable:sortable")
 	EfLabel,
 
