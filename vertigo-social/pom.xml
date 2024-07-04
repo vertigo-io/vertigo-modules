@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-vega</artifactId>
-			<version>${project.version}</version>
+			<version>${vertigo.version}</version>
 		</dependency>
 		
 		<!-- Mail -->
