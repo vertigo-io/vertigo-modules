@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@
  */
 package io.vertigo.audit.impl.trace;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import io.vertigo.audit.trace.Trace;
 import io.vertigo.audit.trace.TraceCriteria;
 import io.vertigo.audit.trace.TraceManager;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * @author xdurand
@@ -49,7 +48,7 @@ public final class TraceManagerImpl implements TraceManager {
 	}
 
 	@Override
-	public List<Trace> findTrace(final TraceCriteria auditTraceCriteria) {
+	public DtList<Trace> findTrace(final TraceCriteria auditTraceCriteria) {
 		return auditTraceStorePlugin.findByCriteria(auditTraceCriteria);
 	}
 

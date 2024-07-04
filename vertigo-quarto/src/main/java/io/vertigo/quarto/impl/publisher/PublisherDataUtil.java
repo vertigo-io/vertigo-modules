@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.definitions.DtProperty;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 import io.vertigo.quarto.publisher.definitions.PublisherField;
 import io.vertigo.quarto.publisher.definitions.PublisherNodeDefinition;
 import io.vertigo.quarto.publisher.model.PublisherNode;
@@ -55,7 +55,7 @@ public final class PublisherDataUtil {
 	 * @param dtoValue Dto contenant les valeurs
 	 * @return publisherNode du champ
 	 */
-	public static PublisherNode populateField(final PublisherNode parentNode, final String fieldName, final DtObject dtoValue) {
+	public static PublisherNode populateField(final PublisherNode parentNode, final String fieldName, final DataObject dtoValue) {
 		final PublisherNode childNode = parentNode.createNode(fieldName);
 		PublisherDataUtil.populateData(dtoValue, childNode);
 		parentNode.setNode(fieldName, childNode);
@@ -70,7 +70,7 @@ public final class PublisherDataUtil {
 	 */
 	public static void populateField(final PublisherNode parentNode, final String fieldName, final DtList<?> dtcValue) {
 		final List<PublisherNode> publisherNodes = new ArrayList<>();
-		for (final DtObject dto : dtcValue) {
+		for (final DataObject dto : dtcValue) {
 			final PublisherNode childNode = parentNode.createNode(fieldName);
 			PublisherDataUtil.populateData(dto, childNode);
 			publisherNodes.add(childNode);
@@ -83,13 +83,13 @@ public final class PublisherDataUtil {
 	 * @param dto Objet de données
 	 * @param publisherDataNode PublisherDataNode
 	 */
-	public static void populateData(final DtObject dto, final PublisherNode publisherDataNode) {
+	public static void populateData(final DataObject dto, final PublisherNode publisherDataNode) {
 		Assertion.check()
 				.isNotNull(dto)
 				.isNotNull(publisherDataNode);
 		//-----
-		final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(dto);
-		final List<String> dtFieldNames = getDtFieldList(dtDefinition);
+		final DataDefinition dataDefinition = DataModelUtil.findDataDefinition(dto);
+		final List<String> dtFieldNames = getDataFieldList(dataDefinition);
 		final PublisherNodeDefinition pnDefinition = publisherDataNode.getNodeDefinition();
 		int nbMappedField = 0;
 		for (final PublisherField publisherField : pnDefinition.getFields()) {
@@ -97,12 +97,12 @@ public final class PublisherDataUtil {
 			if (!dtFieldNames.contains(fieldName)) {
 				continue;
 			}
-			final DtField dtField = dtDefinition.getField(fieldName);
+			final DataField dtField = dataDefinition.getField(fieldName);
 			final Object value = dtField.getDataAccessor().getValue(dto);
 			nbMappedField++;
 			switch (publisherField.getFieldType()) {
 				case Boolean:
-					Assertion.check().isTrue(value instanceof Boolean, "Le champ {0} du DT {1} doit être un Boolean (non null)", fieldName, dtDefinition.getName());
+					Assertion.check().isTrue(value instanceof Boolean, "Le champ {0} du DT {1} doit être un Boolean (non null)", fieldName, dataDefinition.getName());
 					publisherDataNode.setBoolean(fieldName, (Boolean) value);
 					break;
 				case String:
@@ -115,7 +115,7 @@ public final class PublisherDataUtil {
 						//et le champ sera peut être peuplé plus tard
 						final DtList<?> dtc = (DtList<?>) value;
 						final List<PublisherNode> publisherNodes = new ArrayList<>();
-						for (final DtObject element : dtc) {
+						for (final DataObject element : dtc) {
 							final PublisherNode publisherNode = publisherDataNode.createNode(fieldName);
 							populateData(element, publisherNode);
 							publisherNodes.add(publisherNode);
@@ -127,7 +127,7 @@ public final class PublisherDataUtil {
 					if (value != null) { //on autorise les objet null,
 						//car la composition d'objet métier n'est pas obligatoire
 						//et le champ sera peut être peuplé plus tard
-						final DtObject element = (DtObject) value;
+						final DataObject element = (DataObject) value;
 						final PublisherNode elementPublisherDataNode = publisherDataNode.createNode(fieldName);
 						populateData(element, elementPublisherDataNode);
 						publisherDataNode.setNode(fieldName, elementPublisherDataNode);
@@ -141,7 +141,7 @@ public final class PublisherDataUtil {
 		}
 		Assertion.check().isTrue(nbMappedField > 0,
 				"Aucun champ du Dt ne correspond à ceux du PublisherNode, vérifier vos définitions. ({0}:{1}) et ({2}:{3})", "PN",
-				pnDefinition.getFields(), dtDefinition.getName(), dtFieldNames);
+				pnDefinition.getFields(), dataDefinition.getName(), dtFieldNames);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public final class PublisherDataUtil {
 	 * @param dtField le champs à rendre
 	 * @return la chaine de caractère correspondant au rendu du champs
 	 */
-	public static String renderStringField(final DtObject dto, final DtField dtField) {
+	public static String renderStringField(final DataObject dto, final DataField dtField) {
 		final String unit = dtField.smartTypeDefinition().getProperties().getValue(DtProperty.UNIT);
 		final SmartTypeManager smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
 		final Object value = dtField.getDataAccessor().getValue(dto);
@@ -158,9 +158,9 @@ public final class PublisherDataUtil {
 		return formattedValue + (!StringUtil.isBlank(unit) ? " " + unit : "");
 	}
 
-	private static List<String> getDtFieldList(final DtDefinition dtDefinition) {
+	private static List<String> getDataFieldList(final DataDefinition dataDefinition) {
 		final List<String> dtFieldNames = new ArrayList<>();
-		for (final DtField dtField : dtDefinition.getFields()) {
+		for (final DataField dtField : dataDefinition.getFields()) {
 			dtFieldNames.add(dtField.name());
 		}
 		return dtFieldNames;
@@ -172,21 +172,21 @@ public final class PublisherDataUtil {
 
 	/**
 	 * Méthode utilitaire pour générer une proposition de définition de PublisherNode, pour des DtDefinitions.
-	 * @param dtDefinitions DtDefinition à utiliser.
+	 * @param dataDefinitions DtDefinition à utiliser.
 	 * @return Proposition de PublisherNode.
 	 */
-	public static String generatePublisherNodeDefinitionAsKsp(final String... dtDefinitions) {
+	public static String generatePublisherNodeDefinitionAsKsp(final String... dataDefinitions) {
 		final StringBuilder sb = new StringBuilder();
-		for (final String dtDefinitionUrn : dtDefinitions) {
-			appendPublisherNodeDefinition(sb, Node.getNode().getDefinitionSpace().resolve(dtDefinitionUrn, DtDefinition.class));
+		for (final String dataDefinitionUrn : dataDefinitions) {
+			appendPublisherNodeDefinition(sb, Node.getNode().getDefinitionSpace().resolve(dataDefinitionUrn, DataDefinition.class));
 			sb.append('\n');
 		}
 		return sb.toString();
 	}
 
-	private static void appendPublisherNodeDefinition(final StringBuilder sb, final DtDefinition dtDefinition) {
-		sb.append("PN_").append(dtDefinition.id().shortName()).append("  = new PublisherNode (\n");
-		for (final DtField dtField : dtDefinition.getFields()) {
+	private static void appendPublisherNodeDefinition(final StringBuilder sb, final DataDefinition dataDefinition) {
+		sb.append("PN_").append(dataDefinition.id().shortName()).append("  = new PublisherNode (\n");
+		for (final DataField dtField : dataDefinition.getFields()) {
 			final String fieldName = dtField.name();
 			switch (dtField.smartTypeDefinition().getScope()) {
 				case BASIC_TYPE:
@@ -198,9 +198,9 @@ public final class PublisherDataUtil {
 					break;
 				case DATA_TYPE:
 					if (dtField.cardinality().hasMany()) {
-						sb.append("\t\tlistField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DtDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
+						sb.append("\t\tlistField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DataDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
 					} else {
-						sb.append("\t\tdataField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DtDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
+						sb.append("\t\tdataField[").append(fieldName).append(")] = new NodeField (type = PN_").append(DataDefinition.PREFIX + dtField.smartTypeDefinition().getJavaClass().getSimpleName()).append(";);\n");
 					}
 					break;
 				case VALUE_TYPE:

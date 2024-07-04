@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,46 +20,46 @@ package io.vertigo.quarto.publisher.data.domain;
 import java.time.LocalDate;
 
 import io.vertigo.core.lang.Cardinality;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DataObject;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Objet de données AbstractPublisherMock
  */
-public final class PublisherMock implements DtObject {
+public final class PublisherMock implements DataObject {
 	/**
 	 * SerialVersionUID.
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Titre")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Titre")
 	private String titre;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Nom")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Nom")
 	private String nom;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Prénom")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Prénom")
 	private String prenom;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Adresse (multi ligne)")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Adresse (multi ligne)")
 	private String address;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Commentaire (multi paragraphe)")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Commentaire (multi paragraphe)")
 	private String commentaire;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "booleen 1")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "booleen 1")
 	private Boolean boolean1;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "booleen 2")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "booleen 2")
 	private Boolean boolean2;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "booleen 3")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "booleen 3")
 	private Boolean boolean3;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Test champs inutilisé")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Test champs inutilisé")
 	private String testDummy;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyLong", label = "Test long")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyLong", label = "Test long")
 	private Long testLong;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyDouble", label = "Test double")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyDouble", label = "Test double")
 	private Double testDouble;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyInteger", label = "Test integer")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyInteger", label = "Test integer")
 	private Integer testInteger;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyDate", label = "Test date")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyDate", label = "Test date")
 	private LocalDate testDate;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyDtPublisherMock", cardinality = Cardinality.MANY, label = "Test list")
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.quarto.publisher.data.domain.PublisherMock> dtcTest;
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyDtPublisherMock", cardinality = Cardinality.MANY, label = "Test list")
+	private io.vertigo.datamodel.data.model.DtList<io.vertigo.quarto.publisher.data.domain.PublisherMock> dtcTest;
 
 	/**
 	 * Champ : DATA.
@@ -300,7 +300,7 @@ public final class PublisherMock implements DtObject {
 	 * Récupère la valeur de la propriété 'Test list'.
 	 * @return DtList<io.vertigo.publisher.mock.PublisherMock> dtcTest
 	 */
-	public final io.vertigo.datamodel.structure.model.DtList<io.vertigo.quarto.publisher.data.domain.PublisherMock> getDtcTest() {
+	public final io.vertigo.datamodel.data.model.DtList<io.vertigo.quarto.publisher.data.domain.PublisherMock> getDtcTest() {
 		return dtcTest;
 	}
 
@@ -309,7 +309,7 @@ public final class PublisherMock implements DtObject {
 	 * Définit la valeur de la propriété 'Test list'.
 	 * @param dtcTest DtList<io.vertigo.publisher.mock.PublisherMock>
 	 */
-	public final void setDtcTest(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.quarto.publisher.data.domain.PublisherMock> dtcTest) {
+	public final void setDtcTest(final io.vertigo.datamodel.data.model.DtList<io.vertigo.quarto.publisher.data.domain.PublisherMock> dtcTest) {
 		this.dtcTest = dtcTest;
 	}
 }

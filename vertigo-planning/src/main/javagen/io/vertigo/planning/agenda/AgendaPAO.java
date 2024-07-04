@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,24 @@ public final class AgendaPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkCloseTrancheHoraireByTrhId.
+	 * @param trhIds List de Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkCloseTrancheHoraireByTrhId",
+			request = """
+			delete from creneau cre where cre.trh_id in ( #trhIds.rownum# );
+        update tranche_horaire trh set nb_guichet = 0, instant_Publication = null
+        where trh.trh_id in ( #trhIds.rownum# );""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void closeTrancheHoraireByTrhId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "trhIds", smartType = "STyPId") final java.util.List<Long> trhIds) {
+		final Task task = createTaskBuilder("TkCloseTrancheHoraireByTrhId")
+				.addValue("trhIds", trhIds)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkCountUnlinkReservationPerXminByAgeId.
 	 * @param ageId Long
 	 * @param startDate LocalDate
@@ -85,7 +103,7 @@ public final class AgendaPAO implements StoreServices {
             GROUP BY res.date_Locale, floor(res.minutes_Debut/<%=minuteAgg%>);""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPlageHoraireDisplay", name = "plageHoraires")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> countUnlinkReservationPerXminByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "minuteAgg", smartType = "STyPMinute") final Integer minuteAgg) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> countUnlinkReservationPerXminByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "minuteAgg", smartType = "STyPMinute") final Integer minuteAgg) {
 		final Task task = createTaskBuilder("TkCountUnlinkReservationPerXminByAgeId")
 				.addValue("ageId", ageId)
 				.addValue("startDate", startDate)
@@ -219,11 +237,11 @@ public final class AgendaPAO implements StoreServices {
                 min(instant_Publication) as instant_Publication  
             from (select
                         plh.date_Locale as date_Locale,
-                        sum(((trh.instant_Publication is null)::int)) * plh.nb_Guichet as nb_Non_Publie,
-                        sum(COALESCE(((trh.instant_Publication > #now#)::int),0)) * plh.nb_Guichet as nb_Planifie,
-                        sum(COALESCE(((trh.instant_Publication <= #now#)::int),0)) * plh.nb_Guichet as nb_Publie,
+                        sum(((trh.instant_Publication is null)::int) * trh.nb_Guichet) as nb_Non_Publie,
+                        sum(COALESCE(((trh.instant_Publication > #now#)::int),0) * trh.nb_Guichet) as nb_Planifie,
+                        sum(COALESCE(((trh.instant_Publication <= #now#)::int),0) * trh.nb_Guichet) as nb_Publie,
                         sum(COALESCE(res.nb_Reserve,0)) as nb_Reserve,
-                        count(1) * plh.nb_Guichet as nb_Total,
+                        sum(trh.nb_Guichet) as nb_Total,
                         min(trh.instant_Publication) as instant_Publication              
                    from plage_horaire plh
                         join tranche_horaire trh on trh.plh_id = plh.plh_id
@@ -244,7 +262,7 @@ public final class AgendaPAO implements StoreServices {
                    ORDER BY date_Locale;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDateDisponibleDisplay", name = "plageHoraires")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.DateDisponibleDisplay> getDateDisponibleDisplayByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.DateDisponibleDisplay> getDateDisponibleDisplayByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
 		final Task task = createTaskBuilder("TkGetDateDisponibleDisplayByAgeId")
 				.addValue("ageId", ageId)
 				.addValue("startDate", startDate)
@@ -316,7 +334,7 @@ public final class AgendaPAO implements StoreServices {
            AND plh.date_locale BETWEEN #startDate# AND #endDate#;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDefaultPlageHoraire", name = "plageHoraires")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.DefaultPlageHoraire> getDefaultPlageHoraireByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.DefaultPlageHoraire> getDefaultPlageHoraireByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate) {
 		final Task task = createTaskBuilder("TkGetDefaultPlageHoraireByAgeId")
 				.addValue("ageId", ageId)
 				.addValue("startDate", startDate)
@@ -339,30 +357,26 @@ public final class AgendaPAO implements StoreServices {
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetFirstLocalDatesFreeOfPlageHorairePerDayOfWeek",
 			request = """
-			WITH plhTo as 
-                (SELECT distinct plhTo.date_locale, plhFrom.dow, 
-                row_number() over (partition by extract(isodow from plhTo.date_locale) order by plhTo.date_locale asc) as date_per_dow_order
-                FROM (SELECT distinct age_id, date_locale from plage_horaire 
-                        WHERE age_id = #ageId# 
-                        AND date_locale between #dateLocaleToDebut# AND #dateLocaleToFin#) plhTo
-                    join (SELECT distinct age_id, date_locale, extract(isodow from date_locale) dow --on ne garde que les DayOfWeek de la semaine source
+			WITH plhTo as --récupère la liste jour déjà renseigné en collision avec celles de la semaine à copier
+                (SELECT distinct plhTo.date_locale, plhFrom.dow, plhTo.woe,
+                row_number() over (partition by plhFrom.dow order by plhTo.date_locale asc) as date_per_dow_order
+                FROM (SELECT distinct age_id, date_locale, extract(isodow from date_locale) dow, floor(extract(JULIAN from date_locale)/7) woe 
+                        FROM plage_horaire 
+                        WHERE age_id = #ageId#
+                        AND date_locale between #dateLocaleFromDebut# AND #dateLocaleFromFin#) as plhFrom
+                    join (SELECT distinct age_id, date_locale, extract(isodow from date_locale) dow, floor(extract(JULIAN from date_locale)/7) woe --on ne garde que les DayOfWeek de la semaine source
                             FROM plage_horaire plh
-                            WHERE age_id = #ageId# 
-                              AND date_locale between #dateLocaleFromDebut# AND #dateLocaleFromFin#) as plhFrom 
-                    on plhTo.age_id = plhFrom.age_id and plhFrom.dow = extract(isodow from plhTo.date_locale))
-            
-            SELECT firstFreeDate 
+                            WHERE age_id = #ageId#
+                              AND date_locale between #dateLocaleToDebut# AND #dateLocaleToFin#) as plhTo 
+                    on plhTo.age_id = plhFrom.age_id and plhTo.dow = plhFrom.dow)
+            SELECT *
             FROM (
-                SELECT firstDate.date_locale+7 firstFreeDate, firstDate.dow, row_number() over (partition by firstDate.dow  order by  firstDate.date_locale asc)
-                FROM plhTo as firstDate 
-                     left join plhTo as secondDate on firstDate.dow = secondDate.dow --on filtre les dates qui se suivent à 7 jours pour un même jour de la semaine
-                        and secondDate.date_per_dow_order = firstDate.date_per_dow_order+1 
-                        and secondDate.date_locale = firstDate.date_locale+7
-                WHERE secondDate.date_locale is null --on ne retient que ceux qui ont un jour libre
-                ) firstDates
-            WHERE firstDates.row_number = 1
-            order by firstDates.firstFreeDate
-           ;""",
+                SELECT (firstDate.date_locale+7-firstDate.dow::integer+1) firstFreeDate, row_number() over (partition by firstDate.dow  order by  firstDate.date_locale asc) 
+                FROM plhTo as firstDate
+                WHERE not exists (select 1 from plhTo as secondDate where secondDate.woe = firstDate.woe+1) --on filtre les dates dont la semaine suivante est libre
+            ) firstDates
+           WHERE firstDates.row_number = 1
+           order by firstDates.firstFreeDate;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyPLocalDate", name = "firstDatesPerDow")
 	public java.util.List<java.time.LocalDate> getFirstLocalDatesFreeOfPlageHorairePerDayOfWeek(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocaleFromDebut", smartType = "STyPLocalDate") final java.time.LocalDate dateLocaleFromDebut, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocaleFromFin", smartType = "STyPLocalDate") final java.time.LocalDate dateLocaleFromFin, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocaleToDebut", smartType = "STyPLocalDate") final java.time.LocalDate dateLocaleToDebut, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocaleToFin", smartType = "STyPLocalDate") final java.time.LocalDate dateLocaleToFin) {
@@ -404,7 +418,7 @@ public final class AgendaPAO implements StoreServices {
             GROUP BY trh.trh_id, rec.rec_id;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtAffectionReservation", name = "affectionReservation")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.AffectionReservation> getLinkReservationAfterPublishByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.AffectionReservation> getLinkReservationAfterPublishByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate) {
 		final Task task = createTaskBuilder("TkGetLinkReservationAfterPublishByAgeId")
 				.addValue("ageId", ageId)
 				.addValue("startDate", startDate)
@@ -432,10 +446,10 @@ public final class AgendaPAO implements StoreServices {
                 plh.minutes_Debut as minutes_Debut,
                 plh.minutes_Fin as minutes_Fin,
                 plh.nb_Guichet as nb_Guichet,
-                sum(((trh.instant_Publication is null)::int)) * plh.nb_Guichet as nb_Non_Publie,
-                sum(COALESCE(((trh.instant_Publication > #now#)::int),0)) * plh.nb_Guichet as nb_Planifie,
-                sum(COALESCE(((trh.instant_Publication <= #now#)::int),0)) * plh.nb_Guichet as nb_Publie,
-                count(1) * plh.nb_Guichet as nb_Total,
+                sum(((trh.instant_Publication is null)::int) * trh.nb_Guichet) as nb_Non_Publie,
+                sum(COALESCE(((trh.instant_Publication > #now#)::int),0) * trh.nb_Guichet) as nb_Planifie,
+                sum(COALESCE(((trh.instant_Publication <= #now#)::int),0) * trh.nb_Guichet) as nb_Publie,
+                sum(trh.nb_Guichet) as nb_Total,
                 min(trh.instant_Publication) as instant_Publication,
                 sum(COALESCE(res.nb_Reserve_Non_Publie,0)) as nb_Reserve_Non_Publie,
                 sum(COALESCE(res.nb_Reserve,0)) as nb_Reserve                
@@ -443,7 +457,7 @@ public final class AgendaPAO implements StoreServices {
                 join tranche_horaire trh on trh.plh_id = plh.plh_id
                 left join (
                     SELECT trh.trh_Id as trh_Id,
-                          sum (case when trh.instant_Publication <= #now# then 0 else 1 end) as nb_Reserve_Non_Publie,
+                          sum (case when trh.instant_Publication <= #now# and trh.nb_Guichet > 0 then 0 else 1 end) as nb_Reserve_Non_Publie,
                           count(1) as nb_Reserve
                     FROM reservation_creneau res
                          join tranche_horaire trh on trh.age_id = res.age_id 
@@ -458,7 +472,7 @@ public final class AgendaPAO implements StoreServices {
            GROUP BY plh.plh_Id, plh.date_Locale, plh.minutes_Debut, plh.minutes_Fin, plh.nb_Guichet;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPlageHoraireDisplay", name = "plageHoraires")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> getPlageHoraireDisplayByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> getPlageHoraireDisplayByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
 		final Task task = createTaskBuilder("TkGetPlageHoraireDisplayByAgeId")
 				.addValue("ageId", ageId)
 				.addValue("startDate", startDate)
@@ -485,10 +499,10 @@ public final class AgendaPAO implements StoreServices {
                 plh.minutes_Debut as minutes_Debut,
                 plh.minutes_Fin as minutes_Fin,
                 plh.nb_Guichet as nb_Guichet,
-                sum(((trh.instant_Publication is null)::int)) * plh.nb_Guichet as nb_Non_Publie,
-                sum(COALESCE(((trh.instant_Publication > #now#)::int),0)) * plh.nb_Guichet as nb_Planifie,
-                sum(COALESCE(((trh.instant_Publication <= #now#)::int),0)) * plh.nb_Guichet as nb_Publie,
-                count(1) * plh.nb_Guichet as nb_Total,
+                sum(((trh.instant_Publication is null)::int) * trh.nb_Guichet) as nb_Non_Publie,
+                sum(COALESCE(((trh.instant_Publication > #now#)::int),0) * trh.nb_Guichet) as nb_Planifie,
+                sum(COALESCE(((trh.instant_Publication <= #now#)::int),0) * trh.nb_Guichet) as nb_Publie,
+                sum(trh.nb_Guichet) as nb_Total,
                 min(trh.instant_Publication) as instant_Publication,
                 sum(COALESCE(res.nb_Reserve_Non_Publie,0)) as nb_Reserve_Non_Publie,
                 sum(COALESCE(res.nb_Reserve,0)) as nb_Reserve
@@ -496,7 +510,7 @@ public final class AgendaPAO implements StoreServices {
                 join tranche_horaire trh on trh.plh_id = plh.plh_id
                 left join (
                     SELECT trh.trh_Id as trh_Id,
-                          sum (case when trh.instant_Publication <= #now# then 0 else 1 end) as nb_Reserve_Non_Publie,
+                          sum (case when trh.instant_Publication <= #now# and trh.nb_Guichet > 0 then 0 else 1 end) as nb_Reserve_Non_Publie,
                           count(1) as nb_Reserve
                     FROM reservation_creneau res
                          join tranche_horaire trh on trh.age_id = res.age_id 
@@ -618,7 +632,7 @@ public final class AgendaPAO implements StoreServices {
            from tranche_horaire trh
            left join (
                     SELECT trh.trh_Id as trh_Id,
-                          sum (case when trh.instant_Publication <= #now# then 0 else 1 end) as nb_Reserve_Non_Publie,
+                          sum (case when trh.instant_Publication <= #now# and trh.nb_Guichet > 0 then 0 else 1 end) as nb_Reserve_Non_Publie,
                           count(1) as nb_Reserve
                     FROM reservation_creneau res
                          join tranche_horaire trh on trh.age_id = res.age_id 
@@ -631,7 +645,7 @@ public final class AgendaPAO implements StoreServices {
            ORDER BY trh.minutes_Debut;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraireDisplay", name = "trancheHoraires")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocale", smartType = "STyPLocalDate") final java.time.LocalDate dateLocale, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocale", smartType = "STyPLocalDate") final java.time.LocalDate dateLocale, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
 		final Task task = createTaskBuilder("TkGetTrancheHoraireDisplayByDate")
 				.addValue("ageId", ageId)
 				.addValue("dateLocale", dateLocale)
@@ -668,7 +682,7 @@ public final class AgendaPAO implements StoreServices {
            from tranche_horaire trh
            left join (
                     SELECT trh.trh_Id as trh_Id,
-                          sum (case when trh.instant_Publication <= #now# then 0 else 1 end) as nb_Reserve_Non_Publie,
+                          sum (case when trh.instant_Publication <= #now# and trh.nb_Guichet > 0 then 0 else 1 end) as nb_Reserve_Non_Publie,
                           count(1) as nb_Reserve
                     FROM reservation_creneau res
                          join tranche_horaire trh on trh.age_id = res.age_id 
@@ -681,7 +695,7 @@ public final class AgendaPAO implements StoreServices {
            ORDER BY trh.minutes_Debut;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraireDisplay", name = "trancheHoraires")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> getTrancheHoraireDisplayByPlhId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "plhId", smartType = "STyPId") final Long plhId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> getTrancheHoraireDisplayByPlhId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "plhId", smartType = "STyPId") final Long plhId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
 		final Task task = createTaskBuilder("TkGetTrancheHoraireDisplayByPlhId")
 				.addValue("plhId", plhId)
 				.addValue("now", now)
@@ -702,7 +716,7 @@ public final class AgendaPAO implements StoreServices {
         SET rec_Id = #affectionReservation.recId#
         WHERE cre_id = #affectionReservation.creId#;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
-	public void linkCreneauToReservation(@io.vertigo.datamodel.task.proxy.TaskInput(name = "affectionReservation", smartType = "STyDtAffectionReservation") final io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.AffectionReservation> affectionReservation) {
+	public void linkCreneauToReservation(@io.vertigo.datamodel.task.proxy.TaskInput(name = "affectionReservation", smartType = "STyDtAffectionReservation") final io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.AffectionReservation> affectionReservation) {
 		final Task task = createTaskBuilder("TkLinkCreneauToReservation")
 				.addValue("affectionReservation", affectionReservation)
 				.build();
@@ -724,6 +738,7 @@ public final class AgendaPAO implements StoreServices {
             SET instant_publication = #instantPublication#
         WHERE age_id = #ageId#
         AND trh.date_locale BETWEEN #startDate# AND #endDate#
+        AND trh.nb_Guichet > 0
         AND (trh.instant_Publication is null OR trh.instant_Publication > #now#);""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void publishTrancheHoraireByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageId", smartType = "STyPId") final Long ageId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now, @io.vertigo.datamodel.task.proxy.TaskInput(name = "instantPublication", smartType = "STyPInstant") final java.time.Instant instantPublication) {
@@ -735,6 +750,41 @@ public final class AgendaPAO implements StoreServices {
 				.addValue("instantPublication", instantPublication)
 				.build();
 		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkPurgePlageHoraireByDateLocale.
+	 * @param purgeDate LocalDate
+	 * @return Integer intSqlRowcount
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkPurgePlageHoraireByDateLocale",
+			request = """
+			delete from creneau c
+        using tranche_horaire th, plage_horaire ph
+        where c.trh_id = th.trh_id
+        and th.plh_id = ph.plh_id
+        and ph.date_locale < #purgeDate#;
+        
+        delete from reservation_creneau rc
+        where rc.date_locale < #purgeDate#;
+        
+        delete from tranche_horaire th
+        using plage_horaire ph
+        where th.plh_id = ph.plh_id
+        and ph.date_locale < #purgeDate#;
+        
+        delete from plage_horaire ph
+        where ph.date_locale < #purgeDate#;""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyPNombre", name = "intSqlRowcount")
+	public Integer purgePlageHoraireByDateLocale(@io.vertigo.datamodel.task.proxy.TaskInput(name = "purgeDate", smartType = "STyPLocalDate") final java.time.LocalDate purgeDate) {
+		final Task task = createTaskBuilder("TkPurgePlageHoraireByDateLocale")
+				.addValue("purgeDate", purgeDate)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 	/**
@@ -750,7 +800,7 @@ public final class AgendaPAO implements StoreServices {
         WHERE cre_id = #creneaux.0.cre_id# and rec_id is null;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyPNombre", name = "intSqlRowcount")
-	public Integer reserverCreneaux(@io.vertigo.datamodel.task.proxy.TaskInput(name = "creneaux", smartType = "STyDtCreneau") final io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.Creneau> creneaux) {
+	public Integer reserverCreneaux(@io.vertigo.datamodel.task.proxy.TaskInput(name = "creneaux", smartType = "STyDtCreneau") final io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.Creneau> creneaux) {
 		final Task task = createTaskBuilder("TkReserverCreneaux")
 				.addValue("creneaux", creneaux)
 				.build();

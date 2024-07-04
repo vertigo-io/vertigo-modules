@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 package io.vertigo.audit.plugins.trace.memory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,8 +25,8 @@ import io.vertigo.audit.impl.trace.TraceStorePlugin;
 import io.vertigo.audit.trace.Trace;
 import io.vertigo.audit.trace.TraceCriteria;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.ListBuilder;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  *
@@ -54,8 +53,8 @@ public final class MemoryTraceStorePlugin implements TraceStorePlugin {
 	}
 
 	@Override
-	public List<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
-		final ListBuilder<Trace> auditTracesBuilder = new ListBuilder<>();
+	public DtList<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
+		final DtList<Trace> auditTracesBuilder = new DtList<>(Trace.class);
 
 		for (final Trace auditTrace : inMemoryStore.values()) {
 			final boolean categoryMatched = matchCategory(auditTraceCriteria, auditTrace);
@@ -68,9 +67,7 @@ public final class MemoryTraceStorePlugin implements TraceStorePlugin {
 			}
 		}
 
-		return auditTracesBuilder
-				.unmodifiable()
-				.build();
+		return auditTracesBuilder;
 	}
 
 	private static boolean matchItem(final TraceCriteria auditTraceCriteria, final Trace auditTrace) {

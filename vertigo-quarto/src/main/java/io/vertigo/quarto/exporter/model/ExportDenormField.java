@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 package io.vertigo.quarto.exporter.model;
 
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * Définition d'une colonne de type dénormalisation à exporter. On précise la
@@ -30,8 +30,8 @@ import io.vertigo.datamodel.structure.model.DtList;
  */
 public final class ExportDenormField extends ExportField {
 	private final DtList<?> list;
-	private final DtField keyField;
-	private final DtField displayField;
+	private final DataField keyField;
+	private final DataField displayField;
 
 	/**
 	 * Constructor.
@@ -40,7 +40,7 @@ public final class ExportDenormField extends ExportField {
 	 * @param list Liste de éléments dénormés
 	 * @param displayField Champs dénormé
 	 */
-	ExportDenormField(final DtField dtField, final LocaleMessageText label, final DtList<?> list, final DtField keyField, final DtField displayField) {
+	ExportDenormField(final DataField dtField, final LocaleMessageText label, final DtList<?> list, final DataField keyField, final DataField displayField) {
 		super(dtField, label);
 		this.list = list;
 		this.keyField = keyField;
@@ -55,16 +55,16 @@ public final class ExportDenormField extends ExportField {
 	}
 
 	/**
-	 * @return DtField représentant le display de la liste de dénorm.
+	 * @return DataField représentant le display de la liste de dénorm.
 	 */
-	public DtField getDisplayField() {
+	public DataField getDisplayField() {
 		return displayField;
 	}
 
 	/**
-	 * @return DtField représentant la clé de la liste de dénorm. (par défaut la  key du DT)
+	 * @return DataField représentant la clé de la liste de dénorm. (par défaut la  key du DT)
 	 */
-	public DtField getKeyField() {
+	public DataField getKeyField() {
 		return keyField;
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 package io.vertigo.audit.plugins.trace.datastore;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -32,10 +31,11 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 /**
@@ -44,7 +44,7 @@ import io.vertigo.datastore.entitystore.EntityStoreManager;
  */
 public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable {
 
-	private DtDefinition traceDtDefinition;
+	private DataDefinition traceDtDefinition;
 	private final EntityStoreManager entityStoreManager;
 	private final VTransactionManager transactionManager;
 
@@ -67,7 +67,7 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	/** {@inheritDoc} */
 	@Override
 	public void start() {
-		traceDtDefinition = DtObjectUtil.findDtDefinition(Trace.class);
+		traceDtDefinition = DataModelUtil.findDataDefinition(Trace.class);
 	}
 
 	/** {@inheritDoc} */
@@ -91,7 +91,7 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	}
 
 	@Override
-	public List<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
+	public DtList<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
 		return executeInTransaction(() -> {
 			Criteria<Trace> criteria = Criterions.alwaysTrue();
 			if (!StringUtil.isBlank(auditTraceCriteria.getCategory())) {

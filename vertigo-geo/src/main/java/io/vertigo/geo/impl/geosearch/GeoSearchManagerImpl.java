@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.geo.geocoder.GeoLocation;
 import io.vertigo.geo.geosearch.GeoSearchManager;
 
@@ -44,12 +44,12 @@ public class GeoSearchManagerImpl implements GeoSearchManager {
 	}
 
 	@Override
-	public <D extends DtObject> DtList<D> searchInBoundingBox(
+	public <D extends DataObject> DtList<D> searchInBoundingBox(
 			final GeoLocation topLeft,
 			final GeoLocation bottomRight,
 			final String indexName,
 			final Class<D> dtIndexClass,
-			final DtFieldName<D> fieldName,
+			final DataFieldName<D> fieldName,
 			final Optional<Integer> maxRowsOpt) {
 		Assertion.check()
 				.when(maxRowsOpt.isPresent(), () -> Assertion.check()

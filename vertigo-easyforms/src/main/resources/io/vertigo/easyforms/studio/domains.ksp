@@ -1,0 +1,86 @@
+package io.vertigo.easyforms
+    
+create Domain DoEfId {
+	dataType : Long
+	storeType : "NUMERIC"
+}
+
+create Domain DoEfLabel {
+	dataType : String
+	storeType : "VARCHAR(100)"
+}
+
+create Domain DoEfLongLabel {
+	dataType : String
+	storeType : "VARCHAR(1000)"
+}
+
+create Domain DoEfCount {
+	dataType : Integer
+	storeType : "NUMERIC"
+}
+
+create Domain DoEfCountStrict {
+	dataType : Integer
+	storeType : "NUMERIC"
+}
+
+create Domain DoEfSort {
+    dataType : Integer
+    storeType : "NUMERIC"
+}
+
+create Domain DoEfBoolean {
+	dataType : Boolean
+	storeType : "BOOLEAN"
+}
+
+create Domain DoEfInstant {
+	dataType : Instant
+	storeType : "TIMESTAMP"
+}
+
+create Domain DoEfLocalDate {
+	dataType : LocalDate
+	storeType : "DATE"
+}
+
+create Domain DoEfCode {
+	dataType : String
+	storeType : "VARCHAR(100)"
+}
+
+create Domain DoEfText {
+    dataType : String
+    storeType : "TEXT"
+}
+
+create Domain DoEfTextHtml {
+    dataType : String
+    storeType : "TEXT"
+}
+
+create Domain DoEfFormData {
+    dataType : ValueObject
+    type : "io.vertigo.easyforms.runner.model.template.EasyFormsData"
+    storeType : "JSONB"
+}
+
+create Domain DoEfFormTemplate {
+    dataType : ValueObject
+    type : "io.vertigo.easyforms.runner.model.template.EasyFormsTemplate"
+    storeType : "JSONB"
+}
+
+create Domain DoEfFieldValidator {
+    dataType : ValueObject
+    type : "io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator"
+    storeType : "JSONB"
+}
+
+create Domain DoEfFieldValidatorUiList {
+    dataType : ValueObject
+    type : "io.vertigo.easyforms.runner.model.ui.EasyFormsTemplateFieldValidatorUiList"
+    storeType : "JSONB"
+}
+

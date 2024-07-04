@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 
 /**
  * This class is automatically generated.
@@ -85,7 +85,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de AffectionReservation.
 	 */
-	public enum AffectionReservationFields implements DtFieldName<io.vertigo.planning.agenda.domain.AffectionReservation> {
+	public enum AffectionReservationFields implements DataFieldName<io.vertigo.planning.agenda.domain.AffectionReservation> {
 		/** Propriété 'Id de tranche horaire'. */
 		trhId,
 		/** Propriété 'Liste des creneaux disponibles'. */
@@ -100,7 +100,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de Agenda.
 	 */
-	public enum AgendaFields implements DtFieldName<io.vertigo.planning.agenda.domain.Agenda> {
+	public enum AgendaFields implements DataFieldName<io.vertigo.planning.agenda.domain.Agenda> {
 		/** Propriété 'Id'. */
 		ageId,
 		/** Propriété 'Nom'. */
@@ -109,9 +109,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de AgendaDisplayRange.
 	 */
-	public enum AgendaDisplayRangeFields implements DtFieldName<io.vertigo.planning.agenda.domain.AgendaDisplayRange> {
-		/** Propriété 'Id démarche'. */
-		demId,
+	public enum AgendaDisplayRangeFields implements DataFieldName<io.vertigo.planning.agenda.domain.AgendaDisplayRange> {
 		/** Propriété 'Id agenda'. */
 		ageId,
 		/** Propriété 'Date sélectionnée'. */
@@ -128,7 +126,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de CreationPlageHoraireForm.
 	 */
-	public enum CreationPlageHoraireFormFields implements DtFieldName<io.vertigo.planning.agenda.domain.CreationPlageHoraireForm> {
+	public enum CreationPlageHoraireFormFields implements DataFieldName<io.vertigo.planning.agenda.domain.CreationPlageHoraireForm> {
 		/** Propriété 'Date de la plage horaire'. */
 		dateLocale,
 		/** Propriété 'Heure de début'. */
@@ -143,7 +141,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de Creneau.
 	 */
-	public enum CreneauFields implements DtFieldName<io.vertigo.planning.agenda.domain.Creneau> {
+	public enum CreneauFields implements DataFieldName<io.vertigo.planning.agenda.domain.Creneau> {
 		/** Propriété 'Id'. */
 		creId,
 		/** Propriété 'Tranche horaire'. */
@@ -154,7 +152,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de CritereTrancheHoraire.
 	 */
-	public enum CritereTrancheHoraireFields implements DtFieldName<io.vertigo.planning.agenda.domain.CritereTrancheHoraire> {
+	public enum CritereTrancheHoraireFields implements DataFieldName<io.vertigo.planning.agenda.domain.CritereTrancheHoraire> {
 		/** Propriété 'Ids d'agenda'. */
 		ageIds,
 		/** Propriété 'Premier jour'. */
@@ -171,7 +169,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de DateDisponibleDisplay.
 	 */
-	public enum DateDisponibleDisplayFields implements DtFieldName<io.vertigo.planning.agenda.domain.DateDisponibleDisplay> {
+	public enum DateDisponibleDisplayFields implements DataFieldName<io.vertigo.planning.agenda.domain.DateDisponibleDisplay> {
 		/** Propriété 'Date disponible'. */
 		dateLocale,
 		/** Propriété 'Non publié'. */
@@ -190,7 +188,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de DefaultPlageHoraire.
 	 */
-	public enum DefaultPlageHoraireFields implements DtFieldName<io.vertigo.planning.agenda.domain.DefaultPlageHoraire> {
+	public enum DefaultPlageHoraireFields implements DataFieldName<io.vertigo.planning.agenda.domain.DefaultPlageHoraire> {
 		/** Propriété 'Jour de la semaine'. */
 		jourDeSemaine,
 		/** Propriété 'Heure de début'. */
@@ -203,7 +201,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de DuplicationSemaineForm.
 	 */
-	public enum DuplicationSemaineFormFields implements DtFieldName<io.vertigo.planning.agenda.domain.DuplicationSemaineForm> {
+	public enum DuplicationSemaineFormFields implements DataFieldName<io.vertigo.planning.agenda.domain.DuplicationSemaineForm> {
 		/** Propriété 'Date de début de la source'. */
 		dateLocaleFromDebut,
 		/** Propriété 'Date de fin (incluse) de la source'. */
@@ -218,7 +216,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de PlageHoraire.
 	 */
-	public enum PlageHoraireFields implements DtFieldName<io.vertigo.planning.agenda.domain.PlageHoraire> {
+	public enum PlageHoraireFields implements DataFieldName<io.vertigo.planning.agenda.domain.PlageHoraire> {
 		/** Propriété 'Id'. */
 		plhId,
 		/** Propriété 'Date de la plage'. */
@@ -235,7 +233,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de PlageHoraireDisplay.
 	 */
-	public enum PlageHoraireDisplayFields implements DtFieldName<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> {
+	public enum PlageHoraireDisplayFields implements DataFieldName<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> {
 		/** Propriété 'Id'. */
 		plhId,
 		/** Propriété 'Date de la plage horaire'. */
@@ -264,7 +262,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de PublicationRange.
 	 */
-	public enum PublicationRangeFields implements DtFieldName<io.vertigo.planning.agenda.domain.PublicationRange> {
+	public enum PublicationRangeFields implements DataFieldName<io.vertigo.planning.agenda.domain.PublicationRange> {
 		/** Propriété 'Date de début'. */
 		dateMin,
 		/** Propriété 'Date de fin'. */
@@ -275,7 +273,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de PublicationTrancheHoraireForm.
 	 */
-	public enum PublicationTrancheHoraireFormFields implements DtFieldName<io.vertigo.planning.agenda.domain.PublicationTrancheHoraireForm> {
+	public enum PublicationTrancheHoraireFormFields implements DataFieldName<io.vertigo.planning.agenda.domain.PublicationTrancheHoraireForm> {
 		/** Propriété 'Publication immediate'. */
 		publishNow,
 		/** Propriété 'Date de début'. */
@@ -285,12 +283,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Date de publication'. */
 		publicationDateLocale,
 		/** Propriété 'Heure de publication'. */
-		publicationMinutesDebut	}
+		publicationMinutesDebut,
+		/** Propriété 'Fuseau horaire publication'. */
+		publicationZonCd	}
 
 	/**
 	 * Enumération des champs de ReservationCreneau.
 	 */
-	public enum ReservationCreneauFields implements DtFieldName<io.vertigo.planning.agenda.domain.ReservationCreneau> {
+	public enum ReservationCreneauFields implements DataFieldName<io.vertigo.planning.agenda.domain.ReservationCreneau> {
 		/** Propriété 'Id'. */
 		recId,
 		/** Propriété 'Date du créneau'. */
@@ -307,7 +307,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de TrancheHoraire.
 	 */
-	public enum TrancheHoraireFields implements DtFieldName<io.vertigo.planning.agenda.domain.TrancheHoraire> {
+	public enum TrancheHoraireFields implements DataFieldName<io.vertigo.planning.agenda.domain.TrancheHoraire> {
 		/** Propriété 'Id'. */
 		trhId,
 		/** Propriété 'Date du créneau'. */
@@ -328,7 +328,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de TrancheHoraireDisplay.
 	 */
-	public enum TrancheHoraireDisplayFields implements DtFieldName<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> {
+	public enum TrancheHoraireDisplayFields implements DataFieldName<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> {
 		/** Propriété 'Id'. */
 		trhId,
 		/** Propriété 'Date du creneau'. */

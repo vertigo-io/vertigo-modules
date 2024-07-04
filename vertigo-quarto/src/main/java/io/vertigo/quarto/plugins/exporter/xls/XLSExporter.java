@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,10 +51,10 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.locale.LocaleMessageText;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportField;
@@ -70,8 +70,8 @@ import io.vertigo.quarto.impl.exporter.util.ExporterUtil;
 final class XLSExporter {
 	private static final int MAX_COLUMN_WIDTH = 50;
 
-	private final Map<DtField, Map<Object, String>> referenceCache = new HashMap<>();
-	private final Map<DtField, Map<Object, String>> denormCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> referenceCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> denormCache = new HashMap<>();
 
 	private final Map<BasicType, HSSFCellStyle> evenHssfStyleCache = new EnumMap<>(BasicType.class);
 	private final Map<BasicType, HSSFCellStyle> oddHssfStyleCache = new EnumMap<>(BasicType.class);
@@ -239,7 +239,7 @@ final class XLSExporter {
 		sheet.setRepeatingRows(new CellRangeAddress(0, 0, -1, -1));
 
 		int rowIndex = 1;
-		for (final DtObject dto : parameters.getDtList()) {
+		for (final DataObject dto : parameters.getDtList()) {
 			final HSSFRow row = sheet.createRow(rowIndex);
 			cellIndex = 0;
 			Object value;
@@ -247,7 +247,7 @@ final class XLSExporter {
 				final HSSFCell cell = row.createCell(cellIndex);
 
 				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDtField().smartTypeDefinition());
+				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 
 				cellIndex++;
 			}
@@ -259,7 +259,7 @@ final class XLSExporter {
 		int rowIndex = 0;
 		final int labelCellIndex = 0;
 		final int valueCellIndex = 1;
-		final DtObject dto = parameters.getDtObject();
+		final DataObject dto = parameters.getDtObject();
 		Object value;
 		for (final ExportField exportColumn : parameters.getExportFields()) {
 			final HSSFRow row = sheet.createRow(rowIndex);
@@ -272,7 +272,7 @@ final class XLSExporter {
 
 			final HSSFCell valueCell = row.createCell(valueCellIndex);
 			value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-			putValueInCell(smartTypeManager, value, valueCell, oddHssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDtField().smartTypeDefinition());
+			putValueInCell(smartTypeManager, value, valueCell, oddHssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 			rowIndex++;
 		}
 

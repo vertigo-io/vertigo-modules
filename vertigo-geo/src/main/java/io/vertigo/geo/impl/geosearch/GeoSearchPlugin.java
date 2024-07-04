@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@
 package io.vertigo.geo.impl.geosearch;
 
 import io.vertigo.core.node.component.Plugin;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.geo.geocoder.GeoLocation;
 
 public interface GeoSearchPlugin extends Plugin {
 
-	<D extends DtObject> DtList<D> searchInBoundingBox(
+	<D extends DataObject> DtList<D> searchInBoundingBox(
 			final GeoLocation topLeft,
 			final GeoLocation bottomRight,
 			final String indexName,
 			final Class<D> dtIndexClass,
-			final DtFieldName<D> fieldName,
+			final DataFieldName<D> fieldName,
 			final Integer maxRows);
 }

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.vertigo.account.account.Account;
-import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.core.node.component.Manager;
+import io.vertigo.datamodel.data.model.UID;
 
 /**
  * @author pchretien, npiedeloup, btounkara
  */
-public interface NotificationManager extends Component {
+public interface NotificationManager extends Manager {
 	/**
 	 * Sends a notification to a set of users
 	 * @param notification Notification

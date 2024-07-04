@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@ import java.util.List;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * Parametre d'export pour les données de type DT.
@@ -46,9 +46,9 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	/**
 	 * Objet à exporter. dto XOR dtc est renseigné.
 	 */
-	private final DtObject dto;
+	private final DataObject dto;
 	private final DtList<?> dtc;
-	private final DtDefinition dtDefinition;
+	private final DataDefinition dataDefinition;
 
 	private final String title;
 	private final ExportBuilder exportBuilder;
@@ -59,7 +59,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param dto Object to export
 	 * @param title Sheet title
 	 */
-	ExportSheetBuilder(final ExportBuilder exportBuilder, final DtObject dto, final String title) {
+	ExportSheetBuilder(final ExportBuilder exportBuilder, final DataObject dto, final String title) {
 		Assertion.check()
 				.isNotNull(exportBuilder)
 				.isNotNull(dto);
@@ -69,7 +69,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dto = dto;
 		dtc = null;
 		this.title = title;
-		dtDefinition = DtObjectUtil.findDtDefinition(dto);
+		dataDefinition = DataModelUtil.findDataDefinition(dto);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dtc = dtc;
 		dto = null;
 		this.title = title;
-		dtDefinition = dtc.getDefinition();
+		dataDefinition = dtc.getDefinition();
 	}
 
 	/**
@@ -96,7 +96,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param fieldName ajout d'un champs du Dt à exporter
 	 * @return ExportSheetBuilder
 	 */
-	public ExportSheetBuilder addField(final DtFieldName fieldName) {
+	public ExportSheetBuilder addField(final DataFieldName fieldName) {
 		addField(fieldName, null);
 		return this;
 	}
@@ -108,7 +108,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param displayfield Field du libellé à utiliser.
 	 * @return ExportSheetBuilder
 	 */
-	public ExportSheetBuilder addField(final DtFieldName fieldName, final DtList<?> list, final DtFieldName displayfield) {
+	public ExportSheetBuilder addField(final DataFieldName fieldName, final DtList<?> list, final DataFieldName displayfield) {
 		addField(fieldName, list, displayfield, null);
 		return this;
 	}
@@ -118,15 +118,15 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param overridedLabel nom spécifique à utiliser dans l'export, null si l'on souhaite utiliser celui indiqué dans le DT pour ce champs
 	 * @return ExportSheetBuilder
 	 */
-	public ExportSheetBuilder addField(final DtFieldName fieldName, final LocaleMessageText overridedLabel) {
+	public ExportSheetBuilder addField(final DataFieldName fieldName, final LocaleMessageText overridedLabel) {
 		Assertion.check()
 				.isNotNull(fieldName)
 				// On vérifie que la colonne est bien dans la définition de la DTC
-				.isTrue(dtDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
+				.isTrue(dataDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
 		// car pour des raisons diverses ils peuvent l'être plusieurs fois.
 		//-----
-		final ExportField exportField = new ExportField(resolveDtField(fieldName), overridedLabel);
+		final ExportField exportField = new ExportField(resolveDataField(fieldName), overridedLabel);
 		exportFields.add(exportField);
 		return this;
 	}
@@ -138,8 +138,8 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param overridedLabel nom spécifique à utiliser dans l'export, null si l'on souhaite utiliser celui indiqué dans le DT pour ce champs
 	 * @return ExportSheetBuilder
 	 */
-	public ExportSheetBuilder addField(final DtFieldName fieldName, final DtList<?> list, final DtFieldName displayfield, final LocaleMessageText overridedLabel) {
-		final DtFieldName keyFieldName = () -> list.getDefinition().getKeyField().orElseGet(() -> list.getDefinition().getIdField().get()).name();
+	public ExportSheetBuilder addField(final DataFieldName fieldName, final DtList<?> list, final DataFieldName displayfield, final LocaleMessageText overridedLabel) {
+		final DataFieldName keyFieldName = () -> list.getDefinition().getKeyField().orElseGet(() -> list.getDefinition().getIdField().get()).name();
 		return addField(fieldName, list, keyFieldName, displayfield, overridedLabel);
 	}
 
@@ -151,18 +151,18 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 * @param overridedLabel nom spécifique à utiliser dans l'export, null si l'on souhaite utiliser celui indiqué dans le DT pour ce champs
 	 * @return ExportSheetBuilder
 	 */
-	public ExportSheetBuilder addField(final DtFieldName fieldName, final DtList<?> list, final DtFieldName keyfield, final DtFieldName displayfield, final LocaleMessageText overridedLabel) {
+	public ExportSheetBuilder addField(final DataFieldName fieldName, final DtList<?> list, final DataFieldName keyfield, final DataFieldName displayfield, final LocaleMessageText overridedLabel) {
 		Assertion.check()
 				.isNotNull(fieldName)
 				// On vérifie que la colonne est bien dans la définition de la DTC
-				.isTrue(dtDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter")
+				.isTrue(dataDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter")
 				.isTrue(list.getDefinition().contains(keyfield.name()), "Le champ " + keyfield.name() + " n'est pas dans la liste de dénorm")
 				.isTrue(list.getDefinition().contains(displayfield.name()), "Le champ " + displayfield.name() + " n'est pas dans la liste de dénorm");
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
 		// car pour des raisons diverses ils peuvent l'être plusieurs fois.
 		//-----
-		final ExportField exportField = new ExportDenormField(resolveDtField(fieldName), overridedLabel, list,
-				resolveDtField(keyfield, list.getDefinition()), resolveDtField(displayfield, list.getDefinition()));
+		final ExportField exportField = new ExportDenormField(resolveDataField(fieldName), overridedLabel, list,
+				resolveDataField(keyfield, list.getDefinition()), resolveDataField(displayfield, list.getDefinition()));
 		exportFields.add(exportField);
 		return this;
 	}
@@ -173,8 +173,8 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		if (exportFields.isEmpty()) {
 			// si la liste des colonnes est vide alors par convention on les
 			// prend toutes.
-			final Collection<DtField> fields = dtDefinition.getFields();
-			for (final DtField dtField : fields) {
+			final Collection<DataField> fields = dataDefinition.getFields();
+			for (final DataField dtField : fields) {
 				exportFields.add(new ExportField(dtField, null));
 			}
 		}
@@ -189,11 +189,11 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		return exportBuilder.addSheet(build());
 	}
 
-	private DtField resolveDtField(final DtFieldName fieldName) {
-		return resolveDtField(fieldName, dtDefinition);
+	private DataField resolveDataField(final DataFieldName fieldName) {
+		return resolveDataField(fieldName, dataDefinition);
 	}
 
-	private static DtField resolveDtField(final DtFieldName fieldName, final DtDefinition definition) {
+	private static DataField resolveDataField(final DataFieldName fieldName, final DataDefinition definition) {
 		return definition.getField(fieldName);
 	}
 }

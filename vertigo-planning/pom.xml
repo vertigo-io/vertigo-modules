@@ -4,17 +4,55 @@
 	
 	<parent>
 		<groupId>io.vertigo</groupId>
-		<artifactId>vertigo-extensions</artifactId>
+		<artifactId>vertigo-modules</artifactId>
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 
 
-	<groupId>io.vertigo</groupId>
 	<artifactId>vertigo-planning</artifactId>
-	<version>4.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>vertigo-planning</name>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-studio</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-redis-connector</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-ui</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-stella</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-orchestra</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>io.vertigo</groupId>
@@ -35,6 +73,12 @@
             <groupId>io.vertigo</groupId>
             <artifactId>vertigo-stella</artifactId>
             <version>${vertigo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertigo</groupId>
+            <artifactId>vertigo-orchestra</artifactId>
+            <version>${vertigo.version}</version>
+            <optional>true</optional>
         </dependency>
 				
 	</dependencies>

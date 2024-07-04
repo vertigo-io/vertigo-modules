@@ -15,20 +15,25 @@ create Task TkGetActiveProcessByName {
 	out dtProcess	 	{domain : DoDtOProcess 		cardinality: "?" 	}
 }
 
-create Task TkGetProcessesByName {
-	storeName : "orchestra"
+
+create Task TkLockProcessesForInsert {
+    storeName : "orchestra"
     className : "io.vertigo.basics.task.TaskEngineSelect"
         request : "
-        	select 
-        		count(*)
-        	from o_process pro
-        	where pro.NAME = #name#
-        	
-			"
-	in name			 	{domain : DoOLibelle 				cardinality: "1" 		}
-	out nombre			 	{domain : DoONombre				cardinality: "1" 		}
+            SELECT 1 FROM o_process_type WHERE prt_cd = 'DUMB' FOR UPDATE;
+            "
+    out nombre              {domain : DoONombre             cardinality: "1"        }
 }
 
+create Task TkCountProcessesByName {
+    storeName : "orchestra"
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+        request : "
+            select count(*) from o_process pro where pro.NAME = #name#;
+            "
+    in name             {domain : DoOLibelle                cardinality: "1"        }
+    out nombre              {domain : DoONombre             cardinality: "1"        }
+}
 
 create Task TkGetAllActiveProcesses {
 	storeName : "orchestra"

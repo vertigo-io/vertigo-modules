@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,20 @@ package io.vertigo.audit.trace;
 import java.time.Instant;
 
 import io.vertigo.core.lang.Cardinality;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.stereotype.SortField;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class defines the Auditing Trace for an Object.
  *
  * @author xdurand
  */
-@io.vertigo.datamodel.structure.stereotype.DataSpace("audit")
+@io.vertigo.datamodel.data.stereotype.DataSpace("audit")
 public final class Trace implements Entity {
-	private static final long serialVersionUID = 2280022920606418634L;
+	private static final long serialVersionUID = 1L;
 
 	@Field(type = "ID", smartType = "STyATraceId", cardinality = Cardinality.ONE, label = "traId")
 	private Long traId;
@@ -47,6 +48,7 @@ public final class Trace implements Entity {
 	private Instant businessDate;
 
 	@Field(smartType = "STyATraceInstant", label = "executionDate", cardinality = Cardinality.ONE)
+	@SortField
 	private Instant executionDate;
 
 	@Field(smartType = "STyATraceItem", label = "itemUrn", cardinality = Cardinality.ONE)
@@ -215,7 +217,7 @@ public final class Trace implements Entity {
 
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 
 }

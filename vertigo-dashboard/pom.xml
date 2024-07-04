@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.vertigo</groupId>
-		<artifactId>vertigo-extensions</artifactId>
+		<artifactId>vertigo-modules</artifactId>
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 
@@ -25,16 +25,28 @@
       </repository>
     </repositories>
     
+    <dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>2.3.33</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-vega</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+    
 	<dependencies>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-vega</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.32</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
@@ -52,11 +64,14 @@
 			<version>${vertigo.version}</version>
 			<optional>true</optional>
 		</dependency> 
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
 		
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
-			<version>5.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -65,25 +80,21 @@
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.9.5.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>com.h2database</groupId>
 		    <artifactId>h2</artifactId>
-		    <version>2.2.224</version>
 		    <scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>11.0.18</version>
 			<scope>test</scope>
 		</dependency><dependency>
 			<groupId>org.eclipse.jetty.websocket</groupId>
 			<artifactId>websocket-jetty-server</artifactId>
-			<version>11.0.18</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -92,13 +103,11 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.12 -->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.12 -->
 			<scope>test</scope>
 		</dependency>
 
@@ -106,32 +115,28 @@
 		<dependency>
 		    <groupId>org.elasticsearch.client</groupId>
 		    <artifactId>elasticsearch-rest-high-level-client</artifactId>
-		    <version>7.17.14</version>
 		    <scope>test</scope> <!-- REstHighLevelElasticSearchConnector -->
 		</dependency>
 		<dependency>
 		    <groupId>org.elasticsearch.client</groupId>
 		    <artifactId>transport</artifactId>
-		    <version>7.17.14</version>
 		    <scope>test</scope><!-- EsTransportSearchServicesPlugin -->
 		</dependency>
 		<dependency>
 	        <groupId>org.codelibs.elasticsearch.module</groupId>
-	        <artifactId>analysis-common</artifactId> 
-	        <version>7.17.9</version> <!-- required by ESEmbeddedSearchServicesPlugin -->
+	        <artifactId>analysis-common</artifactId> <!-- required by ESEmbeddedSearchServicesPlugin -->
 	        <scope>test</scope>
 	    </dependency>
 	   	<dependency>
 		    <groupId>org.codelibs.elasticsearch.module</groupId>
-		    <artifactId>mapper-extras</artifactId>
-		    <version>7.17.9</version> <!-- required by ESEmbeddedSearchServicesPlugin -->
+		    <artifactId>mapper-extras</artifactId> <!-- required by ESEmbeddedSearchServicesPlugin -->
 	        <scope>test</scope>
 		</dependency>
 		<!-- For Rest Webservice testing -->
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-			<version>5.3.2</version>
+			<version>5.4.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

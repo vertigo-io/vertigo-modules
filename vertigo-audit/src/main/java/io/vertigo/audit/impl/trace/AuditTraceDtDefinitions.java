@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package io.vertigo.audit.impl.trace;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 
 public final class AuditTraceDtDefinitions implements Iterable<Class<?>> {
 
@@ -49,7 +49,7 @@ public final class AuditTraceDtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de OActivity.
 	 */
-	public enum TraceFields implements DtFieldName<io.vertigo.audit.trace.Trace> {
+	public enum TraceFields implements DataFieldName<io.vertigo.audit.trace.Trace> {
 		/** Propriété 'Id Trace'. */
 		traId,
 		/** Propriété 'category'. */

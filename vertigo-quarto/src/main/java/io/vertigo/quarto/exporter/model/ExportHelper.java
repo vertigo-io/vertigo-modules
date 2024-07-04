@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListURIForMasterData;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListURIForMasterData;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 /**
@@ -63,9 +63,9 @@ public final class ExportHelper {
 	 * @return Valeur d'affichage de la colonne de l'objet métier
 	 */
 	public String getText(
-			final Map<DtField, Map<Object, String>> referenceCache,
-			final Map<DtField, Map<Object, String>> denormCache,
-			final DtObject dto,
+			final Map<DataField, Map<Object, String>> referenceCache,
+			final Map<DataField, Map<Object, String>> denormCache,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		return (String) getValue(true, referenceCache, denormCache, dto, exportColumn);
 	}
@@ -81,22 +81,22 @@ public final class ExportHelper {
 	 * @return Valeur typée de la colonne de l'objet métier
 	 */
 	public Object getValue(
-			final Map<DtField, Map<Object, String>> referenceCache,
-			final Map<DtField, Map<Object, String>> denormCache,
-			final DtObject dto,
+			final Map<DataField, Map<Object, String>> referenceCache,
+			final Map<DataField, Map<Object, String>> denormCache,
+			final DataObject dto,
 			final ExportField exportColumn) {
 		return getValue(false, referenceCache, denormCache, dto, exportColumn);
 	}
 
 	private Object getValue(
 			final boolean forceStringValue,
-			final Map<DtField, Map<Object, String>> referenceCache,
-			final Map<DtField, Map<Object, String>> denormCache,
-			final DtObject dto,
+			final Map<DataField, Map<Object, String>> referenceCache,
+			final Map<DataField, Map<Object, String>> denormCache,
+			final DataObject dto,
 			final ExportField exportColumn) {
-		final DtField dtField = exportColumn.getDtField();
+		final DataField dtField = exportColumn.getDataField();
 		Object value;
-		if (dtField.getType() == DtField.FieldType.FOREIGN_KEY && entityStoreManager.getMasterDataConfig().containsMasterData(dtField.getFkDtDefinition())) {
+		if (dtField.getType() == DataField.FieldType.FOREIGN_KEY && entityStoreManager.getMasterDataConfig().containsMasterData(dtField.getFkDtDefinition())) {
 			Map<Object, String> referenceIndex = referenceCache.get(dtField);
 			if (referenceIndex == null) {
 				referenceIndex = createReferentielIndex(dtField);
@@ -111,28 +111,28 @@ public final class ExportHelper {
 			}
 			value = denormIndex.get(dtField.getDataAccessor().getValue(dto));
 		} else {
-			value = exportColumn.getDtField().getDataAccessor().getValue(dto);
+			value = exportColumn.getDataField().getDataAccessor().getValue(dto);
 			if (forceStringValue) {
-				value = smartTypeManager.valueToString(exportColumn.getDtField().smartTypeDefinition(), value);
+				value = smartTypeManager.valueToString(exportColumn.getDataField().smartTypeDefinition(), value);
 			}
 		}
 		//Check if we should return some magic value ("??") when exception are throw here. Previous impl manage this "useless ?" case.
 		return value;
 	}
 
-	private Map<Object, String> createReferentielIndex(final DtField dtField) {
+	private Map<Object, String> createReferentielIndex(final DataField dtField) {
 		//TODO ceci est un copier/coller de KSelectionListBean (qui resemble plus à un helper des MasterData qu'a un bean)
 		//La collection n'est pas précisé alors on va la chercher dans le repository du référentiel
 		final DtListURIForMasterData mdlUri = entityStoreManager.getMasterDataConfig().getDtListURIForMasterData(dtField.getFkDtDefinition());
 		final DtList<Entity> valueList = entityStoreManager.findAll(mdlUri);
-		final DtField dtFieldDisplay = mdlUri.getDtDefinition().getDisplayField().get();
-		final DtField dtFieldKey = valueList.getDefinition().getIdField().get();
+		final DataField dtFieldDisplay = mdlUri.getDataDefinition().getDisplayField().get();
+		final DataField dtFieldKey = valueList.getDefinition().getIdField().get();
 		return createDenormIndex(valueList, dtFieldKey, dtFieldDisplay);
 	}
 
-	private Map<Object, String> createDenormIndex(final DtList<?> valueList, final DtField keyField, final DtField displayField) {
+	private Map<Object, String> createDenormIndex(final DtList<?> valueList, final DataField keyField, final DataField displayField) {
 		final Map<Object, String> denormIndex = new HashMap<>(valueList.size());
-		for (final DtObject dto : valueList) {
+		for (final DataObject dto : valueList) {
 			final String svalue = smartTypeManager.valueToString(displayField.smartTypeDefinition(), displayField.getDataAccessor().getValue(dto));
 			denormIndex.put(keyField.getDataAccessor().getValue(dto), svalue);
 		}

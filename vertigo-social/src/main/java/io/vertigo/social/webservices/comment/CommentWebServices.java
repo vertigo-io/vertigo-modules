@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.MapBuilder;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.KeyConcept;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.social.comment.Comment;
 import io.vertigo.social.comment.CommentManager;
 import io.vertigo.vega.webservice.WebServices;
@@ -155,14 +155,14 @@ public final class CommentWebServices implements WebServices {
 	}
 
 	private static UID<KeyConcept> readKeyConceptURI(final String keyConcept, @QueryParam("id") final String id) {
-		final DtDefinition dtDefinition = Node.getNode().getDefinitionSpace().resolve("Dt" + keyConcept, DtDefinition.class);
-		final Object keyConceptId = stringToId(id, dtDefinition);
-		return UID.of(dtDefinition, keyConceptId);
+		final DataDefinition dataDefinition = Node.getNode().getDefinitionSpace().resolve("Dt" + keyConcept, DataDefinition.class);
+		final Object keyConceptId = stringToId(id, dataDefinition);
+		return UID.of(dataDefinition, keyConceptId);
 	}
 
-	private static Object stringToId(final String id, final DtDefinition dtDefinition) {
-		final Optional<DtField> idFieldOpt = dtDefinition.getIdField();
-		Assertion.check().isTrue(idFieldOpt.isPresent(), "KeyConcept {0} must have an id field, in order to support Comment extension", dtDefinition.id().shortName());
+	private static Object stringToId(final String id, final DataDefinition dataDefinition) {
+		final Optional<DataField> idFieldOpt = dataDefinition.getIdField();
+		Assertion.check().isTrue(idFieldOpt.isPresent(), "KeyConcept {0} must have an id field, in order to support Comment extension", dataDefinition.id().shortName());
 
 		final Class dataType = idFieldOpt.get().smartTypeDefinition().getJavaClass();
 		if (String.class.isAssignableFrom(dataType)) {
@@ -172,7 +172,7 @@ public final class CommentWebServices implements WebServices {
 		} else if (Long.class.isAssignableFrom(dataType)) {
 			return Long.valueOf(id);
 		}
-		throw new IllegalArgumentException("the id of the keyConcept " + dtDefinition.id().shortName() + " must be String, Long or Integer");
+		throw new IllegalArgumentException("the id of the keyConcept " + dataDefinition.id().shortName() + " must be String, Long or Integer");
 	}
 
 	private UID<Account> getLoggedAccountURI() {

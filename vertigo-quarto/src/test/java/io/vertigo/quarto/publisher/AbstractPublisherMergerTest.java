@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.FileUtil;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.FSFile;
 import io.vertigo.quarto.impl.publisher.PublisherDataUtil;
@@ -367,7 +367,7 @@ public abstract class AbstractPublisherMergerTest {
 		try (final InputStream in = baseClass.getResourceAsStream(fileName)) {
 			Assertion.check().isNotNull(in, "fichier non trouvé : {0}", fileName);
 			final String fileExtension = FileUtil.getFileExtension(fileName);
-			final File file = new TempFile("tmp", '.' + fileExtension);
+			final File file = TempFile.of("tmp", '.' + fileExtension);
 			FileUtil.copy(in, file);
 
 			final String mimeType;

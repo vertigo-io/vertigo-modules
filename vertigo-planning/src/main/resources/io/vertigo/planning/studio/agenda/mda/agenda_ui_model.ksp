@@ -1,7 +1,6 @@
 package io.vertigo.planning.agenda.domain
 
 create DtDefinition DtAgendaDisplayRange {
-    field demId {domain: DoPId label: "Id démarche"}
     field ageId {domain: DoPId label: "Id agenda"}
     field showDate {domain: DoPLocalDate label: "Date sélectionnée"}
     field firstDate {domain: DoPLocalDate label: "Date de début"}
@@ -32,8 +31,9 @@ create DtDefinition DtPublicationTrancheHoraireForm {
     field dateLocaleDebut {domain: DoPLocalDate label: "Date de début" cardinality:"1"}
     field dateLocaleFin {domain: DoPLocalDate label: "Date de fin (incluse)" cardinality:"1"}
     
-    field publicationDateLocale {domain: DoPLocalDate label: "Date de publication" cardinality:"1" }
-    field publicationMinutesDebut {domain: DoPHeureMinute label: "Heure de publication" cardinality:"1" }    
+    field publicationDateLocale {domain: DoPLocalDate label: "Date de publication" cardinality:"?" }
+    field publicationMinutesDebut {domain: DoPHeureMinute label: "Heure de publication" cardinality:"?" }  
+    field publicationZonCd {domain: DoPCode label: "Fuseau horaire publication" cardinality:"?" }
 }
 
 create DtDefinition DtDuplicationSemaineForm {

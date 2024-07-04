@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ package io.vertigo.planning.agenda.dao;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.task.TaskManager;
 import io.vertigo.planning.agenda.domain.Agenda;
@@ -65,6 +65,6 @@ public final class AgendaDAO extends DAO<Agenda, java.lang.Long> implements Stor
 	 * @return KeyConcept à modifier
 	 */
 	public Agenda readOneForUpdate(final java.lang.Long id) {
-		return readOneForUpdate(createDtObjectUID(id));
+		return readOneForUpdate(createUID(id));
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +45,10 @@ import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.planning.agenda.AgendaPAO;
 import io.vertigo.planning.agenda.dao.AgendaDAO;
 import io.vertigo.planning.agenda.dao.CreneauDAO;
@@ -137,9 +138,9 @@ public class PlanningServices implements Component {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
 					LocaleMessageText.of("La plage horaire doit débuter au plus tôt à 07:30"));
 		}
-		if (creationPlageHoraireForm.getMinutesFin() > 18 * 60 + 30) {
-			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit finir au plus tard à 18:30"));
+		if (creationPlageHoraireForm.getMinutesFin() > 21 * 60) {
+			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesFin,
+					LocaleMessageText.of("La plage horaire doit finir au plus tard à 21:00"));
 		}
 
 		final var dureePlageMinute = creationPlageHoraireForm.getMinutesFin() - creationPlageHoraireForm.getMinutesDebut();
@@ -189,9 +190,20 @@ public class PlanningServices implements Component {
 	}
 
 	private static DtList<TrancheHoraire> createTrancheHoraires(final PlageHoraire plageHoraire, final int dureeTrancheMinute) {
-		final var trancheHoraires = new DtList<TrancheHoraire>(TrancheHoraire.class);
+		return createTrancheHoraires(plageHoraire, dureeTrancheMinute, Collections.emptyList());
+	}
+
+	private static DtList<TrancheHoraire> createTrancheHoraires(final PlageHoraire plageHoraire, final int dureeTrancheMinute, final List<TrancheHoraire> closedTranchesHoraires) {
+		final var trancheHoraires = new DtList<>(TrancheHoraire.class);
 		for (int i = plageHoraire.getMinutesDebut(); i < plageHoraire.getMinutesFin(); i += dureeTrancheMinute) {
-			trancheHoraires.add(createTrancheHoraire(plageHoraire, i, dureeTrancheMinute, plageHoraire.getNbGuichet()));
+			boolean isClosed = false;
+			for (final TrancheHoraire closedTrancheHoraire : closedTranchesHoraires) {
+				if (i < closedTrancheHoraire.getMinutesFin() && i + dureeTrancheMinute > closedTrancheHoraire.getMinutesDebut()) {
+					isClosed = true;
+					break;
+				}
+			}
+			trancheHoraires.add(createTrancheHoraire(plageHoraire, i, dureeTrancheMinute, isClosed ? 0 : plageHoraire.getNbGuichet()));
 		}
 		return trancheHoraires;
 	}
@@ -253,6 +265,8 @@ public class PlanningServices implements Component {
 			//erreur bloquante
 			throw new VUserException("La semaine que vous souhaitez dupliquer n'a aucune plage horaire");
 		}
+		final var closedTranchesHorairesFrom = trancheHoraireDAO.getTrancheHorairesFermeesByAgeIds(List.of((Long) ageUid.getId()),
+				duplicationSemaineForm.getDateLocaleFromDebut(), duplicationSemaineForm.getDateLocaleFromFin());
 
 		final var previousPlageHorairesTo = plageHoraireDAO.findAll(
 				Criterions.isEqualTo(PlageHoraireFields.ageId, ageUid.getId())
@@ -266,7 +280,11 @@ public class PlanningServices implements Component {
 		final Map<LocalDate, List<PlageHoraire>> mapPreviousPlagesHorairesToPerLocalDate = previousPlageHorairesTo.stream()
 				.collect(Collectors.groupingBy(plh -> plh.getDateLocale()));
 
-		final var plageHorairesToCreate = new DtList<PlageHoraire>(PlageHoraire.class);
+		final Map<DayOfWeek, List<TrancheHoraire>> mapClosedTranchesHorairesFromPerDayOfWeek = closedTranchesHorairesFrom.stream()
+				.collect(Collectors.groupingBy(trh -> trh.getDateLocale().getDayOfWeek()));
+
+		final var plageHorairesToCreate = new DtList<>(PlageHoraire.class);
+		final var trancheHoraires = new DtList<>(TrancheHoraire.class);
 
 		final int dureeTrancheMinute = duplicationSemaineForm.getDureeCreneau();
 		for (var d = 0; d < dureeDuplicationJours + 1; ++d) { //+1 => date de fin incluse
@@ -293,17 +311,17 @@ public class PlanningServices implements Component {
 				plageHoraire.setNbGuichet(plageHoraireFrom.getNbGuichet());
 				plageHorairesToCreate.add(plageHoraire);
 
-				//(les tranches seront crées après l'insert pour pouvoir récupérer la PK générée)
+				//(les tranches seront mis à jour après l'insert pour pouvoir récupérer la PK générée)
 			}
 		}
 		//le batch ne marche pas car l'id n'est pas setté
 		//on le fait quand meme en dernier pour locker moins longtemps
 		//Creation des tranches horaires associées
-		final var trancheHoraires = new DtList<TrancheHoraire>(TrancheHoraire.class);
 		for (final PlageHoraire plageHoraire : plageHorairesToCreate) {
 			plageHoraireDAO.save(plageHoraire);
 			//cette fois l'id de la plage existe et peut être associée dans la FK des tranches
-			trancheHoraires.addAll(createTrancheHoraires(plageHoraire, dureeTrancheMinute));
+			//RDV-351 : il faut vérifier les tranches supprimées
+			trancheHoraires.addAll(createTrancheHoraires(plageHoraire, dureeTrancheMinute, mapClosedTranchesHorairesFromPerDayOfWeek.getOrDefault(plageHoraire.getDateLocale().getDayOfWeek(), Collections.emptyList())));
 		}
 		trancheHoraireDAO.batchInsertTrancheHoraire(trancheHoraires);
 	}
@@ -325,6 +343,14 @@ public class PlanningServices implements Component {
 		//--
 		agendaDAO.readOneForUpdate(agendaUid); //ForUpdate pour éviter les doublons
 		agendaPAO.deletePlageHoraireCascadeByPlhId((Long) plageHoraireUid.getId());
+	}
+
+	public void closeTrancheHoraire(final UID<Agenda> agendaUid, final UID<TrancheHoraire> trancheHoraireUid) {
+		Assertion.check().isNotNull(agendaUid)
+				.isNotNull(trancheHoraireUid);
+		//--
+		agendaDAO.readOneForUpdate(agendaUid); //ForUpdate pour éviter les doublons
+		agendaPAO.closeTrancheHoraireByTrhId(List.of((Long) trancheHoraireUid.getId()));
 	}
 
 	public Agenda getAgenda(final UID<Agenda> ageUid) {
@@ -462,9 +488,8 @@ public class PlanningServices implements Component {
 				.isNotNull(creneaux);
 		//---
 		try (final VTransactionWritable tx = transactionManager.createAutonomousTransaction()) {
-			final DtList<ReservationCreneau> reservationsCreneau = new DtList<>(ReservationCreneau.class);
 			final var trancheHoraire = trancheHoraireDAO.get(trhUid);
-			creneaux.stream()
+			final DtList<ReservationCreneau> reservationsCreneau = creneaux.stream()
 					// First we ensure that all creneaux are associated with the provided tranche
 					.peek(creneau -> {
 						if (!trhUid.equals(creneau.trancheHoraire().getUID())) {
@@ -529,25 +554,35 @@ public class PlanningServices implements Component {
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleFin,
 					LocaleMessageText.of("Vous ne pouvez pas publier plus de 2 mois à la fois"));
 		}
+		if (!publicationTrancheHoraireForm.getPublishNow()) {
+			uiErrorBuilder.checkFieldNotNull(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationDateLocale,
+					LocaleMessageText.of("La date de publication est obligatoire"));
+			uiErrorBuilder.checkFieldNotNull(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationMinutesDebut,
+					LocaleMessageText.of("L'heure de publication est obligatoire"));
+			if (publicationTrancheHoraireForm.getPublicationDateLocale() != null) {
+				final var decalageJoursPublish = ChronoUnit.DAYS.between(LocalDate.now(), publicationTrancheHoraireForm.getPublicationDateLocale());
+				if (decalageJoursPublish < 0) {
+					uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationDateLocale,
+							LocaleMessageText.of("Vous ne pouvez pas planifier la publication à une date dans le passé"));
+				}
+			}
+		}
+		uiErrorBuilder.throwUserExceptionIfErrors();
 
 		Instant datePublication;
 		if (publicationTrancheHoraireForm.getPublishNow()) {
 			datePublication = Instant.now().plusSeconds(PUBLISH_NOW_DELAY_S);
 		} else {
-			uiErrorBuilder.checkFieldNotNull(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationDateLocale,
-					LocaleMessageText.of("La date de publication est obligatoire"));
-			uiErrorBuilder.checkFieldNotNull(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationMinutesDebut,
-					LocaleMessageText.of("L'heure de publication est obligatoire"));
-			final var decalageJoursPublish = ChronoUnit.DAYS.between(LocalDate.now(), publicationTrancheHoraireForm.getPublicationDateLocale());
-			if (decalageJoursPublish < 0) {
-				uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationDateLocale,
-						LocaleMessageText.of("Vous ne pouvez pas planifier la publication à une date dans le passé"));
-			}
+
 			final var localTime = LocalTime.ofSecondOfDay(publicationTrancheHoraireForm.getPublicationMinutesDebut() * 60l);
 			final var publishLocalDateTime = LocalDateTime.of(publicationTrancheHoraireForm.getPublicationDateLocale(), localTime);
 
-			//on suppose l'heure exprimée à paris
-			datePublication = publishLocalDateTime.atZone(ZoneId.of("Europe/Paris")).toInstant();
+			//on suppose l'heure exprimée à paris par défaut
+			String zonCd = "Europe/Paris";
+			if (publicationTrancheHoraireForm.getPublicationZonCd() != null) {
+				zonCd = publicationTrancheHoraireForm.getPublicationZonCd();
+			}
+			datePublication = publishLocalDateTime.atZone(ZoneId.of(zonCd)).toInstant();
 		}
 		uiErrorBuilder.throwUserExceptionIfErrors();
 		/*****/
@@ -590,6 +625,7 @@ public class PlanningServices implements Component {
 		//---
 		agendaPAO.supprimerReservationsCreneau(
 				recUids.stream()
+						.filter(id -> id != null) //protect against bad caller
 						.map(UID::getId)
 						.map(Long.class::cast)
 						.collect(Collectors.toList()));
@@ -642,6 +678,16 @@ public class PlanningServices implements Component {
 
 	public void deleteEmptyAgenda(final UID<Agenda> agendaUid) {
 		agendaDAO.delete(agendaUid);
+	}
+
+	/**
+	 * Purge agenda data linked to plage_horaire older than given date
+	 *
+	 * @param olderThan
+	 */
+	public int purgeAgendaOlderThan(final LocalDate olderThan) {
+		Assertion.check().isNotNull(olderThan);
+		return agendaPAO.purgePlageHoraireByDateLocale(olderThan);
 	}
 
 }

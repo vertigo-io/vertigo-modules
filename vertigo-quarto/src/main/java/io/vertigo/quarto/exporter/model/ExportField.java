@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package io.vertigo.quarto.exporter.model;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 
 /**
  * Définition d'une colonne à exporter.
@@ -27,14 +27,14 @@ import io.vertigo.datamodel.structure.definitions.DtField;
  * @author pchretien, npiedeloup
  */
 public class ExportField {
-	private final DtField dtField;
+	private final DataField dtField;
 	private final LocaleMessageText label;
 
 	/**
 	 * Constructor.
-	 * @param dtField DtField
+	 * @param dtField DataField
 	 */
-	public ExportField(final DtField dtField, final LocaleMessageText label) {
+	public ExportField(final DataField dtField, final LocaleMessageText label) {
 		Assertion.check().isNotNull(dtField);
 		//label may be null
 		//-----
@@ -43,9 +43,9 @@ public class ExportField {
 	}
 
 	/**
-	 * @return DtField
+	 * @return DataField
 	 */
-	public final DtField getDtField() {
+	public final DataField getDataField() {
 		return dtField;
 	}
 

@@ -1,1 +1,0 @@
-VUiExtensions = {dataX : {}, methods  : {}	};

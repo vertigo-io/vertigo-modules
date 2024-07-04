@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -217,7 +217,7 @@ final class DOCXUtil {
 		if (fsFile.canRead()) {
 			return fsFile;
 		}
-		final File file = new TempFile(fsFile.getName(), ".docx");
+		final File file = TempFile.of(fsFile.getName(), ".docx");
 		try (final BufferedInputStream in = new BufferedInputStream(modelFileURL.openStream())) {
 			FileUtil.copy(in, file);
 		} catch (final IOException e) {
@@ -238,7 +238,7 @@ final class DOCXUtil {
 	 * @throws IOException Si une IOException a lieu
 	 */
 	public static File createDOCX(final ZipFile docxFile, final Map<String, String> newXmlContents) throws IOException {
-		final File resultFile = new TempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
+		final File resultFile = TempFile.of(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
 		try (final ZipOutputStream outputFichierDOCX = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(resultFile.toPath())))) {
 			for (final ZipEntry zipEntry : Collections.list(docxFile.entries())) {
 				final String entryName = zipEntry.getName();

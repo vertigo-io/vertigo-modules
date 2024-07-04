@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,10 @@ import com.github.miachm.sods.Style;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.core.locale.LocaleMessageText;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportField;
@@ -59,8 +59,8 @@ final class ODSExporter {
 	private static final double MM_SIZE_PER_CELL = 4;
 	private static final double MM_SIZE_PER_LETTER = 1.8;
 
-	private final Map<DtField, Map<Object, String>> referenceCache = new HashMap<>();
-	private final Map<DtField, Map<Object, String>> denormCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> referenceCache = new HashMap<>();
+	private final Map<DataField, Map<Object, String>> denormCache = new HashMap<>();
 
 	/*private final Map<BasicType, Style> evenStyleCache = new EnumMap<>(BasicType.class);
 	private final Map<BasicType, Style> oddStyleCache = new EnumMap<>(BasicType.class);*/
@@ -170,13 +170,13 @@ final class ODSExporter {
 		}
 
 		int rowIndex = 1;
-		for (final DtObject dto : parameters.getDtList()) {
+		for (final DataObject dto : parameters.getDtList()) {
 			cellIndex = 0;
 			Object value;
 			for (final ExportField exportColumn : parameters.getExportFields()) {
 				final Range cell = sheet.getRange(rowIndex, cellIndex);
 				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(smartTypeManager, value, cell, getRowCellStyle(rowIndex % 2 == 0), cellIndex, maxWidthPerColumn, exportColumn.getDtField().smartTypeDefinition());
+				putValueInCell(smartTypeManager, value, cell, getRowCellStyle(rowIndex % 2 == 0), cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 
 				cellIndex++;
 			}
@@ -187,7 +187,7 @@ final class ODSExporter {
 	private void exportObject(final ExportSheet parameters, final Sheet sheet, final Map<Integer, Double> maxWidthPerColumn) {
 		final int labelCellIndex = 0;
 		final int valueCellIndex = 1;
-		final DtObject dto = parameters.getDtObject();
+		final DataObject dto = parameters.getDtObject();
 		Object value;
 		int rowIndex = 0;
 		for (final ExportField exportColumn : parameters.getExportFields()) {
@@ -201,7 +201,7 @@ final class ODSExporter {
 
 			final Range valueCell = sheet.getRange(rowIndex, valueCellIndex);
 			value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-			putValueInCell(smartTypeManager, value, valueCell, getRowCellStyle(false), valueCellIndex, maxWidthPerColumn, exportColumn.getDtField().smartTypeDefinition());
+			putValueInCell(smartTypeManager, value, valueCell, getRowCellStyle(false), valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 			rowIndex++;
 		}
 

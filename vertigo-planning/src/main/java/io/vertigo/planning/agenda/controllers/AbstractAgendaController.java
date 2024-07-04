@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.domain.Agenda;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
@@ -37,6 +37,7 @@ import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
 import io.vertigo.planning.agenda.domain.PlageHoraire;
 import io.vertigo.planning.agenda.domain.PlageHoraireDisplay;
 import io.vertigo.planning.agenda.domain.PublicationTrancheHoraireForm;
+import io.vertigo.planning.agenda.domain.TrancheHoraire;
 import io.vertigo.planning.agenda.domain.TrancheHoraireDisplay;
 import io.vertigo.planning.agenda.services.PlanningServices;
 import io.vertigo.ui.core.ViewContext;
@@ -169,7 +170,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_deletePlage")
-	public ViewContext _deletePlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
+	public ViewContext deletePlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
 		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
 		planningServices.deletePlageHoraireCascade(ageUid, UID.of(PlageHoraire.class, plhId));
 
@@ -189,6 +190,14 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
+	@PostMapping("/_deleteTrancheHoraire")
+	public ViewContext deleteTrancheHoraire(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, @RequestParam("trhId") final Long trhId) {
+		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
+		final UID<TrancheHoraire> trhUid = UID.of(TrancheHoraire.class, trhId);
+		planningServices.closeTrancheHoraire(ageUid, trhUid);
+		return loadPlageHoraireDetail(viewContext, agenda, plageHoraireDetail.getPlhId());
+	}
+
 	private void prepareContextAtDate(final LocalDate showDate, final AgendaDisplayRange agenda, final UID<Agenda> ageUid, final ViewContext viewContext) {
 		agenda.setShowDate(showDate);
 		agenda.setFirstDate(toPreviousMonday(showDate));
@@ -199,13 +208,13 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	}
 
 	private static PublicationTrancheHoraireForm preparePublicationTrancheHoraireForm(final AgendaDisplayRange agendaRange) {
-		//par defaut la semaine prochaine à 8h00
+		//par defaut non renseigné : il faut regarder l'historique pour proposer par exemple : la semaine prochaine à 8h00
 		final LocalDate today = LocalDate.now();
 		final var publicationTrancheHoraireForm = new PublicationTrancheHoraireForm();
 		publicationTrancheHoraireForm.setDateLocaleDebut(today.isAfter(agendaRange.getFirstDate()) ? today : agendaRange.getFirstDate()); //par défaut aujourd'hui->samedi
 		publicationTrancheHoraireForm.setDateLocaleFin(agendaRange.getLastDate());
-		publicationTrancheHoraireForm.setPublicationDateLocale(toPreviousMonday(LocalDate.now().plusWeeks(1)));
-		publicationTrancheHoraireForm.setPublicationMinutesDebut(8 * 60);
+		//publicationTrancheHoraireForm.setPublicationDateLocale(toPreviousMonday(LocalDate.now().plusWeeks(1)));
+		//publicationTrancheHoraireForm.setPublicationMinutesDebut(8 * 60);
 		publicationTrancheHoraireForm.setPublishNow(false); //par défaut on planifie
 		return publicationTrancheHoraireForm;
 	}

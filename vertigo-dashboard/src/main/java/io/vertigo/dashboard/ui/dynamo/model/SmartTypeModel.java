@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ import io.vertigo.core.lang.Assertion;
 public class SmartTypeModel {
 	private final String smartTypeDefinition;
 	private final Double taskCount; // may be null for UI (displayed as N/A)
-	private final Double dtDefinitionCount; // may be null for UI (displayed as N/A)
+	private final Double dataDefinitionCount; // may be null for UI (displayed as N/A)
 
-	public SmartTypeModel(final String smartTypeDefinition, final Double taskCount, final Double dtDefinitionCount) {
+	public SmartTypeModel(final String smartTypeDefinition, final Double taskCount, final Double dataDefinitionCount) {
 		Assertion.check().isNotNull(smartTypeDefinition);
 		//---
 		this.smartTypeDefinition = smartTypeDefinition;
 		this.taskCount = taskCount;
-		this.dtDefinitionCount = dtDefinitionCount;
+		this.dataDefinitionCount = dataDefinitionCount;
 	}
 
 	public String getName() {
@@ -37,8 +37,8 @@ public class SmartTypeModel {
 	}
 
 	public boolean isOrphan() {
-		if (taskCount != null && dtDefinitionCount != null) {
-			return taskCount == 0 && dtDefinitionCount == 0;
+		if (taskCount != null && dataDefinitionCount != null) {
+			return taskCount == 0 && dataDefinitionCount == 0;
 		} else if (taskCount != null) {// dtDefinitionCount null
 			return taskCount == 0;
 		}
@@ -51,11 +51,11 @@ public class SmartTypeModel {
 	}
 
 	public Double getDtDefinitionCount() {
-		return dtDefinitionCount;
+		return dataDefinitionCount;
 	}
 
 	public Double getUsageCount() {
-		return taskCount + dtDefinitionCount;
+		return taskCount + dataDefinitionCount;
 	}
 
 }

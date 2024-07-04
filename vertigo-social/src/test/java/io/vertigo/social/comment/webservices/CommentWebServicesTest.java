@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,10 @@ import io.vertigo.core.lang.MapBuilder;
 import io.vertigo.core.lang.json.UTCDateUtil;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.util.InjectorUtil;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.model.KeyConcept;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.social.MyNodeConfig;
 import io.vertigo.social.comment.Comment;
 import io.vertigo.social.comment.CommentManager;
@@ -82,10 +82,10 @@ public final class CommentWebServicesTest {
 		account1Uri = MockIdentities.createAccountURI("1");
 
 		//on triche un peu, car AcountGroup n'est pas un KeyConcept
-		final DtDefinition dtDefinition = DtObjectUtil.findDtDefinition(AccountGroup.class);
-		keyConcept1Uri = UID.of(dtDefinition, "10");
-		keyConcept2Uri = UID.of(dtDefinition, "20");
-		CONCEPT_KEY_NAME = dtDefinition.getClassSimpleName();
+		final DataDefinition dataDefinition = DataModelUtil.findDataDefinition(AccountGroup.class);
+		keyConcept1Uri = UID.of(dataDefinition, "10");
+		keyConcept2Uri = UID.of(dataDefinition, "20");
+		CONCEPT_KEY_NAME = dataDefinition.getClassSimpleName();
 
 		preTestLogin();
 	}
@@ -269,7 +269,7 @@ public final class CommentWebServicesTest {
 	}*/
 
 	private static String convertDate(final Instant instant) {
-		return instant == null ? null : UTCDateUtil.formatInstant(instant);
+		return instant == null ? null : UTCDateUtil.formatInstantISO8601(instant);
 	}
 
 	private static Map<String, Object> commentToMap(final Comment comment) {

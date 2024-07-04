@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.util.ClassUtil;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.orchestra.dao.definition.DefinitionPAO;
 import io.vertigo.orchestra.dao.definition.OActivityDAO;
 import io.vertigo.orchestra.dao.definition.OProcessDAO;
@@ -200,7 +200,8 @@ public class DbProcessDefinitionStorePlugin implements ProcessDefinitionStorePlu
 		// ---
 		final String processName = processDefinition.getName();
 
-		final int count = definitionPAO.getProcessesByName(processName);
+		definitionPAO.lockProcessesForInsert();
+		final int count = definitionPAO.countProcessesByName(processName);
 		final boolean exists = count > 0;
 		if (exists) {
 			final ProcessDefinition existingDefinition = getProcessDefinition(processName);

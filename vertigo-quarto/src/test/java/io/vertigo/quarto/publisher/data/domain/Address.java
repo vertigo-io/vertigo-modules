@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@
  */
 package io.vertigo.quarto.publisher.data.domain;
 
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DataObject;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Objet de données AbstractAddress
  */
-public final class Address implements DtObject {
+public final class Address implements DataObject {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Rue")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Rue")
 	private String rue;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyDtVille", label = "Ville")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyDtVille", label = "Ville")
 	private io.vertigo.quarto.publisher.data.domain.Ville ville;
 
 	/**

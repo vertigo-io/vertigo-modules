@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * Interface de consultation des ExportDtParameters.
@@ -39,12 +39,12 @@ public final class ExportSheet {
 	 * Objet à exporter.
 	 * dto XOR dtc est renseigné.
 	 */
-	private final DtObject dto;
+	private final DataObject dto;
 	private final DtList<?> dtc;
 
 	private final String title;
 
-	public ExportSheet(final String title, final List<ExportField> exportFields, final DtObject dto, final DtList dtc) {
+	public ExportSheet(final String title, final List<ExportField> exportFields, final DataObject dto, final DtList dtc) {
 		Assertion.check()
 				.isNotNull(exportFields)
 				.isTrue(dto == null ^ dtc == null, "a dto or a dtc is required");
@@ -73,7 +73,7 @@ public final class ExportSheet {
 	/**
 	 * @return Données sous forme d'un DTO, ceci est un cast donc il y a levé d'une assertion si ce n'est pas un DTO
 	 */
-	public DtObject getDtObject() {
+	public DataObject getDtObject() {
 		Assertion.check().isNotNull(dto);
 		//-----
 		return dto;

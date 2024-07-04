@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,23 @@
  */
 package io.vertigo.quarto.publisher.data.domain;
 
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DataObject;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Objet de données AbstractEnquete
  */
-public final class Enquete implements DtObject {
+public final class Enquete implements DataObject {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "Terminée?")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "Terminée?")
 	private Boolean enqueteTerminee;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Code")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Code")
 	private String codeEnquete;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyString", label = "Sexe")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyString", label = "Sexe")
 	private String fait;
-	@io.vertigo.datamodel.structure.stereotype.Field(smartType = "STyBoolean", label = "Sexe")
+	@io.vertigo.datamodel.data.stereotype.Field(smartType = "STyBoolean", label = "Sexe")
 	private Boolean siGrave;
 
 	/**

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,14 @@ import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.task.TaskManager;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.planning.agenda.domain.ReservationCreneau;
 
 /**
@@ -76,7 +76,7 @@ public final class ReservationCreneauDAO extends DAO<ReservationCreneau, java.la
             #reservationsCreneau.0.instantCreation#
             #reservationsCreneau.0.ageId#);""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
-	public void insertReservationsCreneau(@io.vertigo.datamodel.task.proxy.TaskInput(name = "reservationsCreneau", smartType = "STyDtReservationCreneau") final io.vertigo.datamodel.structure.model.DtList<io.vertigo.planning.agenda.domain.ReservationCreneau> reservationsCreneau) {
+	public void insertReservationsCreneau(@io.vertigo.datamodel.task.proxy.TaskInput(name = "reservationsCreneau", smartType = "STyDtReservationCreneau") final io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.ReservationCreneau> reservationsCreneau) {
 		final Task task = createTaskBuilder("TkInsertReservationsCreneau")
 				.addValue("reservationsCreneau", reservationsCreneau)
 				.build();

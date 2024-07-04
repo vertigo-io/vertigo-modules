@@ -1,1 +1,0 @@
-alter table movie add category varchar(25);

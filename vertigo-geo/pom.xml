@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.vertigo</groupId>
-		<artifactId>vertigo-extensions</artifactId>
+		<artifactId>vertigo-modules</artifactId>
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 
@@ -12,11 +12,6 @@
 	<name>vertigo-geo</name>
 
 	<dependencies>
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-core</artifactId>
-			<version>${vertigo.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-datamodel</artifactId>
@@ -31,7 +26,6 @@
 		<dependency>
 		    <groupId>org.elasticsearch.client</groupId>
 		    <artifactId>elasticsearch-rest-high-level-client</artifactId>
-		    <version>7.17.14</version>
 		    <optional>true</optional> <!-- RestHighLevelElasticSearchConnector -->
 		</dependency>
 	</dependencies>

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.json.CoreJsonAdapters;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.dao.AgendaDAO;
 import io.vertigo.planning.agenda.dao.TrancheHoraireDAO;
 import io.vertigo.planning.agenda.domain.Agenda;
@@ -62,6 +62,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.ScanParams;
 
 @NotDiscoverable
+@Deprecated
 public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanningPlugin {
 	private static final Gson V_CORE_GSON = CoreJsonAdapters.V_CORE_GSON;
 
