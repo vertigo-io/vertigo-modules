@@ -70,11 +70,18 @@ public enum EfPackResources implements LocaleMessageKey {
 	// Validators
 	EfFvaEmailNotInBlacklistLabel,
 	EfFvaEmailNotInBlacklistDescription,
+
 	EfFvaGte13AnsLabel,
 	EfFvaLt16AnsLabel,
 	EfFvaGte16AnsLabel,
 	EfFvaLt18AnsLabel,
 	EfFvaGte18AnsLabel,
+
+	EfFvaInFutureLabel,
+	EfFvaInPastLabel,
+	EfFvaInFutureErrorLabel,
+	EfFvaInPastErrorLabel,
+
 	EfFvaPhoneFrLabel,
 	EfFvaPhoneFrFixeLabel,
 	EfFvaPhoneFrMobileLabel,

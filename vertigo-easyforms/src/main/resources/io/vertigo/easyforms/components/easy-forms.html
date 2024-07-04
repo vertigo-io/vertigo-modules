@@ -46,13 +46,13 @@
 									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)},
 									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, model.efoAllLang, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
-											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})}|"
+											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">
 											    
 											    <vu:content></vu:content>
 											    
 												<div th:case="'EfUicInternalMap'">
-													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="false">
+													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="false">
 														<vu:slot name="after_label_slot">
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
@@ -61,8 +61,8 @@
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
-												<div th:case="'EfUicFile'" th:with="ref=|'uploader_${object}_form$${fieldCode}'|">
-													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+												<div th:case="'EfUicFile'" th:with="ref=|'uploader_${object}_${field}$${fieldCode}'|">
+													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
 												        <vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
@@ -78,7 +78,7 @@
 												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAccept(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
 												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
 												            th:@update:file-info-uris="|(newFileInfoUris) => {${fieldModel} = newFileInfoUris;
-												            												  efCheckUploadConstraints('${object}','form$${fieldCode}',
+												            												  efCheckUploadConstraints('${object}','${field}$${fieldCode}',
 												            												                           ${fieldModel}?.length, ${templateItem.maxItems}, `#{EfUplaodMaxCount(${templateItem.maxItems})}`,
 												            												                           $refs[${ref}].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
 												            												 }|"
@@ -88,7 +88,7 @@
 	         									   </vu:label-edit>
 												</div>
 												<div th:case="'EfUicRadio'">
-													<vu:label-edit object="${object}" field="|form$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
 												        <vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
@@ -106,7 +106,7 @@
 													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicCheckbox'">
-													<vu:label-edit object="${object}" field="|form$${fieldCode}|" th:label="${fieldLabel}" required="false"
+													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" th:label="${fieldLabel}" required="false"
 																   th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|">
 														<vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
@@ -139,8 +139,8 @@
 														th:label="${fieldLabel}"
 														th:classappend="|${templateItem.isMandatory?'v-field__required':''}|"
 											            th:aria-required="${templateItem.isMandatory}"
-											            th::error="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
-														th::error-message="|getErrorMessage('${object}', 'form$${fieldCode}', ${rowIndex})|"
+											            th::error="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
+														th::error-message="|getErrorMessage('${object}', '${field}$${fieldCode}', ${rowIndex})|"
 														orientation="vertical"
 														stack-label
 														label-slot
@@ -156,16 +156,16 @@
 													</q-select>
 												</div>
 												<div th:case="'EfUicDate'"
-													 th:with="myFormat=${fieldParameters['uiDatetimeFormat']?: 'DD/MM/YYYY'}, myRef=|'date_${object}_form$${fieldCode}'|">
+													 th:with="myFormat=${fieldParameters['uiDatetimeFormat']?: 'DD/MM/YYYY'}, myRef=|'date_${object}_${field}$${fieldCode}'|">
 													<q-input 
-															th:v-autofocus="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|"
+															th:v-autofocus="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|"
 															th:v-bind:model-value="|decodeDate(${fieldModel}, '${myFormat}')|" 
 															th:@update:model-value="|function (newValue) { ${fieldModel} = encodeDate(newValue, '${myFormat}') }|" 
 															stack-label
 															th:classappend="${templateItem.isMandatory?'v-field__required':''}"
 															th:aria-required="${templateItem.isMandatory}"
-															th::error="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
-															th::error-message="|getErrorMessage('${object}', 'form$${fieldCode}', ${rowIndex})|"
+															th::error="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
+															th::error-message="|getErrorMessage('${object}', '${field}$${fieldCode}', ${rowIndex})|"
 															label-slot
 															th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__" >
 														<template v-slot:prepend>
@@ -192,13 +192,13 @@
 												</div>
 												<div th:case="*">
 													<q-input 
-															th:v-autofocus="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|"
+															th:v-autofocus="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|"
 															th:v-model="${fieldModel}"
-															th::aria-describedby="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
-															th::aria-invalid="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
+															th::aria-describedby="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
+															th::aria-invalid="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
 															th:id="|text-input-${fieldCode}|"
-															th::error="|hasFieldsError('${object}', 'form$${fieldCode}', ${rowIndex})|" 
-															th::error-message="|getErrorMessage('${object}', 'form$${fieldCode}', ${rowIndex})|"
+															th::error="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
+															th::error-message="|getErrorMessage('${object}', '${field}$${fieldCode}', ${rowIndex})|"
 															th:type="${fieldType.uiComponentName == 'EfUicTextArea' ? 'textarea' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : (fieldType.uiComponentName == 'EfUicDateTime' ? 'datetime-local' : (fieldType.uiComponentName == 'EfUicNumber' ? 'number' : 'text')))}"
 															th::counter="${fieldType.uiComponentName == 'EfUicTextArea' ? 'true' : 'false'}"
 															th:autocomplete="${fieldParameters['textFieldAutocomplete']}"

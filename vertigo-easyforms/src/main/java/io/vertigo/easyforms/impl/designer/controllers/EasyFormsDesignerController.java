@@ -231,7 +231,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 			final var fieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(uiItem.getFieldType(), EasyFormsFieldTypeDefinition.class);
 			if (fieldTypeDefinition.getParamTemplate() != null) {
-				easyFormsRunnerServices.formatAndCheckFormulaire(uiItem, uiItem.getParameters(), fieldTypeDefinition.getParamTemplate(), getUiMessageStack());
+				easyFormsRunnerServices.formatAndCheckFormulaire(uiItem, EasyFormsItemUiFields.parameters, fieldTypeDefinition.getParamTemplate(), getUiMessageStack());
 				field.setParameters(uiItem.getParameters());
 			} else {
 				field.setParameters(null);

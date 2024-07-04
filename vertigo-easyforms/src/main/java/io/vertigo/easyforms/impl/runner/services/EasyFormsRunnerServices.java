@@ -23,10 +23,12 @@ import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.FormatterException;
@@ -61,8 +63,6 @@ import io.vertigo.vega.webservice.validation.ValidationUserException;
 @Transactional
 public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
-	private static final String FORM_PREFIX = "form$";
-
 	@Inject
 	private EasyFormsRunnerManager easyFormsRunnerManager;
 
@@ -93,11 +93,16 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	}
 
 	@Override
-	public void formatAndCheckFormulaire(final DataObject formOwner, final EasyFormsData formData, final EasyFormsTemplate formTempalte, final UiMessageStack uiMessageStack) {
+	public <E extends DataObject> void formatAndCheckFormulaire(final E formOwner, final DataFieldName<E> formDataFieldName, final EasyFormsTemplate formTempalte,
+			final UiMessageStack uiMessageStack) {
+		final var formDataRaw = DataModelUtil.findDataDefinition(formOwner).getField(formDataFieldName).getDataAccessor().getValue(formOwner);
+
 		Assertion.check()
 				.isFalse(formTempalte.getSections() == null || formTempalte.getSections().isEmpty(), "No form")
-				.isFalse(StringUtil.isBlank(formTempalte.getSections().get(0).getCode()) && formTempalte.getSections().size() > 1, "If default section, it must be the only one");
+				.isFalse(StringUtil.isBlank(formTempalte.getSections().get(0).getCode()) && formTempalte.getSections().size() > 1, "If default section, it must be the only one")
+				.isTrue(EasyFormsData.class.isAssignableFrom(formDataRaw.getClass()), "formDataFieldName must point to an EasyFormsData object");
 
+		final EasyFormsData formData = (EasyFormsData) formDataRaw;
 		final EasyFormsData formattedFormData = new EasyFormsData();
 		for (final var section : formTempalte.getSections()) {
 			// test section condition, else continue;
@@ -131,12 +136,12 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 					for (final var elem2 : block.getItems()) {
 						if (elem2 instanceof final EasyFormsTemplateItemField field) {
-							final var formattedValue = formatAndCheckField(formTempalte, section, field, formDataSection, formOwner, uiMessageStack);
+							final var formattedValue = formatAndCheckField(formTempalte, formDataFieldName.name(), section, field, formDataSection, formOwner, uiMessageStack);
 							formattedFormDataSection.put(field.getCode(), formattedValue);
 						}
 					}
 				} else if (elem instanceof final EasyFormsTemplateItemField field) {
-					final var formattedValue = formatAndCheckField(formTempalte, section, field, formDataSection, formOwner, uiMessageStack);
+					final var formattedValue = formatAndCheckField(formTempalte, formDataFieldName.name(), section, field, formDataSection, formOwner, uiMessageStack);
 					formattedFormDataSection.put(field.getCode(), formattedValue);
 				}
 			}
@@ -151,10 +156,11 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		formData.putAll(formattedFormData);
 	}
 
-	private Object formatAndCheckField(final EasyFormsTemplate formTempalte, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field, final EasyFormsData formData,
+	private Object formatAndCheckField(final EasyFormsTemplate formTempalte, final String formDataFieldName, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field,
+			final EasyFormsData formData,
 			final DataObject formOwner, final UiMessageStack uiMessageStack) {
 
-		final var fieldCode = FORM_PREFIX + (formTempalte.useSections() ? section.getCode() + "$" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
+		final var fieldCode = formDataFieldName + "$" + (formTempalte.useSections() ? section.getCode() + "$" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
 
 		// format field (eg: Put last name in upper case)
 		final var inputValue = formData.get(field.getCode());

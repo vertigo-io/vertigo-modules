@@ -1,7 +1,5 @@
 package io.vertigo.easyforms.impl.runner.pack.provider.fieldtype;
 
-import java.util.Map;
-
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
 import io.vertigo.easyforms.impl.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.impl.runner.pack.provider.UiComponentDefinitionProvider.UiComponentEnum;
@@ -18,11 +16,6 @@ public class DateType implements IEasyFormsFieldTypeDefinitionSupplier {
 	@Override
 	public EnumDefinition<EasyFormsUiComponentDefinition, ?> getUiComponent() {
 		return UiComponentEnum.DATE;
-	}
-
-	@Override
-	public Map<String, Object> getUiParams() {
-		return Map.of("uiDatetimeFormat", "'+vueData.uiDateFormat+'");
 	}
 
 }

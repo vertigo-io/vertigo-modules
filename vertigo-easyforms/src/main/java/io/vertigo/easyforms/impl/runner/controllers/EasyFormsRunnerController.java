@@ -2,12 +2,12 @@ package io.vertigo.easyforms.impl.runner.controllers;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.easyforms.domain.EasyForm;
@@ -99,7 +99,7 @@ public final class EasyFormsRunnerController {
 	 * @param formDataAccessor accessor to the form data on the formOwner
 	 * @param <E> Entity type
 	 */
-	public <E extends Entity> void checkForm(final EasyFormsTemplate easyFormsTemplate, final E formOwner, final Function<E, EasyFormsData> formDataAccessor) {
-		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataAccessor.apply(formOwner), easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
+	public <E extends Entity> void checkForm(final EasyFormsTemplate easyFormsTemplate, final E formOwner, final DataFieldName<E> formDataFieldName) {
+		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataFieldName, easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
 	}
 }

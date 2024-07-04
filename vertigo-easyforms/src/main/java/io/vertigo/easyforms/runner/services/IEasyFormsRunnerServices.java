@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
@@ -41,11 +42,11 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * Formats and checks the form data.
 	 *
 	 * @param formOwner The owner of the form.
-	 * @param formData The data of the form.
+	 * @param formDataFieldName The field name of the form data.
 	 * @param formTempalte The template of the form.
 	 * @param uiMessageStack The stack of UI messages.
 	 */
-	void formatAndCheckFormulaire(DataObject formOwner, EasyFormsData formData, EasyFormsTemplate formTempalte, UiMessageStack uiMessageStack);
+	<E extends DataObject> void formatAndCheckFormulaire(E formOwner, final DataFieldName<E> formDataFieldName, EasyFormsTemplate formTempalte, UiMessageStack uiMessageStack);
 
 	/**
 	 * Formats and checks a single field of the form data.

@@ -10,6 +10,8 @@ import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintAgeMaximum;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintAgeMinimum;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintEmailBlackList;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMaximum;
+import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintLocalDateMinimum;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintPhone;
 import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintPhone.ConstraintPhoneEnum;
 import io.vertigo.easyforms.impl.runner.pack.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
@@ -25,6 +27,8 @@ public final class FieldValidatorTypeDefinitionProvider implements SimpleEnumDef
 		GTE_16_ANS(30, new ConstraintAgeMinimum("16", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
 		LT_18_ANS(40, new ConstraintAgeMaximum("17", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
 		GTE_18_ANS(60, new ConstraintAgeMinimum("18", Optional.empty(), Optional.empty()), FieldTypeEnum.BIRTH_DATE),
+		IN_FUTURE(10, new ConstraintLocalDateMinimum("now", Optional.empty(), Optional.of("EfFvaInFutureErrorLabel")), FieldTypeEnum.DATE),
+		IN_PAST(20, new ConstraintLocalDateMaximum("now", Optional.empty(), Optional.of("EfFvaInPastErrorLabel")), FieldTypeEnum.DATE),
 		PHONE_FR(10, ConstraintPhone.ofEnum(ConstraintPhoneEnum.FR_METRO, Optional.empty(), Optional.empty()), FieldTypeEnum.PHONE),
 		PHONE_FR_FIXE(10, ConstraintPhone.ofEnum(ConstraintPhoneEnum.FR_FIXE, Optional.empty(), Optional.empty()), FieldTypeEnum.PHONE),
 		PHONE_FR_MOBILE(20, ConstraintPhone.ofEnum(ConstraintPhoneEnum.FR_MOBILE, Optional.empty(), Optional.empty()), FieldTypeEnum.PHONE),
