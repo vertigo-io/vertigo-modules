@@ -616,7 +616,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		// add default values for field type parameters
 		if (fieldTypeDefinition.getParamTemplate() != null) {
-			itemUi.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate()));
+			itemUi.setParameters(easyFormsRunnerServices.getDefaultDataValues(fieldTypeDefinition.getParamTemplate(), Map.of()));
 		}
 	}
 

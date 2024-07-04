@@ -88,21 +88,18 @@ public final class EasyFormsRunnerController {
 	public EasyFormsData getDefaultDataValues(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
 
-		return easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate);
+		return easyFormsRunnerServices.getDefaultDataValues(easyFormsTemplate, viewContext.asMap());
 	}
 
 	/**
 	 * Validate EasyFormData
 	 *
-	 * @param viewContext viewContext
-	 * @param templateKey ViewContextKey where the template is published
+	 * @param easyFormsTemplate template to check
 	 * @param formOwner entity holding the form
 	 * @param formDataAccessor accessor to the form data on the formOwner
 	 * @param <E> Entity type
 	 */
-	public <E extends Entity> void checkForm(final ViewContext viewContext, final ViewContextKey<EasyFormsTemplate> templateKey, final E formOwner, final Function<E, EasyFormsData> formDataAccessor) {
-		final EasyFormsTemplate easyFormsTemplate = (EasyFormsTemplate) viewContext.get(templateKey.get());
-
+	public <E extends Entity> void checkForm(final EasyFormsTemplate easyFormsTemplate, final E formOwner, final Function<E, EasyFormsData> formDataAccessor) {
 		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataAccessor.apply(formOwner), easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
 	}
 }

@@ -40,6 +40,7 @@ import io.vertigo.easyforms.domain.DtDefinitions.EasyFormFields;
 import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.impl.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
+import io.vertigo.easyforms.impl.runner.util.ObjectUtil;
 import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.data.EasyFormsDataDescriptor;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
@@ -261,7 +262,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	}
 
 	@Override
-	public EasyFormsData getDefaultDataValues(final EasyFormsTemplate easyFormsTemplate) {
+	public EasyFormsData getDefaultDataValues(final EasyFormsTemplate easyFormsTemplate, final Map<String, Serializable> contextData) {
 		final var templateDefaultData = new EasyFormsData();
 
 		for (final var section : easyFormsTemplate.getSections()) {
@@ -276,12 +277,12 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			for (final var field : section.getAllFields()) {
 				if (field.getDefaultValue() != null) {
 					// default value is set on field
-					sectionData.put(field.getCode(), field.getDefaultValue());
+					sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), contextData));
 				} else {
 					// default value is set on field type
 					final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 					if (paramFieldTypeDefinition.getDefaultValue() != null) {
-						sectionData.put(field.getCode(), paramFieldTypeDefinition.getDefaultValue());
+						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), contextData));
 					}
 				}
 			}

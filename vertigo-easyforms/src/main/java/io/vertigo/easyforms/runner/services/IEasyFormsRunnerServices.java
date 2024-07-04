@@ -1,7 +1,9 @@
 package io.vertigo.easyforms.runner.services;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import io.vertigo.core.node.component.Component;
@@ -61,9 +63,10 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * Retrieves the default data values for a given form template.
 	 *
 	 * @param easyFormsTemplate The form template.
+	 * @param contextValues The context values.
 	 * @return The default data values for the given form template.
 	 */
-	EasyFormsData getDefaultDataValues(EasyFormsTemplate easyFormsTemplate);
+	EasyFormsData getDefaultDataValues(EasyFormsTemplate easyFormsTemplate, Map<String, Serializable> contextValues);
 
 	/**
 	 * Creates a temporary FileInfo from a given VFile.
