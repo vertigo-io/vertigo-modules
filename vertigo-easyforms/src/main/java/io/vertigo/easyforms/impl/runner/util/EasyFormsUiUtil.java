@@ -94,10 +94,10 @@ public final class EasyFormsUiUtil implements Serializable {
 	}
 
 	public String getDynamicListForField(final EasyFormsTemplateItemField field) {
-		return getDynamicListForField(field, null);
+		return getDynamicListForField(field, null, null);
 	}
 
-	public String getDynamicListForField(final EasyFormsTemplateItemField field, final String searchValue) {
+	public String getDynamicListForField(final EasyFormsTemplateItemField field, final String filterFunction, final String searchValue) {
 		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(IEasyFormsRunnerServices.class);
 		final var fieldType = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 
@@ -107,17 +107,17 @@ public final class EasyFormsUiUtil implements Serializable {
 		final var ctxNameOpt = easyFormsRunnerServices.resolveCtxName(listSupplier);
 
 		if (ctxNameOpt.isPresent()) {
-			return listFromContext(ctxNameOpt.get(), searchValue);
+			return listFromContext(ctxNameOpt.get(), filterFunction, searchValue);
 		} else {
 			return EasyFormsListItem.ofCollection(resolvedParameters.getOrDefault(listSupplier, List.of())).toString();
 		}
 	}
 
-	private String listFromContext(final String ctxKeyName, final String searchValue) {
+	private String listFromContext(final String ctxKeyName, final String filterFunction, final String searchValue) {
 		final String idField = UiUtil.getIdField(ctxKeyName);
 		final String displayField = UiUtil.getDisplayField(ctxKeyName);
 
-		return "transformListForSelection('" + ctxKeyName + "', '" + idField + "', '" + displayField + "', null, " + searchValue + ")";
+		return "transformListForSelection('" + ctxKeyName + "', '" + idField + "', '" + displayField + "', " + filterFunction + ", " + searchValue + ")";
 	}
 
 	public EasyFormsData getParametersForField(final EasyFormsTemplateItemField field) {
