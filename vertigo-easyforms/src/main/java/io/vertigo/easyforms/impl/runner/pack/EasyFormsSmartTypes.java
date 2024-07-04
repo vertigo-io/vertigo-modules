@@ -71,7 +71,6 @@ public enum EasyFormsSmartTypes {
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Constraint(clazz = ConstraintStringLength.class, arg = "10000")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[^<>&\"]*$", resourceMsg = "EfInvalidSpecialChars")
 	EfText,
 
 	@SmartTypeDefinition(String.class)
