@@ -30,7 +30,7 @@
 							<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
 								<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
 									<th:block th:if="${templateItem.type == 'STATIC'}">
-				    					<div class="q-mb-lg" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, model.efoAllLang, isI18nLabel)}"></div>
+				    					<div class="q-mb-lg ef-static-text" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, model.efoAllLang, isI18nLabel)}"></div>
 				    				</th:block>
 				    				<template th:if="${templateItem.type == 'BLOCK'}"
 				    						  th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.condition)}">
