@@ -80,7 +80,8 @@ public final class UiexecutionsPAO implements StoreServices {
  "         	join o_activity_workspace acw on acw.ACE_ID = ace.ACE_ID\n" + 
  "         	left join o_activity_log acl on acl.ACE_ID = ace.ACE_ID\n" + 
  "         	where ace.PRE_ID = #preId#\n" + 
- "         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD",
+ "         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD\n" +
+ "          order by ace.BEGIN_TIME asc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOActivityExecutionUi", name = "dtcOActivityExecutionUi")
 	public io.vertigo.datamodel.data.model.DtList<io.vertigo.orchestra.monitoring.domain.uiexecutions.OActivityExecutionUi> getActivitiesByPreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId) {
@@ -116,7 +117,8 @@ public final class UiexecutionsPAO implements StoreServices {
  "         	join o_activity_workspace acw on acw.ACE_ID = ace.ACE_ID\n" + 
  "         	left join o_activity_log acl on acl.ACE_ID = ace.ACE_ID\n" + 
  "         	where ace.ACE_ID = #aceId#\n" + 
- "         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD",
+ "         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD\n" +
+ "          order by ace.BEGIN_TIME asc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOActivityExecutionUi", name = "dtOActivityExecutionUi")
 	public io.vertigo.orchestra.monitoring.domain.uiexecutions.OActivityExecutionUi getActivitiyByAceId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "aceId", smartType = "STyOIdentifiant") final Long aceId) {
@@ -152,7 +154,8 @@ public final class UiexecutionsPAO implements StoreServices {
  " 						where ace.PRE_ID = #preId#\n" + 
  " 						order by ace.end_time desc limit 1) as HAS_ATTACHMENT\n" + 
  "         	from o_process_execution pre   \n" + 
- "         	where pre.PRE_ID = #preId#",
+ "         	where pre.PRE_ID = #preId# \n" +
+ "          order by pre.begin_time desc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtOProcessExecutionUi", name = "dtOProcessExecutionUi")
 	public io.vertigo.orchestra.monitoring.domain.uiexecutions.OProcessExecutionUi getExecutionByPreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "preId", smartType = "STyOIdentifiant") final Long preId) {
