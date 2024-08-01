@@ -42,6 +42,22 @@ VUiExtensions.methods = {
         this.$q.notify(this.uiMessageStackToNotify({globalErrors:errorMessages})[0])
     },
     
+    efDecodeDate: function (value, format) {
+        if (value === Quasar.date.formatDate(Quasar.date.extractDate(value, 'YYYY-MM-DD'), 'YYYY-MM-DD')) {
+            return Quasar.date.formatDate(Quasar.date.extractDate(value, 'YYYY-MM-DD'), format);
+        } else {
+            return value;
+        }
+    },
+
+    efEncodeDate: function (newValue, format) {
+        if (newValue === Quasar.date.formatDate(Quasar.date.extractDate(newValue, format), format)) {
+            return Quasar.date.formatDate(Quasar.date.extractDate(newValue, format), 'YYYY-MM-DD');
+        } else {
+            return newValue;
+        }
+    },
+
     
     // ****
     // * Sections

@@ -159,8 +159,8 @@
 													 th:with="myFormat=${fieldParameters['uiDatetimeFormat']?: 'DD/MM/YYYY'}, myRef=|'date_${object}_${field}$${fieldCode}'|">
 													<q-input 
 															th:v-autofocus="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|"
-															th:v-bind:model-value="|decodeDate(${fieldModel}, '${myFormat}')|" 
-															th:@update:model-value="|function (newValue) { ${fieldModel} = encodeDate(newValue, '${myFormat}') }|" 
+															th:v-bind:model-value="|efDecodeDate(${fieldModel}, '${myFormat}')|" 
+															th:@update:model-value="|function (newValue) { ${fieldModel} = efEncodeDate(newValue, '${myFormat}') }|" 
 															stack-label
 															th:classappend="${templateItem.isMandatory?'v-field__required':''}"
 															th:aria-required="${templateItem.isMandatory}"
@@ -174,7 +174,7 @@
 														             <q-date 
 														             	th:v-model="${fieldModel}"
 														             	:landscape="$q.screen.gt.xs"
-														             	mask="DD/MM/YYYY"
+														             	mask="YYYY-MM-DD"
 														             	th:@update:model-value="|() => $refs[${myRef}].hide()|">
 														             </q-date> 
 													       		</q-popup-proxy>
