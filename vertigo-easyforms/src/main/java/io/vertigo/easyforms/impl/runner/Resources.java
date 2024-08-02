@@ -26,6 +26,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
  */
 public enum Resources implements LocaleMessageKey {
 
+	EfUnknownFormatterError,
+
 	EfInvalidCode,
 	EfInvalidSpecialChars,
 	EfInvalidEmail,

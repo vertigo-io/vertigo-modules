@@ -18,6 +18,7 @@
 package io.vertigo.easyforms.impl.runner.services;
 
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -75,7 +76,6 @@ import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Transactional
 public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
@@ -164,11 +164,6 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			}
 		}
 
-		//---
-		if (uiMessageStack.hasErrors()) {
-			throw new ValidationUserException();
-		}
-		// validation succeed, replace raw data with clean data
 		formData.clear();
 		formData.putAll(formattedFormData);
 	}
@@ -261,7 +256,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	private void forEachFiles(final EasyFormsData data, final Function<FileInfoURI, FileInfoURI> fileProcessor) {
 		for (final var section : data.values()) {
-			for (final var entry : ((HashMap<String, Object>) section).entrySet()) {
+			for (final var entry : ((AbstractMap<String, Object>) section).entrySet()) {
 				if (entry.getValue() instanceof final FileInfoURI f) {
 					entry.setValue(fileProcessor.apply(f));
 				} else if (entry.getValue() instanceof final List l) {
@@ -458,6 +453,9 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	private String valueToString(final SmartTypeDefinition smartType, final Object inputValue) {
 		final var targetJavaClass = smartType.getJavaClass();
+		if (!targetJavaClass.equals(String.class) && inputValue instanceof String) {
+			return (String) inputValue; // not a valid value, we display it as is
+		}
 		var adapter = smartTypeManager.getTypeAdapters("easyForm").get(targetJavaClass);
 		if (adapter == null) {
 			adapter = smartTypeManager.getTypeAdapters("ui").get(targetJavaClass);

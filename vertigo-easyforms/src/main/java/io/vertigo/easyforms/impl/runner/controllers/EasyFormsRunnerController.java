@@ -36,7 +36,10 @@ import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.springmvc.controller.VSpringMvcUiMessageStack;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
+import io.vertigo.vega.webservice.validation.ValidationUserException;
 
 @Controller
 public final class EasyFormsRunnerController {
@@ -109,14 +112,26 @@ public final class EasyFormsRunnerController {
 	}
 
 	/**
-	 * Validate EasyFormData
+	 * Validate EasyFormData with the given template and process UI data conversion.
+	 * Can be only used with EasyFormsData coming from UI, not from database.
 	 *
 	 * @param easyFormsTemplate template to check
 	 * @param formOwner entity holding the form
-	 * @param formDataAccessor accessor to the form data on the formOwner
+	 * @param formDataFieldName field name of the form in the entity
+	 * @param throwUserErrors if true, throw UserException if errors
 	 * @param <E> Entity type
+	 * @return if the form is valid
 	 */
-	public <E extends Entity> void checkForm(final EasyFormsTemplate easyFormsTemplate, final E formOwner, final DataFieldName<E> formDataFieldName) {
-		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataFieldName, easyFormsTemplate, UiRequestUtil.obtainCurrentUiMessageStack());
+	public <E extends Entity> boolean checkAndProcessUiFormResponse(final EasyFormsTemplate easyFormsTemplate, final E formOwner, final DataFieldName<E> formDataFieldName,
+			final boolean throwUserErrors) {
+		// do not use the actual message stack if we don't want to throw user errors
+		final UiMessageStack uiMessageStack = throwUserErrors ? UiRequestUtil.obtainCurrentUiMessageStack() : new VSpringMvcUiMessageStack();
+
+		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataFieldName, easyFormsTemplate, uiMessageStack);
+		if (throwUserErrors && uiMessageStack.hasErrors()) {
+			throw new ValidationUserException();
+		}
+
+		return !uiMessageStack.hasErrors();
 	}
 }

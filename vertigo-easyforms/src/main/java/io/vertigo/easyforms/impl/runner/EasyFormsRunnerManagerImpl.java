@@ -210,6 +210,11 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 					.incMeasure(FORMAT_ERROR_MEASURE, 1));
 
 			throw e;
+		} catch (final Exception e) {
+			analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer
+					.incMeasure(FORMAT_ERROR_MEASURE, 1));
+
+			throw new FormatterException(Resources.EfUnknownFormatterError);
 		}
 	}
 
