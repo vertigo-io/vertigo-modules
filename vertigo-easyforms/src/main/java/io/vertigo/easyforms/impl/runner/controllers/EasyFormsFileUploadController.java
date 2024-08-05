@@ -18,7 +18,6 @@
 package io.vertigo.easyforms.impl.runner.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
@@ -43,9 +41,6 @@ public class EasyFormsFileUploadController {
 	@Inject
 	private IEasyFormsRunnerServices easyFormsRunnerServices;
 
-	@Inject
-	private FileStoreManager fileStoreManager;
-
 	@GetMapping("/upload/download/{fileUri}")
 	public VFile downloadFile(@PathVariable("fileUri") final FileInfoURI fileInfoUri) {
 		return easyFormsRunnerServices.downloadFile(fileInfoUri);
@@ -53,17 +48,12 @@ public class EasyFormsFileUploadController {
 
 	@GetMapping("/upload")
 	public UiFileInfo loadUiFileInfo(@QueryParam("file") final FileInfoURI fileInfoUri) {
-		final var fileInfo = fileStoreManager.read(fileInfoUri);
-		return new UiFileInfo<>(fileInfo);
+		return easyFormsRunnerServices.getFileInfo(fileInfoUri);
 	}
 
 	@GetMapping("/upload/fileInfos")
 	public List<UiFileInfo> loadUiFileInfos(@QueryParam("file") final List<FileInfoURI> fileInfoUris) {
-		return fileInfoUris
-				.stream()
-				.map(fileStoreManager::read)
-				.map(UiFileInfo::new)
-				.collect(Collectors.toList());
+		return easyFormsRunnerServices.getFileInfos(fileInfoUris);
 	}
 
 	@PostMapping("/upload")

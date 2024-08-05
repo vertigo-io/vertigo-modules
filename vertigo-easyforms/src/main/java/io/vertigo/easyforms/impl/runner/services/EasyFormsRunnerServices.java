@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.account.security.UserSession;
+import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
@@ -55,6 +57,7 @@ import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.kvstore.KVStoreManager;
 import io.vertigo.easyforms.dao.EasyFormDAO;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormFields;
 import io.vertigo.easyforms.domain.EasyForm;
@@ -74,6 +77,8 @@ import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemFiel
 import io.vertigo.easyforms.runner.model.ui.EasyFormsListItem;
 import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
+import io.vertigo.ui.core.ProtectedValueUtil;
+import io.vertigo.ui.core.UiFileInfo;
 import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
@@ -91,6 +96,12 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	@Inject
 	private SmartTypeManager smartTypeManager;
+
+	@Inject
+	private KVStoreManager kvStoreManager;
+
+	@Inject
+	private VSecurityManager securityManager;
 
 	@Override
 	public EasyForm getEasyFormById(final UID<EasyForm> efoUid) {
@@ -239,6 +250,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			if (easyFormsRunnerManager.isTmpFileInfo(f.getDefinition())) {
 				final FileInfo file = easyFormsRunnerManager.createStdFileInfo(fileStoreManager.read(f).getVFile());
 				final FileInfoURI newUri = fileStoreManager.create(file).getURI();
+				updateProtectedValue(f, newUri);
 				oldFiles.add(f);
 				newFiles.add(newUri);
 				return newUri;
@@ -252,6 +264,19 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		for (final FileInfoURI fileInfoURI : oldFiles) {
 			fileStoreManager.delete(fileInfoURI);
 		}
+	}
+
+	// On autosave, we persist the file but we can't update vueData, so we keep the old protected value and update it to point to the new file
+	private void updateProtectedValue(final FileInfoURI oldUri, final FileInfoURI newUri) {
+		final var oldProtectedString = ProtectedValueUtil.generateProtectedValue(oldUri);
+		kvStoreManager.put(ProtectedValueUtil.PROTECTED_VALUE_COLLECTION_NAME, oldProtectedString + getSessionIdIfExists(), newUri);
+	}
+
+	private String getSessionIdIfExists() {
+		return securityManager.getCurrentUserSession()
+				.map(UserSession::getSessionUUID)
+				.map(u -> "-" + u)
+				.orElse("");
 	}
 
 	private void forEachFiles(final EasyFormsData data, final Function<FileInfoURI, FileInfoURI> fileProcessor) {
@@ -323,6 +348,20 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	public VFile downloadFile(final FileInfoURI fileInfoUri) {
 		final var fileInfo = fileStoreManager.read(fileInfoUri);
 		return fileInfo.getVFile();
+	}
+
+	@Override
+	public List<UiFileInfo> getFileInfos(final List<FileInfoURI> fileInfoUris) {
+		return fileInfoUris
+				.stream()
+				.map(this::getFileInfo)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public UiFileInfo getFileInfo(final FileInfoURI fileInfoUri) {
+		final var fileInfo = fileStoreManager.read(fileInfoUri);
+		return new UiFileInfo<>(fileInfo);
 	}
 
 	@Override

@@ -20,6 +20,7 @@ package io.vertigo.easyforms.runner.services;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ import io.vertigo.easyforms.domain.EasyForm;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
+import io.vertigo.ui.core.UiFileInfo;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 public interface IEasyFormsRunnerServices extends Component {
@@ -109,6 +111,22 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * @return The downloaded VFile.
 	 */
 	VFile downloadFile(FileInfoURI fileInfoUri);
+
+	/**
+	 * Retrieves the list of UiFileInfo from a given list of FileInfoURI.
+	 *
+	 * @param fileInfoUris The list of FileInfoURI.
+	 * @return The list of UiFileInfo.
+	 */
+	List<UiFileInfo> getFileInfos(List<FileInfoURI> fileInfoUris);
+
+	/**
+	 * Retrieves the UiFileInfo from a given FileInfoURI.
+	 *
+	 * @param fileInfoUri The FileInfoURI.
+	 * @return The UiFileInfo
+	 */
+	UiFileInfo getFileInfo(FileInfoURI fileInfoUri);
 
 	/**
 	 * Retrieves the read form of an EasyForm from a given template and data.
