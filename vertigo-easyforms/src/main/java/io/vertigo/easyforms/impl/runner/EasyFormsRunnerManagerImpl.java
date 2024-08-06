@@ -291,9 +291,11 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 				if (value instanceof final List valueList) {
 					final var errorList = new ArrayList<String>();
 					if (fieldDescriptor.getMinListSize() != null && fieldDescriptor.getMinListSize().intValue() > valueList.size()) {
-						errorList.add(LocaleMessageText.of(Resources.EfMinListSize, fieldDescriptor.getMinListSize(), fieldDescriptor.getMinListSize().intValue() > 1 ? "s" : "").getDisplay());
+						errorList.add(LocaleMessageText.of(fieldDescriptor.getMinListSizeResource(), fieldDescriptor.getMinListSize(), fieldDescriptor.getMinListSize().intValue() > 1 ? "s" : "")
+								.getDisplay());
 					} else if (fieldDescriptor.getMaxListSize() != null && fieldDescriptor.getMaxListSize().intValue() < valueList.size()) {
-						errorList.add(LocaleMessageText.of(Resources.EfMaxListSize, fieldDescriptor.getMaxListSize(), fieldDescriptor.getMaxListSize().intValue() > 1 ? "s" : "").getDisplay());
+						errorList.add(LocaleMessageText.of(fieldDescriptor.getMaxListSizeResource(), fieldDescriptor.getMaxListSize(), fieldDescriptor.getMaxListSize().intValue() > 1 ? "s" : "")
+								.getDisplay());
 					}
 					for (final Object element : valueList) {
 						errorList.addAll(doCheckConstraints(fieldDescriptor, element, context));

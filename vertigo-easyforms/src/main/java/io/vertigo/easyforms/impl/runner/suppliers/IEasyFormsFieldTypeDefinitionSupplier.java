@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import io.vertigo.core.node.definition.SimpleEnumDefinitionProvider.EnumDefinition;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
+import io.vertigo.easyforms.impl.runner.Resources;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsUiComponentDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
@@ -51,7 +52,8 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 			template = new EasyFormsTemplate(List.of(new EasyFormsTemplateSection(null, null, null, uiComponentParams))); // TODO
 		}
 
-		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template, isList(),
+		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template,
+				isList(), getMinListSizeResource(), getMaxListSizeResource(),
 				getConstraintsProvider());
 	}
 
@@ -77,6 +79,14 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 
 	public default boolean isList() {
 		return false;
+	}
+
+	public default Resources getMinListSizeResource() {
+		return Resources.EfMinListSize;
+	}
+
+	public default Resources getMaxListSizeResource() {
+		return Resources.EfMaxListSize;
 	}
 
 	public default Function<EasyFormsTemplateItemField, List<Constraint>> getConstraintsProvider() {

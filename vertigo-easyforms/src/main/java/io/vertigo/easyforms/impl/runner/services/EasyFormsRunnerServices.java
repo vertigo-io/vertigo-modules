@@ -226,7 +226,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		}
 
 		return new EasyFormsDataDescriptor(field.getCode(), smartTypeDefinition, cardinality, fieldType.getConstraints(field), constraints,
-				fieldType.isList() && field.isMandatory() ? 1 : null, fieldType.isList() ? field.getMaxItems() : null);
+				fieldType.isList() && field.isMandatory() ? 1 : null, fieldType.isList() ? field.getMaxItems() : null, fieldType.getMinListSizeResource(), fieldType.getMaxListSizeResource());
 	}
 
 	private static SmartTypeDefinition getSmartTypeByName(final String nomSmartType) {

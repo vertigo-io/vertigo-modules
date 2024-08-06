@@ -55,6 +55,12 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 	}
 
 	@Override
+	public Resources getMaxListSizeResource() {
+		return Resources.EfUplaodMaxCount;
+
+	}
+
+	@Override
 	public List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
 		return List.of(
 				new EasyFormsTemplateItemField(FileUiComponent.MAX_FILE_SIZE, FieldTypeEnum.COUNT_STRICT),
