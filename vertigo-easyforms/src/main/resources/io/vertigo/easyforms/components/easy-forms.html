@@ -72,15 +72,16 @@
 														    th::ref="${ref}"
 															class="q-mt-md"
 												            th:url="@{/easyforms/form/upload}" field-name="file"  
-												            :simple="false" :multiple="true"
+												            :simple="false" th::multiple="${templateItem.maxItems > 1}"
 												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
 												            th:accept="${fieldParameters['accept']}"
 												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAccept(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
 												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
-												            th:@update:file-info-uris="|(newFileInfoUris) => {${fieldModel} = newFileInfoUris;
-												            												  efCheckUploadConstraints('${object}','${field}$${fieldCode}',
-												            												                           ${fieldModel}?.length, ${templateItem.maxItems}, `#{EfUplaodMaxCount(${templateItem.maxItems})}`,
+												            th:@update:file-info-uris="|(newFileInfoUris) => {
+												            												  efCheckUploadConstraints('${object}','${field}',
+												            												                           newFileInfoUris?.length, ${templateItem.maxItems}, `#{EfUplaodMaxCount(${templateItem.maxItems})}`,
 												            												                           $refs[${ref}].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
+												            												  ${fieldModel} = newFileInfoUris;
 												            												 }|"
 												            th:@download-file="|(fileUri) => goTo('@{/easyforms/form/upload/download/}' + fileUri)|"
 												            th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__"
