@@ -117,7 +117,15 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		final var ids = efoUids.stream()
 				.map(UID::getId)
 				.toArray(Long[]::new);
-		return easyFormDAO.findAll(Criterions.in(EasyFormFields.efoId, (Serializable[]) ids), DtListState.of(null));
+		// find all does not guarantee the order, so we need to sort it back to the original order
+		final var easyFormMap = easyFormDAO.findAll(Criterions.in(EasyFormFields.efoId, (Serializable[]) ids), DtListState.of(null))
+				.stream()
+				.collect(Collectors.toMap(EasyForm::getEfoId, ef -> ef));
+		final DtList<EasyForm> easyForms = new DtList<>(EasyForm.class);
+		for (final var id : ids) {
+			easyForms.add(easyFormMap.get(id));
+		}
+		return easyForms;
 	}
 
 	@Override
