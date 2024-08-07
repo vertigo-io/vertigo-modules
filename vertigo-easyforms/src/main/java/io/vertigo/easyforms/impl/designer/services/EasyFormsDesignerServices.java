@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -71,10 +72,10 @@ public class EasyFormsDesignerServices implements IEasyFormsDesignerServices {
 	private EasyFormDAO easyFormDAO;
 
 	@Override
-	public DtList<EasyFormsFieldTypeUi> getFieldTypeUiList() {
+	public DtList<EasyFormsFieldTypeUi> getFieldTypeUiList(final Predicate<EasyFormsFieldTypeDefinition> filter) {
 		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldTypeDefinition.class)
 				.stream()
-				.filter(d -> d.getCategory() != null)
+				.filter(filter)
 				.map(fieldType -> {
 					final var fieldTypeUi = new EasyFormsFieldTypeUi();
 					fieldTypeUi.setName(fieldType.id().fullName());

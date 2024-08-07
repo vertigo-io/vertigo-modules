@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -124,11 +125,16 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	private VSecurityManager securityManager;
 
 	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt, final Map<String, Serializable> additionalContext) {
+		initContext(viewContext, efoIdOpt, additionalContext, fieldType -> fieldType.getCategory() != null); // by default don't display system fields (category = null)
+	}
+
+	public void initContext(final ViewContext viewContext, final Optional<UID<EasyForm>> efoIdOpt, final Map<String, Serializable> additionalContext,
+			final Predicate<EasyFormsFieldTypeDefinition> fieldTypeFilter) {
 		final EasyForm easyForm = efoIdOpt
 				.map(easyFormsRunnerServices::getEasyFormById)
 				.orElseGet(EasyForm::new);
 
-		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList();
+		final var fieldTypeUiList = easyFormsDesignerServices.getFieldTypeUiList(fieldTypeFilter);
 		fieldTypeUiList.sort(Comparator.comparing(EasyFormsFieldTypeUi::getLabel));
 
 		// add required context for field types parameters (add needed mdl and push context to front)

@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.data.model.DtList;
@@ -31,6 +32,7 @@ import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsLabelUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
 import io.vertigo.easyforms.impl.runner.rule.FormContextDescription;
+import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -40,9 +42,10 @@ public interface IEasyFormsDesignerServices extends Component {
 	/**
 	 * Get the list of all field types.
 	 *
+	 * @param filter Filter returned field types.
 	 * @return A list of all field types.
 	 */
-	DtList<EasyFormsFieldTypeUi> getFieldTypeUiList();
+	DtList<EasyFormsFieldTypeUi> getFieldTypeUiList(Predicate<EasyFormsFieldTypeDefinition> filter);
 
 	/**
 	 * Get the list of all field validator types.
