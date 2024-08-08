@@ -56,8 +56,12 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 
 	@Override
 	public Resources getMaxListSizeResource() {
-		return Resources.EfUplaodMaxCount;
+		return Resources.EfUploadMaxCount;
+	}
 
+	@Override
+	public Resources getMinListSizeResource() {
+		return Resources.EfUploadMinCount;
 	}
 
 	@Override
