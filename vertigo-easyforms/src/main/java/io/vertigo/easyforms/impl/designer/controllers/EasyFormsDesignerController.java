@@ -68,6 +68,7 @@ import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinitio
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem.ItemType;
+import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
@@ -633,6 +634,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			@RequestParam("editIndex") final Integer editIndex,
 			@RequestParam("editIndex2") final Optional<Integer> editIndex2,
 			@Validate({ DefaultDtObjectValidator.class, EditItemValidator.class }) @ViewAttribute("editItem") final EasyFormsItemUi editUiItem,
+			@ViewAttribute("fieldTypesTemplate") final Map<String, EasyFormsTemplate> fieldTemplates,
 			@ViewAttribute("editLabelText") final DtList<EasyFormsLabelUi> labels,
 			@ViewAttribute("additionalContext") final Map<String, Serializable> additionalContext,
 			final UiMessageStack uiMessageStack) {
@@ -640,6 +642,14 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final List<AbstractEasyFormsTemplateItem> sectionItems = efo.getTemplate().getSections().get(sectionIndex.intValue()).getItems();
 		// check code unicity in section
 		easyFormsDesignerServices.checkUpdateField(efo.getTemplate(), sectionItems, editIndex, editIndex2, editUiItem, labels, additionalContext, uiMessageStack);
+
+		final var fieldTemplate = fieldTemplates.get(editUiItem.getFieldType());
+		if (fieldTemplate != null) {
+			easyFormsRunnerServices.formatAndCheckFormulaire(editUiItem, EasyFormsItemUiFields.parameters, fieldTemplate, uiMessageStack);
+			if (uiMessageStack.hasErrors()) {
+				throw new ValidationUserException();
+			}
+		}
 
 		final List<AbstractEasyFormsTemplateItem> items = resolveLocalItems(editIndex, editIndex2, sectionItems);
 
