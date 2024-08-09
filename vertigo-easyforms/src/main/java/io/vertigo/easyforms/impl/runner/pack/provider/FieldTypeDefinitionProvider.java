@@ -75,6 +75,7 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		INTERNAL_LAYOUT(new RadioLayoutFieldType()),
 		INTERNAL_MAP(new InternalMapFieldType()),
 		INTERNAL_EXTENSIONS(null, EasyFormsSmartTypes.EfIExtList, UiComponentEnum.TEXT_FIELD), // used by file upload
+		INTERNAL_SELECT(null, EasyFormsSmartTypes.EfId, UiComponentEnum.SELECT),
 		COUNT_STRICT(null, EasyFormsSmartTypes.EfCountStrict, UiComponentEnum.NUMBER),
 		;
 
