@@ -145,6 +145,9 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			if (!StringUtil.isBlank(section.getCondition())) {
 				final var result = EasyFormsRuleParser.parse(section.getCondition(), formData);
 				if (result.isValid() && !result.getResult()) {
+					if (section.getCode() != null) {
+						formattedFormData.put(section.getCode(), new EasyFormsData());
+					}
 					continue;
 				}
 			}
