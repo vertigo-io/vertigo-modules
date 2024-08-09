@@ -49,7 +49,7 @@
 			    	
 			    	<q-separator ></q-separator>
 			    	
-			    	<q-card-section th:with="itemHolder = 'section'">
+			    	<q-card-section th:with="itemHolder = 'section'" v-for="item_index2 in [null]">
 			    		<q-list bordered separator th:ref="itemListUi">
 			    			<q-item th:v-for="|(item, item_index${insideBlock != null ? '2':''}) in ${itemHolder}.items|" class="q-hoverable">
 			    				<span class="q-focus-helper" th:if="${viewMode != 'read'}"></span>
