@@ -1,11 +1,35 @@
 Version history
 ===============
-Running 4.2.0
+Running 4.3.0
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-420-to-430)
+  
+more to come :)
+
+
+Running 4.2.0 - 2024/07/04
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-410-to-420)
 * **Github : split `vertigo-extensions` to `vertigo-libs` and `vertigo-modules`**  
-  
-more to come :)
+ - modules with `audit`, `quarto`, `geo`, `dashboard`, `orchestra`, `social`, `planning`, `easyform`
+* [EasyForms] Add module : dynamic forms, use to complete DataObject fixed field by some soft fields
+* [Planning] Add support of TimeZone
+* [Planning] Add support closed TrancheHoraire
+* [Planning] Change no publication date by default (to avoid same hour for all)
+* [Planning] fix mandatory unused fields when publishNow
+* [Planning] Add purgeAgendaActivity
+* [Planning] Sonar
+* [Audit] Api DtList<Trace> and sort Trace by datetime
+* [Orchestra] Protect createOrUpdateDefinition against concurrent insert (lock)
+* [Social] Update libs javax.mail -> jakarta.mail
+* [all] Update libs 
+ - org.web3j 5.0.0 -> 4.12.0 (5.0.0 not offical and has cve)
+ - assertj 3.24.2 -> 3.26.0
+ - freemarker 2.3.32 -> 2.3.33
+ - rest-assured 5.3.2 -> 5.4.0
+ - org.apache.poi 5.2.4 -> 5.3.0
+ - SODS 1.6.4 -> 1.6.7
+ - xdocreport 2.0.4 -> 2.1.0
 
 
 Release 4.1.0 - 2023/11/09
