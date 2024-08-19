@@ -266,11 +266,11 @@
 							<div th:if="${value instanceof T(java.util.List)}">
 								<div th:each="item : ${value}">
 									<th:block th:ref="itemDisplay">
-										<div th:if="${item[urn] != null}"><a th:href="@{/easyforms/form/upload/download/{uri}(uri=${item[urn]})}" th:text="${item[label]}"></a></div>
-										<div th:unless="${item[urn] != null}" th:text="${item[label]}"></div>
+										<div th:if="${item[urn] != null}"><a th:href="@{/easyforms/form/upload/download/{uri}(uri=${item[urn]})}" vu:text="${item[label]}"></a></div>
+										<div th:unless="${item[urn] != null}" vu:text="${item[label]}"></div>
 									</th:block>
 								</div>
-								<div th:if="${value.size() == 0}" th:text="#{EfNoValue}" class="text-caption text-italic"></div>
+								<div th:if="${value.size() == 0}" vu:text="#{EfNoValue}" class="text-caption text-italic"></div>
 							</div>
 				            <div th:unless="${value instanceof T(java.util.List)}" th:with="item=${value}" th:insert="~{:: itemDisplay}"></div>
 				            
