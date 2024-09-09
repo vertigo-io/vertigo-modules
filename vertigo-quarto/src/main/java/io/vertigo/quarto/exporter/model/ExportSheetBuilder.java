@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package io.vertigo.quarto.exporter.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
@@ -27,14 +28,17 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
-import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * Parametre d'export pour les données de type DT.
  * La particularité est que l'on fournit la liste des colonnes du DT a exporter,
  * avec éventuellement des paramètres d'affichage particulier pour une colonne.
+ * 
+ * PB : ajout methode addField pour support du champ ExportCustomField
+ * 
  * @author pchretien, npiedeloup
  */
 public final class ExportSheetBuilder implements Builder<ExportSheet> {
@@ -48,7 +52,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	 */
 	private final DataObject dto;
 	private final DtList<?> dtc;
-	private final DataDefinition dataDefinition;
+	private final DataDefinition dtDefinition;
 
 	private final String title;
 	private final ExportBuilder exportBuilder;
@@ -69,7 +73,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dto = dto;
 		dtc = null;
 		this.title = title;
-		dataDefinition = DataModelUtil.findDataDefinition(dto);
+		dtDefinition = DataModelUtil.findDataDefinition(dto);
 	}
 
 	/**
@@ -88,7 +92,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		this.dtc = dtc;
 		dto = null;
 		this.title = title;
-		dataDefinition = dtc.getDefinition();
+		dtDefinition = dtc.getDefinition();
 	}
 
 	/**
@@ -122,7 +126,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		Assertion.check()
 				.isNotNull(fieldName)
 				// On vérifie que la colonne est bien dans la définition de la DTC
-				.isTrue(dataDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
+				.isTrue(dtDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
 		// car pour des raisons diverses ils peuvent l'être plusieurs fois.
 		//-----
@@ -155,7 +159,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		Assertion.check()
 				.isNotNull(fieldName)
 				// On vérifie que la colonne est bien dans la définition de la DTC
-				.isTrue(dataDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter")
+				.isTrue(dtDefinition.contains(fieldName.name()), "Le champ " + fieldName.name() + " n'est pas dans la liste à exporter")
 				.isTrue(list.getDefinition().contains(keyfield.name()), "Le champ " + keyfield.name() + " n'est pas dans la liste de dénorm")
 				.isTrue(list.getDefinition().contains(displayfield.name()), "Le champ " + displayfield.name() + " n'est pas dans la liste de dénorm");
 		// On ne vérifie pas que les champs ne sont placés qu'une fois
@@ -166,6 +170,25 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		exportFields.add(exportField);
 		return this;
 	}
+	
+	/**
+	 * 
+	 * @param fieldName      obligatoire pour compatibilite avec autres types de
+	 *                       ExportField mais pas utilise, la valeur est extraite
+	 *                       par le getter
+	 * @param getter
+	 * @param overridedLabel
+	 * @return
+	 */
+	public ExportSheetBuilder addCustomField(final DataFieldName fieldName, Function<DataObject, String> getter,
+			final LocaleMessageText overridedLabel) {
+		Assertion.check().isNotNull(fieldName)
+				// On vérifie que la colonne est bien dans la définition de la DTC
+				.isTrue(dtDefinition.contains(fieldName.name()),
+						"Le champ " + fieldName.name() + " n'est pas dans la liste à exporter");
+		exportFields.add(new ExportCustomField(resolveDataField(fieldName), getter, overridedLabel));
+		return this;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -173,7 +196,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 		if (exportFields.isEmpty()) {
 			// si la liste des colonnes est vide alors par convention on les
 			// prend toutes.
-			final Collection<DataField> fields = dataDefinition.getFields();
+			final Collection<DataField> fields = dtDefinition.getFields();
 			for (final DataField dtField : fields) {
 				exportFields.add(new ExportField(dtField, null));
 			}
@@ -190,7 +213,7 @@ public final class ExportSheetBuilder implements Builder<ExportSheet> {
 	}
 
 	private DataField resolveDataField(final DataFieldName fieldName) {
-		return resolveDataField(fieldName, dataDefinition);
+		return resolveDataField(fieldName, dtDefinition);
 	}
 
 	private static DataField resolveDataField(final DataFieldName fieldName, final DataDefinition definition) {
