@@ -61,6 +61,7 @@ import io.vertigo.quarto.publisher.model.PublisherNode;
  * @author npiedeloup
  */
 public abstract class AbstractPublisherMergerTest {
+
 	private static final boolean KEEP_OUTPUT_FILE = false;
 	//Répertoire de test
 	private static String OUTPUT_PATH = "";
@@ -123,6 +124,32 @@ public abstract class AbstractPublisherMergerTest {
 
 		final URL modelFileURL = resourceManager.resolve(DATA_PACKAGE + "ExempleModel." + getExtension());
 		final VFile result = publisherManager.publish(OUTPUT_PATH + "testFusionSpecialsCharacters." + getExtension(), modelFileURL, publisherData);
+		if (KEEP_OUTPUT_FILE) {
+			save(result);
+		}
+		Assertions.assertNotNull(result);
+	}
+
+	@Test
+	public void testMergerRichText() {
+		final PublisherMock reportData = createTestPublisher();
+
+		final PublisherData publisherData = createPublisherData("PuPublisherMock");
+		PublisherDataUtil.populateData(reportData, publisherData.getRootNode());
+		publisherData.getRootNode().setString("commentaire", "<html>Test : <b>Lorem ipsum odor amet</b>, <i>consectetuer adipiscing elit</i>."
+				+ "<h5>Ridiculus parturient pharetra viverra, nunc orci mauris sollicitudin.</h5>"
+				+ "<h6>Ridiculus parturient pharetra viverra, nunc orci mauris sollicitudin.</h6>"
+				+ "<p style=\"text-align: center;\">Laoreet in scelerisque a volutpat; habitasse habitasse.</p>"
+				+ "<p style=\"text-align: right;\">Massa etiam ridiculus natoque quam in ullamcorper phasellus.</p>"
+				+ "<b><p style=\"text-align: right;\">Bold then right</p></b>"
+				+ "<p style=\"text-align: right;\"><b>Right then Bold.</b></p>"
+				+ "<h5><p style=\"text-align: center;\"><u>Title then center.</u></p></h5>"
+				+ "<p style=\"text-align: center;\"><h5>Center then title.</h5></p>"
+				+ "<b><i>Suspendisse luctus in risus</i>, massa</b> dolor fames.<unsupported> toto </unsupported> bla bla. new line &lt;br/&gt; <br/>new line<br/> new line\n end"
+				+ "</html>");
+
+		final URL modelFileURL = resourceManager.resolve(DATA_PACKAGE + "ExempleModel." + getExtension());
+		final VFile result = publisherManager.publish(OUTPUT_PATH + "testFusionRichText." + getExtension(), modelFileURL, publisherData);
 		if (KEEP_OUTPUT_FILE) {
 			save(result);
 		}

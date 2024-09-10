@@ -33,6 +33,12 @@ public final class ODTValueEncoder implements Encoder<String, String> {
 		if (toEncode == null) {
 			return null;
 		}
+
+		if (toEncode.startsWith("<html>") && toEncode.endsWith("</html>")) {
+			//This plugin don't support html values now
+			//More difficult to encode than DOCX : need to add styles before content and ref it in content
+		}
+
 		final StringBuilder result = new StringBuilder(toEncode);
 		StringUtil.replace(result, "&", "&amp;");
 		StringUtil.replace(result, "<", "&lt;");
