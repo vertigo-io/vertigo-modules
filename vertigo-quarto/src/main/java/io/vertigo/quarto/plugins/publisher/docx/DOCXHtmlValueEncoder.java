@@ -207,7 +207,9 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 
 		String strResult = result.toString();
 		strResult = strResult.replaceAll("[\t\r\n]", " "); // in html, \r, \n and \t are not significant
-		return strResult.replaceAll("[\s]+", " "); // keep only one space, because we use xml:spaces="preserve"
+		strResult = strResult.replaceAll("[\s]+", " "); // keep only one space, because we use xml:spaces="preserve"
+		strResult = strResult.replace("&nbsp;", " "); // but keep &nbsp; as space, because we use xml:spaces="preserve"
+		return strResult;
 	}
 
 	private RichTextProperties alterRichTextProperties(final String tagName, final String tagAttributes, final RichTextProperties outerProperties) {
@@ -220,6 +222,7 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 			case "inline":
 				break;
 			case "p":
+			case "div":
 				forceOpenP = true;
 				outerPPr = new HashMap<>(outerPPr);
 				outerRPr = new HashMap<>(outerRPr);
