@@ -60,6 +60,7 @@ import io.vertigo.easyforms.domain.EasyFormsFieldValidatorTypeUi;
 import io.vertigo.easyforms.domain.EasyFormsItemUi;
 import io.vertigo.easyforms.domain.EasyFormsLabelUi;
 import io.vertigo.easyforms.domain.EasyFormsSectionUi;
+import io.vertigo.easyforms.impl.designer.HtmlSanatizerUtil;
 import io.vertigo.easyforms.impl.designer.Resources;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsControllerUtil;
 import io.vertigo.easyforms.impl.runner.util.EasyFormsUiUtil;
@@ -258,6 +259,9 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			block.setCondition(uiItem.getCondition());
 		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
+			for (final var label : labels) {
+				label.setText(HtmlSanatizerUtil.sanatizeHtml(label.getText()));
+			}
 			staticItem.setText(getFromEditLabelText(labels, EasyFormsLabelUi::getText));
 		} else {
 			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
