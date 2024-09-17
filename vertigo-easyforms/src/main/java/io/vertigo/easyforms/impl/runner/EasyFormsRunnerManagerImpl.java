@@ -37,6 +37,7 @@ import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
 import io.vertigo.core.param.ParamValue;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.ConstraintException;
@@ -133,7 +134,7 @@ public final class EasyFormsRunnerManagerImpl implements EasyFormsRunnerManager,
 			return null;
 		}
 		var value = labels.get(userLang);
-		if (value == null) {
+		if (StringUtil.isBlank(value)) {
 			value = labels.get(getSupportedLang().get(0)); // first lang by default
 		}
 		if (value == null) {
