@@ -61,31 +61,35 @@
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
-												<div th:case="'EfUicFile'" th:with="ref=|'uploader_${object}_${field}$${fieldCode}'|">
-													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+												<div th:case="'EfUicFile'" th:with="ref=|uploader_${object}_${field}$${fieldCode}|">
+													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}" th::ref="|'${ref}_label'|">
 												        <vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 															</q-icon>
 												        </vu:slot>
-														<v-file-upload 
-														    th::ref="${ref}"
+														<v-file-upload-quasar 
+														    th::ref="|'${ref}'|"
 															class="q-mt-md"
 												            th:url="@{/easyforms/form/upload}" field-name="file"  
-												            :simple="false" th::multiple="${templateItem.maxItems > 1}"
+												            :simple="false" th::multiple="true"
 												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
 												            th:accept="${fieldParameters['accept']}"
 												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAccept(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
 												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
 												            th:@update:file-info-uris="|(newFileInfoUris) => {
 												            												  efCheckUploadConstraints('${object}','${field}',
-												            												                           newFileInfoUris?.length, ${templateItem.maxItems}, `#{EfUplaodMaxCount(${templateItem.maxItems})}`,
-												            												                           $refs[${ref}].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
+												            												                           newFileInfoUris?.length, ${templateItem.maxItems}, `#{EfUploadMaxCount(${templateItem.maxItems},${templateItem.maxItems>1?'s':''})}`,
+												            												                           $refs['${ref}'].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
 												            												  ${fieldModel} = newFileInfoUris;
 												            												 }|"
 												            th:@download-file="|(fileUri) => goTo('@{/easyforms/form/upload/download/}' + fileUri)|"
+												            th:@init-ok="|efCheckUploadConstraints('${object}','${field}',
+				            												                           $refs['${ref}'].$data.files.length, ${templateItem.maxItems}, `#{EfUploadMaxCount(${templateItem.maxItems},${templateItem.maxItems>1?'s':''})}`,
+				            												                           $refs['${ref}'].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`,
+				            												                           true);|"
 												            th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__"
-											            ></v-file-upload>
+											            ></v-file-upload-quasar>
 	         									   </vu:label-edit>
 												</div>
 												<div th:case="'EfUicRadio'">

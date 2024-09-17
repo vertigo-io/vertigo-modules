@@ -11,15 +11,19 @@ VUiExtensions.methods = {
         return this.$data.vueData.fieldTypes.find(e => e.name === fieldTypeName)?.label;
     },
     
-    efCheckUploadConstraints : function(object, field, actualFileCount, maxFileCount, tooManyFilesMessage, actualSize, maxSize, tooBigMessage) {
-        let errors = [];
+    efCheckUploadConstraints : function(object, field, actualFileCount, maxFileCount, tooManyFilesMessage, actualSize, maxSize, tooBigMessage, conserveErrors = false) {
+        let errors = conserveErrors ? [...this.$data.uiMessageStack.objectFieldErrors?.[object]?.[field] || []] : [];
         
         if (maxFileCount != null && actualFileCount > maxFileCount) {
-            errors.push(tooManyFilesMessage);
+            if (!errors.includes(tooManyFilesMessage)) {
+                errors.push(tooManyFilesMessage);
+            }
         }
         
         if (maxSize != null && actualSize / 1024 / 1024 > maxSize) {
-            errors.push(tooBigMessage);
+            if (!errors.includes(tooBigMessage)) {
+                errors.push(tooBigMessage);
+            }
         }
         
         

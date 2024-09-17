@@ -198,7 +198,7 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 
 		private boolean isAccepted(final String fileName) {
 			for (final String extension : extensions) {
-				if (fileName.endsWith(extension)) {
+				if (fileName.toLowerCase().endsWith(extension)) {
 					return true;
 				}
 			}
