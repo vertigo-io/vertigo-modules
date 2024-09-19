@@ -109,13 +109,13 @@ public enum EasyFormsSmartTypes {
 	@SmartTypeDefinition(LocalDate.class)
 	@Formatter(clazz = FormatterDate.class, arg = "dd/MM/yyyy;yyyy-MM-dd")
 	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now+100y", resourceMsg = "EfDateTooLate")
-	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-100y", resourceMsg = "EfDateTooEarly")
+	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-200y", resourceMsg = "EfDateTooEarly")
 	EfDate,
 
 	@SmartTypeDefinition(LocalDate.class)
 	@Formatter(clazz = FormatterDate.class, arg = "dd/MM/yyyy;yyyy-MM-dd")
-	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now", resourceMsg = "EfDateInvalid")
-	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-120y", resourceMsg = "EfDateInvalid")
+	@Constraint(clazz = ConstraintLocalDateMaximum.class, arg = "now", resourceMsg = "EfDateInFutureError")
+	@Constraint(clazz = ConstraintLocalDateMinimum.class, arg = "now-200y", resourceMsg = "EfDateTooEarly")
 	EfDatePassee,
 
 	@SmartTypeDefinition(String.class)

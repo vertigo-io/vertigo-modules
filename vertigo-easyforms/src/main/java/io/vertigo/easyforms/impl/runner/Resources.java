@@ -37,7 +37,8 @@ public enum Resources implements LocaleMessageKey {
 
 	EfDateTooLate,
 	EfDateTooEarly,
-	EfDateInvalid,
+	EfDateInPastError,
+	EfDateInFutureError,
 
 	EfMinListSize,
 	EfMaxListSize,

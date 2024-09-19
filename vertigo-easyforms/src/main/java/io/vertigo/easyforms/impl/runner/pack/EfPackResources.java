@@ -79,8 +79,6 @@ public enum EfPackResources implements LocaleMessageKey {
 
 	EfFvaInFutureLabel,
 	EfFvaInPastLabel,
-	EfFvaInFutureErrorLabel,
-	EfFvaInPastErrorLabel,
 
 	EfFvaPhoneFrLabel,
 	EfFvaPhoneFrFixeLabel,
