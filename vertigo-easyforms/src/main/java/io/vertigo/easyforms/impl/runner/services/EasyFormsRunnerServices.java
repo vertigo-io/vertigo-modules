@@ -35,6 +35,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.vertigo.account.security.UserSession;
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.commons.transaction.Transactional;
@@ -84,6 +87,8 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Transactional
 public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
+
+	private static final Logger LOG = LogManager.getLogger(EasyFormsRunnerServices.class);
 
 	@Inject
 	private EasyFormsRunnerManager easyFormsRunnerManager;
@@ -144,7 +149,10 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			// test section condition, else continue;
 			if (!StringUtil.isBlank(section.getCondition())) {
 				final var result = EasyFormsRuleParser.parse(section.getCondition(), formData);
-				if (result.isValid() && !result.getResult()) {
+				if (!result.isValid()) {
+					LOG.error("Error parsing condition : '{}'. {}", section.getCondition(), result.getErrorMessage());
+					continue; // assuming invalid condition is false
+				} else if (!result.getResult()) {
 					if (section.getCode() != null) {
 						formattedFormData.put(section.getCode(), new EasyFormsData());
 					}
@@ -168,7 +176,10 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 					// test block condition, else continue;
 					if (!StringUtil.isBlank(block.getCondition())) {
 						final var result = EasyFormsRuleParser.parse(block.getCondition(), formattedFormData);
-						if (!result.isValid() || !result.getResult()) {
+						if (!result.isValid()) {
+							LOG.error("Error parsing condition : '{}'. {}", block.getCondition(), result.getErrorMessage());
+							continue; // assuming invalid condition is false
+						} else if (!result.getResult()) {
 							continue;
 						}
 					}
