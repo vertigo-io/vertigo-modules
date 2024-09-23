@@ -10,11 +10,7 @@ public class HtmlSanatizerUtil {
 			.and(Sanitizers.BLOCKS)
 			.and(Sanitizers.LINKS)
 			.and(Sanitizers.STYLES)
-			.and(Sanitizers.IMAGES)
-			.and(Sanitizers.TABLES)
 			.and(new HtmlPolicyBuilder()
-					.allowElements("font")
-					.allowAttributes("size", "face", "color").onElements("font") // quasar wysiwyg editor still uses font tag
 					.allowElements( // force target _blank https://github.com/OWASP/java-html-sanitizer/issues/147
 							(elementName, attrs) -> {
 								final int targetIndex = attrs.indexOf("target");
