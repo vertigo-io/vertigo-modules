@@ -32,6 +32,7 @@ import io.vertigo.datamodel.data.model.DtList;
  * @author npiedeloup
  */
 public final class LogTraceStorePlugin implements TraceStorePlugin {
+
 	//execDate, category, username, itemUrn, message, businessDate, context, id
 	private static final String AUDIT_PATTERN = "id:\"{}\", executionDate:\"{}\", category:\"{}\", username:\"{}\", itemUrn:\"{}\", message:\"{}\", businessDate:\"{}\", context:\"{}\"";
 	private static final Logger AUDIT_LOGGER = LogManager.getLogger("audit");
@@ -45,8 +46,7 @@ public final class LogTraceStorePlugin implements TraceStorePlugin {
 	@Override
 	public void create(final Trace auditTrace) {
 		Assertion.check()
-				.isNotNull(auditTrace)
-				.isNull(auditTrace.getTraId(), "A new audit trail must not have an id");
+				.isNotNull(auditTrace);
 		//---
 		auditTrace.setTraId(logSequenceGenerator.addAndGet(1));
 		AUDIT_LOGGER.info(AUDIT_PATTERN, auditTrace.getTraId(), auditTrace.getExecutionDate(), auditTrace.getCategory(), auditTrace.getUsername(),
@@ -57,4 +57,10 @@ public final class LogTraceStorePlugin implements TraceStorePlugin {
 	public DtList<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
 		throw new UnsupportedOperationException("LogTraceStorePlugin don't support trace read");
 	}
+
+	@Override
+	public boolean isReadSupported() {
+		return false;
+	}
+
 }

@@ -33,8 +33,14 @@ import io.vertigo.datamodel.data.model.DtList;
  * @author xdurand *
  */
 public final class MemoryTraceStorePlugin implements TraceStorePlugin {
+
 	private final Map<Long, Trace> inMemoryStore = new ConcurrentHashMap<>();
 	private final AtomicLong memorySequenceGenerator = new AtomicLong(0);
+
+	@Override
+	public boolean isReadSupported() {
+		return true;
+	}
 
 	@Override
 	public Trace read(final Long idAuditTrace) {
@@ -44,8 +50,7 @@ public final class MemoryTraceStorePlugin implements TraceStorePlugin {
 	@Override
 	public void create(final Trace auditTrace) {
 		Assertion.check()
-				.isNotNull(auditTrace)
-				.isNull(auditTrace.getTraId(), "A new audit trail must not have an id");
+				.isNotNull(auditTrace);
 		//---
 		final long generatedId = memorySequenceGenerator.addAndGet(1);
 		auditTrace.setTraId(generatedId);
@@ -98,4 +103,5 @@ public final class MemoryTraceStorePlugin implements TraceStorePlugin {
 		return StringUtil.isBlank(auditTraceCriteria.getCategory())
 				|| auditTraceCriteria.getCategory().equals(auditTrace.getCategory());
 	}
+
 }

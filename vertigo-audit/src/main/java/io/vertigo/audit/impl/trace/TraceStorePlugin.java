@@ -27,12 +27,6 @@ import io.vertigo.datamodel.data.model.DtList;
  * @author xdurand
  */
 public interface TraceStorePlugin extends Plugin {
-	/**
-	 * Gets an audit trail.
-	 * @param auditTraceId the audit trail defined by its id.
-	 * @return the
-	 */
-	Trace read(Long auditTraceId);
 
 	/**
 	 * Saves a new audit trail.
@@ -40,6 +34,19 @@ public interface TraceStorePlugin extends Plugin {
 	 * @param auditTrace the audit trail to save.
 	 */
 	void create(Trace auditTrace);
+
+	/**
+	 * Tell if this plugin supports reads and search of audit traces.
+	 * @return boolean
+	 */
+	boolean isReadSupported();
+
+	/**
+	 * Gets an audit trail.
+	 * @param auditTraceId the audit trail defined by its id.
+	 * @return the trace
+	 */
+	Trace read(Long auditTraceId);
 
 	/**
 	 * Fetchs all Audit Trace mathing the provided criteria

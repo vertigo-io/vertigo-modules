@@ -77,6 +77,11 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	}
 
 	@Override
+	public boolean isReadSupported() {
+		return true;
+	}
+
+	@Override
 	public Trace read(final Long idAuditTrace) {
 		return executeInTransaction(() -> entityStoreManager.readOne(UID.of(Trace.class, idAuditTrace)));
 	}
@@ -84,9 +89,9 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	@Override
 	public void create(final Trace auditTrace) {
 		Assertion.check()
-				.isNotNull(auditTrace)
-				.isNull(auditTrace.getTraId(), "A new audit trail must not have an id");
+				.isNotNull(auditTrace);
 		//---
+		auditTrace.setTraId(null); //reset Id
 		executeInTransactionAndCommit(() -> entityStoreManager.create(auditTrace));
 	}
 
@@ -142,4 +147,5 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 			return result;
 		}
 	}
+
 }
