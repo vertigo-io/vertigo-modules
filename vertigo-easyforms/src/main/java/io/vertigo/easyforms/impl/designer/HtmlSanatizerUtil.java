@@ -23,6 +23,7 @@ public class HtmlSanatizerUtil {
 								return elementName;
 							},
 							"a")
+					.allowAttributes("class").globally()
 					.toFactory());
 
 	public static String sanatizeHtml(final String in) {
