@@ -111,14 +111,12 @@
 													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicCheckbox'">
-													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" th:label="${fieldLabel}" required="false"
+													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}"
 																   th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|">
 														<vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 															</q-icon>
-															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
-															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
 														</vu:slot>
 														<q-option-group
 													    	th:v-model="${fieldModel}"
