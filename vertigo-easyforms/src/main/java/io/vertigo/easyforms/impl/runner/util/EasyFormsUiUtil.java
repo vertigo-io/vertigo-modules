@@ -130,7 +130,7 @@ public final class EasyFormsUiUtil implements Serializable {
 	}
 
 	public String resolveCodeName(final EasyFormsTemplate template, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field) {
-		return (template.useSections() ? section.getCode() + "$" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
+		return (template.useSections() ? section.getCode() + "--" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
 	}
 
 	public String convertConditionToJs(final String context, final String condition) {

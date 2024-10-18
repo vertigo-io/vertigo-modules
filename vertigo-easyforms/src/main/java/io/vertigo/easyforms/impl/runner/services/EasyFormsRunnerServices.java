@@ -205,7 +205,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			final EasyFormsData formData,
 			final DataObject formOwner, final UiMessageStack uiMessageStack) {
 
-		final var fieldCode = formDataFieldName + "$" + (formTempalte.useSections() ? section.getCode() + "$" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
+		final var fieldCode = formDataFieldName + "--" + (formTempalte.useSections() ? section.getCode() + "--" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
 
 		// format field (eg: Put last name in upper case)
 		final var inputValue = formData.get(field.getCode());
