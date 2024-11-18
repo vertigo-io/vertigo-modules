@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.dao;
 
 import javax.inject.Inject;
@@ -22,14 +5,14 @@ import javax.inject.Inject;
 import java.util.Optional;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.task.TaskManager;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.planning.agenda.domain.Creneau;
 
 /**
@@ -59,6 +42,44 @@ public final class CreneauDAO extends DAO<Creneau, java.lang.Long> implements St
 	private static TaskBuilder createTaskBuilder(final String name) {
 		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
 		return Task.builder(taskDefinition);
+	}
+
+	/**
+	 * Execute la tache TkSelectCreneauForUpdateByAgeIds.
+	 * @param ageIds List de Long
+	 * @param startDate LocalDate
+	 * @param endDate LocalDate
+	 * @param startMinutes Integer
+	 * @param endMinutes Integer
+	 * @param now Instant
+	 * @return Option de Creneau creneau
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkSelectCreneauForUpdateByAgeIds",
+			request = """
+			SELECT cre.*
+		        FROM CRENEAU cre
+		        join tranche_horaire trh on cre.trh_id = trh.trh_id
+		        WHERE trh.age_id in ( #ageIds.rownum# )
+		        AND trh.date_locale BETWEEN #startDate# AND #endDate#
+		        AND trh.minutes_Debut BETWEEN #startMinutes# AND #endMinutes#
+		        AND trh.instant_Publication <= #now#
+		        and cre.rec_id is null
+		        LIMIT 1 FOR UPDATE SKIP LOCKED""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtCreneau", name = "creneau")
+	public Optional<io.vertigo.planning.agenda.domain.Creneau> selectCreneauForUpdateByAgeIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startMinutes", smartType = "STyPHeureMinute") final Integer startMinutes, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endMinutes", smartType = "STyPHeureMinute") final Integer endMinutes, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+		final Task task = createTaskBuilder("TkSelectCreneauForUpdateByAgeIds")
+				.addValue("ageIds", ageIds)
+				.addValue("startDate", startDate)
+				.addValue("endDate", endDate)
+				.addValue("startMinutes", startMinutes)
+				.addValue("endMinutes", endMinutes)
+				.addValue("now", now)
+				.build();
+		return Optional.ofNullable((io.vertigo.planning.agenda.domain.Creneau) getTaskManager()
+				.execute(task)
+				.getResult());
 	}
 
 	/**

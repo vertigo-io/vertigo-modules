@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
@@ -107,7 +108,7 @@ public class RedisFoConsultationPlanningPlugin extends DbFoConsultationPlanningP
 						cursor = scanResult.getCursor();
 						scanResult.getResult()
 								.stream()
-								.map(minStr -> Integer.parseInt(minStr))
+								.map((Function<? super String, ? extends Integer>) Integer::parseInt)
 								.filter(minutesDebut -> minutesDebut >= filterMinDisplayMinute)
 								.forEach(minutesDebut -> {
 									final var infoTranche = jedis.hgetAll(prefixCleFonctionelle + ":" + minutesDebut);
@@ -190,7 +191,7 @@ public class RedisFoConsultationPlanningPlugin extends DbFoConsultationPlanningP
 
 		for (final Agenda agenda : agendas) {
 			analyticsManager.trace("synchroagenda", agenda.getUID().urn(), tracer -> {
-				final var trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeId(List.of(agenda.getAgeId()), Instant.now());
+				final var trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIds(List.of(agenda.getAgeId()), Instant.now());
 				synchroDbRedisCreneauFromTrancheHoraire(Map.of(agenda.getAgeId(), trancheHoraires));
 				tracer.incMeasure("nbDispos", 0) //pour init a 0
 						.setTag("agenda", agenda.getUID().urn())
@@ -257,7 +258,7 @@ public class RedisFoConsultationPlanningPlugin extends DbFoConsultationPlanningP
 			final List<LocalDate> listDates = entry.getValue().stream()
 					.map(HoraireImpacte::getLocalDate)
 					.toList();
-			final var trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIdAndDates(List.of(entry.getKey()), listDates, Instant.now());
+			final var trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIdsAndDates(List.of(entry.getKey()), listDates, Instant.now());
 			trancheHoraireByDemToResync.put(entry.getKey(), trancheHoraires);
 		}
 		synchroDbRedisCreneauFromTrancheHoraire(trancheHoraireByDemToResync);
@@ -292,7 +293,7 @@ public class RedisFoConsultationPlanningPlugin extends DbFoConsultationPlanningP
 				final var cleFonctionelle = prefixCleFonctionelle + ":" + horaire.getMinutesDebut();
 				final long ttl = jedis.ttl(cleFonctionelle);
 				if (ttl < TTL_MINIMUM_TO_INCR_DISPO) { //si le creneau n'est plus là, ou si il expire dans moins de 5s, on ne fait pas de incr, on lance la resynchro
-					horaireImpacteByDemToResync.computeIfAbsent(horaire.getAgeId(), (demid) -> new ArrayList<>())
+					horaireImpacteByDemToResync.computeIfAbsent(horaire.getAgeId(), demid -> new ArrayList<>())
 							.add(horaire);
 				} else {
 					long newVal = 0;

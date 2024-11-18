@@ -71,14 +71,19 @@ VUiExtensions.methods.isCssColor = function(color) {
     return !!color && !!color.match(/^(#|(rgb|hsl)a?\()/)
 };
 
+VUiExtensions.methods.plageStateColor = function(event) {
+   return (event.nbNonPublie>0?{class:"trh-nonPublie", label:"Non publié", miniLabel:"NP"} 
+    : event.nbPlanifie>0?{class:"trh-planifie", label:"Planifie", miniLabel:"Pl"}
+    : event.nbPublie>0 ? {class:"trh-publie", label:"Publié", miniLabel:"Pu"} 
+	: {class:"trh-none", label:"none", miniLabel:"No"});
+};
+
 VUiExtensions.methods.badgeClasses = function(event, type) {
     const cssColor = this.isCssColor(event.bgcolor);
-    const plageState = event.nbPublie>0 ? "publie" 
-    : event.nbPlanifie>0?"planifie"
-    : event.nbNonPublie>0?"nonPublie" : "none";
+    const plageState = this.plageStateColor(event);
     const isHeader = type === 'header'
     return {
-        [`bg-trh-${plageState}`]: !cssColor,
+        [`bg-${plageState.class}`]: !cssColor,
         'full-width': !isHeader && (!event.side || event.side === 'full'),
         'left-side': !isHeader && event.side === 'left',
         'right-side': !isHeader && event.side === 'right'
@@ -122,55 +127,123 @@ VUiExtensions.methods.intervalCount = function(allEvents) {
 }
 
 VUiExtensions.methods.getEvents = function(dt, allEvents) {
-    const currentDate = QCalendarDay.parsed(dt)
-    const selectedEvents = []
-    for (let i = 0; i < allEvents.length; ++i) {
-        let added = false
-        var eventCalendar = this.toCalendarDate(allEvents[i].dateLocale, allEvents[i].minutesDebut );
-        var eventEndCalendar = this.toCalendarDate(allEvents[i].dateLocale, allEvents[i].minutesFin );
-        //allEvents[i].eventCalendar = eventCalendar;
-        //allEvents[i].eventEndCalendar = eventEndCalendar;
-        if (eventCalendar.date === dt) {
+    const currentDate = QCalendarDay.parsed(dt);
+    const selectedEvents = [];
+
+    allEvents.forEach(event => {
+        let added = false;
+        const eventCalendar = this.toCalendarDate(event.dateLocale, event.minutesDebut);
+        const eventEndCalendar = this.toCalendarDate(event.dateLocale, event.minutesFin);
+		// Création d'une copie propre de l'événement sans modifier l'objet original
+        const eventCopy = { ...event, eventCalendar, eventEndCalendar };
+
+	    if (eventCalendar.date === dt) {
             if (eventCalendar.time) {
-                if (selectedEvents.length > 0) {
-                    // check for overlapping times
-                    const startTime = QCalendarDay.parsed(eventCalendar.date + ' ' + eventCalendar.time)
-                    const endTime = QCalendarDay.parsed(eventCalendar.date + ' ' + eventEndCalendar.time)
-                    for (let j = 0; j < selectedEvents.length; ++j) {
-                        if (selectedEvents[j].eventCalendar.time) {
-                            const startTime2 = QCalendarDay.parsed(selectedEvents[j].eventCalendar.date + ' ' + selectedEvents[j].eventCalendar.time)
-                            const endTime2 = QCalendarDay.parsed(selectedEvents[j].eventEndCalendar.date + ' ' + selectedEvents[j].eventEndCalendar.time)
-                            
-                            if (startTime.date != endTime2.date && startTime2.date != endTime.date && (
-                               QCalendarDay.isBetweenDates(startTime, startTime2, endTime2, true) || QCalendarDay.isBetweenDates(endTime, startTime2, endTime2, true) 
-                            )) {
-                                selectedEvents[j].side = 'left'
-                                selectedEvents.push({...allEvents[i], side:'right', eventCalendar,eventEndCalendar })
-                                added = true
-                                break
-                            }
-                        }
+				const start1 = QCalendarDay.parsed(eventCalendar.date + ' ' + eventCalendar.time);
+				const end1 = QCalendarDay.parsed(eventEndCalendar.date + ' ' + eventEndCalendar.time);				                        
+				const overlappingEvents = selectedEvents.filter(selectedEvent => {
+                    if (selectedEvent.eventCalendar.time) {
+                        const start2 = QCalendarDay.parsed(selectedEvent.eventCalendar.date + ' ' + selectedEvent.eventCalendar.time);
+                        const end2 = QCalendarDay.parsed(selectedEvent.eventEndCalendar.date + ' ' + selectedEvent.eventEndCalendar.time);
+
+                        return start1.date != end2.date && start2.date != end1.date && (
+                            QCalendarDay.isBetweenDates(start1, start2, end2, true) ||
+                            QCalendarDay.isBetweenDates(end1, start2, end2, true)
+                        );
                     }
-                }
-            }
-            if (!added) {
-               selectedEvents.push({...allEvents[i], eventCalendar,eventEndCalendar })
-            }
-        }
-        else if (eventCalendar.days) {
-            // check for overlapping dates
-            const startDate = QCalendarDay.parsed(eventCalendar.date)
-            const endDate = QCalendarDay.addToDate(startDate, { day: eventCalendar.days })
+                    return false;
+                });
+										
+				if (overlappingEvents.length > 0) {
+											              
+						// Fusionner les événements chevauchants
+						const minEvent = [eventCopy, ...overlappingEvents].reduce((minEvt, evt) => 
+							evt.minutesDebut < minEvt.minutesDebut ? evt : minEvt);
+						const maxEvent = [eventCopy, ...overlappingEvents].reduce((maxEvt, evt) => 
+							evt.minutesFin > maxEvt.minutesFin ? evt : maxEvt);
+						
+						// Agréger les valeurs numériques 
+		                const nbNonPublieSum = overlappingEvents.reduce((sum, evt) => sum + evt.nbNonPublie, event.nbNonPublie);
+		                const nbPlanifieSum = overlappingEvents.reduce((sum, evt) => sum + evt.nbPlanifie, event.nbPlanifie);
+		                const nbPublieSum = overlappingEvents.reduce((sum, evt) => sum + evt.nbPublie, event.nbPublie);
+		                const nbReserveSum = overlappingEvents.reduce((sum, evt) => sum + evt.nbReserve, event.nbReserve);
+		                const nbReserveNonPublieSum = overlappingEvents.reduce((sum, evt) => sum + evt.nbReserveNonPublie, event.nbReserveNonPublie);
+		                const nbTotalSum = overlappingEvents.reduce((sum, evt) => sum + evt.nbTotal, event.nbTotal);
+						
+						// Créer la liste des événements fusionnés (contenant tous les événements individuels)
+						const eventList = [eventCopy, ...overlappingEvents].map(evt => evt.eventList || [evt]).flat();
+						// Fusionner les listes d'événements sans doublons
+	                    const uniqueEventList = eventList.filter((value, index, array) => array.indexOf(value) === index);
+															
+		                // Ajouter l'événement fusionné
+		                selectedEvents.push({
+		                    ...eventCopy,
+							eventCalendar: minEvent.eventCalendar,
+		                    eventEndCalendar: maxEvent.eventEndCalendar,
+		                    minutesDebut: minEvent.minutesDebut,  // Conserver minutesDebut du premier
+							minutesDebut_fmt: minEvent.minutesDebut_fmt,  // Conserver minutesDebut_fmt du plus petit
+							minutesFin: maxEvent.minutesFin,  // Conserver minutesFin du dernier
+							minutesFin_fmt: maxEvent.minutesFin_fmt,  // Conserver minutesFin_fmt du dernier
+		                    nbNonPublie: nbNonPublieSum,
+		                    nbPlanifie: nbPlanifieSum,
+		                    nbPublie: nbPublieSum,
+		                    nbReserve: nbReserveSum,
+		                    nbReserveNonPublie: nbReserveNonPublieSum,
+		                    nbTotal: nbTotalSum,
+		                    ageId: minEvent.ageId,
+		                    plhId: minEvent.plhId,
+		                    eventList: uniqueEventList
+		                });
+
+		                // Retirer les événements individuels fusionnés
+		                overlappingEvents.forEach(overlappingEvent => {
+		                    const index = selectedEvents.indexOf(overlappingEvent);
+		                    if (index !== -1) {
+		                        selectedEvents.splice(index, 1);
+		                    }
+		                });
+		            } else {
+		                selectedEvents.push({ ...eventCopy, eventCalendar, eventEndCalendar });
+		            }
+				}
+        } else if (eventCalendar.days) {
+            const startDate = QCalendarDay.parsed(eventCalendar.date);
+            const endDate = QCalendarDay.addToDate(startDate, { day: eventCalendar.days });
             if (QCalendarDay.isBetweenDates(currentDate, startDate, endDate)) {
-                selectedEvents.push({...allEvents[i], eventCalendar,eventEndCalendar })
-                added = true
+                selectedEvents.push({ ...eventCopy, eventCalendar, eventEndCalendar });
             }
         }
-    }
-    return selectedEvents
+    });
+
+    return selectedEvents;
 };
 
 // Week-Agenda
+VUiExtensions.methods.getNameAsTwoLetters = function (name) {
+  if (!name || typeof name !== 'string') return ''; // Si le nom est invalide, retourner une chaîne vide
+  // Nettoyage du nom : supprime les mots entre parenthèses, normalise les espaces autour des tirets,
+    // et retire tout ce qui n'est pas une lettre ou un chiffre.
+    name = name
+      .replace(/\(.*\)/g, ' ') // Supprime les mots entre parenthèses
+      .replace(/\s*-\s*/g, '-') // Normalise les espaces autour des tirets
+      .replace(/[^a-zA-Z0-9\s-]+/g, '') // Retire tout ce qui n'est pas lettre, chiffre, espace ou tiret
+      .trim(); // Supprime les espaces en début et fin de chaîne
+  
+  if (!name) return ''; // Si le nom est vide après nettoyage
+  // Nettoyer et séparer le nom par le séparateur principal
+  const parts = name.split(/\s+/);
+  if (parts.length > 1) {
+      // Si le nom est composé de plusieurs mots, on prend les initiales du premier et du dernier mot
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  if (name.includes('-')) { // Si le nom est unique, on vérifie s'il contient un tiret
+	// Si le nom contient un tiret, séparer par les tirets
+	const subParts = name.split('-');
+    return (subParts[0][0] + subParts[subParts.length - 1][0]).toUpperCase();
+  }
+  // Si c'est un seul mot, prendre les deux premières lettres, la deuxième en minuscule
+  return name.slice(0, 1).toUpperCase() + name.slice(1, 2).toLowerCase();   
+}
 
 VUiExtensions.methods.formatMinutes= function(minutes) {
             let min = '' + minutes % 60;
@@ -214,8 +287,11 @@ VUiExtensions.methods.onCreatePlageHoraireDateTime = function(data) {
                 
                 var plageHoraireForm = this.$data.vueData.creationPlageHoraireForm;
                 plageHoraireForm.dateLocale = day.padStart(2, '0')+'/'+month.padStart(2, '0')+'/'+dateTime.year
-                
+                if(plageHoraireForm.ageId < 0) {
+                    plageHoraireForm.ageId = null;
+                }
                 let dureeCreneau = plageHoraireForm.dureeCreneau;
+                dureeCreneau = dureeCreneau?dureeCreneau:5; //if not set default to 5
                 var mod = minutesOfDay % dureeCreneau;
                 minutesOfDay += mod < (dureeCreneau+1)/2 ? -mod : (dureeCreneau-mod);
                 
@@ -267,8 +343,11 @@ VUiExtensions.methods.doDuplicateWeek = function() {
                 }.bind(this)
             });
         } 
-VUiExtensions.methods.createPlageHoraire = function() {
+VUiExtensions.methods.createPlageHoraire = function(modeGuichet) {
             let formData = this.vueDataParams(['creationPlageHoraireForm']);
+            if(modeGuichet) {
+                formData.delete('vContext[creationPlageHoraireForm][nbGuichet]');
+            }
             formData.delete('vContext[creationPlageHoraireForm][dureeCreneau]');
             this.httpPostAjax('_createPlage', formData, {
                  onSuccess: function() {
@@ -276,6 +355,9 @@ VUiExtensions.methods.createPlageHoraire = function() {
                     this.$data.componentStates.createItemModal.opened = false
                 }.bind(this)
             });
+        }
+VUiExtensions.methods.createPlageHoraireGuichet = function() {
+            createPlageHoraire(true);
         }
 VUiExtensions.methods.confirmDeletePlageHoraire = function(event) {
             this.$data.componentStates.editedPlageHoraire = event;

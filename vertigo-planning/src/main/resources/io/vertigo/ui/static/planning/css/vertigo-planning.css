@@ -1,6 +1,12 @@
 /** Planning **/
 .calendar-container{position:relative}
-.q-calendar .my-event{width:98%;position:absolute;font-size:12px; align-items:flex-start}
+.q-calendar .my-event{width:98%;position:absolute;font-size:12px; align-items:flex-start; min-width:70px;
+	box-shadow: inset -1px 0 0 #000, inset 0 -1px 0 #000, inset 1px 0 0 #000, inset 0 1px 0 #000;
+}
+.q-calendar .my-events{width:98%;position:absolute;font-size:12px; align-items:flex-start; min-width:70px;
+	box-shadow: inset -3px 0 0 #444, inset 0 -3px 0 #444, inset 1px 0 0 #000, inset 0 1px 0 #000;
+}
+/*.q-calendar .my-event:hover{z-index:1000}*/
 .q-calendar .orphan-event{width:90px;position:absolute;margin-top:0px; margin-left:6px;}
 .q-calendar .full-width{left:1%;width:98%!important;}
 .q-calendar .left-side{left:0;width:49.75%}
@@ -20,6 +26,59 @@
 	top: 5px;
 	right: 5px;
 }
+
+.q-calendar .agendas-event {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+}
+
+
+/** palette fixe de 20 couleurs (par dashboardTools.getColors('ANDROID', 20, 1.0)) */
+.text-agendas { color: rgb(16, 16, 16); }
+.text-agendas-palette-0 { color: rgb(0, 153, 204); }
+.text-agendas-palette-1 { color: rgb(9, 98, 206); }
+.text-agendas-palette-2 { color: rgb(19, 48, 206); }
+.text-agendas-palette-3 { color: rgb(55, 30, 206); }
+.text-agendas-palette-4 { color: rgb(114, 42, 205); }
+.text-agendas-palette-5 { color: rgb(163, 48, 205); }
+.text-agendas-palette-6 { color: rgb(206, 36, 203); }
+.text-agendas-palette-7 { color: rgb(207, 24, 152); }
+.text-agendas-palette-8 { color: rgb(206, 14, 95); }
+.text-agendas-palette-9 { color: rgb(205, 4, 33); }
+.text-agendas-palette-10 { color: rgb(209, 12, 0); }
+.text-agendas-palette-11 { color: rgb(220, 37, 0); }
+.text-agendas-palette-12 { color: rgb(231, 65, 0); }
+.text-agendas-palette-13 { color: rgb(242, 95, 0); }
+.text-agendas-palette-14 { color: rgb(252, 127, 0); }
+.text-agendas-palette-15 { color: rgb(239, 158, 0); }
+.text-agendas-palette-16 { color: rgb(217, 180, 0); }
+.text-agendas-palette-17 { color: rgb(196, 195, 0); }
+.text-agendas-palette-18 { color: rgb(146, 174, 0); }
+.text-agendas-palette-19 { color: rgb(102, 153, 0); }
+
+.bg-agendas { background-color: rgb(16, 16, 16); }
+.bg-agendas-palette-0 { background-color: rgb(0, 153, 204); }
+.bg-agendas-palette-1 { background-color: rgb(9, 98, 206); }
+.bg-agendas-palette-2 { background-color: rgb(19, 48, 206); }
+.bg-agendas-palette-3 { background-color: rgb(55, 30, 206); }
+.bg-agendas-palette-4 { background-color: rgb(114, 42, 205); }
+.bg-agendas-palette-5 { background-color: rgb(163, 48, 205); }
+.bg-agendas-palette-6 { background-color: rgb(206, 36, 203); }
+.bg-agendas-palette-7 { background-color: rgb(207, 24, 152); }
+.bg-agendas-palette-8 { background-color: rgb(206, 14, 95); }
+.bg-agendas-palette-9 { background-color: rgb(205, 4, 33); }
+.bg-agendas-palette-10 { background-color: rgb(209, 12, 0); }
+.bg-agendas-palette-11 { background-color: rgb(220, 37, 0); }
+.bg-agendas-palette-12 { background-color: rgb(231, 65, 0); }
+.bg-agendas-palette-13 { background-color: rgb(242, 95, 0); }
+.bg-agendas-palette-14 { background-color: rgb(252, 127, 0); }
+.bg-agendas-palette-15 { background-color: rgb(239, 158, 0); }
+.bg-agendas-palette-16 { background-color: rgb(217, 180, 0); }
+.bg-agendas-palette-17 { background-color: rgb(196, 195, 0); }
+.bg-agendas-palette-18 { background-color: rgb(146, 174, 0); }
+.bg-agendas-palette-19 { background-color: rgb(102, 153, 0); }
+
 
 .bg-trh-nonPublie {
     background-color: #fcc63a!important;

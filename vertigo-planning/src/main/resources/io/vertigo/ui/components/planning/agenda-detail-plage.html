@@ -20,6 +20,14 @@
                     </vu:slot>
                 
                     <vu:grid cols="3">
+                    
+                    <vu:grid-cell col=3 th:if="${!model.modeGuichet}">
+                       <vu:include-data object="plageHoraireDetail" field="ageNom" />
+                        <q-field th:label="${model.agendaLabel}"
+                            orientation="vertical" stack-label readonly borderless >
+                            {{vueData.plageHoraireDetail.ageNom}}
+                        </q-field>               
+				    </vu:grid-cell>
                     <vu:grid-cell col=1>
                         <q-field th:label="${model.util.label('plageHoraireDetail.dateLocale')}"
                             orientation="vertical" stack-label readonly borderless >
@@ -38,7 +46,7 @@
                             {{ formatMinutes(vueData.plageHoraireDetail.minutesFin) }}
                         </q-field>
                     </vu:grid-cell>
-                    <vu:grid-cell col=1>
+                    <vu:grid-cell col=1 th:if="${model.modeGuichet}">
                         <vu:include-data object="plageHoraireDetail" field="nbGuichet" />
                         <q-field th:label="${model.util.label('plageHoraireDetail.nbGuichet')}"
 					        orientation="vertical" stack-label readonly borderless >

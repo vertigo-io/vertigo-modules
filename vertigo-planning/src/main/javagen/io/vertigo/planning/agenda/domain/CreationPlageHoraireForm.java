@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -30,12 +13,32 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 public final class CreationPlageHoraireForm implements DataObject {
 	private static final long serialVersionUID = 1L;
 
+	private Long ageId;
 	private java.time.LocalDate dateLocale;
 	private Integer minutesDebut;
 	private Integer minutesFin;
 	private Integer nbGuichet;
 	private Integer dureeCreneau;
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Agenda'.
+	 * @return Long ageId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyPId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Agenda")
+	public Long getAgeId() {
+		return ageId;
+	}
 
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Agenda'.
+	 * @param ageId Long <b>Obligatoire</b>
+	 */
+	public void setAgeId(final Long ageId) {
+		this.ageId = ageId;
+	}
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de la plage horaire'.
@@ -54,7 +57,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setDateLocale(final java.time.LocalDate dateLocale) {
 		this.dateLocale = dateLocale;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de début'.
@@ -73,7 +76,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setMinutesDebut(final Integer minutesDebut) {
 		this.minutesDebut = minutesDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de fin'.
@@ -92,7 +95,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setMinutesFin(final Integer minutesFin) {
 		this.minutesFin = minutesFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Nombre de guichets'.
@@ -111,7 +114,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setNbGuichet(final Integer nbGuichet) {
 		this.nbGuichet = nbGuichet;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Durée en minutes'.
@@ -130,7 +133,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setDureeCreneau(final Integer dureeCreneau) {
 		this.dureeCreneau = dureeCreneau;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

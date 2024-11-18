@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.domain;
 
 import java.util.Arrays;
@@ -38,6 +21,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		AffectionReservation(io.vertigo.planning.agenda.domain.AffectionReservation.class),
 		/** Objet de données Agenda. */
 		Agenda(io.vertigo.planning.agenda.domain.Agenda.class),
+		/** Objet de données AgendaDisplay. */
+		AgendaDisplay(io.vertigo.planning.agenda.domain.AgendaDisplay.class),
 		/** Objet de données AgendaDisplayRange. */
 		AgendaDisplayRange(io.vertigo.planning.agenda.domain.AgendaDisplayRange.class),
 		/** Objet de données CreationPlageHoraireForm. */
@@ -107,11 +92,24 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nom	}
 
 	/**
+	 * Enumération des champs de AgendaDisplay.
+	 */
+	public enum AgendaDisplayFields implements DataFieldName<io.vertigo.planning.agenda.domain.AgendaDisplay> {
+		/** Propriété 'Id'. */
+		ageId,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Name'. */
+		overridedName,
+		/** Propriété 'Nom agenda'. */
+		displayName	}
+
+	/**
 	 * Enumération des champs de AgendaDisplayRange.
 	 */
 	public enum AgendaDisplayRangeFields implements DataFieldName<io.vertigo.planning.agenda.domain.AgendaDisplayRange> {
-		/** Propriété 'Id agenda'. */
-		ageId,
+		/** Propriété 'Ids agenda'. */
+		ageIds,
 		/** Propriété 'Date sélectionnée'. */
 		showDate,
 		/** Propriété 'Date de début'. */
@@ -127,6 +125,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de CreationPlageHoraireForm.
 	 */
 	public enum CreationPlageHoraireFormFields implements DataFieldName<io.vertigo.planning.agenda.domain.CreationPlageHoraireForm> {
+		/** Propriété 'Agenda'. */
+		ageId,
 		/** Propriété 'Date de la plage horaire'. */
 		dateLocale,
 		/** Propriété 'Heure de début'. */
@@ -236,6 +236,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum PlageHoraireDisplayFields implements DataFieldName<io.vertigo.planning.agenda.domain.PlageHoraireDisplay> {
 		/** Propriété 'Id'. */
 		plhId,
+		/** Propriété 'Agenda'. */
+		ageId,
+		/** Propriété 'Agenda'. */
+		ageNom,
 		/** Propriété 'Date de la plage horaire'. */
 		dateLocale,
 		/** Propriété 'Heure de début'. */
