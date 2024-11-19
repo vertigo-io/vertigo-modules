@@ -33,6 +33,7 @@ import io.vertigo.social.sms.SmsSendingReport;
 
 public class OvhSmsSendPlugin implements SmsSendPlugin {
 
+	private static final String PATTERN_NORMALIZE_PREFIX = "[\\(\\)\\s\\.\\-]+";
 	private static final int MAX_LOGGED_PREFIX_NUM = 8; //maximum numbers keep in tracer tag for matched whitelistPrefix
 	private final AnalyticsManager analyticsManager;
 	private final OvhSmsWebServiceClient ovhSmsWebServiceClient;
@@ -41,10 +42,19 @@ public class OvhSmsSendPlugin implements SmsSendPlugin {
 	private final boolean acceptAll;
 	private final List<String> whitelistPrefixes;
 
+	private static final long REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+	private static final String ENABLED_STATUS = "enable";
+
+	private boolean enabled = false;
+	private double creditsLeft = 0;
+	private double creditLeftThreshold = 0;
+	private long lastRefreshTimeMs = 0;
+
 	@Inject
 	public OvhSmsSendPlugin(
 			final @ParamValue("whitelistPrefixes") Optional<String> whitelistPrefixesOpt,
 			final @ParamValue("serviceName") String serviceName,
+			final @ParamValue("creditLeftThreshold") Optional<Double> creditLeftThreshold,
 			final OvhSmsWebServiceClient ovhSmsWebServiceClient,
 			final AnalyticsManager analyticsManager) {
 		Assertion.check()
@@ -55,11 +65,12 @@ public class OvhSmsSendPlugin implements SmsSendPlugin {
 		this.analyticsManager = analyticsManager;
 		this.ovhSmsWebServiceClient = ovhSmsWebServiceClient;
 		this.serviceName = serviceName;
+		this.creditLeftThreshold = creditLeftThreshold.orElse(-1D);
 		if (whitelistPrefixesOpt.isPresent() && !whitelistPrefixesOpt.get().isBlank()) {
 			acceptAll = false;
 			whitelistPrefixes = Arrays.asList(whitelistPrefixesOpt.get().split(";"))
 					.stream()
-					.map(prefix -> prefix.replaceAll("[\\(\\)\\s\\.\\-]+", "")) //we accept ( ) . - and spaces as separators
+					.map(prefix -> prefix.replaceAll(PATTERN_NORMALIZE_PREFIX, "")) //we accept ( ) . - and spaces as separators
 					.toList();
 		} else {
 			acceptAll = true;
@@ -70,9 +81,13 @@ public class OvhSmsSendPlugin implements SmsSendPlugin {
 
 	@Override
 	public boolean acceptSms(final Sms sms) {
+		if (!acceptSms()) {
+			return false;
+		}
+
 		return acceptAll ||
 				sms.receivers().stream()
-						.map(receiver -> receiver.replaceAll("[\\(\\)\\s\\.\\-]+", ""))
+						.map(receiver -> receiver.replaceAll(PATTERN_NORMALIZE_PREFIX, ""))
 						.allMatch(receiver -> whitelistPrefixes.stream()
 								.anyMatch(prefix -> {
 									if (receiver.startsWith(prefix)) {
@@ -100,6 +115,21 @@ public class OvhSmsSendPlugin implements SmsSendPlugin {
 		final Double totalCreditsRemoved = (Double) ovhSendingReportMap.getOrDefault("totalCreditsRemoved", 0.0);
 
 		return new SmsSendingReport(totalCreditsRemoved, !validReceivers.isEmpty());
+	}
+
+	private boolean acceptSms() {
+		if (creditLeftThreshold < 0) {
+			return true;
+		}
+
+		if (System.currentTimeMillis() - lastRefreshTimeMs > REFRESH_INTERVAL_MS) {
+			final var ovhServiceReportMap = ovhSmsWebServiceClient.smsService(serviceName);
+			enabled = ENABLED_STATUS.equals(ovhServiceReportMap.get("status"));
+			creditsLeft = (Double) ovhServiceReportMap.getOrDefault("creditsLeft", 0.0);
+			lastRefreshTimeMs = System.currentTimeMillis();
+		}
+
+		return enabled && creditsLeft > creditLeftThreshold;
 	}
 
 }
