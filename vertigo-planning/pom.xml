@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-modules</artifactId>
@@ -12,7 +14,7 @@
 	<artifactId>vertigo-planning</artifactId>
 	<packaging>jar</packaging>
 	<name>vertigo-planning</name>
-	<version>4.2.0.1-SNAPSHOT</version>
+	<version>4.2.0.1</version>
 
 	<dependencyManagement>
 		<dependencies>
@@ -53,7 +55,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>io.vertigo</groupId>
@@ -70,18 +72,18 @@
 			<artifactId>vertigo-ui</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>io.vertigo</groupId>
-            <artifactId>vertigo-stella</artifactId>
-            <version>${vertigo.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertigo</groupId>
-            <artifactId>vertigo-orchestra</artifactId>
-            <version>${vertigo.version}</version>
-            <optional>true</optional>
-        </dependency>
-				
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-stella</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-orchestra</artifactId>
+			<version>${vertigo.version}</version>
+			<optional>true</optional>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -146,6 +148,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<sourcepath>
+						${project.basedir}/src/main/java:${project.basedir}/src/main/javagen</sourcepath>
+					<additionalSourceDirs>
+						<additionalSourceDir>${project.basedir}/src/main/javagen</additionalSourceDir>
+					</additionalSourceDirs>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
