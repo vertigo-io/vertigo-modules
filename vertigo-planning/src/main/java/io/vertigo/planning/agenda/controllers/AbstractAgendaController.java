@@ -20,6 +20,11 @@ package io.vertigo.planning.agenda.controllers;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
@@ -30,6 +35,7 @@ import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.domain.Agenda;
+import io.vertigo.planning.agenda.domain.AgendaDisplay;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
 import io.vertigo.planning.agenda.domain.DefaultPlageHoraire;
@@ -47,46 +53,83 @@ import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 public class AbstractAgendaController extends AbstractVSpringMvcController {
 
-	private static final int NB_JOURS_DUPLICATE = 6;
-	private static final ViewContextKey<AgendaDisplayRange> agendaRangeKey = ViewContextKey.of("agendaRange");
-	private static final ViewContextKey<PlageHoraireDisplay> plagesHoraireKey = ViewContextKey.of("plagesHoraire");
-	private static final ViewContextKey<PlageHoraireDisplay> reservationOrphelinesKey = ViewContextKey.of("reservationOrphelines");
+	protected static final int NB_JOURS_DUPLICATE = 6;
+	protected static final ViewContextKey<Integer> weekDaysNumberKey = ViewContextKey.of("weekDaysNumber");
+	protected static final ViewContextKey<String> weekDaysKey = ViewContextKey.of("weekDays");
+	protected static final ViewContextKey<AgendaDisplayRange> agendaRangeKey = ViewContextKey.of("agendaRange");
+	protected static final ViewContextKey<PlageHoraireDisplay> plagesHoraireKey = ViewContextKey.of("plagesHoraire");
+	protected static final ViewContextKey<PlageHoraireDisplay> reservationOrphelinesKey = ViewContextKey.of("reservationOrphelines");
 
 	//creation plage
-	private static final ViewContextKey<DefaultPlageHoraire> defaultPlageHoraire = ViewContextKey.of("defaultPlageHoraire");
-	private static final ViewContextKey<CreationPlageHoraireForm> creationPlageHoraireFormKey = ViewContextKey.of("creationPlageHoraireForm");
+	protected static final ViewContextKey<Boolean> modeGuichetKey = ViewContextKey.of("modeGuichet");
+	protected static final ViewContextKey<String> agendaLabel = ViewContextKey.of("agendaLabel");
+	protected static final ViewContextKey<AgendaDisplay> agendasDisplayKey = ViewContextKey.of("agendasDisplay");
+	protected static final ViewContextKey<DefaultPlageHoraire> defaultPlageHoraire = ViewContextKey.of("defaultPlageHoraire");
+	protected static final ViewContextKey<CreationPlageHoraireForm> creationPlageHoraireFormKey = ViewContextKey.of("creationPlageHoraireForm");
 
 	//publish plage
-	private static final ViewContextKey<PublicationTrancheHoraireForm> publicationTrancheHoraireFormKey = ViewContextKey.of("publicationTrancheHoraireForm");
+	protected static final ViewContextKey<PublicationTrancheHoraireForm> publicationTrancheHoraireFormKey = ViewContextKey.of("publicationTrancheHoraireForm");
 
 	//detail plage
-	private static final ViewContextKey<PlageHoraireDisplay> plageHoraireDetailKey = ViewContextKey.of("plageHoraireDetail");
-	private static final ViewContextKey<TrancheHoraireDisplay> trancheHorairesKey = ViewContextKey.of("trancheHoraires");
+	protected static final ViewContextKey<PlageHoraireDisplay> plageHoraireDetailKey = ViewContextKey.of("plageHoraireDetail");
+	protected static final ViewContextKey<TrancheHoraireDisplay> trancheHorairesKey = ViewContextKey.of("trancheHoraires");
 
 	//duplication semaine
-	private static final ViewContextKey<DuplicationSemaineForm> duplicationSemaineFormKey = ViewContextKey.of("duplicationSemaineForm");
+	protected static final ViewContextKey<DuplicationSemaineForm> duplicationSemaineFormKey = ViewContextKey.of("duplicationSemaineForm");
 
 	@Inject
 	private PlanningServices planningServices;
 
-	public void initContext(final ViewContext viewContext, final UID<Agenda> ageUid, final CreationPlageHoraireForm creationPlageHoraireForm, final DuplicationSemaineForm duplicationSemaineForm) {
+	/**
+	 * Init context for agenda page.
+	 * @param viewContext ViewContext
+	 * @param ageUids list of agenda UIDs
+	 * @param weekDaysNumber number of days
+	 * @param creationPlageHoraireForm initialized form for creating
+	 * @param duplicationSemaineForm initialized form for duplicating
+	 * @param modeGuichet true if mode guichet
+	 * @Deprecated Send agendasDisplay instead of ageUids
+	 */
+	@Deprecated
+	public void initContextWithAgendaUids(final ViewContext viewContext, final List<UID<Agenda>> ageUids, final Integer weekDaysNumber, final CreationPlageHoraireForm creationPlageHoraireForm,
+			final DuplicationSemaineForm duplicationSemaineForm, final boolean modeGuichet) {
+		final var agendasDisplay = planningServices.getAgendasDisplay(ageUids);
+		initContext(viewContext, agendasDisplay, weekDaysNumber, creationPlageHoraireForm, duplicationSemaineForm, modeGuichet);
+	}
 
-		final var showDays = 6;
+	/**
+	 * Init context for agenda page.
+	 * @param viewContext ViewContext
+	 * @param ageUids list of agenda UIDs
+	 * @param weekDaysNumber number of days
+	 * @param creationPlageHoraireForm initialized form for creating
+	 * @param duplicationSemaineForm initialized form for duplicating
+	 * @param modeGuichet true if mode guichet
+	 */
+	public void initContext(final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final Integer weekDaysNumber, final CreationPlageHoraireForm creationPlageHoraireForm,
+			final DuplicationSemaineForm duplicationSemaineForm, final boolean modeGuichet) {
+		//---
 		final var todayDate = LocalDate.now();
-
 		//---
 		final var agendaDisplayRange = new AgendaDisplayRange();
-		agendaDisplayRange.setAgeId(ageUid.getId());
-		agendaDisplayRange.setShowDays(showDays);
+		final var ageUids = agendasDisplay.stream().map(a -> UID.of(Agenda.class, a.getAgeId())).toList();
+		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
+		agendaDisplayRange.setAgeIds(ageIds);
+		agendaDisplayRange.setShowDays(weekDaysNumber);
 		agendaDisplayRange.setMondayLock(true);
 
 		//prépare le agendaDisplayRange, reload les creneaux et prepare la popin publish plage
-		prepareContextAtDate(todayDate, agendaDisplayRange, ageUid, viewContext);
+		prepareContextAtDate(todayDate, agendaDisplayRange, viewContext);
+		viewContext.publishRef(weekDaysNumberKey, weekDaysNumber);
+		viewContext.publishRef(weekDaysKey, Arrays.toString(IntStream.concat(IntStream.range(1, weekDaysNumber), IntStream.of(weekDaysNumber == 7 ? 0 : weekDaysNumber)).toArray()));
+		viewContext.publishRef(modeGuichetKey, modeGuichet);
 
 		//pour popin creation plage
 		viewContext.publishDto(creationPlageHoraireFormKey, creationPlageHoraireForm);
-		final var defaultPlageHoraires = planningServices.getDefaultPlageHoraireByAgenda(ageUid, todayDate.minusMonths(1), todayDate.plusMonths(3));
+		final var defaultPlageHoraires = planningServices.getDefaultPlageHoraireByAgenda(ageUids, todayDate.minusMonths(1), todayDate.plusMonths(3));
 		viewContext.publishDtList(defaultPlageHoraire, defaultPlageHoraires);
+		viewContext.publishDtList(agendasDisplayKey, agendasDisplay);
+		viewContext.publishRef(agendaLabel, getAgendaLabel());
 
 		//pour popin detail plage avec la liste des tranches
 		viewContext.publishDto(plageHoraireDetailKey, new PlageHoraireDisplay());
@@ -94,12 +137,20 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 
 		//pour popin duplication
 		viewContext.publishDto(duplicationSemaineFormKey, duplicationSemaineForm);
+	}
 
+	/**
+	 * Overridable label use for agenda selection.
+	 * @return label
+	 */
+	protected String getAgendaLabel() {
+		return "Agenda";
 	}
 
 	@PostMapping("/_reload")
-	public ViewContext reload(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail) {
-		prepareContextAtDate(agenda.getShowDate(), agenda, UID.of(Agenda.class, agenda.getAgeId()), viewContext);
+	public ViewContext reload(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail) {
+		prepareContextAtDate(agenda.getShowDate(), agenda, viewContext);
 		if (plageHoraireDetail.getPlhId() != null) {
 			loadPlageHoraireDetail(viewContext, agenda, plageHoraireDetail.getPlhId());
 		}
@@ -108,23 +159,22 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_semainePrecedente")
 	public ViewContext semainePrecedente(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
-		prepareContextAtDate(agenda.getShowDate().minusWeeks(1), agenda, UID.of(Agenda.class, agenda.getAgeId()), viewContext);
+		prepareContextAtDate(agenda.getShowDate().minusWeeks(1), agenda, viewContext);
 		return viewContext;
 	}
 
 	@PostMapping("/_semaineSuivante")
 	public ViewContext semaineSuivante(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
-		prepareContextAtDate(agenda.getShowDate().plusWeeks(1), agenda, UID.of(Agenda.class, agenda.getAgeId()), viewContext);
+		prepareContextAtDate(agenda.getShowDate().plusWeeks(1), agenda, viewContext);
 		return viewContext;
 	}
 
 	@PostMapping("/_createPlage")
 	public ViewContext createPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("creationPlageHoraireForm") final CreationPlageHoraireForm creationPlageHoraireForm) {
-		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
-		planningServices.createPlageHoraire(ageUid, creationPlageHoraireForm);
-
-		prepareContextAtDate(creationPlageHoraireForm.getDateLocale(), agenda, ageUid, viewContext);
+		//---
+		planningServices.createPlageHoraire(creationPlageHoraireForm, agenda);
+		prepareContextAtDate(creationPlageHoraireForm.getDateLocale(), agenda, viewContext);
 		return viewContext;
 	}
 
@@ -142,7 +192,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 		//la date de fin correspond à la date de début plus 6 jours (cela fait 1 semaine, car la date de fin est incluses)
 		duplicationSemaineForm.setDateLocaleFromDebut(agendaRange.getFirstDate());
 		duplicationSemaineForm.setDateLocaleFromFin(agendaRange.getLastDate());
-		duplicationSemaineForm.setDateLocaleToDebut(planningServices.getPremierJourLibrePourDuplication(UID.of(Agenda.class, agendaRange.getAgeId()), agendaRange));
+		duplicationSemaineForm.setDateLocaleToDebut(planningServices.getPremierJourLibrePourDuplication(agendaRange));
 		duplicationSemaineForm.setDateLocaleToFin(duplicationSemaineForm.getDateLocaleToDebut().plusDays(NB_JOURS_DUPLICATE)); //1 semaine entiere (borne incluse)
 		viewContext.publishDto(duplicationSemaineFormKey, duplicationSemaineForm);
 
@@ -152,38 +202,55 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	@PostMapping("/_duplicateSemaine")
 	public ViewContext duplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
-		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
-		planningServices.duplicateSemaine(ageUid, duplicationSemaineForm);
-		prepareContextAtDate(duplicationSemaineForm.getDateLocaleToDebut(), agenda, ageUid, viewContext);
+		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm));
+		prepareContextAtDate(duplicationSemaineForm.getDateLocaleToDebut(), agenda, viewContext);
 		return viewContext;
+	}
+
+	protected Map<UID<Agenda>, Integer> getDureeCreneauPerAgenda(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm) {
+		//On applique la duplicationSemaineForm dureeCreneau a tous les agendas
+		return ageUids.stream()
+				.collect(Collectors.toMap(
+						ageUid -> ageUid,
+						ageUid -> duplicationSemaineForm.getDureeCreneau()));
 	}
 
 	@PostMapping("/_publishPlage")
 	public ViewContext publishPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("publicationTrancheHoraireForm") final PublicationTrancheHoraireForm publicationTrancheHoraireForm) {
 
-		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
-		planningServices.publishPlageHorairesAndRelinkReservation(ageUid, publicationTrancheHoraireForm);
+		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		planningServices.publishPlageHorairesAndRelinkReservation(ageUids, publicationTrancheHoraireForm);
 
-		prepareContextAtDate(publicationTrancheHoraireForm.getDateLocaleDebut(), agenda, ageUid, viewContext);
+		prepareContextAtDate(publicationTrancheHoraireForm.getDateLocaleDebut(), agenda, viewContext);
 		return viewContext;
 	}
 
 	@PostMapping("/_deletePlage")
 	public ViewContext deletePlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
-		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
+		final UID<PlageHoraire> plhUid = UID.of(PlageHoraire.class, plhId);
+		final var ageUid = planningServices.checkAuthorizedAgendaOfPlh(plhUid, agenda);
+		//---
 		planningServices.deletePlageHoraireCascade(ageUid, UID.of(PlageHoraire.class, plhId));
 
-		prepareContextAtDate(agenda.getShowDate(), agenda, ageUid, viewContext);
+		prepareContextAtDate(agenda.getShowDate(), agenda, viewContext);
 		return viewContext;
 	}
 
 	@PostMapping("/_loadPlageHoraireDetail")
 	public ViewContext loadPlageHoraireDetail(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
-		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
 		final UID<PlageHoraire> plhUid = UID.of(PlageHoraire.class, plhId);
-		final var plageHoraireDisplay = planningServices.getPlageHoraireDisplay(ageUid, plhUid);
-		final var trancheHoraire = planningServices.getTrancheHoraireDisplayByPlage(ageUid, plhUid);
+		planningServices.checkAuthorizedAgendaOfPlh(plhUid, agenda);
+		//---
+		final var plageHoraireDisplay = planningServices.getPlageHoraireDisplay(plhUid);
+		final var agendasDisplay = viewContext.readDtList(agendasDisplayKey, super.getUiMessageStack());
+		final var agendaName = agendasDisplay.stream()
+				.filter(a -> a.getAgeId().equals(plageHoraireDisplay.getAgeId()))
+				.findFirst()
+				.map(AgendaDisplay::getOverridedName).orElse(plageHoraireDisplay.getAgeNom());
+		plageHoraireDisplay.setAgeNom(agendaName);
+		final var trancheHoraire = planningServices.getTrancheHoraireDisplayByPlage(plhUid);
 
 		viewContext.publishDto(plageHoraireDetailKey, plageHoraireDisplay);
 		viewContext.publishDtList(trancheHorairesKey, trancheHoraire);
@@ -191,20 +258,25 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_deleteTrancheHoraire")
-	public ViewContext deleteTrancheHoraire(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, @RequestParam("trhId") final Long trhId) {
-		final UID<Agenda> ageUid = UID.of(Agenda.class, agenda.getAgeId());
+	public ViewContext deleteTrancheHoraire(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, @RequestParam("trhId") final Long trhId) {
+		final UID<Agenda> ageUid = UID.of(Agenda.class, plageHoraireDetail.getAgeId());
+		planningServices.checkAuthorizedAgenda(ageUid, agenda);
+		//---
 		final UID<TrancheHoraire> trhUid = UID.of(TrancheHoraire.class, trhId);
 		planningServices.closeTrancheHoraire(ageUid, trhUid);
 		return loadPlageHoraireDetail(viewContext, agenda, plageHoraireDetail.getPlhId());
 	}
 
-	private void prepareContextAtDate(final LocalDate showDate, final AgendaDisplayRange agenda, final UID<Agenda> ageUid, final ViewContext viewContext) {
+	protected void prepareContextAtDate(final LocalDate showDate, final AgendaDisplayRange agenda, final ViewContext viewContext) {
 		agenda.setShowDate(showDate);
 		agenda.setFirstDate(toPreviousMonday(showDate));
-		agenda.setLastDate(agenda.getFirstDate().plusDays(agenda.getShowDays() - 1l));
+		agenda.setLastDate(agenda.getFirstDate().plusDays(agenda.getShowDays() - 1L));
 		viewContext.publishDto(agendaRangeKey, agenda);
 		viewContext.publishDto(publicationTrancheHoraireFormKey, preparePublicationTrancheHoraireForm(agenda));
-		reloadPlageHoraires(viewContext, ageUid, agenda.getFirstDate(), agenda.getLastDate());
+
+		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		reloadPlageHoraires(viewContext, ageUids, agenda.getFirstDate(), agenda.getLastDate());
 	}
 
 	private static PublicationTrancheHoraireForm preparePublicationTrancheHoraireForm(final AgendaDisplayRange agendaRange) {
@@ -219,15 +291,23 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 		return publicationTrancheHoraireForm;
 	}
 
-	private void reloadPlageHoraires(final ViewContext viewContext, final UID<Agenda> agendaUid, final LocalDate firstDate, final LocalDate lastDate) {
-		final var plagesHoraire = planningServices.getPlageHoraireDisplayByAgenda(agendaUid, firstDate, lastDate);
+	private void reloadPlageHoraires(final ViewContext viewContext, final List<UID<Agenda>> ageUids, final LocalDate firstDate, final LocalDate lastDate) {
+		final var plagesHoraire = ageUids.isEmpty() ? new DtList<>(PlageHoraireDisplay.class) : planningServices.getPlageHoraireDisplayByAgendas(ageUids, firstDate, lastDate);
 		viewContext.publishDtList(plagesHoraireKey, plagesHoraire);
 
-		final var reservationOrphelines = planningServices.getReservationOrphelines(agendaUid, firstDate, lastDate);
+		final var reservationOrphelines = ageUids.isEmpty() ? new DtList<>(PlageHoraireDisplay.class) : planningServices.getReservationOrphelines(ageUids, firstDate, lastDate);
 		viewContext.publishDtList(reservationOrphelinesKey, reservationOrphelines);
 	}
 
 	private static LocalDate toPreviousMonday(final LocalDate localDate) {
 		return localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+	}
+
+	protected void refreshAgendaDisplay(final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final AgendaDisplayRange agendaDisplayRange) {
+		final var ageUids = agendasDisplay.stream().map(a -> UID.of(Agenda.class, a.getAgeId())).toList();
+		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
+		agendaDisplayRange.setAgeIds(ageIds);
+		prepareContextAtDate(agendaDisplayRange.getShowDate(), agendaDisplayRange, viewContext);
+		viewContext.publishDtList(agendasDisplayKey, agendasDisplay);
 	}
 }

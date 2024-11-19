@@ -31,6 +31,8 @@ public final class PlageHoraireDisplay implements DataObject {
 	private static final long serialVersionUID = 1L;
 
 	private Long plhId;
+	private Long ageId;
+	private String ageNom;
 	private java.time.LocalDate dateLocale;
 	private Integer minutesDebut;
 	private Integer minutesFin;
@@ -42,7 +44,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	private Integer nbPlanifie;
 	private Integer nbPublie;
 	private java.time.Instant instantPublication;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Id'.
@@ -61,7 +63,45 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setPlhId(final Long plhId) {
 		this.plhId = plhId;
 	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Agenda'.
+	 * @return Long ageId
+	 */
+	@Field(smartType = "STyPId", label = "Agenda")
+	public Long getAgeId() {
+		return ageId;
+	}
 
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Agenda'.
+	 * @param ageId Long
+	 */
+	public void setAgeId(final Long ageId) {
+		this.ageId = ageId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Agenda'.
+	 * @return String ageNom
+	 */
+	@Field(smartType = "STyPLabel", label = "Agenda")
+	public String getAgeNom() {
+		return ageNom;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Agenda'.
+	 * @param ageNom String
+	 */
+	public void setAgeNom(final String ageNom) {
+		this.ageNom = ageNom;
+	}
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de la plage horaire'.
@@ -80,7 +120,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setDateLocale(final java.time.LocalDate dateLocale) {
 		this.dateLocale = dateLocale;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de début'.
@@ -99,7 +139,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setMinutesDebut(final Integer minutesDebut) {
 		this.minutesDebut = minutesDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de fin'.
@@ -118,7 +158,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setMinutesFin(final Integer minutesFin) {
 		this.minutesFin = minutesFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Nombre de guichets'.
@@ -137,7 +177,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbGuichet(final Integer nbGuichet) {
 		this.nbGuichet = nbGuichet;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Réservé'.
@@ -156,7 +196,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbReserve(final Integer nbReserve) {
 		this.nbReserve = nbReserve;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Réservé et non publié'.
@@ -175,7 +215,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbReserveNonPublie(final Integer nbReserveNonPublie) {
 		this.nbReserveNonPublie = nbReserveNonPublie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Total'.
@@ -194,7 +234,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbTotal(final Integer nbTotal) {
 		this.nbTotal = nbTotal;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Non publié'.
@@ -213,7 +253,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbNonPublie(final Integer nbNonPublie) {
 		this.nbNonPublie = nbNonPublie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Planifié'.
@@ -232,7 +272,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbPlanifie(final Integer nbPlanifie) {
 		this.nbPlanifie = nbPlanifie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Publié'.
@@ -251,7 +291,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setNbPublie(final Integer nbPublie) {
 		this.nbPublie = nbPublie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date publication'.
@@ -270,7 +310,7 @@ public final class PlageHoraireDisplay implements DataObject {
 	public void setInstantPublication(final java.time.Instant instantPublication) {
 		this.instantPublication = instantPublication;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

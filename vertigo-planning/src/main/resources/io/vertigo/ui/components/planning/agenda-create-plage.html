@@ -53,12 +53,14 @@
 	                        </template>
 						</vu:slot>
 				    </vu:text-field-edit>
-				    
-                    <vu:text-field-edit object="creationPlageHoraireForm" field="nbGuichet" mask="#" />
+                    <vu:select-edit label="${model.agendaLabel}" object="creationPlageHoraireForm" field="ageId" valueField="ageId" list="agendasDisplay" th:if="${!model.modeGuichet}"/>
+                    <vu:text-field-edit object="creationPlageHoraireForm" field="nbGuichet" mask="#" th:if="${model.modeGuichet}"/>
                 </vu:grid>
             </q-card-section>
             <q-card-section class="flex justify-end">
-                <q-btn color="primary" label="Valider" @click="createPlageHoraire" :loading="isPendingAction()"></q-btn>
+                <q-btn color="primary" label="Valider" @click="createPlageHoraire" :loading="isPendingAction()" th:if="${!model.modeGuichet}"></q-btn>
+                <q-btn color="primary" label="Valider" @click="createPlageHoraireGuichet" :loading="isPendingAction()" th:if="${model.modeGuichet}"></q-btn>
+                
             </q-card-section>
         </q-card>
     </q-dialog>

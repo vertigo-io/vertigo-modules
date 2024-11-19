@@ -64,6 +64,7 @@ import redis.clients.jedis.params.ScanParams;
 @NotDiscoverable
 @Deprecated
 public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanningPlugin {
+
 	private static final Gson V_CORE_GSON = CoreJsonAdapters.V_CORE_GSON;
 
 	private static final String SINGLE_JEDIS_NODE = "singleNode";
@@ -160,8 +161,8 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 		final var keyProchaineDispo = critereTrancheHoraire.getAgeIds().hashCode() + ":" + FORMATTER_LOCAL_DATE.format(premierJour) + ":prochaine-dispo";
 		return applyCache(keyProchaineDispo, EXPIRATION_DELAY_DATE_PREMIERE_DISPO_SECONDE,
 				critereTrancheHoraire, super::getDateDePremiereDisponibilite,
-				(date) -> FORMATTER_LOCAL_DATE.format(date),
-				(dateStr) -> LocalDate.parse(dateStr, FORMATTER_LOCAL_DATE));
+				date -> FORMATTER_LOCAL_DATE.format(date),
+				dateStr -> LocalDate.parse(dateStr, FORMATTER_LOCAL_DATE));
 	}
 
 	@Trace(category = "redis", name = "getDateDeDernierePublication")
@@ -170,8 +171,8 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 		final var keyDernierePublication = agendaUids.hashCode() + ":derniere-publication";
 		return applyCache(keyDernierePublication, EXPIRATION_DELAY_DATE_DERNIERE_PUBLI_SECONDE,
 				agendaUids, super::getDateDeDernierePublication,
-				(date) -> FORMATTER_LOCAL_DATE.format(date),
-				(dateStr) -> LocalDate.parse(dateStr, FORMATTER_LOCAL_DATE));
+				date -> FORMATTER_LOCAL_DATE.format(date),
+				dateStr -> LocalDate.parse(dateStr, FORMATTER_LOCAL_DATE));
 	}
 
 	@Trace(category = "redis", name = "getPrecedentePublication")
@@ -180,8 +181,8 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 		final var keyPrecedentePublication = agendaUids.hashCode() + ":precedente-publication";
 		return applyCache(keyPrecedentePublication, EXPIRATION_DELAY_PRECEDENTE_PUBLI_SECONDE,
 				agendaUids, super::getPrecedentePublication,
-				(publicationRange) -> formatPublicationRange(publicationRange),
-				(publicationRangeStr) -> parsePublicationRange(publicationRangeStr));
+				(Function<PublicationRange, String>) this::formatPublicationRange,
+				(Function<String, PublicationRange>) this::parsePublicationRange);
 	}
 
 	@Trace(category = "redis", name = "getProchainePublication")
@@ -190,8 +191,8 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 		final var keyProchainePublication = agendaUids.hashCode() + ":prochaine-publication";
 		return applyCache(keyProchainePublication, EXPIRATION_DELAY_PROCHAINE_PUBLI_SECONDE,
 				agendaUids, super::getProchainePublication,
-				(publicationRange) -> formatPublicationRange(publicationRange),
-				(publicationRangeStr) -> parsePublicationRange(publicationRangeStr));
+				(Function<PublicationRange, String>) this::formatPublicationRange,
+				(Function<String, PublicationRange>) this::parsePublicationRange);
 	}
 
 	private String formatPublicationRange(final PublicationRange publicationRange) {
@@ -202,7 +203,8 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 		return V_CORE_GSON.fromJson(publicationRangeStr, PublicationRange.class);
 	}
 
-	private <R, I> Optional<R> applyCache(final String cacheKey, final long cacheSecond, final I param, final Function<I, Optional<R>> function, final Function<R, String> toString, final Function<String, R> fromString) {
+	private <R, I> Optional<R> applyCache(final String cacheKey, final long cacheSecond, final I param, final Function<I, Optional<R>> function, final Function<R, String> toString,
+			final Function<String, R> fromString) {
 		try (var jedis = redisConnector.getClient(SINGLE_JEDIS_NODE)) {
 			final var cachedValue = jedis.get(cacheKey);
 			if (cachedValue == null) {
@@ -231,9 +233,9 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 		for (final var agenda : agendas) {
 			agendaNames.put(agenda.getAgeId(), agenda.getNom());
 		}
-		final List<TrancheHoraire> trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeId(new ArrayList<>(agendaNames.keySet()), Instant.now());
+		final List<TrancheHoraire> trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIds(new ArrayList<>(agendaNames.keySet()), Instant.now());
 		final Map<UID<Agenda>, List<TrancheHoraire>> trancheHorairesPerAgenda = trancheHoraires.stream()
-				.collect(Collectors.groupingBy((trh) -> trh.agenda().getUID()));
+				.collect(Collectors.groupingBy(trh -> trh.agenda().getUID()));
 
 		for (final Entry<UID<Agenda>, List<TrancheHoraire>> trhPerAge : trancheHorairesPerAgenda.entrySet()) {
 			final String agendaUrn = trhPerAge.getKey().urn();
@@ -316,7 +318,7 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 			final List<LocalDate> listDates = entry.getValue().stream()
 					.map(HoraireImpacte::getLocalDate)
 					.toList();
-			final var trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIdAndDates(List.of(entry.getKey()), listDates, Instant.now());
+			final var trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIdsAndDates(List.of(entry.getKey()), listDates, Instant.now());
 			trancheHoraireByDemToResync.put(entry.getKey(), trancheHoraires);
 		}
 		synchroDbRedisCreneauFromTrancheHoraire(trancheHoraireByDemToResync);
@@ -350,7 +352,7 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 				final var cleFonctionelle = prefixCleFonctionelle + ":" + horaire.getMinutesDebut();
 				final long ttl = jedis.ttl(cleFonctionelle);
 				if (ttl < TTL_MINIMUM_TO_INCR_DISPO) { //si le creneau n'est plus là, ou si il expire dans moins de 5s, on ne fait pas de incr, on lance la resynchro
-					horaireImpacteByDemToResync.computeIfAbsent(horaire.getAgeId(), (demid) -> new ArrayList<>())
+					horaireImpacteByDemToResync.computeIfAbsent(horaire.getAgeId(), demid -> new ArrayList<>())
 							.add(horaire);
 				} else {
 					long newVal = 0;
@@ -379,6 +381,7 @@ public class Redis2FoConsultationPlanningPlugin extends DbFoConsultationPlanning
 	}
 
 	private static final class TrancheHoraireUpdateStats {
+
 		private int nbTranches = 0;
 		private int sumAgeDispo = 0;
 		private int minAgeDispo = Integer.MAX_VALUE;

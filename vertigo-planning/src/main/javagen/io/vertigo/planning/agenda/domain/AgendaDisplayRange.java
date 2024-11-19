@@ -30,32 +30,34 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 public final class AgendaDisplayRange implements DataObject {
 	private static final long serialVersionUID = 1L;
 
-	private Long ageId;
+	private java.util.List<Long> ageIds = new java.util.ArrayList<>();
 	private java.time.LocalDate showDate;
 	private java.time.LocalDate firstDate;
 	private java.time.LocalDate lastDate;
 	private Boolean mondayLock;
 	private Integer showDays;
-
+	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Id agenda'.
-	 * @return Long ageId
+	 * Récupère la valeur de la propriété 'Ids agenda'.
+	 * @return List de Long ageIds
 	 */
-	@Field(smartType = "STyPId", label = "Id agenda")
-	public Long getAgeId() {
-		return ageId;
+	@Field(smartType = "STyPId", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Ids agenda")
+	public java.util.List<Long> getAgeIds() {
+		return ageIds;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Id agenda'.
-	 * @param ageId Long
+	 * Définit la valeur de la propriété 'Ids agenda'.
+	 * @param ageIds List de Long
 	 */
-	public void setAgeId(final Long ageId) {
-		this.ageId = ageId;
+	public void setAgeIds(final java.util.List<Long> ageIds) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(ageIds);
+		//---
+		this.ageIds = ageIds;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date sélectionnée'.
@@ -74,7 +76,7 @@ public final class AgendaDisplayRange implements DataObject {
 	public void setShowDate(final java.time.LocalDate showDate) {
 		this.showDate = showDate;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de début'.
@@ -93,7 +95,7 @@ public final class AgendaDisplayRange implements DataObject {
 	public void setFirstDate(final java.time.LocalDate firstDate) {
 		this.firstDate = firstDate;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de fin (incluse)'.
@@ -112,7 +114,7 @@ public final class AgendaDisplayRange implements DataObject {
 	public void setLastDate(final java.time.LocalDate lastDate) {
 		this.lastDate = lastDate;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Si commence toujours par lundi'.
@@ -131,7 +133,7 @@ public final class AgendaDisplayRange implements DataObject {
 	public void setMondayLock(final Boolean mondayLock) {
 		this.mondayLock = mondayLock;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Nombre de jour affichés'.
@@ -150,7 +152,7 @@ public final class AgendaDisplayRange implements DataObject {
 	public void setShowDays(final Integer showDays) {
 		this.showDays = showDays;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

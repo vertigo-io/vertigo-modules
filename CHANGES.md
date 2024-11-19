@@ -1,13 +1,21 @@
 Version history
 ===============
+
 Running 4.3.0
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-420-to-430)
   
 more to come :)
 
-
-Running 4.2.0 - 2024/07/04
+Release 4.2.0.1 - Planning - 2024/11/19
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-420-to-4201-planning)
+* **Only module Planning**  
+* [Planning] Support multiple agenda in screen, and separare two modes : guichet or not.
+For Guichet, it means evry PlageHoraire have a number of free stock. 
+Else we could merge multiple agenda in one calendar, and take a reservation at one dateTime for a list of agenda
+ 
+Release 4.2.0 - 2024/07/04
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-410-to-420)
 * **Github : split `vertigo-extensions` to `vertigo-libs` and `vertigo-modules`**  

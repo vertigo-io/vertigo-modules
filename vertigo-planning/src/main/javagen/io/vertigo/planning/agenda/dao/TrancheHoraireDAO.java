@@ -21,14 +21,14 @@ import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.task.TaskManager;
-import io.vertigo.datamodel.task.definitions.TaskDefinition;
-import io.vertigo.datamodel.task.model.Task;
-import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.planning.agenda.domain.TrancheHoraire;
 
 /**
@@ -189,13 +189,13 @@ public final class TrancheHoraireDAO extends DAO<TrancheHoraire, java.lang.Long>
 	}
 
 	/**
-	 * Execute la tache TkSynchroGetTrancheHorairesByAgeId.
+	 * Execute la tache TkSynchroGetTrancheHorairesByAgeIds.
 	 * @param ageIds List de Long
 	 * @param now Instant
 	 * @return DtList de TrancheHoraire trancheHoraires
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkSynchroGetTrancheHorairesByAgeId",
+			name = "TkSynchroGetTrancheHorairesByAgeIds",
 			request = """
 			select * from (
             select 
@@ -217,8 +217,8 @@ public final class TrancheHoraireDAO extends DAO<TrancheHoraire, java.lang.Long>
          where dispo.nb_guichet > 0""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraire", name = "trancheHoraires")
-	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraire> synchroGetTrancheHorairesByAgeId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
-		final Task task = createTaskBuilder("TkSynchroGetTrancheHorairesByAgeId")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraire> synchroGetTrancheHorairesByAgeIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+		final Task task = createTaskBuilder("TkSynchroGetTrancheHorairesByAgeIds")
 				.addValue("ageIds", ageIds)
 				.addValue("now", now)
 				.build();
@@ -228,14 +228,14 @@ public final class TrancheHoraireDAO extends DAO<TrancheHoraire, java.lang.Long>
 	}
 
 	/**
-	 * Execute la tache TkSynchroGetTrancheHorairesByAgeIdAndDates.
+	 * Execute la tache TkSynchroGetTrancheHorairesByAgeIdsAndDates.
 	 * @param ageIds List de Long
 	 * @param localDates List de LocalDate
 	 * @param now Instant
 	 * @return DtList de TrancheHoraire trancheHoraires
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkSynchroGetTrancheHorairesByAgeIdAndDates",
+			name = "TkSynchroGetTrancheHorairesByAgeIdsAndDates",
 			request = """
 			select * from (
             select 
@@ -256,8 +256,8 @@ public final class TrancheHoraireDAO extends DAO<TrancheHoraire, java.lang.Long>
          where dispo.nb_guichet > 0""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraire", name = "trancheHoraires")
-	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraire> synchroGetTrancheHorairesByAgeIdAndDates(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "localDates", smartType = "STyPLocalDate") final java.util.List<java.time.LocalDate> localDates, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
-		final Task task = createTaskBuilder("TkSynchroGetTrancheHorairesByAgeIdAndDates")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraire> synchroGetTrancheHorairesByAgeIdsAndDates(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "localDates", smartType = "STyPLocalDate") final java.util.List<java.time.LocalDate> localDates, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+		final Task task = createTaskBuilder("TkSynchroGetTrancheHorairesByAgeIdsAndDates")
 				.addValue("ageIds", ageIds)
 				.addValue("localDates", localDates)
 				.addValue("now", now)

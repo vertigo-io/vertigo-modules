@@ -1,7 +1,7 @@
 package io.vertigo.planning.agenda.domain
 
 create DtDefinition DtAgendaDisplayRange {
-    field ageId {domain: DoPId label: "Id agenda"}
+    field ageIds {domain: DoPId label: "Ids agenda" cardinality:"*"}
     field showDate {domain: DoPLocalDate label: "Date sélectionnée"}
     field firstDate {domain: DoPLocalDate label: "Date de début"}
     field lastDate {domain: DoPLocalDate label: "Date de fin (incluse)"}
@@ -9,8 +9,22 @@ create DtDefinition DtAgendaDisplayRange {
     field showDays {domain: DoPNombre label: "Nombre de jour affichés"}
 }
 
+create DtDefinition DtAgendaDisplay {
+    field ageId {domain: DoPId label:"Id" cardinality:"1"}
+    field name {domain: DoPLabel label:"Name"}
+    field overridedName {domain: DoPLabel label:"Name"}
+    computed displayName { domain: DoPLabel label: "Nom agenda" 
+    expression:"if (overridedName != null) {
+			return overridedName;
+		}
+		return name;"
+    }
+    displayField: "displayName" 
+}
+
 create DtDefinition DtCreationPlageHoraireForm {
     /* On met les libellés pour les messages d'erreur */
+    field ageId {domain: DoPId label:"Agenda" cardinality:"1"}
     field dateLocale {domain: DoPLocalDate label: "Date de la plage horaire"  cardinality:"1"}
     field minutesDebut {domain: DoPHeureMinute label: "Heure de début"  cardinality:"1"}
     field minutesFin {domain: DoPHeureMinute label: "Heure de fin"  cardinality:"1"}
@@ -47,6 +61,8 @@ create DtDefinition DtDuplicationSemaineForm {
 
 create DtDefinition DtPlageHoraireDisplay {
     field plhId {domain: DoPId label:"Id"}
+    field ageId {domain: DoPId label:"Agenda"}
+    field ageNom {domain: DoPLabel label:"Agenda"}
     field dateLocale {domain: DoPLocalDate label: "Date de la plage horaire" }
     field minutesDebut {domain: DoPHeureMinute label: "Heure de début" }
     field minutesFin {domain: DoPHeureMinute label: "Heure de fin" }

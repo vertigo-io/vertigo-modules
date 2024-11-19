@@ -30,12 +30,32 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 public final class CreationPlageHoraireForm implements DataObject {
 	private static final long serialVersionUID = 1L;
 
+	private Long ageId;
 	private java.time.LocalDate dateLocale;
 	private Integer minutesDebut;
 	private Integer minutesFin;
 	private Integer nbGuichet;
 	private Integer dureeCreneau;
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Agenda'.
+	 * @return Long ageId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyPId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Agenda")
+	public Long getAgeId() {
+		return ageId;
+	}
 
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Agenda'.
+	 * @param ageId Long <b>Obligatoire</b>
+	 */
+	public void setAgeId(final Long ageId) {
+		this.ageId = ageId;
+	}
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de la plage horaire'.
@@ -54,7 +74,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setDateLocale(final java.time.LocalDate dateLocale) {
 		this.dateLocale = dateLocale;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de début'.
@@ -73,7 +93,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setMinutesDebut(final Integer minutesDebut) {
 		this.minutesDebut = minutesDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de fin'.
@@ -92,7 +112,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setMinutesFin(final Integer minutesFin) {
 		this.minutesFin = minutesFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Nombre de guichets'.
@@ -111,7 +131,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setNbGuichet(final Integer nbGuichet) {
 		this.nbGuichet = nbGuichet;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Durée en minutes'.
@@ -130,7 +150,7 @@ public final class CreationPlageHoraireForm implements DataObject {
 	public void setDureeCreneau(final Integer dureeCreneau) {
 		this.dureeCreneau = dureeCreneau;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

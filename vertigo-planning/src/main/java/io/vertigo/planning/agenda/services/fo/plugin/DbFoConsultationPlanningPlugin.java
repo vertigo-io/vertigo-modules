@@ -38,6 +38,7 @@ import io.vertigo.planning.agenda.services.fo.FoConsultationPlanningPlugin;
 
 @NotDiscoverable
 public class DbFoConsultationPlanningPlugin implements FoConsultationPlanningPlugin {
+
 	@Inject
 	private TrancheHoraireDAO trancheHoraireDAO;
 	@Inject
@@ -45,7 +46,8 @@ public class DbFoConsultationPlanningPlugin implements FoConsultationPlanningPlu
 
 	@Override
 	public DtList<TrancheHoraire> getTrancheHoraireDisponibles(final CritereTrancheHoraire critereTrancheHoraire) {
-		return trancheHoraireDAO.getTrancheHorairesDisponibleByAgeIds(critereTrancheHoraire.getAgeIds(), critereTrancheHoraire.getPremierJour(), critereTrancheHoraire.getPremierJour().plusDays(6), Instant.now(),
+		return trancheHoraireDAO.getTrancheHorairesDisponibleByAgeIds(critereTrancheHoraire.getAgeIds(), critereTrancheHoraire.getPremierJour(), critereTrancheHoraire.getPremierJour().plusDays(6),
+				Instant.now(),
 				critereTrancheHoraire.getDateMin(), critereTrancheHoraire.getMinutesMin());
 	}
 
@@ -58,21 +60,21 @@ public class DbFoConsultationPlanningPlugin implements FoConsultationPlanningPlu
 
 	@Override
 	public Optional<LocalDate> getDateDeDernierePublication(final List<UID<Agenda>> ageUids) {
-		return agendaPAO.getDateDernierePublicationByAgeId(
+		return agendaPAO.getDateDernierePublicationByAgeIds(
 				ageUids.stream().map(UID::getId).map(Long.class::cast).collect(Collectors.toList()),
 				Instant.now());
 	}
 
 	@Override
 	public Optional<PublicationRange> getPrecedentePublication(final List<UID<Agenda>> ageUids) {
-		return agendaPAO.getPrecedentePublicationByAgeId(
+		return agendaPAO.getPrecedentePublicationByAgeIds(
 				ageUids.stream().map(UID::getId).map(Long.class::cast).collect(Collectors.toList()),
 				Instant.now());
 	}
 
 	@Override
 	public Optional<PublicationRange> getProchainePublication(final List<UID<Agenda>> ageUids) {
-		return agendaPAO.getProchainePublicationByAgeId(
+		return agendaPAO.getProchainePublicationByAgeIds(
 				ageUids.stream().map(UID::getId).map(Long.class::cast).collect(Collectors.toList()),
 				Instant.now());
 	}
