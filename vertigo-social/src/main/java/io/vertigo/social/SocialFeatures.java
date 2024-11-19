@@ -167,7 +167,7 @@ public final class SocialFeatures extends Features<SocialFeatures> {
 		return this;
 	}
 
-	@Feature("sms.ovh.ovhRequestSpecializer")
+	@Feature("sms.ovh.requestSpecializer")
 	public SocialFeatures withOvhRequestSpecializer(final Param... params) {
 		getModuleConfigBuilder()
 				.addComponent(OvhRequestSpecializer.class, params);
