@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -36,7 +19,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	private java.time.LocalDate publicationDateLocale;
 	private Integer publicationMinutesDebut;
 	private String publicationZonCd;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Publication immediate'.
@@ -55,7 +38,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	public void setPublishNow(final Boolean publishNow) {
 		this.publishNow = publishNow;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de début'.
@@ -74,7 +57,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	public void setDateLocaleDebut(final java.time.LocalDate dateLocaleDebut) {
 		this.dateLocaleDebut = dateLocaleDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de fin (incluse)'.
@@ -93,7 +76,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	public void setDateLocaleFin(final java.time.LocalDate dateLocaleFin) {
 		this.dateLocaleFin = dateLocaleFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de publication'.
@@ -112,7 +95,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	public void setPublicationDateLocale(final java.time.LocalDate publicationDateLocale) {
 		this.publicationDateLocale = publicationDateLocale;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de publication'.
@@ -131,7 +114,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	public void setPublicationMinutesDebut(final Integer publicationMinutesDebut) {
 		this.publicationMinutesDebut = publicationMinutesDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Fuseau horaire publication'.
@@ -150,7 +133,7 @@ public final class PublicationTrancheHoraireForm implements DataObject {
 	public void setPublicationZonCd(final String publicationZonCd) {
 		this.publicationZonCd = publicationZonCd;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

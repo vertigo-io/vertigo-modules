@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -37,7 +20,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	private Integer nbReserve;
 	private Integer nbTotal;
 	private java.time.Instant instantPublication;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date disponible'.
@@ -56,7 +39,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setDateLocale(final java.time.LocalDate dateLocale) {
 		this.dateLocale = dateLocale;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Non publié'.
@@ -75,7 +58,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setNbNonPublie(final Integer nbNonPublie) {
 		this.nbNonPublie = nbNonPublie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Planifié'.
@@ -94,7 +77,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setNbPlanifie(final Integer nbPlanifie) {
 		this.nbPlanifie = nbPlanifie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Publié'.
@@ -113,7 +96,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setNbPublie(final Integer nbPublie) {
 		this.nbPublie = nbPublie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Réservé'.
@@ -132,7 +115,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setNbReserve(final Integer nbReserve) {
 		this.nbReserve = nbReserve;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Total'.
@@ -151,7 +134,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setNbTotal(final Integer nbTotal) {
 		this.nbTotal = nbTotal;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date publication'.
@@ -170,7 +153,7 @@ public final class DateDisponibleDisplay implements DataObject {
 	public void setInstantPublication(final java.time.Instant instantPublication) {
 		this.instantPublication = instantPublication;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

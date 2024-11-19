@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -36,7 +19,7 @@ public final class CritereTrancheHoraire implements DataObject {
 	private Integer minutesMin;
 	private java.time.LocalDate dateMax;
 	private java.time.LocalDate datePremiereDispo;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Ids d'agenda'.
@@ -57,7 +40,7 @@ public final class CritereTrancheHoraire implements DataObject {
 		//---
 		this.ageIds = ageIds;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Premier jour'.
@@ -76,7 +59,7 @@ public final class CritereTrancheHoraire implements DataObject {
 	public void setPremierJour(final java.time.LocalDate premierJour) {
 		this.premierJour = premierJour;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de début'.
@@ -95,7 +78,7 @@ public final class CritereTrancheHoraire implements DataObject {
 	public void setDateMin(final java.time.LocalDate dateMin) {
 		this.dateMin = dateMin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de début'.
@@ -114,7 +97,7 @@ public final class CritereTrancheHoraire implements DataObject {
 	public void setMinutesMin(final Integer minutesMin) {
 		this.minutesMin = minutesMin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de fin'.
@@ -133,7 +116,7 @@ public final class CritereTrancheHoraire implements DataObject {
 	public void setDateMax(final java.time.LocalDate dateMax) {
 		this.dateMax = dateMax;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de première disponibilité'.
@@ -152,7 +135,7 @@ public final class CritereTrancheHoraire implements DataObject {
 	public void setDatePremiereDispo(final java.time.LocalDate datePremiereDispo) {
 		this.datePremiereDispo = datePremiereDispo;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

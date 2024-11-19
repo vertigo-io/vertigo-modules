@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -35,7 +18,7 @@ public final class DuplicationSemaineForm implements DataObject {
 	private java.time.LocalDate dateLocaleToDebut;
 	private java.time.LocalDate dateLocaleToFin;
 	private Integer dureeCreneau;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de début de la source'.
@@ -54,7 +37,7 @@ public final class DuplicationSemaineForm implements DataObject {
 	public void setDateLocaleFromDebut(final java.time.LocalDate dateLocaleFromDebut) {
 		this.dateLocaleFromDebut = dateLocaleFromDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de fin (incluse) de la source'.
@@ -73,7 +56,7 @@ public final class DuplicationSemaineForm implements DataObject {
 	public void setDateLocaleFromFin(final java.time.LocalDate dateLocaleFromFin) {
 		this.dateLocaleFromFin = dateLocaleFromFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de début'.
@@ -92,7 +75,7 @@ public final class DuplicationSemaineForm implements DataObject {
 	public void setDateLocaleToDebut(final java.time.LocalDate dateLocaleToDebut) {
 		this.dateLocaleToDebut = dateLocaleToDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de fin (incluse)'.
@@ -111,7 +94,7 @@ public final class DuplicationSemaineForm implements DataObject {
 	public void setDateLocaleToFin(final java.time.LocalDate dateLocaleToFin) {
 		this.dateLocaleToFin = dateLocaleToFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Durée en minutes'.
@@ -130,7 +113,7 @@ public final class DuplicationSemaineForm implements DataObject {
 	public void setDureeCreneau(final Integer dureeCreneau) {
 		this.dureeCreneau = dureeCreneau;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -33,7 +16,7 @@ public final class PublicationRange implements DataObject {
 	private java.time.LocalDate dateMin;
 	private java.time.LocalDate dateMax;
 	private java.time.Instant instantPublication;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de début'.
@@ -52,7 +35,7 @@ public final class PublicationRange implements DataObject {
 	public void setDateMin(final java.time.LocalDate dateMin) {
 		this.dateMin = dateMin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date de fin'.
@@ -71,7 +54,7 @@ public final class PublicationRange implements DataObject {
 	public void setDateMax(final java.time.LocalDate dateMax) {
 		this.dateMax = dateMax;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date publication'.
@@ -90,7 +73,7 @@ public final class PublicationRange implements DataObject {
 	public void setInstantPublication(final java.time.Instant instantPublication) {
 		this.instantPublication = instantPublication;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
