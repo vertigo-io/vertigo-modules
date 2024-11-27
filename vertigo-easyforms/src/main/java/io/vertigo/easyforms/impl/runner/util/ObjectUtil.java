@@ -17,7 +17,6 @@
  */
 package io.vertigo.easyforms.impl.runner.util;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import io.vertigo.core.lang.VSystemException;
@@ -75,7 +74,7 @@ public class ObjectUtil {
 	 * @param contextData the context data
 	 * @return the resolved default value
 	 */
-	public static Object resolveDefaultValue(final Object defaultValueIn, final Map<String, Serializable> contextData) {
+	public static Object resolveDefaultValue(final Object defaultValueIn, final Map<String, ?> contextData) {
 		if (defaultValueIn instanceof final String defaultStr && defaultStr.startsWith("#ctx.") && defaultStr.endsWith("#")) {
 			final String defaultValueCode = defaultStr.substring(5, defaultStr.length() - 1);
 			return ObjectUtil.extractValueFromData(defaultValueCode, contextData);

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.vertigo.core.util.StringUtil;
+import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 
@@ -88,6 +90,30 @@ public final class EasyFormsTemplateSection implements Serializable {
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			for (final var blockElem : block.getItems()) {
 				addFieldsForItem(list, blockElem);
+			}
+		}
+	}
+
+	public List<EasyFormsTemplateItemField> getAllDisplayedFields(final EasyFormsData data) {
+		final List<EasyFormsTemplateItemField> list = new ArrayList<>();
+		for (final var item : getItems()) {
+			addDisplayedFieldsForItem(list, item, data);
+		}
+		return list;
+	}
+
+	private static void addDisplayedFieldsForItem(final List<EasyFormsTemplateItemField> list, final AbstractEasyFormsTemplateItem item, final EasyFormsData data) {
+		if (item instanceof final EasyFormsTemplateItemField field) {
+			list.add(field);
+		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
+			if (!StringUtil.isBlank(block.getCondition())) {
+				final var result = EasyFormsRuleParser.parse(block.getCondition(), data);
+				if (!result.isValid() || !result.getResult()) {
+					return;
+				}
+			}
+			for (final var blockElem : block.getItems()) {
+				addDisplayedFieldsForItem(list, blockElem, data);
 			}
 		}
 	}
