@@ -85,11 +85,21 @@ public final class EasyFormsRunnerController {
 		}
 	}
 
-	public void initEditContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
+	public void initEditContext(final ViewContext viewContext,
+			final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey,
+			final EasyFormsData formulaireResponse, final boolean isCreation) {
+
 		final var easyFormsUiUtil = new EasyFormsUiUtil();
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
 		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
+
+		// if new form, add all default values, if not, add only values on hidden fields
+		if (isCreation) {
+			formulaireResponse.putAll(easyFormsRunnerServices.getDefaultDataValues(easyForm.getTemplate(), viewContext.asMap()));
+		} else {
+			easyFormsRunnerServices.setDefaultValuesOnHidden(easyForm.getTemplate(), formulaireResponse, viewContext.asMap());
+		}
 
 		viewContext.publishRef(efoUiUtilKey, easyFormsUiUtil)
 				.publishRef(templateKey, easyForm.getTemplate())
@@ -127,7 +137,7 @@ public final class EasyFormsRunnerController {
 		// do not use the actual message stack if we don't want to throw user errors
 		final UiMessageStack uiMessageStack = throwUserErrors ? UiRequestUtil.obtainCurrentUiMessageStack() : new VSpringMvcUiMessageStack();
 
-		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataFieldName, easyFormsTemplate, uiMessageStack);
+		easyFormsRunnerServices.formatAndCheckFormulaire(formOwner, formDataFieldName, easyFormsTemplate, uiMessageStack, UiRequestUtil.getCurrentViewContext().asMap());
 		if (throwUserErrors && uiMessageStack.hasErrors()) {
 			throw new ValidationUserException();
 		}

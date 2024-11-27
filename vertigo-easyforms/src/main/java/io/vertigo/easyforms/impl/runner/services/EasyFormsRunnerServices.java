@@ -135,7 +135,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 
 	@Override
 	public <E extends DataObject> void formatAndCheckFormulaire(final E formOwner, final DataFieldName<E> formDataFieldName, final EasyFormsTemplate formTempalte,
-			final UiMessageStack uiMessageStack) {
+			final UiMessageStack uiMessageStack, final Map<String, Serializable> contextValues) {
 		final var formDataRaw = DataModelUtil.findDataDefinition(formOwner).getField(formDataFieldName).getDataAccessor().getValue(formOwner);
 
 		Assertion.check()
@@ -203,33 +203,7 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 		if (uiMessageStack.hasErrors()) {
 			// on error, we put back default values on hidden fields as we can continue to edit the form and therefore we need default values on these fields
 
-			for (final var section : formTempalte.getSections()) {
-				boolean isSectionVisible = true;
-				if (!StringUtil.isBlank(section.getCondition())) {
-					final var result = EasyFormsRuleParser.parse(section.getCondition(), formData);
-					if (!result.isValid() || !result.getResult()) {
-						isSectionVisible = false;
-					}
-				}
-				final var fields = section.getAllFields();
-				if (isSectionVisible) {
-					fields.removeAll(section.getAllDisplayedFields(formData));
-				}
-
-				final var sectionData = (EasyFormsData) formData.get(section.getCode());
-				for (final var field : fields) {
-					if (field.getDefaultValue() != null) {
-						// default value is set on field
-						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), formData));
-					} else {
-						// default value is set on field type
-						final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
-						if (paramFieldTypeDefinition.getDefaultValue() != null) {
-							sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), formData));
-						}
-					}
-				}
-			}
+			setDefaultValuesOnHidden(formTempalte, formData, contextValues);
 		}
 	}
 
@@ -385,6 +359,37 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 			}
 		}
 		return templateDefaultData;
+	}
+
+	@Override
+	public void setDefaultValuesOnHidden(final EasyFormsTemplate formTempalte, final EasyFormsData formData, final Map<String, Serializable> contextData) {
+		for (final var section : formTempalte.getSections()) {
+			boolean isSectionVisible = true;
+			if (!StringUtil.isBlank(section.getCondition())) {
+				final var result = EasyFormsRuleParser.parse(section.getCondition(), formData);
+				if (!result.isValid() || !result.getResult()) {
+					isSectionVisible = false;
+				}
+			}
+			final var fields = section.getAllFields();
+			if (isSectionVisible) {
+				fields.removeAll(section.getAllDisplayedFields(formData));
+			}
+
+			final var sectionData = (Map<String, Object>) formData.get(section.getCode());
+			for (final var field : fields) {
+				if (field.getDefaultValue() != null) {
+					// default value is set on field
+					sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), contextData));
+				} else {
+					// default value is set on field type
+					final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
+					if (paramFieldTypeDefinition.getDefaultValue() != null) {
+						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), contextData));
+					}
+				}
+			}
+		}
 	}
 
 	@Override

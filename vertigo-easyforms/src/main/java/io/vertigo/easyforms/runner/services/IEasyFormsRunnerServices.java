@@ -64,8 +64,10 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * @param formDataFieldName The field name of the form data.
 	 * @param formTempalte The template of the form.
 	 * @param uiMessageStack The stack of UI messages.
+	 * @param contextValues The context values.
 	 */
-	<E extends DataObject> void formatAndCheckFormulaire(E formOwner, final DataFieldName<E> formDataFieldName, EasyFormsTemplate formTempalte, UiMessageStack uiMessageStack);
+	<E extends DataObject> void formatAndCheckFormulaire(E formOwner, final DataFieldName<E> formDataFieldName, EasyFormsTemplate formTempalte, UiMessageStack uiMessageStack,
+			Map<String, Serializable> contextValues);
 
 	/**
 	 * Formats and checks a single field of the form data.
@@ -87,6 +89,15 @@ public interface IEasyFormsRunnerServices extends Component {
 	 * @return The default data values for the given form template.
 	 */
 	EasyFormsData getDefaultDataValues(EasyFormsTemplate easyFormsTemplate, Map<String, Serializable> contextValues);
+
+	/**
+	 * Sets the default values on hidden fields.
+	 *
+	 * @param formTempalte The form template.
+	 * @param formData The form data
+	 * @param contextValues The context values.
+	 */
+	void setDefaultValuesOnHidden(EasyFormsTemplate formTempalte, EasyFormsData formData, Map<String, Serializable> contextValues);
 
 	/**
 	 * Creates a temporary FileInfo from a given VFile.
