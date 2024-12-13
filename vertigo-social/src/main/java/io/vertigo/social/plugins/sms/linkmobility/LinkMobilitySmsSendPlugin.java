@@ -87,7 +87,6 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 
 	@Override
 	public SmsSendingReport sendSms(final Sms sms) {
-		analyticsManager.getCurrentTracer().ifPresent(tracer -> tracer.setTag("linkmobility", "linkmobility"));
 		double cost = 0.0;
 		boolean sent = false;
 
