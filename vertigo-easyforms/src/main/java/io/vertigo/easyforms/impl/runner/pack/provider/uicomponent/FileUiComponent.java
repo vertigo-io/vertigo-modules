@@ -33,6 +33,7 @@ public class FileUiComponent implements IEasyFormsUiComponentDefinitionSupplier 
 	@Override
 	public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 		return List.of(
+				new EasyFormsTemplateItemField(MAX_FILE_SIZE, FieldTypeEnum.COUNT_STRICT),
 				new EasyFormsTemplateItemField(MAX_SIZE, FieldTypeEnum.COUNT_STRICT),
 				new EasyFormsTemplateItemField(ACCEPT, FieldTypeEnum.INTERNAL_EXTENSIONS));
 	}

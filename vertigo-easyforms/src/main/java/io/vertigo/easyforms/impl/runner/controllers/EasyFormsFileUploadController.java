@@ -18,6 +18,7 @@
 package io.vertigo.easyforms.impl.runner.controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -28,10 +29,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.easyforms.runner.services.IEasyFormsRunnerServices;
 import io.vertigo.ui.core.UiFileInfo;
+import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 @Controller
@@ -56,16 +60,38 @@ public class EasyFormsFileUploadController {
 		return easyFormsRunnerServices.getFileInfos(fileInfoUris);
 	}
 
-	@PostMapping("/upload")
-	public FileInfoURI uploadFile(@QueryParam("file") final VFile vFile) {
-		return easyFormsRunnerServices.saveTmpFile(vFile).getURI();
-	}
-
 	@DeleteMapping("/upload")
 	public FileInfoURI removeFile(@QueryParam("file") final FileInfoURI fileInfoUri) {
 		// fileStoreManager.delete(fileInfoUri);
 		// Don't remove file now : it may be needed if user go back before saving
 		return fileInfoUri; // if no return, you must get the response. Prefer to return old uri.
+	}
+
+	@Controller
+	@RequestMapping("/easyforms/form")
+	public class EasyFormsFileUploadControllerWithContext extends AbstractVSpringMvcController {
+
+		@PostMapping("/upload")
+		public FileInfoURI uploadFile(
+				@ViewAttribute("efoSupportedFileExtensions") final Set<String> acceptedExtensions,
+				@ViewAttribute("efoMaxFileFileSize") final Long maxFileSize,
+				@QueryParam("file") final VFile vFile) {
+
+			if (!acceptedExtensions.isEmpty()) {
+				// we have to check the file extension
+				final var fileName = vFile.getFileName();
+				final var dotIndex = fileName.lastIndexOf('.');
+				if (dotIndex == -1 || !acceptedExtensions.contains(fileName.substring(dotIndex))) {
+					throw new VSystemException("File extension not allowed");
+				}
+			}
+
+			if (maxFileSize != -1L && vFile.getLength() > maxFileSize * 1024 * 1024) {
+				throw new VSystemException("File size too big");
+			}
+			return easyFormsRunnerServices.saveTmpFile(vFile).getURI();
+		}
+
 	}
 
 }

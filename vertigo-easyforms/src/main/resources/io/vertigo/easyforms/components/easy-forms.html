@@ -72,6 +72,7 @@
 														    th::ref="|'${ref}'|"
 															class="q-mt-md"
 												            th:url="@{/easyforms/form/upload}" field-name="file"  
+															:form-fields="[{name:'CTX',value:vueData.CTX}]"
 												            :simple="false" th::multiple="true"
 												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
 												            th:accept="${fieldParameters['accept']}"
