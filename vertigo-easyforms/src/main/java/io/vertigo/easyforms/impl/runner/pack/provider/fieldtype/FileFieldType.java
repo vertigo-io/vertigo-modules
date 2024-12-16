@@ -75,16 +75,16 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 	@Override
 	public Function<EasyFormsTemplateItemField, List<Constraint>> getConstraintsProvider() {
 		return field -> List.of(
-				new maxFileSizeConstraint(field),
-				new maxSizeConstraint(field),
-				new acceptConstraint(field));
+				new MaxFileSizeConstraint(field),
+				new MaxSizeConstraint(field),
+				new AcceptConstraint(field));
 	}
 
-	private static final class maxFileSizeConstraint implements EasyFormsConstraint<Boolean, List<FileInfoURI>> {
+	private static final class MaxFileSizeConstraint implements EasyFormsConstraint<Boolean, List<FileInfoURI>> {
 		private final Long maxSizeMo;
 		private final Long maxSize;
 
-		public maxFileSizeConstraint(final EasyFormsTemplateItemField field) {
+		public MaxFileSizeConstraint(final EasyFormsTemplateItemField field) {
 			if (field.getParameters() == null) {
 				maxSizeMo = null;
 				maxSize = null;
@@ -120,11 +120,11 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		}
 	}
 
-	private static final class maxSizeConstraint implements EasyFormsConstraint<Boolean, List<FileInfoURI>> {
+	private static final class MaxSizeConstraint implements EasyFormsConstraint<Boolean, List<FileInfoURI>> {
 		private final Long maxSizeMo;
 		private final Long maxSize;
 
-		public maxSizeConstraint(final EasyFormsTemplateItemField field) {
+		public MaxSizeConstraint(final EasyFormsTemplateItemField field) {
 			if (field.getParameters() == null) {
 				maxSizeMo = null;
 				maxSize = null;
@@ -159,10 +159,10 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		}
 	}
 
-	private static final class acceptConstraint implements EasyFormsConstraint<Boolean, List<FileInfoURI>> {
+	private static final class AcceptConstraint implements EasyFormsConstraint<Boolean, List<FileInfoURI>> {
 		private final String[] extensions;
 
-		public acceptConstraint(final EasyFormsTemplateItemField field) {
+		public AcceptConstraint(final EasyFormsTemplateItemField field) {
 			if (field.getParameters() == null) {
 				extensions = null;
 			} else {
@@ -197,8 +197,9 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 		}
 
 		private boolean isAccepted(final String fileName) {
+			final var fileNameLower = fileName.toLowerCase();
 			for (final String extension : extensions) {
-				if (fileName.toLowerCase().endsWith(extension)) {
+				if (fileNameLower.endsWith(extension)) {
 					return true;
 				}
 			}
