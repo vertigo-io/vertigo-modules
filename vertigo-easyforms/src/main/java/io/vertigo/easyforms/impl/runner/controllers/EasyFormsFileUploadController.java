@@ -79,7 +79,7 @@ public class EasyFormsFileUploadController {
 
 			if (!acceptedExtensions.isEmpty()) {
 				// we have to check the file extension
-				final var fileName = vFile.getFileName();
+				final var fileName = vFile.getFileName().toLowerCase();
 				final var dotIndex = fileName.lastIndexOf('.');
 				if (dotIndex == -1 || !acceptedExtensions.contains(fileName.substring(dotIndex))) {
 					throw new VSystemException("File extension not allowed");
