@@ -424,45 +424,47 @@ public class EasyFormsRunnerServices implements IEasyFormsRunnerServices {
 	}
 
 	@Override
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
+	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final boolean addEmptyFields) {
 		final var easyFormDisplay = new LinkedHashMap<String, LinkedHashMap<String, Object>>();
 		final var outOfSections = new LinkedHashSet<>(easyForm.keySet());
 
-		processSections(easyFormsTemplate, easyForm, easyFormDisplay, outOfSections);
+		processSections(easyFormsTemplate, easyForm, easyFormDisplay, outOfSections, addEmptyFields);
 		processOldSections(easyForm, easyFormDisplay, outOfSections);
 
 		return easyFormDisplay;
 	}
 
 	private void processSections(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm,
-			final LinkedHashMap<String, LinkedHashMap<String, Object>> easyFormDisplay, final Set<String> outOfSections) {
+			final LinkedHashMap<String, LinkedHashMap<String, Object>> easyFormDisplay, final Set<String> outOfSections, final boolean addEmptyFields) {
 		// We use display order from template
 		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
 			outOfSections.remove(section.getCode());
+			if (!StringUtil.isBlank(section.getCondition())) {
+				final var result = EasyFormsRuleParser.parse(section.getCondition(), easyForm);
+				if (!result.isValid() || !result.getResult()) {
+					continue;
+				}
+			}
 			final var easyFormSectionData = (Map<String, Object>) easyForm.get(section.getCode());
 
-			// TODO check section display condition or if contains actual data ?
-			// Idea : have an option to choose behavior (eg : display empty data if it is shown in edit mode)
-			if (easyFormSectionData != null) {
+			if (easyFormSectionData != null || addEmptyFields) {
 				final var sectionDisplay = new LinkedHashMap<String, Object>();
 				easyFormDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(section.getLabel()), sectionDisplay);
 				final var outOfSectionData = new HashMap<>(easyFormSectionData);
 
-				processFieldsInSection(section, easyFormSectionData, sectionDisplay, outOfSectionData);
+				processFieldsInSection(section, easyForm, easyFormSectionData, sectionDisplay, outOfSectionData, addEmptyFields);
 				processOldSectionData(outOfSectionData, sectionDisplay);
 			}
 		}
 	}
 
-	private void processFieldsInSection(final EasyFormsTemplateSection section, final Map<String, Object> easyFormSectionData,
-			final LinkedHashMap<String, Object> sectionDisplay, final Map<String, Object> outOfSectionData) {
-		for (final EasyFormsTemplateItemField field : section.getAllFields()) {
+	private void processFieldsInSection(final EasyFormsTemplateSection section, final EasyFormsData easyForm, final Map<String, Object> easyFormSectionData,
+			final LinkedHashMap<String, Object> sectionDisplay, final Map<String, Object> outOfSectionData, final boolean addEmptyFields) {
+		for (final EasyFormsTemplateItemField field : section.getAllDisplayedFields(easyForm)) {
 			final var fieldCode = field.getCode();
-			final Object rawValue = easyFormSectionData.get(fieldCode);
+			final Object rawValue = easyFormSectionData == null ? null : easyFormSectionData.get(fieldCode);
 
-			// TODO check block display condition or if contains actual data ? (impact on getAllFieldsForSection to check block condition)
-			// Idea : have an option to choose behavior (eg : display empty data if it is shown in edit mode)
-			if (rawValue != null) {
+			if (rawValue != null || addEmptyFields) {
 				processField(field, rawValue, sectionDisplay);
 				outOfSectionData.remove(fieldCode);
 			}

@@ -144,9 +144,10 @@ public interface IEasyFormsRunnerServices extends Component {
 	 *
 	 * @param easyFormsTemplate The form template.
 	 * @param easyForm The form data.
+	 * @param addEmptyFields Whether to add empty fields.
 	 * @return The read form of the EasyForm.
 	 */
-	LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(EasyFormsTemplate easyFormsTemplate, EasyFormsData easyForm);
+	LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(EasyFormsTemplate easyFormsTemplate, EasyFormsData easyForm, boolean addEmptyFields);
 
 	/**
 	 * Resolves the context name from a given list supplier.

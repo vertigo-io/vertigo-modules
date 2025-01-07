@@ -297,7 +297,10 @@
 								<div th:each="item : ${value}">
 									<th:block th:ref="itemDisplay">
 										<div th:if="${item[urn] != null}"><a th:href="@{/easyforms/form/upload/download/{uri}(uri=${item[urn]})}" vu:text="${item[label]}"></a></div>
-										<div th:unless="${item[urn] != null}" vu:text="${item[label]}"></div>
+										<th:block th:unless="${item[urn] != null}">
+											<div th:if="${item[label] != ''}" vu:text="${item[label]}"></div>
+											<div th:if="${item[label] == ''}" vu:text="#{EfNoValue}" class="text-caption text-italic"></div>
+										</th:block>
 									</th:block>
 								</div>
 								<div th:if="${value.size() == 0}" vu:text="#{EfNoValue}" class="text-caption text-italic"></div>
