@@ -173,7 +173,8 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	public ViewContext createPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("creationPlageHoraireForm") final CreationPlageHoraireForm creationPlageHoraireForm) {
 		//---
-		planningServices.createPlageHoraire(creationPlageHoraireForm, agenda);
+		final var ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		planningServices.createPlageHoraire(creationPlageHoraireForm, ageUids, agenda.getShowDays());
 		prepareContextAtDate(creationPlageHoraireForm.getDateLocale(), agenda, viewContext);
 		return viewContext;
 	}
@@ -202,7 +203,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	@PostMapping("/_duplicateSemaine")
 	public ViewContext duplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
-		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		final var ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm));
 		prepareContextAtDate(duplicationSemaineForm.getDateLocaleToDebut(), agenda, viewContext);
 		return viewContext;
@@ -230,7 +231,8 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	@PostMapping("/_deletePlage")
 	public ViewContext deletePlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
 		final UID<PlageHoraire> plhUid = UID.of(PlageHoraire.class, plhId);
-		final var ageUid = planningServices.checkAuthorizedAgendaOfPlh(plhUid, agenda);
+		final var showAgeUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		final var ageUid = planningServices.checkAuthorizedAgendaOfPlh(plhUid, showAgeUids);
 		//---
 		planningServices.deletePlageHoraireCascade(ageUid, UID.of(PlageHoraire.class, plhId));
 
@@ -241,7 +243,8 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	@PostMapping("/_loadPlageHoraireDetail")
 	public ViewContext loadPlageHoraireDetail(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
 		final UID<PlageHoraire> plhUid = UID.of(PlageHoraire.class, plhId);
-		planningServices.checkAuthorizedAgendaOfPlh(plhUid, agenda);
+		final var showAgeUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		planningServices.checkAuthorizedAgendaOfPlh(plhUid, showAgeUids);
 		//---
 		final var plageHoraireDisplay = planningServices.getPlageHoraireDisplay(plhUid);
 		final var agendasDisplay = viewContext.readDtList(agendasDisplayKey, super.getUiMessageStack());
@@ -261,7 +264,8 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	public ViewContext deleteTrancheHoraire(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, @RequestParam("trhId") final Long trhId) {
 		final UID<Agenda> ageUid = UID.of(Agenda.class, plageHoraireDetail.getAgeId());
-		planningServices.checkAuthorizedAgenda(ageUid, agenda);
+		final var showAgeUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		planningServices.checkAuthorizedAgenda(ageUid, showAgeUids);
 		//---
 		final UID<TrancheHoraire> trhUid = UID.of(TrancheHoraire.class, trhId);
 		planningServices.closeTrancheHoraire(ageUid, trhUid);
