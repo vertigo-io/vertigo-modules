@@ -41,11 +41,15 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 
 	private final boolean acceptAll;
 	private final List<String> whitelistPrefixes;
+	private long sendDelay = -1;
+	private long lastSentTimeMs = 0;
+
 	private static final int ALPHA_NUMERIC_ORIGINATOR_TON = 1;
 
 	@Inject
 	public LinkMobilitySmsSendPlugin(
 			final @ParamValue("whitelistPrefixes") Optional<String> whitelistPrefixesOpt,
+			final @ParamValue("sendDelay") Optional<Long> sendDelay,
 			final LinkMobilitySmsWebServiceClient linkMobilitySmsWebServiceClient,
 			final AnalyticsManager analyticsManager) {
 		Assertion.check()
@@ -55,6 +59,7 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 		//---
 		this.analyticsManager = analyticsManager;
 		this.linkMobilitySmsWebServiceClient = linkMobilitySmsWebServiceClient;
+		this.sendDelay = sendDelay.orElse(0L);
 		if (whitelistPrefixesOpt.isPresent() && !whitelistPrefixesOpt.get().isBlank()) {
 			acceptAll = false;
 			whitelistPrefixes = Arrays.asList(whitelistPrefixesOpt.get().split(";"))
@@ -91,6 +96,16 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 		boolean sent = false;
 
 		for (final var receiver : sms.receivers()) {
+			final long sleepMs = sendDelay - (System.currentTimeMillis() - lastSentTimeMs);
+			if (sleepMs > 0) {
+				try {
+					Thread.sleep(sleepMs);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
+			lastSentTimeMs = System.currentTimeMillis();
+
 			final var linkMobilitySendingReportMap = linkMobilitySmsWebServiceClient.sendSms(
 					receiver,
 					ALPHA_NUMERIC_ORIGINATOR_TON,
