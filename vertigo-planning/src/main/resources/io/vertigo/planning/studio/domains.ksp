@@ -12,7 +12,7 @@ create Domain DoPId {
 
 create Domain DoPLabel {
 	dataType : String
-	storeType : "VARCHAR(100)"
+	storeType : "VARCHAR(250)"
 }
 
 create Domain DoPMinute {

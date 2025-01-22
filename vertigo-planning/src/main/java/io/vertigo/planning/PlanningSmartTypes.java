@@ -45,7 +45,7 @@ public enum PlanningSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "250", msg = "")
 	PLabel,
 
 	@SmartTypeDefinition(LocalDate.class)
