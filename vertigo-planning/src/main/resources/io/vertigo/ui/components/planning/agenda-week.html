@@ -1,5 +1,6 @@
-<th:block th:fragment="agenda-week(agenda_actions_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow)" vu:alias="agenda-week" vu:selector="${true}"
-	      th:with="myEventNameTwoLetters=${eventNameTwoLetters?:false}, myEventIconAgenda=${eventIconAgenda?:'event'}, myMultiEventIconAgenda=${multiEventIconAgenda?:'calendar_month'}, myMaxMultiEventShow=${maxMultiEventShow?:3}"
+<th:block th:fragment="agenda-week(agenda_actions_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow, hasAuthzAdmin)" vu:alias="agenda-week" vu:selector="${true}"
+	      th:with="myEventNameTwoLetters=${eventNameTwoLetters?:false}, myEventIconAgenda=${eventIconAgenda?:'event'}, myMultiEventIconAgenda=${multiEventIconAgenda?:'calendar_month'}, 
+	      myMaxMultiEventShow=${maxMultiEventShow?:3}, myHasAuthzAdmin=${hasAuthzAdmin?:true}"
 			th:attr="objectKey=${model.vContext['componentStates'].addComponentState('editedPlageHoraire')}">
 	<vu:block data-shape="rounded" id="agenda" title="Agenda">
 		<vu:slot name="actions_slot" >
@@ -54,7 +55,7 @@
 		           transition-prev="slide-right"
 		           transition-next="slide-left"
 		           :model-value="toCalendarDateFmt(vueData.agendaRange.firstDate).date"
-		           @click-time="onCreatePlageHoraireDateTime($event)">
+		           th:attrappend="'@click-time'=${myHasAuthzAdmin?'onCreatePlageHoraireDateTime($event)':null}">
 		
 		               <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
 		                <template v-for="(event, index) in getEvents(timestamp.date, vueData.plagesHoraire)" :key="event.eventId">
@@ -73,7 +74,7 @@
 			                      </q-btn>                    
 		                  	  </div>
 		                      <div class="actions-event">
-		                         <q-btn icon="ri-delete-bin-2-line" title="Supprimer" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(event)"></q-btn>
+		                         <q-btn icon="ri-delete-bin-2-line" title="Supprimer" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(event)" vu:authz="${myHasAuthzAdmin}"></q-btn>
 		                      </div>
 		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>90}">
 		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>90}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
@@ -135,6 +136,9 @@
 				                                    title="Dépassement des disponibilités de la plage"></q-icon>
 				                                    <b>{{subEvent.nbReserve}}</b>/{{subEvent.nbTotal}}
 				                            </q-chip>
+								          </q-item-section>
+								          <q-item-section side>
+								            <q-btn icon="ri-delete-bin-2-line" title="Supprimer" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(subEvent)" vu:authz="${myHasAuthzAdmin}"></q-btn>
 								          </q-item-section>
 								        </q-item>
 								      </q-list>
