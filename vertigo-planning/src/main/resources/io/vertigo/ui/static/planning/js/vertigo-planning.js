@@ -343,9 +343,9 @@ VUiExtensions.methods.doDuplicateWeek = function() {
                 }.bind(this)
             });
         } 
-VUiExtensions.methods.createPlageHoraire = function(modeGuichet) {
+VUiExtensions.methods.createPlageHoraire = function(event, modeGuichet) {
             let formData = this.vueDataParams(['creationPlageHoraireForm']);
-            if(modeGuichet) {
+            if(!modeGuichet) {
                 formData.delete('vContext[creationPlageHoraireForm][nbGuichet]');
             }
             formData.delete('vContext[creationPlageHoraireForm][dureeCreneau]');
@@ -356,8 +356,8 @@ VUiExtensions.methods.createPlageHoraire = function(modeGuichet) {
                 }.bind(this)
             });
         }
-VUiExtensions.methods.createPlageHoraireGuichet = function() {
-            createPlageHoraire(true);
+VUiExtensions.methods.createPlageHoraireGuichet = function(event) {
+            this.createPlageHoraire(event, true);
         }
 VUiExtensions.methods.confirmDeletePlageHoraire = function(event) {
             this.$data.componentStates.editedPlageHoraire = event;
