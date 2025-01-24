@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.impl.easyformsrunner.pack.constraint;
+package io.vertigo.easyforms.runner.pack.constraint;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.easyforms.runner.pack.constraint.ConstraintPhone;
 import io.vertigo.easyforms.runner.pack.constraint.ConstraintPhone.ConstraintPhoneEnum;
 
 /**

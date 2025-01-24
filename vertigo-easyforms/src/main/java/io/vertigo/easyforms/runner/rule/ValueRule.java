@@ -20,28 +20,28 @@ package io.vertigo.easyforms.runner.rule;
 import java.util.List;
 import java.util.Optional;
 
-import io.vertigo.commons.peg.AbstractRule;
 import io.vertigo.commons.peg.PegChoice;
-import io.vertigo.commons.peg.PegRule;
-import io.vertigo.commons.peg.PegRules;
-import io.vertigo.commons.peg.PegWordRule;
+import io.vertigo.commons.peg.rule.PegAbstractRule;
+import io.vertigo.commons.peg.rule.PegWordRuleMode;
+import io.vertigo.commons.peg.rule.PegRule;
+import io.vertigo.commons.peg.rule.PegRules;
 
-class ValueRule extends AbstractRule<String, PegChoice> {
+class ValueRule extends PegAbstractRule<String, PegChoice> {
 
 	private static final PegRule<String> NULL_RULE = PegRules.term("null");
 
 	private static final PegRule<List<Object>> STRING_RULE = PegRules.sequence(
 			PegRules.term("\""),
-			PegRules.named(PegRules.word(true, "\"", PegWordRule.Mode.REJECT, "^\"*"), "string"),
+			PegRules.named(PegRules.word(true, "\"", PegWordRuleMode.REJECT, "^\"*"), "string"),
 			PegRules.term("\""));
 
 	private static final PegRule<List<Object>> NUMBER_RULE = PegRules.named(
 			PegRules.sequence(
 					PegRules.optional(PegRules.term("-")), // Optional negative sign
-					PegRules.word(false, "0123456789", PegWordRule.Mode.ACCEPT, "0-9"),
+					PegRules.word(false, "0123456789", PegWordRuleMode.ACCEPT, "0-9"),
 					PegRules.optional(PegRules.sequence( // Optional decimal value
 							PegRules.term("."),
-							PegRules.word(false, "0123456789", PegWordRule.Mode.ACCEPT, "0-9")))),
+							PegRules.word(false, "0123456789", PegWordRuleMode.ACCEPT, "0-9")))),
 			"number");
 
 	private static final PegRule<PegChoice> BOOLEAN_RULE = PegRules.choice(PegRules.term("true"), PegRules.term("false"));
@@ -49,7 +49,7 @@ class ValueRule extends AbstractRule<String, PegChoice> {
 	private static final PegRule<List<Object>> VARIABLE_RULE = PegRules.named(
 			PegRules.sequence(
 					PegRules.term("#"),
-					PegRules.word(false, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._-", PegWordRule.Mode.ACCEPT, "a-zA-Z._-"),
+					PegRules.word(false, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._-", PegWordRuleMode.ACCEPT, "a-zA-Z._-"),
 					PegRules.term("#")),
 			"variable");
 
@@ -71,8 +71,8 @@ class ValueRule extends AbstractRule<String, PegChoice> {
 		switch (choice.choiceIndex()) {
 			case 0: // NULL_RULE
 				return (String) choice.value();
-			case 1: // STRING_RULE
-			case 3: // VARIABLE_RULE
+			case 1, // STRING_RULE
+					3: // VARIABLE_RULE
 				final StringBuilder sb = new StringBuilder();
 				for (final var object : (List) choice.value()) {
 					sb.append(object);

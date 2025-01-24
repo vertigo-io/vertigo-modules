@@ -146,7 +146,7 @@ public final class EasyFormsUiUtil implements Serializable {
 				.replaceAll("([^!><])=", "$1=="); // = => ==
 	}
 
-	public String resolveLabel(final Map<String, String> labels, final List<String> supportedLang, final Boolean isI18n) {
+	public String resolveLabel(final Map<String, String> labels, final Boolean isI18n) {
 		if (labels == null) {
 			return null;
 		}

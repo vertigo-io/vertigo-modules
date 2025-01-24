@@ -211,9 +211,7 @@ public class EasyFormsDesignerServices {
 			}
 		} else if (value instanceof final DataObject dto) {
 			final var dtDefinition = DataModelUtil.findDataDefinition(dto);
-			dtDefinition.getFields().forEach(field -> {
-				contextDescription.add(newKey + "." + field.name(), field.getTargetJavaClass());
-			});
+			dtDefinition.getFields().forEach(field -> contextDescription.add(newKey + "." + field.name(), field.getTargetJavaClass()));
 		} else if (value instanceof final FormContextDescription description) {
 			description.getContextMap().forEach((k, v) -> contextDescription.add(newKey + "." + k, v));
 		} else {
@@ -282,20 +280,6 @@ public class EasyFormsDesignerServices {
 		}
 
 		errorBuilder.throwUserExceptionIfErrors();
-
-		/*
-		 * TODO: Example of multi-field parameter constraint that should be parametrable by project (via manager ?)
-				if (!editField.getIsDefault() && editField.getIsDisplay()) {
-					//on retire tous les autres qui auraient isDisplay (sauf les defaults)
-					for (var champIndex = 0; champIndex < champs.size(); ++champIndex) {
-						final var champUi = champs.get(champIndex);
-						if (champIndex != editIndex && champUi.getIsDisplay() && !champUi.getIsDefault()) {
-							champUi.setIsDisplay(false);
-							uiMessageStack.warning("Il ne peut y avoir qu'un seul champ complémentaire affiché dans le formulaire.\nLe champ \"" + champUi.getFieldCode() + "\" n'est plus inclus");
-						}
-					}
-				}
-				*/
 	}
 
 	private boolean isHtmlEmpty(final String str) {

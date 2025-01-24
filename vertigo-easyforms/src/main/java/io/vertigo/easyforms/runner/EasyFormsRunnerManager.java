@@ -271,8 +271,7 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 					resolvedList.add(doFormatValue(fieldDescriptor, elem));
 				}
 				return resolvedList;
-			case ONE:
-			case OPTIONAL_OR_NULLABLE:
+			case ONE, OPTIONAL_OR_NULLABLE:
 				return doFormatValue(fieldDescriptor, inputValue);
 			default:
 				throw new UnsupportedOperationException();
@@ -297,10 +296,9 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 	 *
 	 * @param fieldDescriptor The descriptor of the field to be validated.
 	 * @param value The value to be validated.
-	 * @param context The context in which the validation is performed.
 	 * @return A list of validation error messages, if any.
 	 */
-	public final List<String> validateField(final EasyFormsDataDescriptor fieldDescriptor, final Object value, final Map<String, Object> context) {
+	public final List<String> validateField(final EasyFormsDataDescriptor fieldDescriptor, final Object value) {
 		// validate data nature (structure)
 		try {
 			fieldDescriptor.validate(value);
@@ -312,7 +310,7 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 		}
 
 		// If ok, validate data intention (business rules)
-		final List<String> errors = doValidateField(fieldDescriptor, value, context);
+		final List<String> errors = doValidateField(fieldDescriptor, value);
 
 		for (final var fieldConstraint : fieldDescriptor.getFieldConstraints()) {
 			if (fieldConstraint != null && !fieldConstraint.checkConstraint(value)) {
@@ -327,10 +325,10 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 		return errors;
 	}
 
-	private List<String> doValidateField(final EasyFormsDataDescriptor fieldDescriptor, final Object value, final Map<String, Object> context) {
+	private List<String> doValidateField(final EasyFormsDataDescriptor fieldDescriptor, final Object value) {
 		switch (fieldDescriptor.cardinality()) {
 			case MANY:
-				if (value instanceof final List valueList) {
+				if (value instanceof final List<?> valueList) {
 					final var errorList = new ArrayList<String>();
 					if (fieldDescriptor.getMinListSize() != null && fieldDescriptor.getMinListSize().intValue() > valueList.size()) {
 						errorList.add(LocaleMessageText.of(fieldDescriptor.getMinListSizeResource(), fieldDescriptor.getMinListSize(), fieldDescriptor.getMinListSize().intValue() > 1 ? "s" : "")
@@ -340,21 +338,20 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 								.getDisplay());
 					}
 					for (final Object element : valueList) {
-						errorList.addAll(doCheckConstraints(fieldDescriptor, element, context));
+						errorList.addAll(doCheckConstraints(fieldDescriptor, element));
 					}
 					return errorList;
 				} else {
 					throw new ClassCastException("Value " + value + " must be a list");
 				}
-			case ONE:
-			case OPTIONAL_OR_NULLABLE:
-				return doCheckConstraints(fieldDescriptor, value, context);
+			case ONE, OPTIONAL_OR_NULLABLE:
+				return doCheckConstraints(fieldDescriptor, value);
 			default:
 				throw new UnsupportedOperationException();
 		}
 	}
 
-	private List<String> doCheckConstraints(final EasyFormsDataDescriptor fieldDescriptor, final Object value, final Map<String, Object> context) {
+	private List<String> doCheckConstraints(final EasyFormsDataDescriptor fieldDescriptor, final Object value) {
 		final var errorList = new ArrayList<String>();
 		for (final Constraint constraint : fieldDescriptor.getBusinessConstraints()) {
 			if (!constraint.checkConstraint(value)) {

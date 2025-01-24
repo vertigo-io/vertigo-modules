@@ -15,12 +15,12 @@
 						<div th:if="${template.useSections}" class="q-card__section" >
 							<q-item>
 								<q-item-section>
-								    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
-									<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
-									<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
-									<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
-									<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
-									<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
+								    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
+									<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
+									<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
+									<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
+									<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
+									<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
 								</q-item-section>
 							</q-item>
 						</div>
@@ -30,7 +30,7 @@
 							<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
 								<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
 									<th:block th:if="${templateItem.type == 'STATIC'}">
-				    					<div class="q-mb-lg ef-static-text" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, model.efoAllLang, isI18nLabel)}"></div>
+				    					<div class="q-mb-lg ef-static-text" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, isI18nLabel)}"></div>
 				    				</th:block>
 				    				<template th:if="${templateItem.type == 'BLOCK'}"
 				    						  th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.condition)}">
@@ -43,8 +43,8 @@
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
 									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
-									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)},
-									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, model.efoAllLang, isI18nLabel)}">
+									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, isI18nLabel)},
+									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
 											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">

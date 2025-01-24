@@ -22,11 +22,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 import io.vertigo.commons.peg.PegNoMatchFoundException;
-import io.vertigo.easyforms.rules.DelayedOperationRule;
-import io.vertigo.easyforms.rules.OperationSolver;
-import io.vertigo.easyforms.rules.term.BoolOperator;
-import io.vertigo.easyforms.rules.term.ParsingValueException;
-import io.vertigo.easyforms.runner.rule.ComparisonRule.ComparisonRuleSolver;
+import io.vertigo.commons.peg.PegParsingValueException;
+import io.vertigo.commons.peg.rule.PegComparisonRuleSolver;
+import io.vertigo.commons.peg.rule.PegDelayedOperationSolver;
+import io.vertigo.commons.peg.rule.PegRule;
+import io.vertigo.commons.peg.rule.PegRules;
+import io.vertigo.commons.peg.term.PegBoolOperatorTerm;
 import io.vertigo.easyforms.runner.util.ObjectUtil;
 
 public class EasyFormsRuleParser {
@@ -35,7 +36,9 @@ public class EasyFormsRuleParser {
 		// only statics
 	}
 
-	private static final DelayedOperationRule<ComparisonRuleSolver, BoolOperator, Boolean> MAIN_RULE = new DelayedOperationRule<>(new ComparisonRule(), BoolOperator.class, true, true);
+	private static final PegRule<PegDelayedOperationSolver<PegComparisonRuleSolver, PegBoolOperatorTerm, Boolean>> MAIN_RULE = PegRules.delayedOperation(PegRules.comparison(new ValueRule()),
+			PegBoolOperatorTerm.class,
+			true);
 
 	private static final Function<String, Object> STATIC_RESOLVE_FUNCTION = s -> {
 		if (s.startsWith("\"")) {
@@ -74,12 +77,12 @@ public class EasyFormsRuleParser {
 	 * @param context Context to use
 	 * @return The function
 	 */
-	private static Function<ComparisonRuleSolver, Boolean> getTestResolveFunction(final FormContextDescription context) {
+	private static Function<PegComparisonRuleSolver, Boolean> getTestResolveFunction(final FormContextDescription context) {
 		return f -> f.apply(s -> {
 			if (s.startsWith("#")) {
 				final var key = s.substring(1, s.length() - 1);
 				if (!context.contains(key)) {
-					throw new ParsingValueException("Variable #" + key + "# not found (" + context.getLastCorrespondingKey(key) + " is not defined)");
+					throw new PegParsingValueException("Variable #" + key + "# not found (" + context.getLastCorrespondingKey(key) + " is not defined)");
 				}
 				return context.getDummyValue(key);
 			}
@@ -93,7 +96,7 @@ public class EasyFormsRuleParser {
 	 * @param context Context to use
 	 * @return The function
 	 */
-	private static Function<ComparisonRuleSolver, Boolean> getResolveFunction(final Map<String, Object> context) {
+	private static Function<PegComparisonRuleSolver, Boolean> getResolveFunction(final Map<String, Object> context) {
 		return f -> f.apply(s -> {
 			if (s.startsWith("#")) {
 				final var key = s.substring(1, s.length() - 1);
@@ -108,7 +111,7 @@ public class EasyFormsRuleParser {
 		private final boolean result;
 		private final String errorMessage;
 
-		private ParseResult(final OperationSolver<ComparisonRuleSolver, BoolOperator, Boolean> solver, final Function<ComparisonRuleSolver, Boolean> resolveFunction) {
+		private ParseResult(final PegDelayedOperationSolver<PegComparisonRuleSolver, PegBoolOperatorTerm, Boolean> solver, final Function<PegComparisonRuleSolver, Boolean> resolveFunction) {
 			boolean tmpIsValid;
 			boolean tmpResult;
 			String tmpErrorMessage;
@@ -116,7 +119,7 @@ public class EasyFormsRuleParser {
 				tmpResult = solver.solve(resolveFunction);
 				tmpIsValid = true;
 				tmpErrorMessage = null;
-			} catch (final ParsingValueException e) {
+			} catch (final PegParsingValueException e) {
 				tmpResult = false;
 				tmpIsValid = false;
 				tmpErrorMessage = e.getMessage();

@@ -55,14 +55,14 @@ public class InternalMapFieldType implements IEasyFormsFieldTypeDefinitionSuppli
 	@Override
 	public Function<EasyFormsTemplateItemField, List<Constraint>> getConstraintsProvider() {
 		return field -> List.of(
-				new mandatoryInternalFieldsConstraint(),
-				new uniqueValueConstraint());
+				new MandatoryInternalFieldsConstraint(),
+				new UniqueValueConstraint());
 	}
 
-	private static final class mandatoryInternalFieldsConstraint implements EasyFormsConstraint<Boolean, List<Map<String, Object>>> {
+	private static final class MandatoryInternalFieldsConstraint implements EasyFormsConstraint<Boolean, List<Map<String, Object>>> {
 		private final String defaultLang;
 
-		public mandatoryInternalFieldsConstraint() {
+		public MandatoryInternalFieldsConstraint() {
 			final var easyFormsRunnerManager = Node.getNode().getComponentSpace().resolve(EasyFormsRunnerManager.class);
 			defaultLang = easyFormsRunnerManager.getSupportedLang().get(0);
 		}
@@ -84,7 +84,7 @@ public class InternalMapFieldType implements IEasyFormsFieldTypeDefinitionSuppli
 		}
 	}
 
-	private static final class uniqueValueConstraint implements EasyFormsConstraint<Boolean, List<Map<String, Object>>> {
+	private static final class UniqueValueConstraint implements EasyFormsConstraint<Boolean, List<Map<String, Object>>> {
 
 		@Override
 		public boolean checkConstraint(final List<Map<String, Object>> value) {

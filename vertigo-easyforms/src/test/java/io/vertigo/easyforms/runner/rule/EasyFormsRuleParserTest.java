@@ -15,14 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.rules;
+package io.vertigo.easyforms.runner.rule;
 
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import io.vertigo.easyforms.runner.rule.EasyFormsRuleParser;
 
 public class EasyFormsRuleParserTest {
 

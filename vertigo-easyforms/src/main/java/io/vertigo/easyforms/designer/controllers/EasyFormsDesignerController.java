@@ -142,9 +142,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		// add required context for field types parameters (add needed mdl and push context to front)
 		fieldTypeUiList.stream()
 				.filter(EasyFormsFieldTypeUi::getHasTemplate)
-				.forEach(fieldTypeUi -> {
-					EasyFormsControllerUtil.addRequiredContext(viewContext, fieldTypeUi.getParamTemplate(), true);
-				});
+				.forEach(fieldTypeUi -> EasyFormsControllerUtil.addRequiredContext(viewContext, fieldTypeUi.getParamTemplate(), true));
 
 		final ArrayList<String> supportedLang = new ArrayList<>(easyFormsRunnerManager.getSupportedLang()); // needed to be ArrayList to be serializable
 		final var userLang = securityManager.getCurrentUserSession().map(UserSession::getLocale).map(Locale::getLanguage).orElse("fr");
@@ -214,17 +212,17 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		return itemUi;
 	}
 
-	private AbstractEasyFormsTemplateItem mergeUiToItem(final AbstractEasyFormsTemplateItem previousItem, final EasyFormsItemUi uiItem, final DtList<EasyFormsLabelUi> labels,
-			final UiMessageStack uiMessageStack) {
+	private AbstractEasyFormsTemplateItem createEfTemplateItem(final EasyFormsItemUi uiItem) {
 		final Class<? extends AbstractEasyFormsTemplateItem> itemClass = ItemType.getClassFromString(uiItem.getType());
+		return ClassUtil.newInstance(itemClass);
+	}
 
-		final AbstractEasyFormsTemplateItem item;
-		if (previousItem == null) {
-			item = ClassUtil.newInstance(itemClass);
-		} else {
-			Assertion.check().isTrue(previousItem.getClass().equals(itemClass), "Class type mismatch");
-			item = previousItem;
-		}
+	private void mergeUiToItem(final AbstractEasyFormsTemplateItem item, final EasyFormsItemUi uiItem, final DtList<EasyFormsLabelUi> labels,
+			final UiMessageStack uiMessageStack) {
+		Assertion.check()
+				.isNotNull(item)
+				.isNotNull(uiItem)
+				.isTrue(item.getClass().equals(ItemType.getClassFromString(uiItem.getType())), "Class type mismatch");
 
 		if (item instanceof final EasyFormsTemplateItemField field) {
 			if (!field.isSystem()) {
@@ -248,7 +246,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			field.setValidators(uiItem.getFieldValidatorSelection().stream().map(EasyFormsTemplateFieldValidator::new).toList());
 
 			// handle default value, all previous configuration is used to check the default value validity (except for mandatory, we skip verification if default value is empty)
-			if (!uiItem.getIsList() && !StringUtil.isBlank(uiItem.getDefaultValue())) {
+			if (!Boolean.FALSE.equals(uiItem.getIsList()) && !StringUtil.isBlank(uiItem.getDefaultValue())) {
 				field.setDefaultValue(easyFormsRunnerServices.formatAndCheckSingleField(uiItem, EasyFormsItemUiFields.defaultValue.name(), field, uiItem.getDefaultValue(), uiMessageStack));
 				if (uiMessageStack.hasErrors()) {
 					throw new ValidationUserException();
@@ -266,8 +264,6 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		} else {
 			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
 		}
-
-		return item;
 	}
 
 	private void setEmptyEditLabelText(final ViewContext viewContext, final List<String> supportedLang) {
@@ -432,9 +428,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		final var tree = new Tree();
 		contextDescription.getContextMap().entrySet().stream()
 				.sorted(Comparator.comparing(Entry::getKey))
-				.forEach(entry -> {
-					addKeyToNodes(tree.getChildren(), null, entry.getKey(), entry.getValue());
-				});
+				.forEach(entry -> addKeyToNodes(tree.getChildren(), null, entry.getKey(), entry.getValue()));
 
 		viewContext.publishRef(contextTreeKey, tree);
 	}
@@ -657,13 +651,14 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 		final List<AbstractEasyFormsTemplateItem> items = resolveLocalItems(editIndex, editIndex2, sectionItems);
 
-		AbstractEasyFormsTemplateItem editItem;
+		final AbstractEasyFormsTemplateItem editItem;
 		if (editIndex2.orElse(editIndex) == -1) {
-			editItem = mergeUiToItem(null, editUiItem, labels, uiMessageStack);
+			editItem = createEfTemplateItem(editUiItem);
 			items.add(editItem);
 		} else {
-			editItem = mergeUiToItem(items.get(editIndex2.orElse(editIndex)), editUiItem, labels, uiMessageStack);
+			editItem = items.get(editIndex2.orElse(editIndex));
 		}
+		mergeUiToItem(editItem, editUiItem, labels, uiMessageStack);
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemValidated).getDisplay()); // Vertigo should handle flash messages through uiMessageStack

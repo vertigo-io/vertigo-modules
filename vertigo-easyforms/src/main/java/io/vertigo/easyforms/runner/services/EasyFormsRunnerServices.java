@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -232,9 +232,7 @@ public class EasyFormsRunnerServices {
 
 		// format field (eg: Put last name in upper case)
 		final var inputValue = formData.get(field.getCode());
-		final Object typedValue = formatAndCheckSingleField(formOwner, fieldCode, field, inputValue, uiMessageStack);
-
-		return typedValue;
+		return formatAndCheckSingleField(formOwner, fieldCode, field, inputValue, uiMessageStack);
 	}
 
 	/**
@@ -258,7 +256,7 @@ public class EasyFormsRunnerServices {
 		}
 
 		// if formatter succeed, validate constraints
-		final var errors = easyFormsRunnerManager.validateField(fieldDescriptor, typedValue, Map.of());
+		final var errors = easyFormsRunnerManager.validateField(fieldDescriptor, typedValue);
 		for (final var error : errors) {
 			uiMessageStack.error(error, formOwner, fieldCode);
 		}
@@ -276,7 +274,7 @@ public class EasyFormsRunnerServices {
 		} else {
 			constraints = field.getValidators().stream()
 					.map(EasyFormsRunnerServices::validatorToConstraint)
-					.collect(Collectors.toList());
+					.toList();
 		}
 
 		return new EasyFormsDataDescriptor(field.getCode(), smartTypeDefinition, cardinality, fieldType.getConstraints(field), constraints,
@@ -338,7 +336,7 @@ public class EasyFormsRunnerServices {
 				.orElse("");
 	}
 
-	private void forEachFiles(final EasyFormsData data, final Function<FileInfoURI, FileInfoURI> fileProcessor) {
+	private void forEachFiles(final EasyFormsData data, final UnaryOperator<FileInfoURI> fileProcessor) {
 		for (final var section : data.values()) {
 			for (final var entry : ((AbstractMap<String, Object>) section).entrySet()) {
 				if (entry.getValue() instanceof final FileInfoURI f) {
