@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
+import io.vertigo.easyforms.runner.rule.EasyFormsRuleParser;
 
 public final class EasyFormsTemplateSection implements Serializable {
 

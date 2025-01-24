@@ -23,7 +23,7 @@ import io.vertigo.core.lang.Cardinality;
 import io.vertigo.datamodel.data.definitions.DataDescriptor;
 import io.vertigo.datamodel.smarttype.definitions.Constraint;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.easyforms.impl.runner.Resources;
+import io.vertigo.easyforms.runner.Resources;
 
 public class EasyFormsDataDescriptor extends DataDescriptor {
 

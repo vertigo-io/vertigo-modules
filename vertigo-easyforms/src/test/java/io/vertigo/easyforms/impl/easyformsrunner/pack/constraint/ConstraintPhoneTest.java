@@ -23,8 +23,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintPhone;
-import io.vertigo.easyforms.impl.runner.pack.constraint.ConstraintPhone.ConstraintPhoneEnum;
+import io.vertigo.easyforms.runner.pack.constraint.ConstraintPhone;
+import io.vertigo.easyforms.runner.pack.constraint.ConstraintPhone.ConstraintPhoneEnum;
 
 /**
  * Phone constraint tests.

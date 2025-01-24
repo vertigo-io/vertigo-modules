@@ -15,31 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.designer;
+package io.vertigo.easyforms.runner.pack.constraint;
 
-import javax.inject.Inject;
+import io.vertigo.datamodel.smarttype.definitions.Constraint;
+import io.vertigo.datamodel.smarttype.definitions.Property;
 
-import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.node.component.Activeable;
-import io.vertigo.core.node.component.Manager;
+public interface EasyFormsConstraint<J, D> extends Constraint<J, D> {
 
-public final class EasyFormsDesignerManager implements Manager, Activeable {
-
-	private final LocaleManager localeManager;
-
-	@Inject
-	public EasyFormsDesignerManager(final LocaleManager localeManager) {
-		this.localeManager = localeManager;
+	@Override
+	default Property getProperty() {
+		return null;
 	}
 
 	@Override
-	public void start() {
-		localeManager.add("io.vertigo.easyforms.designer.Resources", Resources.values());
-	}
-
-	@Override
-	public void stop() {
-		// Nothing
+	default J getPropertyValue() {
+		return null;
 	}
 
 }

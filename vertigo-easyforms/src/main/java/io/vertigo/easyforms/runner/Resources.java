@@ -15,31 +15,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.designer;
+package io.vertigo.easyforms.runner;
 
-import javax.inject.Inject;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.node.component.Activeable;
-import io.vertigo.core.node.component.Manager;
+/**
+ * Resources dictionary.
+ *
+ * @author skerdudou
+ */
+public enum Resources implements LocaleMessageKey {
 
-public final class EasyFormsDesignerManager implements Manager, Activeable {
+	EfUnknownFormatterError,
 
-	private final LocaleManager localeManager;
+	EfInvalidCode,
+	EfInvalidSpecialChars,
+	EfInvalidEmail,
+	EfInvalidPhoneNumber,
+	EfInvalidVisa,
+	EfInvalidPostalCode,
 
-	@Inject
-	public EasyFormsDesignerManager(final LocaleManager localeManager) {
-		this.localeManager = localeManager;
-	}
+	EfDateTooLate,
+	EfDateTooEarly,
+	EfDateInPastError,
+	EfDateInFutureError,
 
-	@Override
-	public void start() {
-		localeManager.add("io.vertigo.easyforms.designer.Resources", Resources.values());
-	}
+	EfMinListSize,
+	EfMaxListSize,
 
-	@Override
-	public void stop() {
-		// Nothing
-	}
+	EfUploadMaxSize,
+	EfUploadMaxFileSize,
+	EfUploadAccept,
+	EfUploadMaxCount,
+	EfUploadMinCount,
 
+	EfNoValue,
+
+	// Internal
+	EfIMapMandatory,
+	EfIMapDuplicateValue,
 }

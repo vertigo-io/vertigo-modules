@@ -15,31 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.easyforms.designer;
+package io.vertigo.easyforms.runner.pack.constraint;
 
-import javax.inject.Inject;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.node.component.Activeable;
-import io.vertigo.core.node.component.Manager;
-
-public final class EasyFormsDesignerManager implements Manager, Activeable {
-
-	private final LocaleManager localeManager;
-
-	@Inject
-	public EasyFormsDesignerManager(final LocaleManager localeManager) {
-		this.localeManager = localeManager;
-	}
-
-	@Override
-	public void start() {
-		localeManager.add("io.vertigo.easyforms.designer.Resources", Resources.values());
-	}
-
-	@Override
-	public void stop() {
-		// Nothing
-	}
-
+/**
+ * Resources dictionary.
+ *
+ * @author skerdudou
+ */
+public enum EfConstraintResources implements LocaleMessageKey {
+	EfConAgeMin,
+	EfConAgeMax,
+	EfConEmail,
+	EfConDateMin,
+	EfConDateMax,
+	EfConPhone,
+	EfConPhoneDetail,
 }

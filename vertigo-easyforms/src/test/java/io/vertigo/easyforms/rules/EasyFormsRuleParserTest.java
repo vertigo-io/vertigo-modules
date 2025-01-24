@@ -22,7 +22,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.easyforms.impl.runner.rule.EasyFormsRuleParser;
+import io.vertigo.easyforms.runner.rule.EasyFormsRuleParser;
 
 public class EasyFormsRuleParserTest {
 
