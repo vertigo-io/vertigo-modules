@@ -40,7 +40,7 @@ import io.vertigo.datamodel.smarttype.definitions.Property;
 public final class ConstraintEmailBlackList implements Constraint<Integer, String> {
 	public static final String DISPOSABLE = "DISPOSABLE";
 
-	public static Set<String> DISPOSABLE_MAIL;
+	private static final Set<String> DISPOSABLE_MAIL;
 	static { // load list of disposable email from file
 		try (var is = ConstraintEmailBlackList.class.getResourceAsStream("disposableMailList.txt");
 				var reader = new BufferedReader(new InputStreamReader(is))) {

@@ -31,6 +31,7 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
@@ -62,7 +63,7 @@ import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Transactional
-public class EasyFormsDesignerServices {
+public class EasyFormsDesignerServices implements Component {
 
 	public static final String FORM_INTERNAL_CTX_NAME = "ctx";
 	private static final Pattern EMPTY_HTML_PATTERN = Pattern.compile("^( |&nbsp;|<br */?>|</?div>)*$");

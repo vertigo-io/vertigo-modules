@@ -44,6 +44,7 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Cardinality;
 import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
@@ -85,7 +86,7 @@ import io.vertigo.ui.impl.springmvc.util.UiRequestUtil;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Transactional
-public class EasyFormsRunnerServices {
+public class EasyFormsRunnerServices implements Component {
 
 	private static final Logger LOG = LogManager.getLogger(EasyFormsRunnerServices.class);
 
