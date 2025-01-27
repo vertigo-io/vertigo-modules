@@ -23,11 +23,7 @@ import java.util.function.Function;
 
 import io.vertigo.commons.peg.PegNoMatchFoundException;
 import io.vertigo.commons.peg.PegParsingValueException;
-import io.vertigo.commons.peg.rule.PegComparisonRuleSolver;
-import io.vertigo.commons.peg.rule.PegDelayedOperationSolver;
-import io.vertigo.commons.peg.rule.PegRule;
-import io.vertigo.commons.peg.rule.PegRules;
-import io.vertigo.commons.peg.term.PegBoolOperatorTerm;
+import io.vertigo.commons.peg.PegSolver;
 import io.vertigo.easyforms.runner.util.ObjectUtil;
 
 public class EasyFormsRuleParser {
@@ -36,9 +32,7 @@ public class EasyFormsRuleParser {
 		// only statics
 	}
 
-	private static final PegRule<PegDelayedOperationSolver<PegComparisonRuleSolver, PegBoolOperatorTerm, Boolean>> MAIN_RULE = PegRules.delayedOperation(PegRules.comparison(new ValueRule()),
-			PegBoolOperatorTerm.class,
-			true);
+	private static final EasyFormsRule MAIN_RULE = new EasyFormsRule();
 
 	private static final Function<String, Object> STATIC_RESOLVE_FUNCTION = s -> {
 		if (s.startsWith("\"")) {
@@ -77,8 +71,8 @@ public class EasyFormsRuleParser {
 	 * @param context Context to use
 	 * @return The function
 	 */
-	private static Function<PegComparisonRuleSolver, Boolean> getTestResolveFunction(final FormContextDescription context) {
-		return f -> f.apply(s -> {
+	private static Function<String, Object> getTestResolveFunction(final FormContextDescription context) {
+		return s -> {
 			if (s.startsWith("#")) {
 				final var key = s.substring(1, s.length() - 1);
 				if (!context.contains(key)) {
@@ -87,7 +81,7 @@ public class EasyFormsRuleParser {
 				return context.getDummyValue(key);
 			}
 			return STATIC_RESOLVE_FUNCTION.apply(s);
-		});
+		};
 	}
 
 	/**
@@ -96,14 +90,14 @@ public class EasyFormsRuleParser {
 	 * @param context Context to use
 	 * @return The function
 	 */
-	private static Function<PegComparisonRuleSolver, Boolean> getResolveFunction(final Map<String, Object> context) {
-		return f -> f.apply(s -> {
+	private static Function<String, Object> getResolveFunction(final Map<String, Object> context) {
+		return s -> {
 			if (s.startsWith("#")) {
 				final var key = s.substring(1, s.length() - 1);
 				return ObjectUtil.extractValueFromData(key, context);
 			}
 			return STATIC_RESOLVE_FUNCTION.apply(s);
-		});
+		};
 	}
 
 	public static class ParseResult {
@@ -111,12 +105,12 @@ public class EasyFormsRuleParser {
 		private final boolean result;
 		private final String errorMessage;
 
-		private ParseResult(final PegDelayedOperationSolver<PegComparisonRuleSolver, PegBoolOperatorTerm, Boolean> solver, final Function<PegComparisonRuleSolver, Boolean> resolveFunction) {
+		private ParseResult(final PegSolver<String, Object, Boolean> solver, final Function<String, Object> resolveFunction) {
 			boolean tmpIsValid;
 			boolean tmpResult;
 			String tmpErrorMessage;
 			try {
-				tmpResult = solver.solve(resolveFunction);
+				tmpResult = solver.apply(resolveFunction);
 				tmpIsValid = true;
 				tmpErrorMessage = null;
 			} catch (final PegParsingValueException e) {

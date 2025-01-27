@@ -39,6 +39,7 @@ public class EasyFormsRuleParserTest {
 		checkResult("true = true", true);
 
 		checkResult("#var1# = true", Map.of("var1", Boolean.TRUE), true);
+		checkResult("#var1# = true", Map.of("var1", Boolean.FALSE), false);
 
 		checkResult("#var1# < #var2#", Map.of("var1", 12, "var2", 13), true);
 
