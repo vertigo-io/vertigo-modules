@@ -42,11 +42,13 @@ import io.vertigo.connectors.redis.RedisConnector;
 import io.vertigo.connectors.redis.RedisConnectorUtil;
 import io.vertigo.core.analytics.trace.Trace;
 import io.vertigo.core.daemon.DaemonScheduled;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.json.CoreJsonAdapters;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.config.discovery.NotDiscoverable;
+import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
@@ -70,7 +72,6 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 
 	private static final Gson V_CORE_GSON = CoreJsonAdapters.V_CORE_GSON;
 	private static final Logger LOG = LogManager.getLogger(RedisUnifiedFoConsultationPlanningPlugin.class);
-	private static final boolean USE_DISTRIBUTED_WORK = true;
 	private static final String PREFIX_REDIS_KEY = SynchroDbRedisCreneauHelper.PREFIX_REDIS_KEY;
 	private static final int SYNCHRO_FREQUENCE_SECOND = 60;
 	private static final int SYNCHRO_AGENDA_CHUNCK_SIZE = 5;
@@ -84,16 +85,41 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 
 	private static final DateTimeFormatter FORMATTER_LOCAL_DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-	@Inject
-	private RedisConnector redisConnector;
-	@Inject
-	private AgendaDAO agendaDAO;
-	@Inject
-	private MasterManager masterManager;
+	private final RedisConnector redisConnector;
+	private final AgendaDAO agendaDAO;
+	private final Optional<MasterManager> masterManagerOpt;
+	private final boolean useDistributedWork;
 	//init at start
 	private SynchroDbRedisCreneauHelper synchroDbRedisCreneauHelper;
 
 	private static final int MAX_LOOP = 100;
+
+	/**
+	 * Constructor.
+	 * @param redisConnector Redis connector
+	 * @param agendaDAO Agenda DAO
+	 * @param masterManagerOpt Master manager
+	 * @param distributedSynchroOpt if synchro is distributed (use Stella MasterManager)
+	 */
+	@Inject
+	public RedisUnifiedFoConsultationPlanningPlugin(
+			final RedisConnector redisConnector,
+			final AgendaDAO agendaDAO,
+			final Optional<MasterManager> masterManagerOpt,
+			@ParamValue("distributedSynchro") final Optional<Boolean> distributedSynchroOpt) {
+		Assertion.check()
+				.isNotNull(redisConnector)
+				.isNotNull(agendaDAO)
+				.isNotNull(masterManagerOpt)
+				.isNotNull(distributedSynchroOpt)
+				.when(distributedSynchroOpt.orElse(false),
+						() -> Assertion.check().isTrue(masterManagerOpt.isPresent(), "distributedSynchro requires masterManager"));
+		//-----
+		this.redisConnector = redisConnector;
+		this.agendaDAO = agendaDAO;
+		this.masterManagerOpt = masterManagerOpt;
+		useDistributedWork = distributedSynchroOpt.orElse(false);
+	}
 
 	@Override
 	public void start() {
@@ -235,7 +261,7 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 	@DaemonScheduled(name = "DmnSynchroDbRedisCreneau", periodInSeconds = SYNCHRO_FREQUENCE_SECOND/*60s*/)
 	@Transactional
 	public void synchroDbRedisCreneau() {
-		if (USE_DISTRIBUTED_WORK) {
+		if (useDistributedWork) {
 			synchroDbRedisCreneauDistributedWork();
 		} else {
 			synchroDbRedisCreneauLocal();
@@ -260,17 +286,13 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 		final var jedis = redisConnector.getClient();
 		final boolean lock = RedisConnectorUtil.obtainLock(jedis, "DmnSynchroDbRedisCreneau.lock", SYNCHRO_FREQUENCE_SECOND - 1);
 		if (lock) { //lock récupéré
-			LOG.debug("HAVE LOCK");
 			// pour l'instant on prend toutes les agendas
 			final DtList<Agenda> agendas = agendaDAO.findAll(Criterions.alwaysTrue(), DtListState.of(null));
 			IntStream.range(0, (agendas.size() + SYNCHRO_AGENDA_CHUNCK_SIZE - 1) / SYNCHRO_AGENDA_CHUNCK_SIZE)
 					.mapToObj(i -> agendas.subList(i * SYNCHRO_AGENDA_CHUNCK_SIZE, Math.min(SYNCHRO_AGENDA_CHUNCK_SIZE * (i + 1), agendas.size()))) //crée une list<list<agenda>> tout les SYNCHRO_AGENDA_CHUNCK_SIZE éléments
 					.map(listAgenda -> listAgenda.stream().map(agenda -> agenda.getUID().urn() + "->" + agenda.getNom()).collect(Collectors.toList())) //transforme en list<list<String>> avec les urn->nom
 					.collect(Collectors.toList())
-					.forEach(todoList -> masterManager.schedule(todoList, WorkEngineSynchroDbRedisCreneau.class, EMPTY_WORK_RESULT_HANDLER)); //enregistre les paquets de chose à faire
-			LOG.debug("push todo");
-		} else {
-			LOG.debug("DON'T HAVE LOCK");
+					.forEach(todoList -> masterManagerOpt.get().schedule(todoList, WorkEngineSynchroDbRedisCreneau.class, EMPTY_WORK_RESULT_HANDLER)); //enregistre les paquets de chose à faire
 		}
 
 		//2- Les Workers récupèrent les éléments de la todoList en boucle
@@ -281,22 +303,18 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 		final var jedis = redisConnector.getClient();
 		final boolean lock = RedisConnectorUtil.obtainLock(jedis, "DmnSynchroDbRedisCreneau.lock", SYNCHRO_FREQUENCE_SECOND - 1);
 		if (lock) { //lock récupéré
-			LOG.debug("HAVE LOCK");
 			// pour l'instant on prend toutes les agendas
 			final DtList<Agenda> agendas = agendaDAO.findAll(Criterions.alwaysTrue(), DtListState.of(null));
 			final String[] ids = new String[agendas.size()];
 			agendas.stream().map(agenda -> agenda.getUID().urn() + "->" + agenda.getNom()).collect(Collectors.toList()).toArray(ids);
 			jedis.rpush("DmnSynchroDbRedisCreneau.todoList", ids);
-			LOG.debug("push todo");
 		} else {
-			LOG.debug("DON'T HAVE LOCK");
 			//Si on a pas le lock, on attend la fin du TTL
 			//A fur et à mesure les nodes se synchronizeront et tomberont au même moment
 			//il est important que le deamon qui remplit la todoList, traite aussi la file
 			final long lockTTL = jedis.ttl("DmnSynchroDbRedisCreneau.lock");
 			if (lockTTL == -1) {
 				//pas le lock mais pas d'expire : il y a un pb : ne devrait pas arriver
-				LOG.debug("FIX expire");
 				jedis.expire("DmnSynchroDbRedisCreneau.lock", SYNCHRO_FREQUENCE_SECOND - 1, ExpiryOption.NX);
 			} else if (lockTTL < 5) {
 				LOG.debug("lock libéré dans moins de 5s, on attend et on retente le lock");
@@ -315,14 +333,11 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 		KeyValue<String, List<String>> idsTodo;
 		do {
 			//on fait un pop bloquant avec un timeout de 1s sur un max de 5 éléments de la todoList
-			LOG.debug("pre blmpop");
 			idsTodo = jedis.blmpop(1, ListDirection.RIGHT, SYNCHRO_AGENDA_CHUNCK_SIZE /*~5*/, "DmnSynchroDbRedisCreneau.todoList");
 
 			if (idsTodo != null) {
 				final var workEngineSynchroDbRedisCreneau = new WorkEngineSynchroDbRedisCreneau();
 				workEngineSynchroDbRedisCreneau.process(idsTodo.getValue());
-			} else {
-				LOG.debug("post blmpop : null");
 			}
 		} while (idsTodo != null && idsTodo.getValue().size() == SYNCHRO_AGENDA_CHUNCK_SIZE);
 	}
@@ -384,8 +399,7 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 					// we need to delete the key in the set used by consultation
 					jedis.srem(prefixCleFonctionelle + ":horaire", horaire.getMinutesDebut().toString() + "$" + trhId);
 				}
-				//TODO to debug
-				LOG.info("update redis cache of {0} to {3} (increment {1}, setZero {2})", cleFonctionelle, increment, setZero, newVal);
+				//LOG.debug("update redis cache of {0} to {3} (increment {1}, setZero {2})", cleFonctionelle, increment, setZero, newVal);
 			}
 		}
 		if (!horaireImpacteByAgeToResync.isEmpty()) {
