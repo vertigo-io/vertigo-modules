@@ -17,6 +17,7 @@
  */
 package io.vertigo.easyforms.runner.rule;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
@@ -42,6 +43,11 @@ public class EasyFormsRuleParserTest {
 		checkResult("#var1# = true", Map.of("var1", Boolean.FALSE), false);
 
 		checkResult("#var1# < #var2#", Map.of("var1", 12, "var2", 13), true);
+
+		final var valuesWithNull = new HashMap<String, Object>();
+		valuesWithNull.put("var1", null);
+		checkResult("#var1# = \"test\"", valuesWithNull, false);
+		checkResult("#var1# = null", valuesWithNull, true);
 
 		// syntax errors
 		final var resultErrSyntax = EasyFormsRuleParser.parse(" \"test  ", Map.of()); // string never ends
