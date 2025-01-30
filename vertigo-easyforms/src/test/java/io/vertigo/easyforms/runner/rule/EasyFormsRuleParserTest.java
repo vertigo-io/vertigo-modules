@@ -27,27 +27,34 @@ public class EasyFormsRuleParserTest {
 
 	@Test
 	public void complexRuleTest() {
-		checkResult(" (150 + 2)  > (8+2)  *   2 or  10 < 8 and 2 != 3 ", true);
-
-		checkResult(" (150  > (8+2)  *   2 or  10 < 8) and 2 != 3 ", true);
-
-		checkResult(" \"test\" != \"test2\" && \"test2\" = \"test2\"", true);
-
+		// arithmetics
 		checkResult("10.2>10.3", false);
-
 		checkResult("10.2 + 1.0 > 10.3", true);
+		checkResult("10.2 + 1.0 = 11.20", true);
 
+		// booleans
 		checkResult("true = true", true);
+		checkResult("true = false", false);
 
+		// variables
 		checkResult("#var1# = true", Map.of("var1", Boolean.TRUE), true);
 		checkResult("#var1# = true", Map.of("var1", Boolean.FALSE), false);
-
 		checkResult("#var1# < #var2#", Map.of("var1", 12, "var2", 13), true);
 
+		// compare with null is always false
+		checkResult("12 > null", false);
+		checkResult("12 < null", false);
+
+		// support for null in variables
 		final var valuesWithNull = new HashMap<String, Object>();
 		valuesWithNull.put("var1", null);
 		checkResult("#var1# = \"test\"", valuesWithNull, false);
 		checkResult("#var1# = null", valuesWithNull, true);
+
+		// combinaison of comparison and operations, more or less spaced
+		checkResult(" (150 + 2)  > (8+2)  *   2 or  10 < 8 and 2 != 3 ", true);
+		checkResult(" (150  > (8+2)  *   2 or  10 < 8) and 2 != 3 ", true);
+		checkResult(" \"test\" != \"test2\" && \"test2\" = \"test2\"", true);
 
 		// syntax errors
 		final var resultErrSyntax = EasyFormsRuleParser.parse(" \"test  ", Map.of()); // string never ends
