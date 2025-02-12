@@ -99,7 +99,7 @@ resources:
 __Compléments javascript__
 ```Javascript
 <section layout:fragment="additional-librairies" >
-	<script th:src="@{/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.0.0-beta.16/QCalendarDay.umd.min.js}"></script>
+	<script th:src="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.0.0-beta.16/QCalendarDay.umd.min.js}"></script>
 	<script th:src="@{/vertigo-ui/static/planning/js/vertigo-planning.js?t=__${appBuildTime}__}"></script>
 </section>	
 ```
