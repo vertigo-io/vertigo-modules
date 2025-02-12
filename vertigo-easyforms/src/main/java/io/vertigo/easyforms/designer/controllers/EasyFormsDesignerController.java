@@ -246,7 +246,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			field.setValidators(uiItem.getFieldValidatorSelection().stream().map(EasyFormsTemplateFieldValidator::new).toList());
 
 			// handle default value, all previous configuration is used to check the default value validity (except for mandatory, we skip verification if default value is empty)
-			if (!Boolean.FALSE.equals(uiItem.getIsList()) && !StringUtil.isBlank(uiItem.getDefaultValue())) {
+			if (Boolean.FALSE.equals(uiItem.getIsList()) && !StringUtil.isBlank(uiItem.getDefaultValue())) {
 				field.setDefaultValue(easyFormsRunnerServices.formatAndCheckSingleField(uiItem, EasyFormsItemUiFields.defaultValue.name(), field, uiItem.getDefaultValue(), uiMessageStack));
 				if (uiMessageStack.hasErrors()) {
 					throw new ValidationUserException();
@@ -641,6 +641,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		// check code unicity in section
 		easyFormsDesignerServices.checkUpdateField(efo.getTemplate(), sectionItems, editIndex, editIndex2, editUiItem, labels, additionalContext, uiMessageStack);
 
+		// check dynamic field attributes if exists
 		final var fieldTemplate = fieldTemplates.get(editUiItem.getFieldType());
 		if (fieldTemplate != null) {
 			easyFormsRunnerServices.formatAndCheckFormulaire(editUiItem, EasyFormsItemUiFields.parameters, fieldTemplate, uiMessageStack, Map.of());
