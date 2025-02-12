@@ -85,8 +85,12 @@ create Association AMyBusinessObjectAgenda {
 }
 ```
 
-Pour que le DtAgenda soit reconnu, il faut aussi l'ajouter <<TODO>>
-
+Pour que le DtAgenda soit reconnu, il faut aussi l'ajouter le kpr du module lors de la génération de studio.
+Exemple dans `studio-config.yaml` :
+```yaml
+resources:
+  - { type: kpr, path: classpath:io/vertigo/planning/studio/agenda/export_agenda.kpr }
+```
 
 ## Utilisation dans les pages
 
