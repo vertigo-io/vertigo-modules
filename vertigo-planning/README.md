@@ -70,6 +70,23 @@ Le plugin `foConsultation` utilisé coté FrontOffice existe en version : Base d
         distributedSynchro: true
 ```
 
+## Ajout dans le model
+
+Dans votre modelisation, il faut référencer l'agenda depuis un de vos objets métier.
+```Json
+create Association AMyBusinessObjectAgenda {
+    fkFieldName : "ageId"
+    
+    dtDefinitionA : DtMyBusinessObject
+    type : "*>1"
+    dtDefinitionB : DtAgenda
+            
+    labelB : "Agenda"
+}
+```
+
+Pour que le DtAgenda soit reconnu, il faut aussi l'ajouter <<TODO>>
+
 
 ## Utilisation dans les pages
 
