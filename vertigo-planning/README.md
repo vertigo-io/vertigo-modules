@@ -24,13 +24,13 @@ Utilisé sur un site avec une très forte affluence. Certains agendas disposent 
 # Installation module planning
 
 ## Ajout du module dans le pom
-	```yaml
-	<dependency>
-		<groupId>io.vertigo</groupId>
-		<artifactId>vertigo-planning</artifactId>
-		<version>4.2.0.1</version>
-	</dependency>
-	```
+```yaml
+<dependency>
+   <groupId>io.vertigo</groupId>
+   <artifactId>vertigo-planning</artifactId>
+   <version>4.2.0.1</version>
+</dependency>
+```
 
 ## Ajout dans la conf vertigo
 
@@ -73,15 +73,15 @@ Le plugin `foConsultation` utilisé coté FrontOffice existe en version : Base d
 ## Ajout dans le model
 
 Dans votre modelisation, il faut référencer l'agenda depuis un de vos objets métier.
-```Json
+```
 create Association AMyBusinessObjectAgenda {
-    fkFieldName : "ageId"
+   fkFieldName : "ageId"
+
+   dtDefinitionA : DtMyBusinessObject
+   type : "*>1"
+   dtDefinitionB : DtAgenda
     
-    dtDefinitionA : DtMyBusinessObject
-    type : "*>1"
-    dtDefinitionB : DtAgenda
-            
-    labelB : "Agenda"
+   labelB : "Agenda"
 }
 ```
 
