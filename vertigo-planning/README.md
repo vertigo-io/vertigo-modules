@@ -67,7 +67,7 @@ Le plugin `foConsultation` utilisé coté FrontOffice existe en version : Base d
   io.vertigo.planning.agenda.AgendaFeatures:   
     featuresConfig:
       - foConsultation.redis2Unified:
-		  distributedSynchro: true
+        distributedSynchro: true
 ```
 
 
