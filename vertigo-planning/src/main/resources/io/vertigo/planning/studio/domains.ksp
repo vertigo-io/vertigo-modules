@@ -1,6 +1,6 @@
 package io.vertigo.planning
 
-create Domain DoMultipleIds {
+create Domain DoPMultipleIds {
     dataType : String
     storeType : "TEXT"
 }

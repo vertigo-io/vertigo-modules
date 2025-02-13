@@ -43,7 +43,7 @@ public final class AffectionReservation implements DataObject {
 	 * Récupère la valeur de la propriété 'Liste des creneaux disponibles'.
 	 * @return String creIds
 	 */
-	@Field(smartType = "STyMultipleIds", label = "Liste des creneaux disponibles")
+	@Field(smartType = "STyPMultipleIds", label = "Liste des creneaux disponibles")
 	public String getCreIds() {
 		return creIds;
 	}

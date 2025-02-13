@@ -41,7 +41,7 @@ public enum PlanningSmartTypes {
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@SmartTypeProperty(property = "storeType", value = "TEXT")
-	MultipleIds,
+	PMultipleIds,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
