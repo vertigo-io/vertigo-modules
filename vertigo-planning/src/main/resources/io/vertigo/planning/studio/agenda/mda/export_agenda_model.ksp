@@ -1,0 +1,15 @@
+package io.vertigo.planning.agenda.domain
+
+create DtDefinition DtAgenda {
+	id ageId {domain: DoId label:"Id"}
+}
+
+create DtDefinition DtAgendaDisplay {
+	field ageId {domain: DoId label:"Id"}
+	field name {domain: DoLabel label:"Name"}
+}
+
+create DtDefinition DtReservationCreneau {
+	id recId {domain: DoId label:"Id"}
+}
+

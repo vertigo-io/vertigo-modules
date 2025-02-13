@@ -1,17 +1,19 @@
-<th:block th:fragment="agenda-week(agenda_actions_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow, hasAuthzAdmin)" vu:alias="agenda-week" vu:selector="${true}"
+<th:block th:fragment="agenda-week(agenda_actions_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow, hasAuthzAdmin, style)" vu:alias="agenda-week" vu:selector="${true}"
 	      th:with="myEventNameTwoLetters=${eventNameTwoLetters?:false}, myEventIconAgenda=${eventIconAgenda?:'event'}, myMultiEventIconAgenda=${multiEventIconAgenda?:'calendar_month'}, 
 	      myMaxMultiEventShow=${maxMultiEventShow?:3}, myHasAuthzAdmin=${hasAuthzAdmin?:true}"
 			th:attr="objectKey=${model.vContext['componentStates'].addComponentState('editedPlageHoraire')}">
 	<vu:block data-shape="rounded" id="agenda" title="Agenda">
-		<vu:slot name="actions_slot" >
+	    <vu:slot name="actions_slot" >
             <div vu:slot="agenda_actions_slot" class="row q-gutter-sm">
-				<q-btn color="primary" label="Créer une plage horaire"  icon="ri-add-line" @click="onCreatePlageHoraireDefault"></q-btn>
-				<q-btn color="primary" label="Dupliquer cette semaine"  icon="ri-file-copy-line"  @click="onDuplicateWeek"></q-btn>
+				<q-btn color="primary" label="Créer une plage horaire" icon="ri-add-line" @click="onCreatePlageHoraireDefault"></q-btn>
+				<q-btn color="primary" label="Dupliquer cette semaine" icon="ri-file-copy-line" @click="onDuplicateWeek"></q-btn>
 				<q-btn color="primary" label="Gérer la publication" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'DD/MM/YYYY') < new Date()" icon="ri-gallery-upload-line" @click="onPublishPlageHoraires"></q-btn>
             </div>
 		</vu:slot>
 		<div class="row q-col-gutter-md">
-		    <div class="col-12">
+		    <div th:utext="${style}"></div>
+		
+			<div class="col-12">
 		             <div class="row items-center">
 		              <vu:include-data object="agendaRange" field="showDate" />
 		              <div class="col items-center q-pb-sm row q-gutter-sm">
@@ -40,8 +42,7 @@
 		           <vu:include-data object="plagesHoraire" field="nbTotal" />
 		           <vu:include-data object="plagesHoraire" field="nbNonPublie" />
 		           <vu:include-data object="plagesHoraire" field="nbPlanifie" />
-		           <vu:include-data object="plagesHoraire" field="nbPublie" />
-		           
+		           <vu:include-data object="plagesHoraire" field="nbPublie" />	           
 		           <q-calendar-day ref="calendar" 
 		           locale="fr"
 		           hour24-format
@@ -76,9 +77,9 @@
 		                      <div class="actions-event">
 		                         <q-btn icon="ri-delete-bin-2-line" title="Supprimer" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(event)" vu:authz="${myHasAuthzAdmin}"></q-btn>
 		                      </div>
-		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>90}">
-		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>90}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
-		                          <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>90}">
+		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>59}">
+		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
+		                          <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">
 		                            <q-chip color="white" text-color="dark" :class="{'q-pl-none':(event.nbReserveNonPublie>0 || event.nbReserve>event.nbTotal)}" 
 		                                  :title="event.nbReserve + ' rendez-vous réservé(s) sur '+event.nbTotal">
 		                                <q-icon name="ri-error-warning-fill" size="md" color="negative" v-if="event.nbReserveNonPublie>0"
@@ -144,9 +145,9 @@
 								      </q-list>
 								    </q-btn>                     
 		                  	  </div>
-		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>90}">
-		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>90}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
-		                          <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>90}">
+		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>59}">
+		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
+		                          <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">
 		                            <q-chip color="white" text-color="dark" :class="{'q-pl-none':(event.nbReserveNonPublie>0 || event.nbReserve>event.nbTotal)}" 
 		                                  :title="event.nbReserve + ' rendez-vous réservé(s) sur '+event.nbTotal">
 		                                <q-icon name="ri-error-warning-fill" size="md" color="negative" v-if="event.nbReserveNonPublie>0"
@@ -160,6 +161,45 @@
 		                  </div>
 		                </template>
 		                
+				        <vu:include-data object="tranchesHoraire" field="dateLocale" />
+				        <vu:include-data object="tranchesHoraire" field="minutesDebut" />
+				        <vu:include-data object="tranchesHoraire" field="minutesFin" />
+				        <vu:include-data object="tranchesHoraire" field="nbReserve" />
+				        <vu:include-data object="tranchesHoraire" field="nbReserveNonPublie" />
+				        <vu:include-data object="tranchesHoraire" field="nbGuichet" />
+				        <vu:include-data object="tranchesHoraire" field="etatPublication" />
+		                <template v-for="(event, index) in getEvents(timestamp.date, vueData.tranchesHoraire)" :key="event.eventId">
+		                  <div
+		                    class="my-event q-pa-xs row justify-center text-dark"
+		                    :class="badgeClasses(event, 'body')"
+		                    :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
+		                    @click.stop.prevent="onSelectPlageHoraire(event)"
+		                  >
+		                  <div class="row col-12 self-center items-center" :class="{'justify-center':(event.minutesFin - event.minutesDebut)>29}">
+		                          <div class="agendas-event">
+		                          <q-icon name="ri-checkbox-blank-circle-line" v-if="event.nbReserve == 0 || !event.nbReserve" :color="'trh-'+event.etatPublication" :title="event.etatPublication" ></q-icon>
+					              <q-icon name="ri-contrast-fill" v-if="event.nbReserve > 0 && event.nbReserve < event.nbGuichet" :color="'trh-'+event.etatPublication" :title="event.etatPublication" ></q-icon>
+					              <q-icon name="ri-checkbox-blank-circle-fill" v-if="event.nbReserve == event.nbGuichet " :color="'trh-'+event.etatPublication" :title="event.etatPublication" ></q-icon>
+					              <q-icon name="ri-share-circle-fill" v-if="event.nbReserve > event.nbGuichet" :color="'trh-'+event.etatPublication" :title="event.etatPublication" ></q-icon>                                      
+                                  </div>
+		                          
+								  <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>29, 'q-pl-none':(event.nbReserveNonPublie>0 || event.nbReserve>event.nbGuichet)}"
+		                          :title="event.nbReserve + ' rendez-vous réservé(s) sur '+event.nbGuichet">
+		                            <span color="white" text-color="dark">
+		                                <q-icon name="ri-error-warning-fill" size="md" color="negative" v-if="event.nbReserveNonPublie>0"
+		                                    :title="event.nbReserveNonPublie + ' rendez-vous réservé(s) sur des créneaux non publiés'"></q-icon>
+		                                <q-icon name="ri-share-circle-fill" size="sm" color="trh-publie" v-if="event.nbReserveNonPublie==0 && event.nbReserve>event.nbGuichet"
+		                                    title="Dépassement des disponibilités de la tranche"></q-icon>
+		                                     
+		                                    
+		                                    
+		                                    {{event.nbReserve}} / {{event.nbGuichet}}
+		                            </span>
+		                          </div>
+		                      </div>
+		                  </div> 
+		                </template>
+
 		           <vu:include-data object="reservationOrphelines" field="dateLocale" />
 		           <vu:include-data object="reservationOrphelines" field="minutesDebut" />
 		           <vu:include-data object="reservationOrphelines" field="minutesFin" />

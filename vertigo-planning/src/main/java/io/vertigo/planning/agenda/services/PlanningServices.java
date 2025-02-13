@@ -125,8 +125,7 @@ public class PlanningServices implements Component {
 		return createdAgenda;
 	}
 
-	/** TODO : pas besoin de AgendaDisplayRange, mais de la liste des ids */
-	public PlageHoraire createPlageHoraire(final CreationPlageHoraireForm creationPlageHoraireForm, final List<UID<Agenda>> displayedAgeUids, final int weekDaysNumber) {
+	public PlageHoraire createPlageHoraire(final CreationPlageHoraireForm creationPlageHoraireForm, final List<UID<Agenda>> authorizedAgeUids, final int maxWeekDaysNumber) {
 		/** Contrôles User */
 		final var uiErrorBuilder = new UiErrorBuilder();
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), creationPlageHoraireForm.getDateLocale());
@@ -160,17 +159,18 @@ public class PlanningServices implements Component {
 					LocaleMessageText.of("La plage horaire doit avoir une durée inférieure à " + CREATE_MAX_DUREE_PLAGE_HEURE + " heures"));
 		}
 
-		if (creationPlageHoraireForm.getDateLocale().getDayOfWeek().getValue() > weekDaysNumber) {
+		if (creationPlageHoraireForm.getDateLocale().getDayOfWeek().getValue() > maxWeekDaysNumber) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.dateLocale,
 					LocaleMessageText.of("Il n'est pas possible de créer une plage sur ce jour de la semaine"));
 		}
 		//---
 
-		final var ageId = checkAuthorizedAgenda(UID.of(Agenda.class, creationPlageHoraireForm.getAgeId()), displayedAgeUids);
+		final var ageId = checkAuthorizedAgenda(UID.of(Agenda.class, creationPlageHoraireForm.getAgeId()), authorizedAgeUids);
 		final var agenda = agendaDAO.readOneForUpdate(ageId); //ForUpdate pour éviter les doublons
-		final var displayedAgeIds = displayedAgeUids.stream().map(UID::getId).map(Long.class::cast).toList();
+
+		final var authorizedAgeIds = authorizedAgeUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		final var firstPlageConflict = plageHoraireDAO.getExistsConflictingPlageHoraire(
-				displayedAgeIds,
+				authorizedAgeIds,
 				creationPlageHoraireForm.getDateLocale(),
 				creationPlageHoraireForm.getMinutesDebut(),
 				creationPlageHoraireForm.getMinutesFin());
@@ -372,11 +372,11 @@ public class PlanningServices implements Component {
 		return agendaDAO.get(ageUid);
 	}
 
-	public void saveAgenda(final Agenda agenda) {
+	/*public void saveAgenda(final Agenda agenda) {
 		Assertion.check().isNotNull(agenda.getAgeId());
 		//---
 		agendaDAO.save(agenda);
-	}
+	}*/
 
 	public DtList<Agenda> getAgendas(final List<UID<Agenda>> ageUids) {
 		Assertion.check()
@@ -736,13 +736,14 @@ public class PlanningServices implements Component {
 		return agendaPAO.getDateDisponibleDisplayByAgeIds(ageIds, startDate, endDate, Instant.now());
 	}
 
-	public DtList<TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(final List<UID<Agenda>> ageUids, final LocalDate localDate) {
+	public DtList<TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(final List<UID<Agenda>> ageUids, final LocalDate startDate, final LocalDate endDate) {
 		Assertion.check()
 				.isNotNull(ageUids)
-				.isNotNull(localDate);
+				.isNotNull(startDate)
+				.isNotNull(endDate);
 		//-----
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
-		return agendaPAO.getTrancheHoraireDisplayByDate(ageIds, localDate, Instant.now());
+		return agendaPAO.getTrancheHoraireDisplayByDate(ageIds, startDate, endDate, Instant.now());
 	}
 
 	public void deleteEmptyAgenda(final UID<Agenda> agendaUid) {
@@ -759,15 +760,15 @@ public class PlanningServices implements Component {
 		return agendaPAO.purgePlageHoraireByDateLocale(olderThan);
 	}
 
-	public UID<Agenda> checkAuthorizedAgendaOfPlh(final UID<PlageHoraire> plhUid, final List<UID<Agenda>> displayedAgendaUid) {
+	public UID<Agenda> checkAuthorizedAgendaOfPlh(final UID<PlageHoraire> plhUid, final List<UID<Agenda>> authorizedAgeUids) {
 		final var plageHoraire = plageHoraireDAO.get(plhUid);
 		final var ageUid = UID.of(Agenda.class, plageHoraire.getAgeId());
-		return checkAuthorizedAgenda(ageUid, displayedAgendaUid);
+		return checkAuthorizedAgenda(ageUid, authorizedAgeUids);
 	}
 
-	public UID<Agenda> checkAuthorizedAgenda(final UID<Agenda> ageUid, final List<UID<Agenda>> displayedAgendaUid) {
+	public UID<Agenda> checkAuthorizedAgenda(final UID<Agenda> ageUid, final List<UID<Agenda>> authorizedAgeUids) {
 		//check ageId in agenda.getAgeIds()
-		if (!displayedAgendaUid.contains(ageUid)) {
+		if (!authorizedAgeUids.contains(ageUid)) {
 			throw new VSecurityException(LocaleMessageText.of("Vous n'avez pas les droits pour agir sur cet agenda"));
 		}
 		return ageUid;
