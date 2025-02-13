@@ -96,6 +96,16 @@ resources:
 
 ### Pour le BackOffice
 
+__Compléments CSS__
+```HTML
+<head>
+    ...
+    <link th:href="@{/vertigo-ui/static/planning/css/vertigo-planning.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.0.0-beta.16/index.min.css}" rel="stylesheet" type="text/css">   
+</head>	
+```
+___Note:___ _La css de quasar est nécessaire pour le calendrier_
+
 __Compléments javascript__
 ```Javascript
 <section layout:fragment="additional-librairies" >
