@@ -1,29 +1,27 @@
-<th:block th:fragment="agenda-week(agenda_actions_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow, hasAuthzAdmin, style)" vu:alias="agenda-week" vu:selector="${true}"
+<th:block th:fragment="agenda-week(agenda_actions_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow, hasAuthzAdmin)" vu:alias="agenda-week" vu:selector="${true}"
 	      th:with="myEventNameTwoLetters=${eventNameTwoLetters?:false}, myEventIconAgenda=${eventIconAgenda?:'event'}, myMultiEventIconAgenda=${multiEventIconAgenda?:'calendar_month'}, 
 	      myMaxMultiEventShow=${maxMultiEventShow?:3}, myHasAuthzAdmin=${hasAuthzAdmin?:true}"
 			th:attr="objectKey=${model.vContext['componentStates'].addComponentState('editedPlageHoraire')}">
 	<vu:block data-shape="rounded" id="agenda" title="Agenda">
 	    <vu:slot name="actions_slot" >
             <div vu:slot="agenda_actions_slot" class="row q-gutter-sm">
-				<q-btn color="primary" label="Créer une plage horaire" icon="ri-add-line" @click="onCreatePlageHoraireDefault"></q-btn>
-				<q-btn color="primary" label="Dupliquer cette semaine" icon="ri-file-copy-line" @click="onDuplicateWeek"></q-btn>
-				<q-btn color="primary" label="Gérer la publication" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'DD/MM/YYYY') < new Date()" icon="ri-gallery-upload-line" @click="onPublishPlageHoraires"></q-btn>
+				<q-btn color="primary" th:label="#{planning.agendaWeek.createPlageHoraire}" th:icon="#{planning.agendaWeek.createPlageHoraire.icon}" @click="onCreatePlageHoraireDefault"></q-btn>
+				<q-btn color="primary" th:label="#{planning.agendaWeek.duplicateWeek}" th:icon="#{planning.agendaWeek.duplicateWeek.icon}" @click="onDuplicateWeek"></q-btn>
+				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'DD/MM/YYYY') < new Date()" @click="onPublishPlageHoraires"></q-btn>
             </div>
 		</vu:slot>
-		<div class="row q-col-gutter-md">
-		    <div th:utext="${style}"></div>
-		
+		<div class="row q-col-gutter-md">		
 			<div class="col-12">
 		             <div class="row items-center">
 		              <vu:include-data object="agendaRange" field="showDate" />
 		              <div class="col items-center q-pb-sm row q-gutter-sm">
-		                      <q-btn outline dense icon="ri-arrow-left-s-line" title="Semaine précédente" th:@click="|httpPostAjax('@{_semainePrecedente}', {})|"><span class="sr-only">Semaine précédente</span></q-btn>
-		                      <q-btn outline dense icon="ri-arrow-right-s-line" title="Semaine suivante" th:@click="|httpPostAjax('@{_semaineSuivante}', {})|"><span class="sr-only">Semaine suivante</span></q-btn>
+		                      <q-btn outline dense th:icon="#{planning.agendaWeek.previousWeek.icon}" th:title="#{planning.agendaWeek.previousWeek}" th:@click="|httpPostAjax('@{_semainePrecedente}', {})|"><span class="sr-only" th:text="#{planning.agendaWeek.previousWeek}"></span></q-btn>
+		                      <q-btn outline dense th:icon="#{planning.agendaWeek.nextWeek.icon}" th:title="#{planning.agendaWeek.nextWeek}" th:@click="|httpPostAjax('@{_semaineSuivante}', {})|"><span class="sr-only" th:text="#{planning.agendaWeek.nextWeek}"></span></q-btn>
 		                      <vu:include-data object="agendaRange" field="firstDate" />
 		                      <vu:include-data object="agendaRange" field="lastDate" />
 		                      <div><b>Semaine du {{ vueData.agendaRange.firstDate}} au {{ vueData.agendaRange.lastDate}}</b></div>                                
 		              </div>
-		              <div class="on-right q-gutter-sm">
+		              <div class="on-right q-gutter-sm" th:if="#{planning.agendaWeek.showPublicationLegend}">
 		                 <q-chip outline color="grey-7"><q-badge rounded color="trh-nonPublie" class="on-left"></q-badge>Non publié</q-chip>
 		                 <q-chip outline color="grey-7"><q-badge rounded color="trh-planifie" class="on-left"></q-badge>Planifié</q-chip>
 		                 <q-chip outline color="grey-7"><q-badge rounded color="trh-publie" class="on-left"></q-badge>Publié</q-chip>
@@ -190,9 +188,6 @@
 		                                    :title="event.nbReserveNonPublie + ' rendez-vous réservé(s) sur des créneaux non publiés'"></q-icon>
 		                                <q-icon name="ri-share-circle-fill" size="sm" color="trh-publie" v-if="event.nbReserveNonPublie==0 && event.nbReserve>event.nbGuichet"
 		                                    title="Dépassement des disponibilités de la tranche"></q-icon>
-		                                     
-		                                    
-		                                    
 		                                    {{event.nbReserve}} / {{event.nbGuichet}}
 		                            </span>
 		                          </div>
