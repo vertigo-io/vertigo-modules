@@ -92,6 +92,19 @@ resources:
   - { type: kpr, path: classpath:io/vertigo/planning/studio/agenda/export_agenda.kpr }
 ```
 
+## Ajout des messages resource
+
+Dans votre `XxxVSpringWebConfig`, on ajout la ressource au `MessageSource` Spring.
+```Java
+public static MessageSource getMessageSource() {
+	final ResourceBundleMessageSource customMessageSource = new ResourceBundleMessageSource();
+        ...
+	customMessageSource.addBasenames("io/vertigo/ui/components/planning/planning");
+	...
+	return customMessageSource;
+}
+```
+
 ## Utilisation dans les pages
 
 ### Pour le BackOffice
