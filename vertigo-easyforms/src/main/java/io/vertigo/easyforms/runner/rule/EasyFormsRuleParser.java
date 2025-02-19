@@ -17,14 +17,21 @@
  */
 package io.vertigo.easyforms.runner.rule;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import io.vertigo.commons.peg.PegNoMatchFoundException;
 import io.vertigo.commons.peg.PegParsingValueException;
 import io.vertigo.commons.peg.PegSolver;
+import io.vertigo.commons.peg.PegSolver.PegSolverFunction;
+import io.vertigo.commons.peg.rule.PegRule;
+import io.vertigo.commons.peg.rule.PegRules;
+import io.vertigo.commons.peg.term.PegArithmeticsOperatorTerm;
+import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 import io.vertigo.easyforms.runner.util.ObjectUtil;
+import io.vertigo.vega.webservice.model.UiObject;
 
 public class EasyFormsRuleParser {
 
@@ -32,13 +39,14 @@ public class EasyFormsRuleParser {
 		// only statics
 	}
 
-	private static final EasyFormsRule MAIN_RULE = new EasyFormsRule();
+	private static final EasyFormsRule MAIN_RULE_COMPARISON = new EasyFormsRule();
+	private static final PegRule<PegSolver<String, Object, Object>> MAIN_RULE_COMPUTE = PegRules.delayedOperation(new ValueRule(), PegArithmeticsOperatorTerm.class, false);
 
 	private static final Function<String, Object> STATIC_RESOLVE_FUNCTION = s -> {
 		if (s.startsWith("\"")) {
 			return s.substring(1, s.length() - 1);
 		} else if (s.contains(".")) {
-			return new BigDecimal(s);
+			return Double.valueOf(s);
 		} else if (s.equalsIgnoreCase("true")) {
 			return true;
 		} else if (s.equalsIgnoreCase("false")) {
@@ -49,20 +57,56 @@ public class EasyFormsRuleParser {
 		return Integer.parseInt(s);
 	};
 
-	public static ParseResult parse(final String s, final Map<String, Object> context) {
+	public static ParseResult<Object> parseCompute(final String s, final EasyFormsData data, final Map<String, Serializable> context) {
 		try {
-			return new ParseResult(MAIN_RULE.parse(s).getValue(), getResolveFunction(context));
+			return new ParseResult<>(MAIN_RULE_COMPUTE.parse(s).getValue(), getResolveFunction(buildFullContext(data, context)));
 		} catch (final PegNoMatchFoundException e) {
-			return new ParseResult(e);
+			return new ParseResult<>(e);
 		}
 	}
 
-	public static ParseResult parseTest(final String s, final FormContextDescription context) {
+	public static ParseResult<Object> parseComputeTest(final String s, final FormContextDescription context) {
 		try {
-			return new ParseResult(MAIN_RULE.parse(s).getValue(), getTestResolveFunction(context));
+			return new ParseResult<>(MAIN_RULE_COMPUTE.parse(s).getValue(), getTestResolveFunction(context));
 		} catch (final PegNoMatchFoundException e) {
-			return new ParseResult(e);
+			return new ParseResult<>(e);
 		}
+	}
+
+	public static ParseResult<Boolean> parseComparison(final String s, final EasyFormsData data, final Map<String, Serializable> context) {
+		try {
+			return new ParseResult<>(MAIN_RULE_COMPARISON.parse(s).getValue(), getResolveFunction(buildFullContext(data, context)));
+		} catch (final PegNoMatchFoundException e) {
+			return new ParseResult<>(e);
+		}
+	}
+
+	public static ParseResult<Boolean> parseComparisonTest(final String s, final FormContextDescription context) {
+		try {
+			return new ParseResult<>(MAIN_RULE_COMPARISON.parse(s).getValue(), getTestResolveFunction(context));
+		} catch (final PegNoMatchFoundException e) {
+			return new ParseResult<>(e);
+		}
+	}
+
+	private static Map<String, Object> buildFullContext(final EasyFormsData data, final Map<String, Serializable> context) {
+		final Map<String, Object> conditionContext = new HashMap<>();
+		if (data != null) {
+			conditionContext.putAll(data);
+		}
+		if (context != null) {
+			// resolve UiObject to actual serverSide object (to have typed values and not only String)
+			final var resolvedContext = new HashMap<String, Object>();
+			for (final var entry : context.entrySet()) {
+				if (entry.getValue() instanceof final UiObject<?> uiObject) {
+					resolvedContext.put(entry.getKey(), uiObject.getServerSideObject());
+				} else {
+					resolvedContext.put(entry.getKey(), entry.getValue());
+				}
+			}
+			conditionContext.put("ctx", resolvedContext);
+		}
+		return conditionContext;
 	}
 
 	/**
@@ -71,7 +115,7 @@ public class EasyFormsRuleParser {
 	 * @param context Context to use
 	 * @return The function
 	 */
-	private static Function<String, Object> getTestResolveFunction(final FormContextDescription context) {
+	private static PegSolverFunction<String, Object> getTestResolveFunction(final FormContextDescription context) {
 		return s -> {
 			if (s.startsWith("#")) {
 				final var key = s.substring(1, s.length() - 1);
@@ -90,7 +134,7 @@ public class EasyFormsRuleParser {
 	 * @param context Context to use
 	 * @return The function
 	 */
-	private static Function<String, Object> getResolveFunction(final Map<String, Object> context) {
+	private static PegSolverFunction<String, Object> getResolveFunction(final Map<String, Object> context) {
 		return s -> {
 			if (s.startsWith("#")) {
 				final var key = s.substring(1, s.length() - 1);
@@ -100,21 +144,21 @@ public class EasyFormsRuleParser {
 		};
 	}
 
-	public static class ParseResult {
+	public static class ParseResult<R extends Object> {
 		private final boolean isValid;
-		private final boolean result;
+		private final R result;
 		private final String errorMessage;
 
-		private ParseResult(final PegSolver<String, Object, Boolean> solver, final Function<String, Object> resolveFunction) {
+		private ParseResult(final PegSolver<String, Object, R> solver, final PegSolverFunction<String, Object> resolveFunction) {
 			boolean tmpIsValid;
-			boolean tmpResult;
+			R tmpResult;
 			String tmpErrorMessage;
 			try {
 				tmpResult = solver.apply(resolveFunction);
 				tmpIsValid = true;
 				tmpErrorMessage = null;
 			} catch (final PegParsingValueException e) {
-				tmpResult = false;
+				tmpResult = null;
 				tmpIsValid = false;
 				tmpErrorMessage = e.getMessage();
 			}
@@ -125,7 +169,7 @@ public class EasyFormsRuleParser {
 
 		private ParseResult(final PegNoMatchFoundException e) {
 			isValid = false;
-			result = false;
+			result = null;
 			errorMessage = e.getRootMessage();
 		}
 
@@ -133,7 +177,7 @@ public class EasyFormsRuleParser {
 			return isValid;
 		}
 
-		public boolean getResult() {
+		public R getResult() {
 			return result;
 		}
 

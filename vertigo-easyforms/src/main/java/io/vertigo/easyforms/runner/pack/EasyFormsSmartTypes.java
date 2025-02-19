@@ -85,6 +85,10 @@ public enum EasyFormsSmartTypes {
 	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "1")
 	EfCountStrict,
 
+	@SmartTypeDefinition(Double.class)
+	@Formatter(clazz = FormatterDefault.class)
+	EfAmount,
+
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Constraint(clazz = ConstraintStringLength.class, arg = "10000")

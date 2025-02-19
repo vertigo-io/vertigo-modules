@@ -166,7 +166,7 @@ public class EasyFormsRunnerServices implements Component {
 		for (final var section : formTempalte.getSections()) {
 			// test section condition, else continue;
 			if (!StringUtil.isBlank(section.getCondition())) {
-				final var result = EasyFormsRuleParser.parse(section.getCondition(), formData);
+				final var result = EasyFormsRuleParser.parseComparison(section.getCondition(), formattedFormData, contextValues);
 				if (!result.isValid()) {
 					LOG.error("Error parsing condition : '{}'. {}", section.getCondition(), result.getErrorMessage());
 					continue; // assuming invalid condition is false
@@ -193,7 +193,7 @@ public class EasyFormsRunnerServices implements Component {
 				if (elem instanceof final EasyFormsTemplateItemBlock block) {
 					// test block condition, else continue;
 					if (!StringUtil.isBlank(block.getCondition())) {
-						final var result = EasyFormsRuleParser.parse(block.getCondition(), formattedFormData);
+						final var result = EasyFormsRuleParser.parseComparison(block.getCondition(), formattedFormData, contextValues);
 						if (!result.isValid()) {
 							LOG.error("Error parsing condition : '{}'. {}", block.getCondition(), result.getErrorMessage());
 							continue; // assuming invalid condition is false
@@ -204,12 +204,12 @@ public class EasyFormsRunnerServices implements Component {
 
 					for (final var elem2 : block.getItems()) {
 						if (elem2 instanceof final EasyFormsTemplateItemField field) {
-							final var formattedValue = formatAndCheckField(formTempalte, formDataFieldName.name(), section, field, formDataSection, formOwner, uiMessageStack);
+							final var formattedValue = formatAndCheckField(formTempalte, formDataFieldName.name(), section, field, formDataSection, contextValues, formOwner, uiMessageStack);
 							formattedFormDataSection.put(field.getCode(), formattedValue);
 						}
 					}
 				} else if (elem instanceof final EasyFormsTemplateItemField field) {
-					final var formattedValue = formatAndCheckField(formTempalte, formDataFieldName.name(), section, field, formDataSection, formOwner, uiMessageStack);
+					final var formattedValue = formatAndCheckField(formTempalte, formDataFieldName.name(), section, field, formDataSection, contextValues, formOwner, uiMessageStack);
 					formattedFormDataSection.put(field.getCode(), formattedValue);
 				}
 			}
@@ -226,14 +226,13 @@ public class EasyFormsRunnerServices implements Component {
 	}
 
 	private Object formatAndCheckField(final EasyFormsTemplate formTempalte, final String formDataFieldName, final EasyFormsTemplateSection section, final EasyFormsTemplateItemField field,
-			final EasyFormsData formData,
-			final DataObject formOwner, final UiMessageStack uiMessageStack) {
+			final EasyFormsData formData, final Map<String, Serializable> contextValues, final DataObject formOwner, final UiMessageStack uiMessageStack) {
 
 		final var fieldCode = formDataFieldName + "--" + (formTempalte.useSections() ? section.getCode() + "--" : "") + field.getCode().replace("_", ""); // remove _ as it is reserved for qualifiers
 
 		// format field (eg: Put last name in upper case)
 		final var inputValue = formData.get(field.getCode());
-		return formatAndCheckSingleField(formOwner, fieldCode, field, inputValue, uiMessageStack);
+		return formatAndCheckSingleField(formOwner, fieldCode, field, inputValue, formData, contextValues, uiMessageStack);
 	}
 
 	/**
@@ -243,11 +242,22 @@ public class EasyFormsRunnerServices implements Component {
 	 * @param fieldCode The code of the field.
 	 * @param field The field to format and check.
 	 * @param inputValue The value of the field.
+	 * @param formData The form data.
+	 * @param contextValues The context values.
 	 * @param uiMessageStack The stack of UI messages.
 	 * @return The formatted and checked value of the field.
 	 */
-	public Object formatAndCheckSingleField(final DataObject formOwner, final String fieldCode, final EasyFormsTemplateItemField field, final Object inputValue, final UiMessageStack uiMessageStack) {
+	public Object formatAndCheckSingleField(final DataObject formOwner, final String fieldCode, final EasyFormsTemplateItemField field, final Object inputValue, final EasyFormsData formData,
+			final Map<String, Serializable> contextValues, final UiMessageStack uiMessageStack) {
 		final EasyFormsDataDescriptor fieldDescriptor = fieldToDataDescriptor(field);
+		if (fieldDescriptor.isComputed()) {
+			final var parseResult = EasyFormsRuleParser.parseCompute(field.getDefaultValue().toString(), formData, contextValues);
+			if (parseResult.isValid()) {
+				return parseResult.getResult();
+			}
+			uiMessageStack.error(parseResult.getErrorMessage(), formOwner, fieldCode);
+			return inputValue;
+		}
 		Object typedValue;
 		try {
 			typedValue = easyFormsRunnerManager.formatField(fieldDescriptor, inputValue);
@@ -279,7 +289,8 @@ public class EasyFormsRunnerServices implements Component {
 		}
 
 		return new EasyFormsDataDescriptor(field.getCode(), smartTypeDefinition, cardinality, fieldType.getConstraints(field), constraints,
-				fieldType.isList() && field.isMandatory() ? 1 : null, fieldType.isList() ? field.getMaxItems() : null, fieldType.getMinListSizeResource(), fieldType.getMaxListSizeResource());
+				fieldType.isList() && field.isMandatory() ? 1 : null, fieldType.isList() ? field.getMaxItems() : null, fieldType.getMinListSizeResource(), fieldType.getMaxListSizeResource(),
+				fieldType.isComputed());
 	}
 
 	private static SmartTypeDefinition getSmartTypeByName(final String nomSmartType) {
@@ -384,12 +395,12 @@ public class EasyFormsRunnerServices implements Component {
 			for (final var field : section.getAllFields()) {
 				if (field.getDefaultValue() != null) {
 					// default value is set on field
-					sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), contextData));
+					sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), templateDefaultData, contextData));
 				} else {
 					// default value is set on field type
 					final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 					if (paramFieldTypeDefinition.getDefaultValue() != null) {
-						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), contextData));
+						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), templateDefaultData, contextData));
 					}
 				}
 			}
@@ -408,26 +419,26 @@ public class EasyFormsRunnerServices implements Component {
 		for (final var section : formTempalte.getSections()) {
 			boolean isSectionVisible = true;
 			if (!StringUtil.isBlank(section.getCondition())) {
-				final var result = EasyFormsRuleParser.parse(section.getCondition(), formData);
-				if (!result.isValid() || !result.getResult()) {
+				final var result = EasyFormsRuleParser.parseComparison(section.getCondition(), formData, contextData);
+				if (!result.isValid() || Boolean.FALSE.equals(result.getResult())) {
 					isSectionVisible = false;
 				}
 			}
 			final var fields = section.getAllFields();
 			if (isSectionVisible) {
-				fields.removeAll(section.getAllDisplayedFields(formData));
+				fields.removeAll(section.getAllDisplayedFields(formData, contextData));
 			}
 
 			final var sectionData = (Map<String, Object>) formData.get(section.getCode());
 			for (final var field : fields) {
 				if (field.getDefaultValue() != null) {
 					// default value is set on field
-					sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), contextData));
+					sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(field.getDefaultValue(), formData, contextData));
 				} else {
 					// default value is set on field type
 					final var paramFieldTypeDefinition = Node.getNode().getDefinitionSpace().resolve(field.getFieldTypeName(), EasyFormsFieldTypeDefinition.class);
 					if (paramFieldTypeDefinition.getDefaultValue() != null) {
-						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), contextData));
+						sectionData.put(field.getCode(), ObjectUtil.resolveDefaultValue(paramFieldTypeDefinition.getDefaultValue(), formData, contextData));
 					}
 				}
 			}
@@ -495,27 +506,29 @@ public class EasyFormsRunnerServices implements Component {
 	 *
 	 * @param easyFormsTemplate The form template.
 	 * @param easyForm The form data.
+	 * @param context The context values.
 	 * @param addEmptyFields Whether to add empty fields.
-	 * @return The read form of the EasyForm.
+	 * @return The read form of the EasyForm. We uses a LinkedHashMap to keep the order of the fields.
 	 */
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final boolean addEmptyFields) {
+	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final Map<String, Serializable> context,
+			final boolean addEmptyFields) {
 		final var easyFormDisplay = new LinkedHashMap<String, LinkedHashMap<String, Object>>();
 		final var outOfSections = new LinkedHashSet<>(easyForm.keySet());
 
-		processSections(easyFormsTemplate, easyForm, easyFormDisplay, outOfSections, addEmptyFields);
+		processSections(easyFormsTemplate, easyForm, context, easyFormDisplay, outOfSections, addEmptyFields);
 		processOldSections(easyForm, easyFormDisplay, outOfSections);
 
 		return easyFormDisplay;
 	}
 
-	private void processSections(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm,
+	private void processSections(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final Map<String, Serializable> context,
 			final LinkedHashMap<String, LinkedHashMap<String, Object>> easyFormDisplay, final Set<String> outOfSections, final boolean addEmptyFields) {
 		// We use display order from template
 		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
 			outOfSections.remove(section.getCode());
 			if (!StringUtil.isBlank(section.getCondition())) {
-				final var result = EasyFormsRuleParser.parse(section.getCondition(), easyForm);
-				if (!result.isValid() || !result.getResult()) {
+				final var result = EasyFormsRuleParser.parseComparison(section.getCondition(), easyForm, context);
+				if (!result.isValid() || Boolean.FALSE.equals(result.getResult())) {
 					continue;
 				}
 			}
@@ -526,15 +539,15 @@ public class EasyFormsRunnerServices implements Component {
 				easyFormDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(section.getLabel()), sectionDisplay);
 				final var outOfSectionData = new HashMap<>(easyFormSectionData);
 
-				processFieldsInSection(section, easyForm, easyFormSectionData, sectionDisplay, outOfSectionData, addEmptyFields);
+				processFieldsInSection(section, easyForm, context, easyFormSectionData, sectionDisplay, outOfSectionData, addEmptyFields);
 				processOldSectionData(outOfSectionData, sectionDisplay);
 			}
 		}
 	}
 
-	private void processFieldsInSection(final EasyFormsTemplateSection section, final EasyFormsData easyForm, final Map<String, Object> easyFormSectionData,
+	private void processFieldsInSection(final EasyFormsTemplateSection section, final EasyFormsData easyForm, final Map<String, Serializable> context, final Map<String, Object> easyFormSectionData,
 			final LinkedHashMap<String, Object> sectionDisplay, final Map<String, Object> outOfSectionData, final boolean addEmptyFields) {
-		for (final EasyFormsTemplateItemField field : section.getAllDisplayedFields(easyForm)) {
+		for (final EasyFormsTemplateItemField field : section.getAllDisplayedFields(easyForm, context)) {
 			final var fieldCode = field.getCode();
 			final Object rawValue = easyFormSectionData == null ? null : easyFormSectionData.get(fieldCode);
 

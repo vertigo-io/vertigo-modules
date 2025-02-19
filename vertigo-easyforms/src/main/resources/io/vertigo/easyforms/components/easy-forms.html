@@ -219,6 +219,29 @@
 														</template>
 												    </q-input>
 												</div>
+												<div th:case="'EfUicReadOnly'"
+												     th:with="expression=${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.defaultValue)}">
+													    <q-field
+													            orientation="vertical"
+													            stack-label label-slot
+													            readonly disable
+													            bottom-slots
+													            borderless
+													    >
+													        <template v-slot:label>
+																<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
+																	<span vu:text="${fieldLabel}" />
+																	<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																		<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+																	</q-icon>
+																</div>
+															</template>
+															<template v-slot:control>
+															    <vui-ef-computed th:v-model="${fieldModel}"
+															    				 th::expression="|efRoundOrDefaut(${expression}, 2, null)|"></vui-ef-computed>
+															</template>
+														</q-field>
+												</div>
 												<div th:case="*">
 													<q-input 
 															th:v-autofocus="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|"

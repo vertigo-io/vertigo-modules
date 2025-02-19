@@ -49,6 +49,8 @@ public final class UiComponentDefinitionProvider implements SimpleEnumDefinition
 
 		FILE(new FileUiComponent()), //
 
+		READ_ONLY, //
+
 		// Internal use
 		INTERNAL_MAP,//
 		;

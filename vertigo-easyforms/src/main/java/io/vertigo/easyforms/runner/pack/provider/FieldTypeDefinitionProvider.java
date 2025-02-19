@@ -64,12 +64,15 @@ public final class FieldTypeDefinitionProvider implements SimpleEnumDefinitionPr
 		YES_NO(new YesNoFieldType()),
 
 		COUNT(EasyFormsSmartTypes.EfCount, UiComponentEnum.NUMBER),
+		AMOUNT(EasyFormsSmartTypes.EfAmount, UiComponentEnum.NUMBER),
 
 		CUSTOM_LIST_SELECT(new CustomListFieldType(UiComponentEnum.SELECT)),
 		CUSTOM_LIST_RADIO(new CustomListFieldType(UiComponentEnum.RADIO)),
 		CUSTOM_LIST_CHECKBOX(new CustomListFieldType(UiComponentEnum.CHECKBOX)),
 
 		FILE(new FileFieldType()),
+
+		COMPUTED_AMOUNT(EasyFormsSmartTypes.EfAmount, UiComponentEnum.READ_ONLY),
 
 		// internal use (null category means "hidden")
 		INTERNAL_LAYOUT(new RadioLayoutFieldType()),

@@ -74,7 +74,11 @@ public class EasyFormsControllerUtil {
 		}
 	}
 
-	private static void addListToFrontCtx(final ViewContext viewContext, final String ctxKey) {
+	public static void addToFrontCtx(final ViewContext viewContext, final String ctxKey) {
+		viewContext.asMap().addKeyForClient(ctxKey, "*", null, false);
+	}
+
+	public static void addListToFrontCtx(final ViewContext viewContext, final String ctxKey) {
 		viewContext.asMap().addKeyForClient(ctxKey, UiUtil.getIdField(ctxKey), null, false); // expose key attribute
 		viewContext.asMap().addKeyForClient(ctxKey, UiUtil.getDisplayField(ctxKey), null, false); // expose display attribute
 	}

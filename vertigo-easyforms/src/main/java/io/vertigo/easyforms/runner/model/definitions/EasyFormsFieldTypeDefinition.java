@@ -44,13 +44,14 @@ public final class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyF
 	private final EasyFormsData uiParameters; // configure uiComponent
 	private final EasyFormsTemplate paramTemplate; // expose parameters to designer UI
 	private final boolean isList;
+	private final boolean isComputed;
 	private final Resources minListSizeResource;
 	private final Resources maxListSizeResource;
 	private final Function<EasyFormsTemplateItemField, List<Constraint>> constraintProviders;
 
 	private EasyFormsFieldTypeDefinition(final String name, final String category, final String smartTypeName, final String uiComponentName, final Object defaultValue,
 			final Map<String, Object> uiParameters,
-			final EasyFormsTemplate paramTemplate, final boolean isList, final Resources minListSizeResource, final Resources maxListSizeResource,
+			final EasyFormsTemplate paramTemplate, final boolean isList, final boolean isComputed, final Resources minListSizeResource, final Resources maxListSizeResource,
 			final Function<EasyFormsTemplateItemField, List<Constraint>> constraintProviders) {
 		super(name);
 		//---
@@ -61,6 +62,7 @@ public final class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyF
 		this.uiParameters = new EasyFormsData(uiParameters);
 		this.paramTemplate = paramTemplate;
 		this.isList = isList;
+		this.isComputed = isComputed;
 		this.minListSizeResource = minListSizeResource;
 		this.maxListSizeResource = maxListSizeResource;
 		this.constraintProviders = constraintProviders;
@@ -68,10 +70,10 @@ public final class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyF
 
 	public static EasyFormsFieldTypeDefinition of(final String name, final String category, final String smartTypeName, final String uiComponentName, final Object defaultValue,
 			final Map<String, Object> uiParameters, final EasyFormsTemplate paramTemplate,
-			final boolean isList, final Resources minListSizeResource, final Resources maxListSizeResource,
+			final boolean isList, final boolean isComputed, final Resources minListSizeResource, final Resources maxListSizeResource,
 			final Function<EasyFormsTemplateItemField, List<Constraint>> constraintProviders) {
-		return new EasyFormsFieldTypeDefinition(name, category, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate, isList, minListSizeResource,
-				maxListSizeResource, constraintProviders);
+		return new EasyFormsFieldTypeDefinition(name, category, SmartTypeDefinition.PREFIX + smartTypeName, uiComponentName, defaultValue, uiParameters, paramTemplate, isList, isComputed,
+				minListSizeResource, maxListSizeResource, constraintProviders);
 	}
 
 	public static EasyFormsFieldTypeDefinition resolve(final String name) {
@@ -108,6 +110,10 @@ public final class EasyFormsFieldTypeDefinition extends AbstractDefinition<EasyF
 
 	public boolean isList() {
 		return isList;
+	}
+
+	public boolean isComputed() {
+		return isComputed;
 	}
 
 	public Resources getMinListSizeResource() {

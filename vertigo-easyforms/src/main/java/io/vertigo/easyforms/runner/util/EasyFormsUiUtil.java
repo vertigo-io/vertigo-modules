@@ -90,7 +90,7 @@ public final class EasyFormsUiUtil implements Serializable {
 	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
 		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(EasyFormsRunnerServices.class);
 
-		return easyFormsRunnerServices.getEasyFormRead(easyFormsTemplate, easyForm, true);
+		return easyFormsRunnerServices.getEasyFormRead(easyFormsTemplate, easyForm, UiRequestUtil.getCurrentViewContext().asMap(), true);
 	}
 
 	public String getDynamicListForField(final EasyFormsTemplateItemField field) {

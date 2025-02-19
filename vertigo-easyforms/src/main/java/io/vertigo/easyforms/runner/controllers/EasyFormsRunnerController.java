@@ -63,6 +63,13 @@ public final class EasyFormsRunnerController {
 	private static final ViewContextKey<Boolean> efoAllFileExtensions = ViewContextKey.of("efoAllFileExtensions");
 	private static final ViewContextKey<Long> efoMaxFileFileSize = ViewContextKey.of("efoMaxFileFileSize");
 
+	/**
+	 * Initialize the context for reading a form.
+	 *
+	 * @param viewContext Current viewContext
+	 * @param efoUid UID of the form
+	 * @param templateKey ViewContextKey where the template is published
+	 */
 	public void initReadContext(final ViewContext viewContext, final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey) {
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
@@ -75,6 +82,13 @@ public final class EasyFormsRunnerController {
 		EasyFormsControllerUtil.addRequiredContext(viewContext, easyForm.getTemplate(), false);
 	}
 
+	/**
+	 * Initialize the context for reading multiple forms.
+	 *
+	 * @param viewContext Current viewContext
+	 * @param efoUidList List of UID of the forms
+	 * @param templateKey ViewContextKey where the template is published
+	 */
 	public void initMultipleReadContext(final ViewContext viewContext, final Collection<UID<EasyForm>> efoUidList, final ViewContextKey<ArrayList<EasyFormsTemplate>> templateKey) {
 		final var easyForms = easyFormsRunnerServices.getEasyFormListByIds(efoUidList);
 		final var templates = easyForms.stream()
@@ -92,9 +106,19 @@ public final class EasyFormsRunnerController {
 		}
 	}
 
+	/**
+	 * Initialize the context for editing a form.
+	 *
+	 * @param viewContext Current viewContext
+	 * @param efoUid UID of the form
+	 * @param templateKey ViewContextKey where the template is published
+	 * @param formulaireResponse Data of the form (user input)
+	 * @param isCreation if the form is being created
+	 * @param additionalContextKeys additional context keys needed for the form (eg, resolving conditional blocs)
+	 */
 	public void initEditContext(final ViewContext viewContext,
 			final UID<EasyForm> efoUid, final ViewContextKey<EasyFormsTemplate> templateKey,
-			final EasyFormsData formulaireResponse, final boolean isCreation) {
+			final EasyFormsData formulaireResponse, final boolean isCreation, final ViewContextKey<?>... additionalContextKeys) {
 
 		final var easyForm = easyFormsRunnerServices.getEasyFormById(efoUid);
 
@@ -118,6 +142,10 @@ public final class EasyFormsRunnerController {
 
 		// Add master data list needed for fields to context
 		EasyFormsControllerUtil.addRequiredContext(viewContext, template, true);
+
+		for (final var additionalContextKey : additionalContextKeys) {
+			EasyFormsControllerUtil.addToFrontCtx(viewContext, additionalContextKey.get());
+		}
 	}
 
 	private void saveFileUploadMaxConstraints(final ViewContext viewContext, final EasyFormsTemplate template) {

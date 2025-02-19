@@ -2,6 +2,14 @@ let context = document.currentScript.dataset.context ;
 
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
+	
+	efRoundOrDefaut : function(value, decimals, defaultValue) {
+		if (!Number.isFinite(value)) {
+			return defaultValue;
+		}
+		const factor = Math.pow(10, decimals);
+		return Math.round((value + Number.EPSILON) * factor) / factor;
+	},
     
     // ****
     // * UI
@@ -234,7 +242,25 @@ VUiExtensions.methods = {
 }
 
 window.addEventListener('vui-before-plugins', function(event) {
-    
+    // ****
+	// * Component to handle computed fields
+	// ****
+	let vuiEasyFormsComputed = Vue.defineComponent({
+		props: {
+			modelValue: { type: Number, required: true },
+			expression: { type: Number, required: true },
+		},
+		template: `<div>{{ expression }}</div>`,
+		emits: ["update:modelValue"],
+		watch: {
+			expression: function(newVal) {
+				this.$emit('update:modelValue', newVal);
+			},
+		}
+	});
+	event.detail.vuiAppInstance.component('vui-ef-computed',vuiEasyFormsComputed);
+	
+	
     // ****
     // * main component to handle JSON serialization
     // ****

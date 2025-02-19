@@ -17,11 +17,14 @@
  */
 package io.vertigo.easyforms.runner.rule;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import io.vertigo.easyforms.runner.model.template.EasyFormsData;
 
 public class EasyFormsRuleParserTest {
 
@@ -35,6 +38,10 @@ public class EasyFormsRuleParserTest {
 		// booleans
 		checkResult("true = true", true);
 		checkResult("true = false", false);
+
+		// global context
+		checkResult("#ctx.user.isActive# = false", true);
+		checkResult("#ctx.not.present# = null", true);
 
 		// variables
 		checkResult("#var1# = true", Map.of("var1", Boolean.TRUE), true);
@@ -57,17 +64,17 @@ public class EasyFormsRuleParserTest {
 		checkResult(" \"test\" != \"test2\" && \"test2\" = \"test2\"", true);
 
 		// syntax errors
-		final var resultErrSyntax = EasyFormsRuleParser.parse(" \"test  ", Map.of()); // string never ends
+		final var resultErrSyntax = EasyFormsRuleParser.parseComparison(" \"test  ", null, null); // string never ends
 		Assertions.assertFalse(resultErrSyntax.isValid());
 
 		// resolving errors (type dependent)
-		final var resultErrType1 = EasyFormsRuleParser.parse(" \"test\" > \"test2\" ", Map.of());
+		final var resultErrType1 = EasyFormsRuleParser.parseComparison(" \"test\" > \"test2\" ", null, null);
 		Assertions.assertFalse(resultErrType1.isValid());
 
-		final var resultErrType2 = EasyFormsRuleParser.parse(" 12 > \"test2\" ", Map.of());
+		final var resultErrType2 = EasyFormsRuleParser.parseComparison(" 12 > \"test2\" ", null, null);
 		Assertions.assertFalse(resultErrType2.isValid());
 
-		final var resultErrType3 = EasyFormsRuleParser.parse(" 12 + true < 12", Map.of());
+		final var resultErrType3 = EasyFormsRuleParser.parseComparison(" 12 + true < 12", null, null);
 		Assertions.assertFalse(resultErrType3.isValid());
 	}
 
@@ -76,7 +83,8 @@ public class EasyFormsRuleParserTest {
 	}
 
 	private void checkResult(final String expression, final Map<String, Object> context, final boolean result) {
-		final var res = EasyFormsRuleParser.parse(expression, context);
+		final Map<String, Serializable> globalContext = Map.of("user", (Serializable) Map.of("isActive", false));
+		final var res = EasyFormsRuleParser.parseComparison(expression, new EasyFormsData(context), globalContext);
 		Assertions.assertTrue(res.isValid(), "Parse error");
 		Assertions.assertEquals(result, res.getResult());
 	}

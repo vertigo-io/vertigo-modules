@@ -45,9 +45,9 @@ public class FormContextDescription implements Serializable {
 		final var targetClass = contextMap.get(name);
 
 		if (targetClass == Integer.class) {
-			return Integer.valueOf(0);
+			return Integer.valueOf(1);
 		} else if (targetClass == Double.class) {
-			return Double.valueOf(0.0);
+			return Double.valueOf(1.0);
 		} else if (targetClass == Boolean.class) {
 			return Boolean.FALSE;
 		} else if (targetClass == String.class) {
@@ -57,9 +57,9 @@ public class FormContextDescription implements Serializable {
 		} else if (targetClass == Instant.class) {
 			return Instant.now();
 		} else if (targetClass == BigDecimal.class) {
-			return BigDecimal.ZERO;
+			return BigDecimal.ONE;
 		} else if (targetClass == Long.class) {
-			return 0L;
+			return 1L;
 		}
 		return ClassUtil.newInstance(targetClass);
 	}

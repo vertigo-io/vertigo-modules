@@ -73,6 +73,7 @@ import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemBlock;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemStatic;
+import io.vertigo.easyforms.runner.rule.EasyFormsRuleParser;
 import io.vertigo.easyforms.runner.services.EasyFormsRunnerServices;
 import io.vertigo.easyforms.runner.util.EasyFormsControllerUtil;
 import io.vertigo.easyforms.runner.util.EasyFormsUiUtil;
@@ -82,6 +83,7 @@ import io.vertigo.ui.impl.quasar.tree.Tree;
 import io.vertigo.ui.impl.quasar.tree.TreeNode;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import io.vertigo.ui.impl.springmvc.controller.VSpringMvcUiMessageStack;
 import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DefaultDtObjectValidator;
@@ -218,7 +220,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 	}
 
 	private void mergeUiToItem(final AbstractEasyFormsTemplateItem item, final EasyFormsItemUi uiItem, final DtList<EasyFormsLabelUi> labels,
-			final UiMessageStack uiMessageStack) {
+			final EasyFormsTemplate easyFormsTemplate, final Map<String, Serializable> additionalContext, final UiMessageStack uiMessageStack) {
 		Assertion.check()
 				.isNotNull(item)
 				.isNotNull(uiItem)
@@ -247,13 +249,33 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 			// handle default value, all previous configuration is used to check the default value validity (except for mandatory, we skip verification if default value is empty)
 			if (Boolean.FALSE.equals(uiItem.getIsList()) && !StringUtil.isBlank(uiItem.getDefaultValue())) {
-				field.setDefaultValue(easyFormsRunnerServices.formatAndCheckSingleField(uiItem, EasyFormsItemUiFields.defaultValue.name(), field, uiItem.getDefaultValue(), uiMessageStack));
-				if (uiMessageStack.hasErrors()) {
-					throw new ValidationUserException();
+				final var tmpUiMessageStack = new VSpringMvcUiMessageStack(); // we can't undo adding to stack, so we use a temporary one
+				field.setDefaultValue(easyFormsRunnerServices.formatAndCheckSingleField(uiItem, EasyFormsItemUiFields.defaultValue.name(), field, uiItem.getDefaultValue(), null, additionalContext,
+						tmpUiMessageStack));
+				if (tmpUiMessageStack.hasErrors()) {
+					// not native value, perhaps we have an expression
+					if (uiItem.getDefaultValue().contains("#")) {
+						final var formContextDescription = easyFormsDesignerServices.buildContextDescription(easyFormsTemplate, additionalContext);
+						final var parseResult = EasyFormsRuleParser.parseComputeTest(uiItem.getDefaultValue(), formContextDescription);
+						if (!parseResult.isValid()) {
+							uiMessageStack.error(parseResult.getErrorMessage(), uiItem, EasyFormsItemUiFields.defaultValue.name());
+						} else {
+							// check result type
+							easyFormsRunnerServices.formatAndCheckSingleField(uiItem, EasyFormsItemUiFields.defaultValue.name(), field, parseResult.getResult(), null, additionalContext,
+									uiMessageStack);
+						}
+					} else {
+						// transfer errors to actual UiMessageStack
+						tmpUiMessageStack.getObjectFieldErrors().entrySet().forEach(e -> e.getValue().get(EasyFormsItemUiFields.defaultValue.name())
+								.forEach(m -> uiMessageStack.error(m, uiItem, EasyFormsItemUiFields.defaultValue.name())));
+
+					}
 				}
 			} else {
 				field.setDefaultValue(null);
 			}
+
+			field.setDefaultValue(uiItem.getDefaultValue());
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			block.setCondition(uiItem.getCondition());
 		} else if (item instanceof final EasyFormsTemplateItemStatic staticItem) {
@@ -263,6 +285,10 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			staticItem.setText(getFromEditLabelText(labels, EasyFormsLabelUi::getText));
 		} else {
 			throw new VSystemException("Unsupported class of type " + item.getClass().getName());
+		}
+
+		if (uiMessageStack.hasErrors()) {
+			throw new ValidationUserException();
 		}
 	}
 
@@ -659,7 +685,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		} else {
 			editItem = items.get(editIndex2.orElse(editIndex));
 		}
-		mergeUiToItem(editItem, editUiItem, labels, uiMessageStack);
+		mergeUiToItem(editItem, editUiItem, labels, efo.getTemplate(), additionalContext, uiMessageStack);
 
 		viewContext.publishDto(efoKey, efo)
 				.publishRef(messageKey, LocaleMessageText.of(Resources.EfDesignerItemValidated).getDisplay()); // Vertigo should handle flash messages through uiMessageStack

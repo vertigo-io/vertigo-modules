@@ -33,9 +33,11 @@ public class EasyFormsDataDescriptor extends DataDescriptor {
 	private final Integer maxListSize; // When cardinality MANY, provide maximum number of elements
 	private final Resources minListSizeResource;
 	private final Resources maxListSizeResource;
+	private final boolean isComputed;
 
 	public EasyFormsDataDescriptor(final String name, final SmartTypeDefinition smartTypeDefinition, final Cardinality cardinality, final List<Constraint> fieldConstraints,
-			final List<Constraint> businessConstraints, final Integer minListSize, final Integer maxListSize, final Resources minListSizeResource, final Resources maxListSizeResource) {
+			final List<Constraint> businessConstraints, final Integer minListSize, final Integer maxListSize, final Resources minListSizeResource, final Resources maxListSizeResource,
+			final boolean isComputed) {
 		super(computeDescriptorName(name), smartTypeDefinition, cardinality);
 		this.fieldConstraints = fieldConstraints;
 		this.businessConstraints = businessConstraints;
@@ -43,6 +45,7 @@ public class EasyFormsDataDescriptor extends DataDescriptor {
 		this.maxListSize = maxListSize;
 		this.minListSizeResource = minListSizeResource;
 		this.maxListSizeResource = maxListSizeResource;
+		this.isComputed = isComputed;
 	}
 
 	private static String computeDescriptorName(final String name) {
@@ -71,6 +74,10 @@ public class EasyFormsDataDescriptor extends DataDescriptor {
 
 	public Resources getMaxListSizeResource() {
 		return maxListSizeResource;
+	}
+
+	public boolean isComputed() {
+		return isComputed;
 	}
 
 }

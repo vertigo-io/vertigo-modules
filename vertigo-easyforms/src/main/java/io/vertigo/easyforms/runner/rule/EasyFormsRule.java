@@ -25,7 +25,7 @@ import io.vertigo.commons.peg.rule.PegRules;
 import io.vertigo.commons.peg.term.PegBoolOperatorTerm;
 
 /**
- * Main rule for EasyForm expressions.
+ * Main rule for EasyForm conditional expressions.
  * Supports expressions of the form: "value1 == value2 && value3 != value4 + 5". ie : operation(bool, comparison(operation(math)))
  *
  * @author skerdudou

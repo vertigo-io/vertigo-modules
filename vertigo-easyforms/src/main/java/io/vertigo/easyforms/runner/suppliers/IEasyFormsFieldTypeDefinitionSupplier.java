@@ -53,8 +53,7 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 		}
 
 		return EasyFormsFieldTypeDefinition.of(definitionName, getCategory(), getSmartType().name(), getUiComponent().getDefinitionName(), getDefaultValue(), getUiParams(), template,
-				isList(), getMinListSizeResource(), getMaxListSizeResource(),
-				getConstraintsProvider());
+				isList(), isComputed(), getMinListSizeResource(), getMaxListSizeResource(), getConstraintsProvider());
 	}
 
 	public default String getCategory() {
@@ -78,6 +77,10 @@ public interface IEasyFormsFieldTypeDefinitionSupplier {
 	}
 
 	public default boolean isList() {
+		return false;
+	}
+
+	public default boolean isComputed() {
 		return false;
 	}
 

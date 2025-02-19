@@ -22,6 +22,9 @@ import java.util.Map;
 
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.util.BeanUtil;
+import io.vertigo.core.util.StringUtil;
+import io.vertigo.easyforms.runner.model.template.EasyFormsData;
+import io.vertigo.easyforms.runner.rule.EasyFormsRuleParser;
 
 public class ObjectUtil {
 
@@ -36,7 +39,7 @@ public class ObjectUtil {
 	private static Object extractValueFromData(final String initialKey, final String parsedKey, final String key, final Object data) {
 		final String[] keys = key.split("\\.", 2);
 		final String prefix = keys[0];
-		final var currentGlobalKey = (parsedKey == "" ? "" : parsedKey + ".") + prefix;
+		final var currentGlobalKey = (StringUtil.isBlank(parsedKey) ? "" : parsedKey + ".") + prefix;
 		if (!containsKey(data, prefix)) {
 			return null;
 		}
@@ -75,10 +78,13 @@ public class ObjectUtil {
 	 * @param contextData the context data
 	 * @return the resolved default value
 	 */
-	public static Object resolveDefaultValue(final Object defaultValueIn, final Map<String, Serializable> contextData) {
-		if (defaultValueIn instanceof final String defaultStr && defaultStr.startsWith("#ctx.") && defaultStr.endsWith("#")) {
-			final String defaultValueCode = defaultStr.substring(5, defaultStr.length() - 1);
-			return ObjectUtil.extractValueFromData(defaultValueCode, contextData);
+	public static Object resolveDefaultValue(final Object defaultValueIn, final EasyFormsData easyFormData, final Map<String, Serializable> contextData) {
+		if (defaultValueIn instanceof final String defaultStr) {
+			final var parsedExpression = EasyFormsRuleParser.parseCompute(defaultStr, easyFormData, contextData);
+			if (parsedExpression.isValid()) {
+				return parsedExpression.getResult();
+			}
+			return defaultStr;
 		}
 		return defaultValueIn;
 	}

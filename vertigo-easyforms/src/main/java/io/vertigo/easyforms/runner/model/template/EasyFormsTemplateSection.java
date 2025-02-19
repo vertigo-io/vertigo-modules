@@ -94,26 +94,27 @@ public final class EasyFormsTemplateSection implements Serializable {
 		}
 	}
 
-	public List<EasyFormsTemplateItemField> getAllDisplayedFields(final EasyFormsData data) {
+	public List<EasyFormsTemplateItemField> getAllDisplayedFields(final EasyFormsData data, final Map<String, Serializable> contextData) {
 		final List<EasyFormsTemplateItemField> list = new ArrayList<>();
 		for (final var item : getItems()) {
-			addDisplayedFieldsForItem(list, item, data);
+			addDisplayedFieldsForItem(list, item, data, contextData);
 		}
 		return list;
 	}
 
-	private static void addDisplayedFieldsForItem(final List<EasyFormsTemplateItemField> list, final AbstractEasyFormsTemplateItem item, final EasyFormsData data) {
+	private static void addDisplayedFieldsForItem(final List<EasyFormsTemplateItemField> list, final AbstractEasyFormsTemplateItem item, final EasyFormsData data,
+			final Map<String, Serializable> contextData) {
 		if (item instanceof final EasyFormsTemplateItemField field) {
 			list.add(field);
 		} else if (item instanceof final EasyFormsTemplateItemBlock block) {
 			if (!StringUtil.isBlank(block.getCondition())) {
-				final var result = EasyFormsRuleParser.parse(block.getCondition(), data);
-				if (!result.isValid() || !result.getResult()) {
+				final var result = EasyFormsRuleParser.parseComparison(block.getCondition(), data, contextData);
+				if (!result.isValid() || Boolean.FALSE.equals(result.getResult())) {
 					return;
 				}
 			}
 			for (final var blockElem : block.getItems()) {
-				addDisplayedFieldsForItem(list, blockElem, data);
+				addDisplayedFieldsForItem(list, blockElem, data, contextData);
 			}
 		}
 	}

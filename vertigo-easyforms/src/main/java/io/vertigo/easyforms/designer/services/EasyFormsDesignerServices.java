@@ -150,7 +150,7 @@ public class EasyFormsDesignerServices implements Component {
 		if (!StringUtil.isBlank(sectionEdit.getCondition())) {
 			// check section condition
 			final var formContextDescription = buildContextDescription(easyFormsTemplate, additionalContext);
-			final var parseResult = EasyFormsRuleParser.parseTest(sectionEdit.getCondition(), formContextDescription);
+			final var parseResult = EasyFormsRuleParser.parseComparisonTest(sectionEdit.getCondition(), formContextDescription);
 			if (!parseResult.isValid()) {
 				errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 				uiMessageStack.error(parseResult.getErrorMessage(), sectionEdit, EasyFormsSectionUiFields.condition + "_detail");
@@ -261,6 +261,7 @@ public class EasyFormsDesignerServices implements Component {
 				if (StringUtil.isBlank(labels.get(0).getLabel())) {
 					errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.label, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
 				}
+
 				break;
 			case STATIC:
 				if (StringUtil.isBlank(labels.get(0).getText()) || isHtmlEmpty(labels.get(0).getText())) {
@@ -271,7 +272,7 @@ public class EasyFormsDesignerServices implements Component {
 				if (!StringUtil.isBlank(fieldEdit.getCondition())) {
 					// check section condition
 					final var formContextDescription = buildContextDescription(easyFormsTemplate, additionalContext);
-					final var parseResult = EasyFormsRuleParser.parseTest(fieldEdit.getCondition(), formContextDescription);
+					final var parseResult = EasyFormsRuleParser.parseComparisonTest(fieldEdit.getCondition(), formContextDescription);
 					if (!parseResult.isValid()) {
 						errorBuilder.addError(fieldEdit, EasyFormsSectionUiFields.condition, LocaleMessageText.of(Resources.EfDesignerSectionConditionInvalid));
 						uiMessageStack.error(parseResult.getErrorMessage(), fieldEdit, EasyFormsItemUiFields.condition + "_detail");
