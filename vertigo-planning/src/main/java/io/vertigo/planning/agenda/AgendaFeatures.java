@@ -20,7 +20,7 @@ package io.vertigo.planning.agenda;
 import io.vertigo.core.node.config.Feature;
 import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
 import io.vertigo.core.param.Param;
-import io.vertigo.planning.agenda.services.PlanningServices;
+import io.vertigo.planning.agenda.services.PlanningServicesConfig;
 import io.vertigo.planning.agenda.services.fo.plugin.DbFoConsultationPlanningPlugin;
 import io.vertigo.planning.agenda.services.fo.plugin.Redis2FoConsultationPlanningPlugin;
 import io.vertigo.planning.agenda.services.fo.plugin.RedisFoConsultationPlanningPlugin;
@@ -65,7 +65,7 @@ public class AgendaFeatures extends ModuleDiscoveryFeatures<AgendaFeatures> {
 	@Feature("services.config")
 	public AgendaFeatures withAgendaConfig(final Param... params) {
 		getModuleConfigBuilder()
-				.addComponent(PlanningServices.class, params);
+				.addComponent(PlanningServicesConfig.class, params);
 		isPlanningServices = true;
 		return this;
 	}
@@ -73,10 +73,10 @@ public class AgendaFeatures extends ModuleDiscoveryFeatures<AgendaFeatures> {
 	/** {@inheritDoc} */
 	@Override
 	protected void buildFeatures() {
-		super.buildFeatures();
 		if (!isPlanningServices) {
-			getModuleConfigBuilder().addComponent(PlanningServices.class);
+			getModuleConfigBuilder().addComponent(PlanningServicesConfig.class);
 		}
+		super.buildFeatures();
 	}
 
 	@Override
