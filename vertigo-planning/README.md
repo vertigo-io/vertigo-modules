@@ -35,18 +35,19 @@ Utilisé sur un site avec une très forte affluence. Certains agendas disposent 
 ## Ajout dans la conf vertigo
 
 Il faut ajouter les features `PlanningFeatures` et `AgendaFeatures`.
+L'entrée `services.config` permet de modifier le paramétrage par défaut du service `PlanningServices` (cf. plus bas).
 Le plugin `foConsultation` utilisé coté FrontOffice existe en version : Base de Données et Redis.
 
 ```yaml
   io.vertigo.planning.PlanningFeatures:
   io.vertigo.planning.agenda.AgendaFeatures:   
     featuresConfig:
+      - services.config:
       - foConsultation.db:  
          __flags__: ["!redis"]
       - foConsultation.redis2Unified:
           __flags__: ["redis && redisCluster"]  
 ```
-
 
 > La configuration permet de proposer une synchronisation distribuée.
 > Pour cela, il faut un WorkEngine dans Stella et ajouter la tache dans le redis2Unified :
@@ -215,7 +216,15 @@ une partie des services sont consommés par le controller,
 une autre peut-être utilisé par vos services métiers.
 https://github.com/vertigo-io/vertigo-modules/blob/master/vertigo-planning/src/main/java/io/vertigo/planning/agenda/services/PlanningServices.java
 
-
-   
- 
- 
+Les seuils utilisés lors des controles de validité sont paramétrable via `AgendaFeature -services.config` :
+- `createMinDureePlageMinute` : la durée minimale d'une plage horaire en minutes (60 minutes par défaut)
+- `createMaxDureePlageHeure` : la durée maximale d'une plage horaire en heures (10 heures par défaut)
+- `createPlageHeureMin` : l'heure de début minimale d'une plage horaire en minutes depuis le début de la journée (7:30 par défaut)
+- `createPlageHeureMax` : l'heure de fin maximale d'une plage horaire en minutes depuis le début de la journée (21:00 par défaut)
+- `createMaxNbGuichet` : le nombre maximal de guichets pour une plage horaire (9 par défaut)
+- `createMaxDaysFromNow` : le nombre maximal de jours à l'avance pour créer une plage horaire (365 jours par défaut)
+- `publishMaxDaysFromNow` : le nombre maximal de jours à l'avance pour publier une plage horaire (365 jours par défaut)
+- `publishMaxDaysPeriode` : le nombre maximal de jours publiés à la fois (2 mois par défaut)
+- `publishNowDelaySecond` : le délai avant la publication effective (60 secondes par défaut)
+- `duplicateMaxDaysPeriode` : le nombre maximal de jours à dupliquer (3 mois par défaut)
+- `duplicateMaxDaysFromNow` : le nombre maximal de jours à l'avance pour dupliquer (365 jours par défaut)
