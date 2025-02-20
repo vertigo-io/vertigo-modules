@@ -47,6 +47,8 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.node.config.discovery.NotDiscoverable;
+import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
@@ -82,24 +84,11 @@ import io.vertigo.planning.domain.DtDefinitions.PublicationTrancheHoraireFormFie
 import io.vertigo.planning.domain.DtDefinitions.TrancheHoraireFields;
 import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 
+@NotDiscoverable
 @Transactional
 public class PlanningServices implements Component {
 
 	public static final int MAX_AGENDA_TO_LOAD = 20;
-
-	private static final int CREATE_MIN_DUREE_PLAGE_MINUTE = 60;
-	private static final int CREATE_MAX_DUREE_PLAGE_HEURE = 10;
-	private static final int CREATE_MAX_NB_GUICHET = 9;
-	private static final int CREATE_MAX_DAYS_FROM_NOW = 365; //maximum 1 an par rapport à aujourd'hui
-
-	private static final int PUBLISH_MAX_DAYS_FROM_NOW = 365; //maximum 1 an par rapport à aujourd'hui
-	private static final int PUBLISH_MAX_DAYS_PERIODE = 31 * 2; //maximum 2 mois publié à la fois
-	private static final int PUBLISH_NOW_DELAY_S = 60; //1 minute de sécurité avant publication effective
-
-	private static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
-
-	private static final int DUPLICATE_MAX_DAYS_PERIODE = 31 * 3; //3 mois
-	private static final int DUPLICATE_MAX_DAYS_FROM_NOW = 365; //maximum 1 an par rapport à aujourd'hui
 
 	@Inject
 	private AgendaDAO agendaDAO;
@@ -116,6 +105,66 @@ public class PlanningServices implements Component {
 	@Inject
 	private VTransactionManager transactionManager;
 
+	private final int createMinDureePlageMinute;
+	private final int createMaxDureePlageHeure;
+	private final int createPlageHeureMin; //07:30 min by default
+	private final int createPlageHeureMax; //21:00 max by default
+
+	private final int createMaxNbGuichet;
+	private final int createMaxDaysFromNow; //maximum 1 an par rapport à aujourd'hui
+
+	private final int publishMaxDaysFromNow; //maximum 1 an par rapport à aujourd'hui
+	private final int publishMaxDaysPeriode; //maximum 2 mois publié à la fois
+	private final int publishNowDelaySecond; //1 minute de sécurité avant publication effective
+
+	private static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
+
+	private final int duplicateMaxDaysPeriode; //3 mois
+	private final int duplicateMaxDaysFromNow; //maximum 1 an par rapport à aujourd'hui
+
+	/**
+	 * Constructor.
+	 *
+	 */
+	@Inject
+	public PlanningServices(
+			@ParamValue("createMinDureePlageMinute") final Optional<Integer> createMinDureePlageMinuteOpt,
+			@ParamValue("createMaxDureePlageHeure") final Optional<Integer> createMaxDureePlageHeureOpt,
+			@ParamValue("createPlageHeureMin") final Optional<Integer> createPlageHeureMinOpt,
+			@ParamValue("createPlageHeureMax") final Optional<Integer> createPlageHeureMaxOpt,
+			@ParamValue("createMaxNbGuichet") final Optional<Integer> createMaxNbGuichetOpt,
+			@ParamValue("createMaxDaysFromNow") final Optional<Integer> createMaxDaysFromNowOpt,
+			@ParamValue("publishMaxDaysFromNow") final Optional<Integer> publishMaxDaysFromNowOpt,
+			@ParamValue("publishMaxDaysPeriode") final Optional<Integer> publishMaxDaysPeriodeOpt,
+			@ParamValue("publishNowDelaySecond") final Optional<Integer> publishNowDelaySecondOpt,
+			@ParamValue("duplicateMaxDaysPeriode") final Optional<Integer> duplicateMaxDaysPeriodeOpt,
+			@ParamValue("duplicateMaxDaysFromNow") final Optional<Integer> duplicateMaxDaysFromNowOpt) {
+		Assertion.check()
+				.isNotNull(createMinDureePlageMinuteOpt)
+				.isNotNull(createMaxDureePlageHeureOpt)
+				.isNotNull(createPlageHeureMinOpt)
+				.isNotNull(createPlageHeureMaxOpt)
+				.isNotNull(createMaxNbGuichetOpt)
+				.isNotNull(createMaxDaysFromNowOpt)
+				.isNotNull(publishMaxDaysFromNowOpt)
+				.isNotNull(publishMaxDaysPeriodeOpt)
+				.isNotNull(publishNowDelaySecondOpt)
+				.isNotNull(duplicateMaxDaysPeriodeOpt)
+				.isNotNull(duplicateMaxDaysFromNowOpt);
+		//-----
+		createMinDureePlageMinute = createMinDureePlageMinuteOpt.orElse(60); //60 minutes min by default
+		createMaxDureePlageHeure = createMaxDureePlageHeureOpt.orElse(10); //10 hours max by default
+		createPlageHeureMin = createPlageHeureMinOpt.orElse(7 * 60 + 30); //7:30 min by default
+		createPlageHeureMax = createPlageHeureMaxOpt.orElse(21 * 60); //21:00 max by default
+		createMaxNbGuichet = createMaxNbGuichetOpt.orElse(9); //9 max by default
+		createMaxDaysFromNow = createMaxDaysFromNowOpt.orElse(365); //max 1 year in future
+		publishMaxDaysFromNow = publishMaxDaysFromNowOpt.orElse(365); //max 1 year in future
+		publishMaxDaysPeriode = publishMaxDaysPeriodeOpt.orElse(31 * 2); //max 2 months published at once
+		publishNowDelaySecond = publishNowDelaySecondOpt.orElse(60); //1 minute before publishing by security
+		duplicateMaxDaysPeriode = duplicateMaxDaysPeriodeOpt.orElse(31 * 3); //3 months max by default
+		duplicateMaxDaysFromNow = duplicateMaxDaysFromNowOpt.orElse(365); //max 1 year in future
+	}
+
 	public Agenda createAgenda(final String name) {
 		Assertion.check().isNotBlank(name, "A agenda must have a name");
 		//---
@@ -129,34 +178,34 @@ public class PlanningServices implements Component {
 		/** Contrôles User */
 		final var uiErrorBuilder = new UiErrorBuilder();
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), creationPlageHoraireForm.getDateLocale());
-		if (Math.abs(decalageJours) > CREATE_MAX_DAYS_FROM_NOW) {
+		if (Math.abs(decalageJours) > createMaxDaysFromNow) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.dateLocale,
-					LocaleMessageText.of("La date de la plage horaire doit être à moins d'1 an"));
+					LocaleMessageText.of("La date de la plage horaire doit être à moins de {0}", getDaysLimitLabel(createMaxDaysFromNow, false)));
 		}
-		if (creationPlageHoraireForm.getNbGuichet() <= 0 || creationPlageHoraireForm.getNbGuichet() > CREATE_MAX_NB_GUICHET) {
+		if (creationPlageHoraireForm.getNbGuichet() <= 0 || creationPlageHoraireForm.getNbGuichet() > createMaxNbGuichet) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.nbGuichet,
-					LocaleMessageText.of("Le nombre de guichets doit être un nombre compris entre 1 et 9"));
+					LocaleMessageText.of("Le nombre de guichets doit être un nombre compris entre 1 et {0}", createMaxNbGuichet));
 		}
 
-		if (creationPlageHoraireForm.getMinutesDebut() < 7 * 60 + 30) {
+		if (creationPlageHoraireForm.getMinutesDebut() < createPlageHeureMin) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit débuter au plus tôt à 07:30"));
+					LocaleMessageText.of("La plage horaire doit débuter au plus tôt à {0}", getMinutesLabel(createPlageHeureMin)));
 		}
-		if (creationPlageHoraireForm.getMinutesFin() > 21 * 60) {
+		if (creationPlageHoraireForm.getMinutesFin() > createPlageHeureMax) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesFin,
-					LocaleMessageText.of("La plage horaire doit finir au plus tard à 21:00"));
+					LocaleMessageText.of("La plage horaire doit finir au plus tard à {0}", getMinutesLabel(createPlageHeureMax)));
 		}
 
 		final var dureePlageMinute = creationPlageHoraireForm.getMinutesFin() - creationPlageHoraireForm.getMinutesDebut();
 		if (dureePlageMinute <= 0) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesFin,
 					LocaleMessageText.of("L'heure de fin de la plage horaire doit être postérieur à l'heure de début"));
-		} else if (dureePlageMinute < CREATE_MIN_DUREE_PLAGE_MINUTE) {
+		} else if (dureePlageMinute < createMinDureePlageMinute) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit avoir une durée d'au moins " + CREATE_MIN_DUREE_PLAGE_MINUTE + " minutes"));
-		} else if (dureePlageMinute > CREATE_MAX_DUREE_PLAGE_HEURE * 60) {
+					LocaleMessageText.of("La plage horaire doit avoir une durée d'au moins {0} minutes", createMinDureePlageMinute));
+		} else if (dureePlageMinute > createMaxDureePlageHeure * 60) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit avoir une durée inférieure à " + CREATE_MAX_DUREE_PLAGE_HEURE + " heures"));
+					LocaleMessageText.of("La plage horaire doit avoir une durée inférieure à {0} heures", createMaxDureePlageHeure));
 		}
 
 		if (creationPlageHoraireForm.getDateLocale().getDayOfWeek().getValue() > maxWeekDaysNumber) {
@@ -238,18 +287,18 @@ public class PlanningServices implements Component {
 				LocaleMessageText.of("La date de fin de la plage de copie doit être postérieur à la date de début"));
 
 		final var dureeDuplicationJours = ChronoUnit.DAYS.between(duplicationSemaineForm.getDateLocaleToDebut(), duplicationSemaineForm.getDateLocaleToFin());
-		if (dureeDuplicationJours > DUPLICATE_MAX_DAYS_PERIODE) {
+		if (dureeDuplicationJours > duplicateMaxDaysPeriode) {
 			uiErrorBuilder.addError(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleToFin,
-					LocaleMessageText.of("Vous ne pouvez pas dupliquer une semaine sur plus de 3 mois"));
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer une semaine sur plus de {0}", getDaysLimitLabel(duplicateMaxDaysPeriode, false)));
 		}
 
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), duplicationSemaineForm.getDateLocaleToDebut());
-		if (decalageJours > DUPLICATE_MAX_DAYS_FROM_NOW) { //abs : on autorise la publication de creneau passé
+		if (decalageJours > duplicateMaxDaysFromNow) { //abs : on autorise la publication de creneau passé
 			uiErrorBuilder.addError(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleToDebut,
-					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus d'1 an"));
-		} else if (Math.abs(decalageJours) > DUPLICATE_MAX_DAYS_FROM_NOW) { //abs : on autorise la publication de creneau passé
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus de {0}", getDaysLimitLabel(duplicateMaxDaysFromNow, false)));
+		} else if (Math.abs(decalageJours) > duplicateMaxDaysFromNow) { //abs : on autorise la publication de creneau passé
 			uiErrorBuilder.addError(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleToDebut,
-					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus d'1 an"));
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus de {0}", getDaysLimitLabel(duplicateMaxDaysFromNow, false)));
 		}
 
 		if (duplicationSemaineForm.getDateLocaleToDebut().isBefore(LocalDate.now())) {
@@ -604,9 +653,9 @@ public class PlanningServices implements Component {
 		//On change le status des trancheHoraires non publiées en masse (y compris celles planifiées)
 		final var uiErrorBuilder = new UiErrorBuilder();
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), publicationTrancheHoraireForm.getDateLocaleDebut());
-		if (Math.abs(decalageJours) > PUBLISH_MAX_DAYS_FROM_NOW) { //abs : on autorise la publication de creneau passé
+		if (Math.abs(decalageJours) > publishMaxDaysFromNow) { //abs : on autorise la publication de creneau passé
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleDebut,
-					LocaleMessageText.of("Vous ne pouvez pas publier des créneaux à plus d'1 an"));
+					LocaleMessageText.of("Vous ne pouvez pas publier des créneaux à plus de {0}", getDaysLimitLabel(publishMaxDaysFromNow, false)));
 		} else if (decalageJours < 0) { //on n'autorise pas la publication de creneau passé RDV-154
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleDebut,
 					LocaleMessageText.of("Vous ne pouvez pas publier des créneaux du passé"));
@@ -616,9 +665,9 @@ public class PlanningServices implements Component {
 		if (dureeJours < 0) {//inferieur strictement
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleFin,
 					LocaleMessageText.of("La date de fin de la selection doit être postérieur à la date de début"));
-		} else if (dureeJours > PUBLISH_MAX_DAYS_PERIODE) {
+		} else if (dureeJours > publishMaxDaysPeriode) {
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleFin,
-					LocaleMessageText.of("Vous ne pouvez pas publier plus de 2 mois à la fois"));
+					LocaleMessageText.of("Vous ne pouvez pas publier plus de {0} à la fois", getDaysLimitLabel(publishMaxDaysPeriode, true)));
 		}
 		if (!publicationTrancheHoraireForm.getPublishNow()) {
 			uiErrorBuilder.checkFieldNotNull(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationDateLocale,
@@ -637,7 +686,7 @@ public class PlanningServices implements Component {
 
 		Instant datePublication;
 		if (publicationTrancheHoraireForm.getPublishNow()) {
-			datePublication = Instant.now().plusSeconds(PUBLISH_NOW_DELAY_S);
+			datePublication = Instant.now().plusSeconds(publishNowDelaySecond);
 		} else {
 
 			final var localTime = LocalTime.ofSecondOfDay(publicationTrancheHoraireForm.getPublicationMinutesDebut() * 60L);
@@ -772,6 +821,41 @@ public class PlanningServices implements Component {
 			throw new VSecurityException(LocaleMessageText.of("Vous n'avez pas les droits pour agir sur cet agenda"));
 		}
 		return ageUid;
+	}
+
+	protected final String getMinutesLabel(final int minutesOfDay) {
+		return String.format("%02d:%02d", minutesOfDay / 60, minutesOfDay % 60);
+	}
+
+	protected String getDaysLimitLabel(final int days, final boolean onlyOneLevel) {
+		Assertion.check().isTrue(days > 0, "Can't display less than 1 day");
+		//--
+		final int years = days / 365;
+		final int remainingDaysAfterYears = days % 365;
+		final int months = remainingDaysAfterYears / 30;
+		final int remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+		final int weeks = remainingDaysAfterMonths / 7;
+		final int remainingDaysAfterWeeks = remainingDaysAfterMonths % 7;
+
+		if (years > 0 && (remainingDaysAfterYears == 0 || onlyOneLevel)) {
+			return plurialize(years, "an", "ans");
+		} else if (months > 0 && (remainingDaysAfterMonths == 0 || onlyOneLevel)) {
+			return plurialize(months, "mois", "mois");
+		} else if (weeks > 0 && (remainingDaysAfterWeeks == 0 || onlyOneLevel)) {
+			return plurialize(weeks, "semaine", "semaines");
+		} else if (years > 0) {
+			return plurialize(years, "an", "ans") + " et " + plurialize(months, "mois", "mois");
+		} else if (months > 0) {
+			return plurialize(months, "mois", "mois") + " et " + plurialize(weeks, "semaine", "semaines");
+		} else if (weeks > 0) {
+			return plurialize(weeks, "semaine", "semaines") + " et " + plurialize(remainingDaysAfterWeeks, "jour", "jours");
+		} else {
+			return plurialize(days, "jour", "jours");
+		}
+	}
+
+	private static String plurialize(final int value, final String singular, final String plural) {
+		return value + " " + (value == 1 ? singular : plural);
 	}
 
 }
