@@ -62,7 +62,7 @@ public class AgendaFeatures extends ModuleDiscoveryFeatures<AgendaFeatures> {
 		return this;
 	}
 
-	@Feature("agenda.config")
+	@Feature("services.config")
 	public AgendaFeatures withAgendaConfig(final Param... params) {
 		getModuleConfigBuilder()
 				.addComponent(PlanningServices.class, params);

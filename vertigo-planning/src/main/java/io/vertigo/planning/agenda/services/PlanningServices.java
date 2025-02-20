@@ -124,7 +124,17 @@ public class PlanningServices implements Component {
 
 	/**
 	 * Constructor.
-	 *
+	 * @param createMinDureePlageMinute the minimum duration of a time slot in minutes
+	 * @param createMaxDureePlageHeure the maximum duration of a time slot in hours
+	 * @param createPlageHeureMin the minimum time slot start time in minutes from start of day
+	 * @param createPlageHeureMax the maximum time slot end time in minutes from start of day
+	 * @param createMaxNbGuichet the maximum number of counters (guichets) for a time slot
+	 * @param createMaxDaysFromNow the maximum number of days in the future to create a time slot
+	 * @param publishMaxDaysFromNow the maximum number of days in the future to publish a time slot
+	 * @param publishMaxDaysPeriode the maximum number of days published at once
+	 * @param publishNowDelaySecond the delay before effective publication (security to revert)
+	 * @param duplicateMaxDaysPeriode the maximum number of days to duplicate
+	 * @param duplicateMaxDaysFromNow the maximum number of days from now to duplicate
 	 */
 	@Inject
 	public PlanningServices(
