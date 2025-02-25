@@ -10,7 +10,7 @@
 				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'DD/MM/YYYY') < new Date()" @click="onPublishPlageHoraires"></q-btn>
             </div>
 		</vu:slot>
-		<div class="row q-col-gutter-md">		
+		<div class="row q-col-gutter-md">
 			<div class="col-12">
 		             <div class="row items-center">
 		              <vu:include-data object="agendaRange" field="showDate" />
@@ -40,22 +40,22 @@
 		           <vu:include-data object="plagesHoraire" field="nbTotal" />
 		           <vu:include-data object="plagesHoraire" field="nbNonPublie" />
 		           <vu:include-data object="plagesHoraire" field="nbPlanifie" />
-		           <vu:include-data object="plagesHoraire" field="nbPublie" />	           
-		           <q-calendar-day ref="calendar" 
-		           locale="fr"
-		           hour24-format
-		           interval-minutes="30"
-		           :interval-start="intervalStart(vueData.plagesHoraire)"
-		           :interval-count="intervalCount(vueData.plagesHoraire)"
-		           interval-height="30"
-		           view="week"
-		           th::weekdays="${model.weekDays}"
-		           animated
-		           transition-prev="slide-right"
-		           transition-next="slide-left"
-		           :model-value="toCalendarDateFmt(vueData.agendaRange.firstDate).date"
-		           th:attrappend="'@click-time'=${myHasAuthzAdmin?'onCreatePlageHoraireDateTime($event)':null}">
-		
+		           <vu:include-data object="plagesHoraire" field="nbPublie" />
+		           <q-calendar-day ref="calendar"
+			           locale="fr"
+			           hour24-format
+			           interval-minutes="30"
+			           :interval-start="intervalStart(vueData.plagesHoraire)"
+			           :interval-count="intervalCount(vueData.plagesHoraire)"
+			           interval-height="30"
+			           view="week"
+			           th::weekdays="${model.weekDays}"
+			           animated
+			           transition-prev="slide-right"
+			           transition-next="slide-left"
+			           :model-value="toCalendarDateFmt(vueData.agendaRange.firstDate).date"
+			           no-active-date @click-date=""
+			           th:attrappend="'@click-time'=${myHasAuthzAdmin?'onCreatePlageHoraireDateTime($event)':null}">    	   
 		               <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
 		                <template v-for="(event, index) in getEvents(timestamp.date, vueData.plagesHoraire)" :key="event.eventId">
 		                  <div
