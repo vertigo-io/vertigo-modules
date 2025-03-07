@@ -16,7 +16,7 @@
 			<dependency>
 				<groupId>org.web3j</groupId>
 				<artifactId>core</artifactId>
-				<version>4.12.0</version><!-- 5.0.0 : not official -->
+				<version>4.12.3-android</version><!-- 5.0.0 : not official -->
 			</dependency>
 			<dependency>
 				<groupId>io.vertigo</groupId>
