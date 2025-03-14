@@ -249,8 +249,12 @@ public class PlanningServices implements Component {
 		uiErrorBuilder.throwUserExceptionIfErrors();
 		/*****/
 
-		//on lock tous les agendas concernés : Attention ça peut locker la table !!
-		ageUids.forEach(ageUid -> agendaDAO.readOneForUpdate(ageUid)); //ForUpdate pour éviter les doublons
+		//on lock tous les agendas existants concernés : Attention ça peut locker la table !!
+		ageUids.forEach(ageUid -> {
+			if ((Long) ageUid.getId() > 0L) {
+				agendaDAO.readOneForUpdate(ageUid);
+			}
+		}); //ForUpdate pour éviter les doublons
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		final var ageIdsArray = ageIds.toArray(Serializable[]::new);
 		final var plageHorairesFrom = plageHoraireDAO.findAll(
