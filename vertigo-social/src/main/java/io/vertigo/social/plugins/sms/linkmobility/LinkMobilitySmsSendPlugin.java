@@ -41,25 +41,34 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 
 	private final boolean acceptAll;
 	private final List<String> whitelistPrefixes;
-	private long sendDelay = -1;
+	private long sendDelayMs = -1;
 	private long lastSentTimeMs = 0;
 
 	private static final int ALPHA_NUMERIC_ORIGINATOR_TON = 1;
 
+	/**
+	 * Constructor.
+	 * @param whitelistPrefixesOpt prefixes of phone numbers to accept
+	 * @param maxSmsPerMinute maximum number of SMS to send in a minute (LinkMobility reject if too fast)
+	 * @param linkMobilitySmsWebServiceClient SMS web service client
+	 * @param analyticsManager analytics manager
+	 */
 	@Inject
 	public LinkMobilitySmsSendPlugin(
 			final @ParamValue("whitelistPrefixes") Optional<String> whitelistPrefixesOpt,
-			final @ParamValue("sendDelay") Optional<Long> sendDelay,
+			final @ParamValue("maxSmsPerMinute") Optional<Long> maxSmsPerMinute,
 			final LinkMobilitySmsWebServiceClient linkMobilitySmsWebServiceClient,
 			final AnalyticsManager analyticsManager) {
 		Assertion.check()
 				.isNotNull(whitelistPrefixesOpt)
 				.isNotNull(linkMobilitySmsWebServiceClient)
-				.isNotNull(analyticsManager);
+				.isNotNull(analyticsManager)
+				.when(maxSmsPerMinute.isPresent(),
+						() -> Assertion.check().isTrue(maxSmsPerMinute.get() > 0, "maxSmsPerMinute must be greater than 0"));
 		//---
 		this.analyticsManager = analyticsManager;
 		this.linkMobilitySmsWebServiceClient = linkMobilitySmsWebServiceClient;
-		this.sendDelay = sendDelay.orElse(0L);
+		sendDelayMs = maxSmsPerMinute.map(v -> 60 * 1000L / v).orElse(0L); //convert max SMS per minute to delay between sending in ms
 		if (whitelistPrefixesOpt.isPresent() && !whitelistPrefixesOpt.get().isBlank()) {
 			acceptAll = false;
 			whitelistPrefixes = Arrays.asList(whitelistPrefixesOpt.get().split(";"))
@@ -96,14 +105,8 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 		boolean sent = false;
 
 		for (final var receiver : sms.receivers()) {
-			final long sleepMs = sendDelay - (System.currentTimeMillis() - lastSentTimeMs);
-			if (sleepMs > 0) {
-				try {
-					Thread.sleep(sleepMs);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-			}
+			final long sleepMs = sendDelayMs - (System.currentTimeMillis() - lastSentTimeMs);
+			sleep(sleepMs);
 			lastSentTimeMs = System.currentTimeMillis();
 
 			final var linkMobilitySendingReportMap = linkMobilitySmsWebServiceClient.sendSms(
@@ -123,6 +126,16 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 		}
 
 		return new SmsSendingReport(cost, sent);
+	}
+
+	private void sleep(final long sleepMs) {
+		if (sleepMs > 0) {
+			try {
+				Thread.sleep(sleepMs);
+			} catch (final InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 
 }
