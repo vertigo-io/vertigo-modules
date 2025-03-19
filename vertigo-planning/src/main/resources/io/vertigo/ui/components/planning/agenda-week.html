@@ -53,7 +53,7 @@
 			           animated
 			           transition-prev="slide-right"
 			           transition-next="slide-left"
-			           :model-value="toCalendarDateFmt(vueData.agendaRange.firstDate).date"
+			           :model-value="toCalendarDate(vueData.agendaRange.firstDate).date"
 			           no-active-date @click-date=""
 			           th:attrappend="'@click-time'=${myHasAuthzAdmin?'onCreatePlageHoraireDateTime($event)':null}">    	   
 		               <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
