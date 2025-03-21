@@ -57,10 +57,9 @@
                     <vu:text-field-edit object="creationPlageHoraireForm" field="nbGuichet" mask="#" th:if="${model.modeGuichet}"/>
                 </vu:grid>
             </q-card-section>
-            <q-card-section class="flex justify-end">
+            <q-card-section class="flex justify-end" vu:slot="plage_actions_slot">
                 <q-btn color="primary" label="Valider" @click="createPlageHoraire" :loading="isPendingAction()" th:if="${!model.modeGuichet}"></q-btn>
-                <q-btn color="primary" label="Valider" @click="createPlageHoraireGuichet" :loading="isPendingAction()" th:if="${model.modeGuichet}"></q-btn>
-                
+                <q-btn color="primary" label="Valider" @click="createPlageHoraireGuichet" :loading="isPendingAction()" th:if="${model.modeGuichet}"></q-btn>                
             </q-card-section>
         </q-card>
     </q-dialog>

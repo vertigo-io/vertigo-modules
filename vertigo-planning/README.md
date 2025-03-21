@@ -138,16 +138,19 @@ Composants VertigoUi
   - `hasAuthzAdmin` : Si droit d'admin de l'agenda (défaut : true)
 
 - `agenda-create-plage` : Composant de modale création de plage horaire
-  - **TODO** : slots à ajouter
+  - `plage_actions_slot` : Slot des boutons du composant (défaut: creation si guichet, creation si agenda personnel)
   
 - `agenda-detail-plage` : Composant de modale détail de plage horaire
   - `plage_actions_slot` : Slot des boutons du composant (défaut: aucun)
 
 - `agenda-delete-plage` : Composant de modale de confirmation de suppression de plage horaire
+  - `plage_actions_slot` : Slot des boutons du composant (défaut: annuler, deletePlageHoraire)
 
 - `agenda-duplicate-week` : Composant de modale de duplication de semaine
+  - `plage_actions_slot` : Slot des boutons du composant (défaut: dupliquer semaine)
 
 - `agenda-publish-plage` : Composant de modale de publication de plage horaire
+  - `plage_actions_slot` : Slot des boutons du composant (défaut: annuler, publishPlageHoraires)
 
 Exemple
 ```HTML

@@ -1,4 +1,4 @@
-<th:block th:fragment="agenda-publish-plage" vu:alias="agenda-publish-plage" vu:selector="${true}" 
+<th:block th:fragment="agenda-publish-plage(plage_actions_slot)" vu:alias="agenda-publish-plage" vu:selector="${true}" 
     th:attr="objectKey=${model.vContext['componentStates'].addComponentState('publishItemModal').addPrimitive('opened', false)},
     objectKey=${model.vContext['componentStates']['publishItemModal'].addPrimitive('selectedTab', 'planifie')}">
 
@@ -80,7 +80,7 @@
                         </vu:grid-cell>
                    </vu:grid>
             </q-card-section>
-            <q-card-section class="row justify-end q-gutter-md">
+            <q-card-section class="row justify-end q-gutter-md" vu:slot="plage_actions_slot">
                 <q-btn color="primary" outline label="Annuler" v-close-popup></q-btn>
                 <q-btn color="primary" label="Valider" @click="doPublishPlageHoraires" :loading="isPendingAction()"></q-btn>
             </q-card-section>

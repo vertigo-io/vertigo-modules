@@ -1,4 +1,4 @@
-<th:block th:fragment="agenda-delete-plage" vu:alias="agenda-delete-plage" vu:selector="${true}" 
+<th:block th:fragment="agenda-delete-plage(plage_actions_slot)" vu:alias="agenda-delete-plage" vu:selector="${true}" 
     th:attr="objectKey=${model.vContext['componentStates'].addComponentState('confirmDeleteItemModal').addPrimitive('opened', false)} ">
     <q-dialog v-model="componentStates.confirmDeleteItemModal.opened" persistent v-if="componentStates.editedPlageHoraire">
       <q-card>
@@ -16,7 +16,7 @@
 			    </q-banner>
           </span>
         </q-card-section>
-        <q-card-actions align="right" vu:slot="actions_slot">
+        <q-card-actions align="right" vu:slot="plage_actions_slot">
                <q-btn label="Annuler" color="primary" outline v-close-popup ></q-btn>
                <q-btn label="Supprimer" color="primary" @click.stop.prevent="deletePlageHoraire(componentStates.editedPlageHoraire.plhId)" v-close-popup ></q-btn>
         </q-card-actions>
