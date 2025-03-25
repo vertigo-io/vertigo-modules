@@ -7,7 +7,7 @@
             <div vu:slot="agenda_actions_slot" class="row q-gutter-sm">
 				<q-btn color="primary" th:label="#{planning.agendaWeek.createPlageHoraire}" th:icon="#{planning.agendaWeek.createPlageHoraire.icon}" @click="onCreatePlageHoraireDefault"></q-btn>
 				<q-btn color="primary" th:label="#{planning.agendaWeek.duplicateWeek}" th:icon="#{planning.agendaWeek.duplicateWeek.icon}" @click="onDuplicateWeek"></q-btn>
-				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'DD/MM/YYYY') < new Date()" @click="onPublishPlageHoraires"></q-btn>
+				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'yyyy-MM-dd') < new Date()" @click="onPublishPlageHoraires"></q-btn>
             </div>
 		</vu:slot>
 		<div class="row q-col-gutter-md">

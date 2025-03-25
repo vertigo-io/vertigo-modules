@@ -158,7 +158,7 @@ Exemple
 	<vu:slot name="agenda_actions_slot">
 		<vu:button icon="ri-add-line" label="#{demarche.bo.demarche.agenda.action.create-plage-horaire}" @click="onCreatePlageHoraireDefault" vu:authz="Demarche$agendaPersonel" /> 
 		<vu:button icon="ri-file-copy-line" label="#{demarche.bo.demarche.agenda.action.duplicate-week}" @click="onDuplicateWeek" vu:authz="Demarche$agendaPersonel"/>
-		<vu:button icon="ri-gallery-upload-line" label="#{demarche.bo.demarche.agenda.action.manage-publication}" @click="onPublishPlageHoraires" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'DD/MM/YYYY') < new Date()" vu:authz="Demarche$agendaPersonel"/>
+		<vu:button icon="ri-gallery-upload-line" label="#{demarche.bo.demarche.agenda.action.manage-publication}" @click="onPublishPlageHoraires" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'yyyy-MM-dd') < new Date()" vu:authz="Demarche$agendaPersonel"/>
 	</vu:slot>
 </vu:agenda-week>
 <vu:agenda-create-plage/>
