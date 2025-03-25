@@ -707,9 +707,8 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		return items;
 	}
 
-	public Long save(final ViewContext viewContext) {
-		final var efo = viewContext.readDto(efoKey, getUiMessageStack());
-		return easyFormsDesignerServices.saveForm(efo);
+	public EasyForm readEasyForm(final ViewContext viewContext) {
+		return viewContext.readDto(efoKey, getUiMessageStack());
 	}
 
 	protected static void loadValidatorsByType(final ViewContext viewContext,

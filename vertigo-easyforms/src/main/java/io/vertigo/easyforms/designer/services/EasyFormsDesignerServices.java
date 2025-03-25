@@ -292,11 +292,10 @@ public class EasyFormsDesignerServices implements Component {
 	 * Save an EasyForm.
 	 *
 	 * @param easyForm The EasyForm to save.
-	 * @return The ID of the saved EasyForm.
+	 * @return The saved EasyForm.
 	 */
-	public Long saveForm(final EasyForm easyForm) {
-		easyFormDAO.save(easyForm);
-		return easyForm.getEfoId();
+	public EasyForm saveForm(final EasyForm easyForm) {
+		return easyFormDAO.save(easyForm);
 	}
 
 	/**
