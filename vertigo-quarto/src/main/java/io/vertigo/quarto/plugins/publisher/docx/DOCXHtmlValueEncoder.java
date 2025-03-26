@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +40,7 @@ import io.vertigo.core.util.StringUtil;
  * - u : underline
  * - b : bold
  * - i : italic
- *
+ * TODO: for hyperlink : need to change others files see http://www.officeopenxml.com/WPhyperlink.php
  * @author npiedeloup
  */
 final class DOCXHtmlValueEncoder implements Encoder<String, String> {
@@ -59,13 +60,17 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 		Assertion.check().isTrue("html".equals(parsedXhtml.tagName), "RichText must start with an unique root <html> tag");
 		//---
 		final var encoded = new StringBuilder();
-		encoded.append("<w:p>");
-		final RichTextProperties currentProperties = new RichTextProperties(Map.of(), Map.of(), null, true);
+		//encoded.append("<w:p>");
+		final RichTextProperties currentProperties = new RichTextProperties(new HashMap<>(), new HashMap<>(), null, true, true, new AtomicBoolean(false));
 		encodeXHtml(parsedXhtml, currentProperties, encoded, currentProperties);
-		encoded.append("</w:p>");
+		if (currentProperties.pOpen.get()) {
+			encoded.append("</w:p>");
+			currentProperties.pOpen.set(false);
+		}
+
 		//System.out.println("=====>>>>>>>>>>>>>");
-		//		System.out.println(toEncode);
-		//		System.out.println("==================");
+		//System.out.println(toEncode);
+		//System.out.println("==================");
 		//System.out.println(parsedXhtml);
 		//System.out.println("==================");
 		//System.out.println(encoded.toString().replace("</w:p>", "</w:p>\n"));
@@ -77,12 +82,12 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 	 * Record to keep track of RichText properties.
 	 * Use during rendering xhtml nodes to Docx.
 	 */
-	record RichTextProperties(Map<String, String> pPr, Map<String, String> rPr, String content, boolean root) {
+	record RichTextProperties(Map<String, String> pPr, Map<String, String> rPr, String content, boolean root, AtomicBoolean pOpen) {
 
 		private static int forceOpenPCounter = 0;
 
-		RichTextProperties(final Map<String, String> pPr, final Map<String, String> rPr, final String content, final boolean root, final boolean forceOpenP) {
-			this(pPr, rPr, content, root);
+		RichTextProperties(final Map<String, String> pPr, final Map<String, String> rPr, final String content, final boolean root, final boolean forceOpenP, final AtomicBoolean pOpen) {
+			this(pPr, rPr, content, root, pOpen);
 			if (forceOpenP) {
 				pPr.put("forceOpenP", String.valueOf(forceOpenPCounter++));
 				rPr.put("forceOpenP", String.valueOf(forceOpenPCounter++));
@@ -146,7 +151,10 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 		final var contentIndex = startTagClosePos + 1;
 		final var startTagNameEnd = startTagAttrPos > 0
 				? Math.min(startTagClosePos, isAutoClosedTag ? startTagAutoClosePos : startTagAttrPos)
-				: isAutoClosedTag ? startTagAutoClosePos : startTagAttrPos;
+				: isAutoClosedTag ? startTagAutoClosePos : startTagClosePos;
+
+		Assertion.check().isTrue(fromIndex + 1 < startTagNameEnd, "Can't found valid tag at {0}, sample: {1}", fromIndex, xhtml.substring(fromIndex, Math.min(fromIndex + 20, xhtml.length())));
+
 		final var tagName = xhtml.substring(fromIndex + 1, startTagNameEnd);
 		final var tagAttributes = xhtml.substring(startTagNameEnd, isAutoClosedTag ? startTagAutoClosePos : startTagClosePos);
 		final List<XHtmlNode> innerNodes = new ArrayList<>();
@@ -188,8 +196,10 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 		} else if (xHtmlNode.tagName() != null) {
 			final var newProperties = alterRichTextProperties(xHtmlNode.tagName(), xHtmlNode.tagAttributes(), outerProperties);
 			var newOpenedProperties = openedProperties;
-			if (newProperties.content != null) {
+			if (newProperties.content != null) {//case when content comes from RichTextProperties not from xml itself
+				output.append(encodedStartTag(outerProperties, openedProperties));
 				output.append(newProperties.content());
+				output.append(encodedEndTag());
 			}
 			for (final var innerNode : xHtmlNode.innerNodes()) {
 				newOpenedProperties = encodeXHtml(innerNode, newProperties, output, newOpenedProperties);
@@ -216,9 +226,12 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 		var outerPPr = outerProperties.pPr;
 		var outerRPr = outerProperties.rPr;
 		var forceOpenP = false;
+		var rootP = false;
 		String content = null;
 		switch (tagName) {
 			case "html":
+				rootP = true;
+				break;
 			case "inline":
 				break;
 			case "p":
@@ -261,20 +274,26 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 				outerRPr.put("sz", "30");
 				break;
 			case "br":
-				content = "<w:r><w:t><w:br/></w:t></w:r>";
+				content = "<w:br/>";
 				break;
 		}
 
-		return new RichTextProperties(outerPPr, outerRPr, content, false, forceOpenP);
+		return new RichTextProperties(outerPPr, outerRPr, content, rootP, forceOpenP, outerProperties.pOpen);
 	}
 
 	private String encodedStartTag(final RichTextProperties currentProperties, final RichTextProperties openedProperties) {
 		final StringBuilder result = new StringBuilder();
+
 		if (!currentProperties.pPr.equals(openedProperties.pPr)) {
 			if (!openedProperties.root) {
-				result.append("</w:p>");
+				result.append("</w:p><w:p>");
+				openedProperties.pOpen.set(true);
 			}
-			result.append("<w:p><w:pPr>");
+			if (!openedProperties.pOpen.get()) {
+				result.append("<w:p>");
+				openedProperties.pOpen.set(true);
+			}
+			result.append("<w:pPr>");
 			if (currentProperties.pPr.containsKey("spacing")) {
 				result.append("<w:spacing w:before=\"").append(currentProperties.pPr.get("spacing")).append("\" w:after=\"").append(currentProperties.pPr.get("spacing")).append("\"/>");
 			}
@@ -285,6 +304,10 @@ final class DOCXHtmlValueEncoder implements Encoder<String, String> {
 				result.append("<w:jc w:val=\"").append(currentProperties.pPr.get("jc")).append("\"/>");
 			}
 			result.append("</w:pPr>");
+		}
+		if (!openedProperties.pOpen.get()) {
+			result.append("<w:p>");
+			openedProperties.pOpen.set(true);
 		}
 		result.append("<w:r>");
 		if (!currentProperties.rPr.equals(openedProperties.rPr)) {
