@@ -28,7 +28,7 @@ Utilisé sur un site avec une très forte affluence. Certains agendas disposent 
 <dependency>
    <groupId>io.vertigo</groupId>
    <artifactId>vertigo-planning</artifactId>
-   <version>4.2.0.1</version>
+   <version>4.3.0</version>
 </dependency>
 ```
 
@@ -115,7 +115,7 @@ __Compléments CSS__
 <head>
     ...
     <link th:href="@{/vertigo-ui/static/planning/css/vertigo-planning.css}" rel="stylesheet" type="text/css">
-    <link th:href="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.0.0-beta.16/index.min.css}" rel="stylesheet" type="text/css">   
+    <link th:href="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.1.2/index.min.css}" rel="stylesheet" type="text/css">   
 </head>	
 ```
 ___Note:___ _La css de quasar est nécessaire pour le calendrier_
@@ -123,7 +123,7 @@ ___Note:___ _La css de quasar est nécessaire pour le calendrier_
 __Compléments javascript__
 ```Javascript
 <section layout:fragment="additional-librairies" >
-	<script th:src="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.0.0-beta.16/QCalendarDay.umd.min.js}"></script>
+	<script th:src="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.1.2/QCalendarDay.umd.min.js}"></script>
 	<script th:src="@{/vertigo-ui/static/planning/js/vertigo-planning.js?t=__${appBuildTime}__}"></script>
 </section>	
 ```
@@ -190,7 +190,11 @@ Vous pouvez compléter le context pour les autres éléments de votre page, et a
 **TODO** lien vertigo-docs : https://github.com/vertigo-io/vertigo-modules/blob/master/vertigo-planning/src/main/javagen/mermaid/mermaid-io-vertigo-planning.html
 
 ### Sql
- - planning_create_init_4.2.0.sql : pour la création de la base de données initiale
+ - planning_create_init_4.3.0.sql : pour la création de la base de données initiale
+ 
+_ previous version _
+Si besoin :
+ - planning_create_init_4.2.0.sql : pour la création de la base de données initiale en 4.2.0
  - planning_update_4.2.0.1.sql : pour la mise à jour vers 4.2.0.1
  
 ### Controlleurs
