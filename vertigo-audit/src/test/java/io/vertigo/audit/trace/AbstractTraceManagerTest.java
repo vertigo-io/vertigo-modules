@@ -38,7 +38,8 @@ import io.vertigo.core.node.config.NodeConfig;
  * @author xdurand
  *
  */
-public class TraceManagerTest {
+public abstract class AbstractTraceManagerTest {
+
 	@Inject
 	private TraceManager auditManager;
 
@@ -57,10 +58,7 @@ public class TraceManagerTest {
 		}
 	}
 
-	private NodeConfig buildNodeConfig() {
-		return MyNodeConfig.configWithStore();
-		//return MyNodeConfig.configMemory();
-	}
+	protected abstract NodeConfig buildNodeConfig();
 
 	/**
 	 * Add/Get Test for audit trace
