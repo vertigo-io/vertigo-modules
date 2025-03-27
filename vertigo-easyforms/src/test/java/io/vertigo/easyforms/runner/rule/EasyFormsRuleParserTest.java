@@ -85,7 +85,7 @@ public class EasyFormsRuleParserTest {
 	private void checkResult(final String expression, final Map<String, Object> context, final boolean result) {
 		final Map<String, Serializable> globalContext = Map.of("user", (Serializable) Map.of("isActive", false));
 		final var res = EasyFormsRuleParser.parseComparison(expression, new EasyFormsData(context), globalContext);
-		Assertions.assertTrue(res.isValid(), "Parse error");
+		Assertions.assertTrue(res.isValid(), "Parse error : " + res.getErrorMessage());
 		Assertions.assertEquals(result, res.getResult());
 	}
 }
