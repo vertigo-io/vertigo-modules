@@ -47,6 +47,7 @@ public class MyNodeConfig {
 				.addModule(new AuditFeatures()
 						.withTrace()
 						.withMemoryTrace()
+						.withLogTrace()
 						.withLedger()
 						.withFakeBlockChain()
 						.build())

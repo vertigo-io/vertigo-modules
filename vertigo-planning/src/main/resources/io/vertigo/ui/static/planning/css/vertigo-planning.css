@@ -21,6 +21,10 @@
     font-size: 1rem;
 }
 
+.q-calendar .q-calendar-day__head--day__label {
+	cursor: initial;
+}
+
 .q-calendar .actions-event {
 	position: absolute;
 	top: 5px;

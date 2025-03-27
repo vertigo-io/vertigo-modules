@@ -49,7 +49,7 @@
 			    	
 			    	<q-separator ></q-separator>
 			    	
-			    	<q-card-section th:with="itemHolder = 'section'">
+			    	<q-card-section th:with="itemHolder = 'section'" v-for="item_index2 in [null]">
 			    		<q-list bordered separator th:ref="itemListUi">
 			    			<q-item th:v-for="|(item, item_index${insideBlock != null ? '2':''}) in ${itemHolder}.items|" class="q-hoverable">
 			    				<span class="q-focus-helper" th:if="${viewMode != 'read'}"></span>
@@ -202,8 +202,9 @@
 								    		object="editLabelText" rowIndex="${stat.index}" field="text"
 								    		autofocus="${stat.first}"
 								    		:toolbar="[['bold','italic','underline'],
-								    		           ['link'],
-								    		           ['unordered', 'ordered', 'outdent', 'indent'],
+								    		           ['link', 'unlink'],
+								    		           ['unordered', 'ordered', 'outdent', 'indent'],['infoBlock'],
+								    		           [],
 								    		           ['undo','redo'],
 								    		           ['viewsource']
 								    		          ]"/>
@@ -287,14 +288,14 @@
 								</vu:select-multiple-edit>
 							</vu:grid-cell>
 							<vu:grid-cell>
-								<div th:each="parentFieldType : ${model.fieldTypes}" th:if="${parentFieldType.hasTemplate}" th:v-if="|vueData.editItem.fieldType === '${parentFieldType.name}'|">
+								<div th:each="parentFieldType : ${model.fieldTypes}" th:if="${parentFieldType.hasTemplate}" th:v-if="|vueData.editItem.fieldType === '${parentFieldType.name}' && vueData.editItem?.parameters|">
 									<vu:easy-forms object="editItem" field="parameters" template="${model.fieldTypesTemplate['__${parentFieldType.name}__']}" isI18nLabel="true"/>
 								</div>
 							</vu:grid-cell>
 						</vu:grid>
 					</template>
 				</q-card-section>
-				<q-card-section class="flex justify-end">
+				<q-card-section class="flex justify-end q-mb-xl">
 					<q-btn @click="efSaveEditItem" color="primary" th:label="#{EfDesignerSave}" rounded></q-btn>
 				</q-card-section>
 			</q-card>

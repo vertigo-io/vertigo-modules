@@ -36,6 +36,9 @@ import io.vertigo.social.plugins.handle.redis.RedisHandlePlugin;
 import io.vertigo.social.plugins.mail.javax.JavaxMailPlugin;
 import io.vertigo.social.plugins.notification.memory.MemoryNotificationPlugin;
 import io.vertigo.social.plugins.notification.redis.RedisNotificationPlugin;
+import io.vertigo.social.plugins.sms.linkmobility.LinkMobilityRequestSpecializer;
+import io.vertigo.social.plugins.sms.linkmobility.LinkMobilitySmsSendPlugin;
+import io.vertigo.social.plugins.sms.linkmobility.LinkMobilitySmsWebServiceClient;
 import io.vertigo.social.plugins.sms.ovh.OvhRequestSpecializer;
 import io.vertigo.social.plugins.sms.ovh.OvhSmsSendPlugin;
 import io.vertigo.social.plugins.sms.ovh.OvhSmsWebServiceClient;
@@ -164,10 +167,25 @@ public final class SocialFeatures extends Features<SocialFeatures> {
 		return this;
 	}
 
-	@Feature("sms.ovh.ovhRequestSpecializer")
+	@Feature("sms.ovh.requestSpecializer")
 	public SocialFeatures withOvhRequestSpecializer(final Param... params) {
 		getModuleConfigBuilder()
 				.addComponent(OvhRequestSpecializer.class, params);
+		return this;
+	}
+
+	@Feature("sms.linkmobility")
+	public SocialFeatures withLinkMobilitySmsPlugin(final Param... params) {
+		getModuleConfigBuilder()
+				.addPlugin(LinkMobilitySmsSendPlugin.class, params)
+				.addAmplifier(LinkMobilitySmsWebServiceClient.class);
+		return this;
+	}
+
+	@Feature("sms.linkmobility.requestSpecializer")
+	public SocialFeatures withLinkMobilityRequestSpecializer(final Param... params) {
+		getModuleConfigBuilder()
+				.addComponent(LinkMobilityRequestSpecializer.class, params);
 		return this;
 	}
 

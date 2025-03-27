@@ -21,6 +21,7 @@ create Task TkGetExecutionByPreId {
 						order by ace.end_time desc limit 1) as HAS_ATTACHMENT
         	from o_process_execution pre   
         	where pre.PRE_ID = #preId#
+        	order by pre.begin_time desc        	
 			"
 	in preId	 	{domain : DoOIdentifiant		cardinality: "1" 	}
 	out dtOProcessExecutionUi	 	{domain : DoDtOProcessExecutionUi		cardinality: "1" 	}
@@ -75,6 +76,7 @@ create Task TkGetActivitiyByAceId {
         	left join o_activity_log acl on acl.ACE_ID = ace.ACE_ID
         	where ace.ACE_ID = #aceId#
         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD
+        	order by ace.BEGIN_TIME asc
         	
 			"
 	in aceId	 	{domain : DoOIdentifiant		cardinality: "1" 	}
@@ -101,6 +103,7 @@ create Task TkGetActivitiesByPreId {
         	left join o_activity_log acl on acl.ACE_ID = ace.ACE_ID
         	where ace.PRE_ID = #preId#
         	group by ace.ACE_ID, act.LABEL, ace.BEGIN_TIME, ace.END_TIME, acl.ATTACHMENT, acl.LOG, ace.EST_CD
+        	order by ace.BEGIN_TIME asc
         	
 			"
 	in preId	 	{domain : DoOIdentifiant		cardinality: "1" 	}

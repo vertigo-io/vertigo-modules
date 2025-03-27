@@ -2,6 +2,14 @@ let context = document.currentScript.dataset.context ;
 
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
+	
+	efRoundOrDefaut : function(value, decimals, defaultValue) {
+		if (!Number.isFinite(value)) {
+			return defaultValue;
+		}
+		const factor = Math.pow(10, decimals);
+		return Math.round((value + Number.EPSILON) * factor) / factor;
+	},
     
     // ****
     // * UI
@@ -11,15 +19,19 @@ VUiExtensions.methods = {
         return this.$data.vueData.fieldTypes.find(e => e.name === fieldTypeName)?.label;
     },
     
-    efCheckUploadConstraints : function(object, field, actualFileCount, maxFileCount, tooManyFilesMessage, actualSize, maxSize, tooBigMessage) {
-        let errors = [];
+    efCheckUploadConstraints : function(object, field, actualFileCount, maxFileCount, tooManyFilesMessage, actualSize, maxSize, tooBigMessage, conserveErrors = false) {
+        let errors = conserveErrors ? [...this.$data.uiMessageStack.objectFieldErrors?.[object]?.[field] || []] : [];
         
         if (maxFileCount != null && actualFileCount > maxFileCount) {
-            errors.push(tooManyFilesMessage);
+            if (!errors.includes(tooManyFilesMessage)) {
+                errors.push(tooManyFilesMessage);
+            }
         }
         
         if (maxSize != null && actualSize / 1024 / 1024 > maxSize) {
-            errors.push(tooBigMessage);
+            if (!errors.includes(tooBigMessage)) {
+                errors.push(tooBigMessage);
+            }
         }
         
         
@@ -42,6 +54,22 @@ VUiExtensions.methods = {
         this.$q.notify(this.uiMessageStackToNotify({globalErrors:errorMessages})[0])
     },
     
+    efDecodeDate: function (value, format) {
+        if (value === Quasar.date.formatDate(Quasar.date.extractDate(value, 'YYYY-MM-DD'), 'YYYY-MM-DD')) {
+            return Quasar.date.formatDate(Quasar.date.extractDate(value, 'YYYY-MM-DD'), format);
+        } else {
+            return value;
+        }
+    },
+
+    efEncodeDate: function (newValue, format) {
+        if (newValue === Quasar.date.formatDate(Quasar.date.extractDate(newValue, format), format)) {
+            return Quasar.date.formatDate(Quasar.date.extractDate(newValue, format), 'YYYY-MM-DD');
+        } else {
+            return newValue;
+        }
+    },
+
     
     // ****
     // * Sections
@@ -214,7 +242,25 @@ VUiExtensions.methods = {
 }
 
 window.addEventListener('vui-before-plugins', function(event) {
-    
+    // ****
+	// * Component to handle computed fields
+	// ****
+	let vuiEasyFormsComputed = Vue.defineComponent({
+		props: {
+			modelValue: { type: Number, required: true },
+			expression: { type: Number, required: true },
+		},
+		template: `<div>{{ expression }}</div>`,
+		emits: ["update:modelValue"],
+		watch: {
+			expression: function(newVal) {
+				this.$emit('update:modelValue', newVal);
+			},
+		}
+	});
+	event.detail.vuiAppInstance.component('vui-ef-computed',vuiEasyFormsComputed);
+	
+	
     // ****
     // * main component to handle JSON serialization
     // ****

@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda;
 
 import javax.inject.Inject;
@@ -672,7 +655,8 @@ public final class AgendaPAO implements StoreServices {
 	/**
 	 * Execute la tache TkGetTrancheHoraireDisplayByDate.
 	 * @param ageIds List de Long
-	 * @param dateLocale LocalDate
+	 * @param startDate LocalDate
+	 * @param endDate LocalDate
 	 * @param now Instant
 	 * @return DtList de TrancheHoraireDisplay trancheHoraires
 	*/
@@ -703,16 +687,17 @@ public final class AgendaPAO implements StoreServices {
                          AND res.date_locale = trh2.date_locale
                          AND res.minutes_debut >= trh2.minutes_Debut
                          AND res.minutes_debut < trh2.minutes_Fin
-                 WHERE trh2.age_id in ( #ageIds.rownum# ) and trh2.date_Locale = #dateLocale#
+                 WHERE trh2.age_id in ( #ageIds.rownum# ) and trh2.date_locale BETWEEN #startDate# AND #endDate#
                  GROUP BY trh2.trh_id, trh2.age_id) as res on res.trh_id = trh.trh_id and res.age_id = trh.age_id
-           WHERE trh.age_id in ( #ageIds.rownum# ) and trh.date_locale = #dateLocale#
+           WHERE trh.age_id in ( #ageIds.rownum# ) and trh.date_locale BETWEEN #startDate# AND #endDate#
            ORDER BY trh.minutes_Debut;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraireDisplay", name = "trancheHoraires")
-	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "dateLocale", smartType = "STyPLocalDate") final java.time.LocalDate dateLocale, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
 		final Task task = createTaskBuilder("TkGetTrancheHoraireDisplayByDate")
 				.addValue("ageIds", ageIds)
-				.addValue("dateLocale", dateLocale)
+				.addValue("startDate", startDate)
+				.addValue("endDate", endDate)
 				.addValue("now", now)
 				.build();
 		return getTaskManager()

@@ -27,19 +27,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import jakarta.mail.BodyPart;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
-import jakarta.mail.Part;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-import jakarta.mail.internet.MimeUtility;
 
 import io.vertigo.connectors.mail.MailSessionConnector;
 import io.vertigo.core.analytics.health.HealthChecked;
@@ -54,6 +41,19 @@ import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.social.impl.mail.MailPlugin;
 import io.vertigo.social.impl.mail.Resources;
 import io.vertigo.social.mail.Mail;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
 
 /**
  * Plugin de gestion des mails, pour l'implémentation du jdk.
@@ -89,7 +89,7 @@ public final class JavaxMailPlugin implements MailPlugin {
 		Assertion.check()
 				.isNotNull(connectorNameOpt)
 				.isNotNull(mailSessionConnectors)
-				.isNotBlank(developmentMailTo);
+				.when(developmentMode, () -> Assertion.check().isNotBlank(developmentMailTo));
 		//-----
 		final String connectorName = connectorNameOpt.orElse("main");
 		mailSessionConnector = mailSessionConnectors.stream()

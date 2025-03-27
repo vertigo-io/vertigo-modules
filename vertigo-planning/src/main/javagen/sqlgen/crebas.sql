@@ -44,7 +44,7 @@ create sequence SEQ_TRANCHE_HORAIRE
 create table AGENDA
 (
     AGE_ID      	 NUMERIC     	not null,
-    NOM         	 VARCHAR(100)	not null,
+    NOM         	 VARCHAR(250)	not null,
     constraint PK_AGENDA primary key (AGE_ID)
 );
 

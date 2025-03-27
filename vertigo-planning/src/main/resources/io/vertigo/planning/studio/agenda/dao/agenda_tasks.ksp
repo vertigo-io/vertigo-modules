@@ -431,15 +431,16 @@ create Task TkGetTrancheHoraireDisplayByDate {
                          AND res.date_locale = trh2.date_locale
                          AND res.minutes_debut >= trh2.minutes_Debut
                          AND res.minutes_debut < trh2.minutes_Fin
-                 WHERE trh2.age_id in ( #ageIds.rownum# ) and trh2.date_Locale = #dateLocale#
+                 WHERE trh2.age_id in ( #ageIds.rownum# ) and trh2.date_locale BETWEEN #startDate# AND #endDate#
                  GROUP BY trh2.trh_id, trh2.age_id) as res on res.trh_id = trh.trh_id and res.age_id = trh.age_id
-           WHERE trh.age_id in ( #ageIds.rownum# ) and trh.date_locale = #dateLocale#
+           WHERE trh.age_id in ( #ageIds.rownum# ) and trh.date_locale BETWEEN #startDate# AND #endDate#
            ORDER BY trh.minutes_Debut;
            "
     in  ageIds          {domain : DoPId                        cardinality: "*" }
-    in  dateLocale      {domain : DoPLocalDate                 cardinality: "1" }
+    in  startDate       {domain : DoPLocalDate                 cardinality: "1" }
+    in  endDate         {domain : DoPLocalDate                 cardinality: "1" }
     in  now             {domain : DoPInstant                   cardinality: "1" }
-    out trancheHoraires {domain : DoDtTrancheHoraireDisplay   cardinality: "*" }
+    out trancheHoraires {domain : DoDtTrancheHoraireDisplay    cardinality: "*" }
 }
 
 

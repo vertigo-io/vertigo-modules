@@ -41,7 +41,7 @@ create DtDefinition DtPlageHoraire { /* Niveau d'administration */
 
 create DtDefinition DtAffectionReservation {
     field trhId {domain: DoPId label:"Id de tranche horaire" }
-    field creIds {domain: DoMultipleIds label:"Liste des creneaux disponibles" }
+    field creIds {domain: DoPMultipleIds label:"Liste des creneaux disponibles" }
     field creId {domain: DoPId label:"creneau affecté" }
     field recId {domain: DoPId label:"Id de la reservation" }
     field instantCreation {domain: DoPInstant label:"Date de creation de la reservation" }

@@ -11,7 +11,7 @@ create DtDefinition DtAgendaDisplayRange {
 
 create DtDefinition DtAgendaDisplay {
     field ageId {domain: DoPId label:"Id" cardinality:"1"}
-    field name {domain: DoPLabel label:"Name"}
+    field name {domain: DoPLabel label:"Name" cardinality:"1"}
     field overridedName {domain: DoPLabel label:"Name"}
     computed displayName { domain: DoPLabel label: "Nom agenda" 
     expression:"if (overridedName != null) {

@@ -15,12 +15,12 @@
 						<div th:if="${template.useSections}" class="q-card__section" >
 							<q-item>
 								<q-item-section>
-								    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
-									<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
-									<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
-									<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
-									<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
-									<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, model.efoAllLang, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
+								    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
+									<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
+									<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
+									<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
+									<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
+									<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
 								</q-item-section>
 							</q-item>
 						</div>
@@ -30,7 +30,7 @@
 							<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
 								<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
 									<th:block th:if="${templateItem.type == 'STATIC'}">
-				    					<div th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, model.efoAllLang, isI18nLabel)}"></div>
+				    					<div class="q-mb-lg ef-static-text" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, isI18nLabel)}"></div>
 				    				</th:block>
 				    				<template th:if="${templateItem.type == 'BLOCK'}"
 				    						  th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.condition)}">
@@ -43,16 +43,16 @@
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
 									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
-									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, model.efoAllLang, isI18nLabel)},
-									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, model.efoAllLang, isI18nLabel)}">
+									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, isI18nLabel)},
+									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
-											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})}|"
+											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">
 											    
 											    <vu:content></vu:content>
 											    
 												<div th:case="'EfUicInternalMap'">
-													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="false">
+													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="false">
 														<vu:slot name="after_label_slot">
 															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
 															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
@@ -61,34 +61,40 @@
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
-												<div th:case="'EfUicFile'" th:with="ref=|'uploader_${object}_${field}$${fieldCode}'|">
-													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+												<div th:case="'EfUicFile'" th:with="ref=|uploader_${object}_${field}--${fieldCode}|">
+													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}" th::ref="|'${ref}_label'|">
 												        <vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 															</q-icon>
 												        </vu:slot>
-														<v-file-upload 
-														    th::ref="${ref}"
+														<v-file-upload-quasar 
+														    th::ref="|'${ref}'|"
 															class="q-mt-md"
 												            th:url="@{/easyforms/form/upload}" field-name="file"  
-												            :simple="false" :multiple="true"
+															:form-fields="[{name:'CTX',value:vueData.CTX}]"
+												            :simple="false" th::multiple="true"
 												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
 												            th:accept="${fieldParameters['accept']}"
 												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAccept(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
 												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
-												            th:@update:file-info-uris="|(newFileInfoUris) => {${fieldModel} = newFileInfoUris;
-												            												  efCheckUploadConstraints('${object}','${field}$${fieldCode}',
-												            												                           ${fieldModel}?.length, ${templateItem.maxItems}, `#{EfUplaodMaxCount(${templateItem.maxItems})}`,
-												            												                           $refs[${ref}].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
+												            th:@update:file-info-uris="|(newFileInfoUris) => {
+												            												  efCheckUploadConstraints('${object}','${field}',
+												            												                           newFileInfoUris?.length, ${templateItem.maxItems}, `#{EfUploadMaxCount(${templateItem.maxItems},${templateItem.maxItems>1?'s':''})}`,
+												            												                           $refs['${ref}'].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`);
+												            												  ${fieldModel} = newFileInfoUris;
 												            												 }|"
 												            th:@download-file="|(fileUri) => goTo('@{/easyforms/form/upload/download/}' + fileUri)|"
+												            th:@init-ok="|efCheckUploadConstraints('${object}','${field}',
+				            												                           $refs['${ref}'].$data.files.length, ${templateItem.maxItems}, `#{EfUploadMaxCount(${templateItem.maxItems},${templateItem.maxItems>1?'s':''})}`,
+				            												                           $refs['${ref}'].getGlobalSize(), ${fieldParameters['maxSize']}, `#{EfUploadMaxSize(${fieldParameters['maxSize']})}`,
+				            												                           true);|"
 												            th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__"
-											            ></v-file-upload>
+											            ></v-file-upload-quasar>
 	         									   </vu:label-edit>
 												</div>
 												<div th:case="'EfUicRadio'">
-													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
 												        <vu:slot name="after_label_slot">
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
@@ -106,15 +112,30 @@
 													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicCheckbox'">
-													<vu:label-edit object="${object}" field="|${field}$${fieldCode}|" th:label="${fieldLabel}" required="false"
-																   th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|">
-														<vu:slot name="after_label_slot">
-															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
-																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
-															</q-icon>
-															<!--/* We don't use required attribute on vu:label => Hack so that subsequent inputs don't have the red * */-->
-															<span th:if="${templateItem.isMandatory}" class="v-block__required"></span>
-														</vu:slot>
+													<q-field :label-width="3"
+												             th:label="|${fieldLabel}|"
+												             th:aria-required="${templateItem.isMandatory}"
+												             th::error="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
+												             th::aria-describedby="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex}) ? 'input-${fieldCode}-desc-error' : null|"
+															 th::aria-invalid="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|"
+												             orientation="vertical"
+												             stack-label
+												             borderless
+												             th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|"
+												             bottom-slots
+												             th:classappend="|${templateItem.isMandatory?'v-field_'+'_required':''} v-field__has_after_label|"
+												    >
+														<template v-slot:label slot-scope="props">
+															<span vu:text="${fieldLabel}"/>
+															<span class="v-field__after_label all-pointer-events">
+																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+																</q-icon>
+														    </span>
+														</template>
+														<template v-slot:error>
+													        <div th:id="|input-${fieldCode}-desc-error|">{{ <th:block th:text="|getErrorMessage('${object}', '${field}--${fieldCode}', ${rowIndex})|"/> }}</div>
+														</template>
 														<q-option-group
 													    	th:v-model="${fieldModel}"
 													    	th:@update:model-value="__${fieldParameters['onChange']}__"
@@ -124,7 +145,7 @@
 													    	color="primary"
 													    	th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__"
 													    ></q-option-group>
-													</vu:label-edit>
+													</q-field>
 												</div>
 												<div th:case="'EfUicSelect'"
 													 th:attr="objectKey=${model.vContext['componentStates'].addComponentState(fieldId).addPrimitive('searchValue','')}">
@@ -139,8 +160,9 @@
 														th:label="${fieldLabel}"
 														th:classappend="|${templateItem.isMandatory?'v-field__required':''}|"
 											            th:aria-required="${templateItem.isMandatory}"
-											            th::error="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
-														th::error-message="|getErrorMessage('${object}', '${field}$${fieldCode}', ${rowIndex})|"
+											            th::error="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
+														th::aria-describedby="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex}) ? 'input-${fieldCode}-desc-error' : null|"
+														th::aria-invalid="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
 														orientation="vertical"
 														stack-label
 														label-slot
@@ -153,19 +175,23 @@
 																</q-icon>
 															</div>
 														</template>
+														<template v-slot:error>
+													        <div th:id="|input-${fieldCode}-desc-error|">{{ <th:block th:text="|getErrorMessage('${object}', '${field}--${fieldCode}', ${rowIndex})|"/> }}</div>
+														</template>
 													</q-select>
 												</div>
 												<div th:case="'EfUicDate'"
-													 th:with="myFormat=${fieldParameters['uiDatetimeFormat']?: 'DD/MM/YYYY'}, myRef=|'date_${object}_${field}$${fieldCode}'|">
+													 th:with="myFormat=${fieldParameters['uiDatetimeFormat']?: 'DD/MM/YYYY'}, myRef=|'date_${object}_${field}--${fieldCode}'|">
 													<q-input 
-															th:v-autofocus="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|"
-															th:v-bind:model-value="|decodeDate(${fieldModel}, '${myFormat}')|" 
-															th:@update:model-value="|function (newValue) { ${fieldModel} = encodeDate(newValue, '${myFormat}') }|" 
+															th:v-autofocus="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|"
+															th:v-bind:model-value="|efDecodeDate(${fieldModel}, '${myFormat}')|" 
+															th:@update:model-value="|function (newValue) { ${fieldModel} = efEncodeDate(newValue, '${myFormat}') }|" 
+															th::aria-describedby="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex}) ? 'input-${fieldCode}-desc-error' : null|"
+															th::aria-invalid="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
 															stack-label
 															th:classappend="${templateItem.isMandatory?'v-field__required':''}"
 															th:aria-required="${templateItem.isMandatory}"
-															th::error="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
-															th::error-message="|getErrorMessage('${object}', '${field}$${fieldCode}', ${rowIndex})|"
+															th::error="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
 															label-slot
 															th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__" >
 														<template v-slot:prepend>
@@ -174,7 +200,7 @@
 														             <q-date 
 														             	th:v-model="${fieldModel}"
 														             	:landscape="$q.screen.gt.xs"
-														             	mask="DD/MM/YYYY"
+														             	mask="YYYY-MM-DD"
 														             	th:@update:model-value="|() => $refs[${myRef}].hide()|">
 														             </q-date> 
 													       		</q-popup-proxy>
@@ -188,17 +214,42 @@
 																</q-icon>
 															</div>
 														</template>
+														<template v-slot:error>
+													        <div th:id="|input-${fieldCode}-desc-error|">{{ <th:block th:text="|getErrorMessage('${object}', '${field}--${fieldCode}', ${rowIndex})|"/> }}</div>
+														</template>
 												    </q-input>
+												</div>
+												<div th:case="'EfUicReadOnly'"
+												     th:with="expression=${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.defaultValue)}">
+													    <q-field
+													            orientation="vertical"
+													            stack-label label-slot
+													            readonly disable
+													            bottom-slots
+													            borderless
+													    >
+													        <template v-slot:label>
+																<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
+																	<span vu:text="${fieldLabel}" />
+																	<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																		<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+																	</q-icon>
+																</div>
+															</template>
+															<template v-slot:control>
+															    <vui-ef-computed th:v-model="${fieldModel}"
+															    				 th::expression="|efRoundOrDefaut(${expression}, 2, null)|"></vui-ef-computed>
+															</template>
+														</q-field>
 												</div>
 												<div th:case="*">
 													<q-input 
-															th:v-autofocus="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|"
+															th:v-autofocus="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|"
 															th:v-model="${fieldModel}"
-															th::aria-describedby="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex}) ? 'text-input-${templateItem.code}-desc-error' : null|"
-															th::aria-invalid="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
-															th:id="|text-input-${fieldCode}|"
-															th::error="|hasFieldsError('${object}', '${field}$${fieldCode}', ${rowIndex})|" 
-															th::error-message="|getErrorMessage('${object}', '${field}$${fieldCode}', ${rowIndex})|"
+															th::aria-describedby="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex}) ? 'input-${fieldCode}-desc-error' : null|"
+															th::aria-invalid="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
+															th:id="|input-${fieldCode}|"
+															th::error="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
 															th:type="${fieldType.uiComponentName == 'EfUicTextArea' ? 'textarea' : (fieldType.uiComponentName == 'EfUicDate' ? 'date' : (fieldType.uiComponentName == 'EfUicDateTime' ? 'datetime-local' : (fieldType.uiComponentName == 'EfUicNumber' ? 'number' : 'text')))}"
 															th::counter="${fieldType.uiComponentName == 'EfUicTextArea' ? 'true' : 'false'}"
 															th:autocomplete="${fieldParameters['textFieldAutocomplete']}"
@@ -216,6 +267,9 @@
 																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 																</q-icon>
 															</div>
+														</template>
+														<template v-slot:error>
+													        <div th:id="|input-${fieldCode}-desc-error|">{{ <th:block th:text="|getErrorMessage('${object}', '${field}--${fieldCode}', ${rowIndex})|"/> }}</div>
 														</template>
 													</q-input>
 												</div>
@@ -265,11 +319,14 @@
 							<div th:if="${value instanceof T(java.util.List)}">
 								<div th:each="item : ${value}">
 									<th:block th:ref="itemDisplay">
-										<div th:if="${item[urn] != null}"><a th:href="@{/easyforms/form/upload/download/{uri}(uri=${item[urn]})}" th:text="${item[label]}"></a></div>
-										<div th:unless="${item[urn] != null}" th:text="${item[label]}"></div>
+										<div th:if="${item[urn] != null}"><a th:href="@{/easyforms/form/upload/download/{uri}(uri=${item[urn]})}" vu:text="${item[label]}"></a></div>
+										<th:block th:unless="${item[urn] != null}">
+											<div th:if="${item[label] != ''}" vu:text="${item[label]}"></div>
+											<div th:if="${item[label] == ''}" vu:text="#{EfNoValue}" class="text-caption text-italic"></div>
+										</th:block>
 									</th:block>
 								</div>
-								<div th:if="${value.size() == 0}" th:text="#{EfNoValue}" class="text-caption text-italic"></div>
+								<div th:if="${value.size() == 0}" vu:text="#{EfNoValue}" class="text-caption text-italic"></div>
 							</div>
 				            <div th:unless="${value instanceof T(java.util.List)}" th:with="item=${value}" th:insert="~{:: itemDisplay}"></div>
 				            

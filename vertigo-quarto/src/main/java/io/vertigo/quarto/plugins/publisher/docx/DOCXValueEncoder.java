@@ -21,11 +21,13 @@ import io.vertigo.commons.codec.Encoder;
 import io.vertigo.core.util.StringUtil;
 
 /**
- * Implémentation de l'encodage des données dans un fichier ODT.
+ * Implémentation de l'encodage des données dans un fichier DOCX.
  *
  * @author npiedeloup
  */
 public final class DOCXValueEncoder implements Encoder<String, String> {
+
+	private final DOCXHtmlValueEncoder htmlValueEncoder = new DOCXHtmlValueEncoder();
 
 	/** {@inheritDoc} */
 	@Override
@@ -33,6 +35,11 @@ public final class DOCXValueEncoder implements Encoder<String, String> {
 		if (toEncode == null) {
 			return null;
 		}
+
+		if (toEncode.startsWith("<html>") && toEncode.endsWith("</html>")) {
+			return htmlValueEncoder.encode(toEncode);
+		}
+
 		final StringBuilder result = new StringBuilder(toEncode);
 		StringUtil.replace(result, "&", "&amp;");
 		StringUtil.replace(result, "<", "&lt;");

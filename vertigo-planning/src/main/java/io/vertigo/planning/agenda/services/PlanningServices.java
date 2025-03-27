@@ -85,22 +85,6 @@ import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 @Transactional
 public class PlanningServices implements Component {
 
-	public static final int MAX_AGENDA_TO_LOAD = 20;
-
-	private static final int CREATE_MIN_DUREE_PLAGE_MINUTE = 60;
-	private static final int CREATE_MAX_DUREE_PLAGE_HEURE = 10;
-	private static final int CREATE_MAX_NB_GUICHET = 9;
-	private static final int CREATE_MAX_DAYS_FROM_NOW = 365; //maximum 1 an par rapport à aujourd'hui
-
-	private static final int PUBLISH_MAX_DAYS_FROM_NOW = 365; //maximum 1 an par rapport à aujourd'hui
-	private static final int PUBLISH_MAX_DAYS_PERIODE = 31 * 2; //maximum 2 mois publié à la fois
-	private static final int PUBLISH_NOW_DELAY_S = 60; //1 minute de sécurité avant publication effective
-
-	private static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
-
-	private static final int DUPLICATE_MAX_DAYS_PERIODE = 31 * 3; //3 mois
-	private static final int DUPLICATE_MAX_DAYS_FROM_NOW = 365; //maximum 1 an par rapport à aujourd'hui
-
 	@Inject
 	private AgendaDAO agendaDAO;
 	@Inject
@@ -115,6 +99,8 @@ public class PlanningServices implements Component {
 	private AgendaPAO agendaPAO;
 	@Inject
 	private VTransactionManager transactionManager;
+	@Inject
+	private PlanningServicesConfig planningServicesConfig;
 
 	public Agenda createAgenda(final String name) {
 		Assertion.check().isNotBlank(name, "A agenda must have a name");
@@ -125,51 +111,52 @@ public class PlanningServices implements Component {
 		return createdAgenda;
 	}
 
-	public PlageHoraire createPlageHoraire(final CreationPlageHoraireForm creationPlageHoraireForm, final AgendaDisplayRange agendaDisplayRange) {
+	public PlageHoraire createPlageHoraire(final CreationPlageHoraireForm creationPlageHoraireForm, final List<UID<Agenda>> authorizedAgeUids, final int maxWeekDaysNumber) {
 		/** Contrôles User */
 		final var uiErrorBuilder = new UiErrorBuilder();
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), creationPlageHoraireForm.getDateLocale());
-		if (Math.abs(decalageJours) > CREATE_MAX_DAYS_FROM_NOW) {
+		if (Math.abs(decalageJours) > planningServicesConfig.getCreateMaxDaysFromNow()) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.dateLocale,
-					LocaleMessageText.of("La date de la plage horaire doit être à moins d'1 an"));
+					LocaleMessageText.of("La date de la plage horaire doit être à moins de {0}", getDaysLimitLabel(planningServicesConfig.getCreateMaxDaysFromNow(), false)));
 		}
-		if (creationPlageHoraireForm.getNbGuichet() <= 0 || creationPlageHoraireForm.getNbGuichet() > CREATE_MAX_NB_GUICHET) {
+		if (creationPlageHoraireForm.getNbGuichet() <= 0 || creationPlageHoraireForm.getNbGuichet() > planningServicesConfig.getCreateMaxNbGuichet()) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.nbGuichet,
-					LocaleMessageText.of("Le nombre de guichets doit être un nombre compris entre 1 et 9"));
+					LocaleMessageText.of("Le nombre de guichets doit être un nombre compris entre 1 et {0}", planningServicesConfig.getCreateMaxNbGuichet()));
 		}
 
-		if (creationPlageHoraireForm.getMinutesDebut() < 7 * 60 + 30) {
+		if (creationPlageHoraireForm.getMinutesDebut() < planningServicesConfig.getCreatePlageHeureMin()) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit débuter au plus tôt à 07:30"));
+					LocaleMessageText.of("La plage horaire doit débuter au plus tôt à {0}", getMinutesLabel(planningServicesConfig.getCreatePlageHeureMin())));
 		}
-		if (creationPlageHoraireForm.getMinutesFin() > 21 * 60) {
+		if (creationPlageHoraireForm.getMinutesFin() > planningServicesConfig.getCreatePlageHeureMax()) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesFin,
-					LocaleMessageText.of("La plage horaire doit finir au plus tard à 21:00"));
+					LocaleMessageText.of("La plage horaire doit finir au plus tard à {0}", getMinutesLabel(planningServicesConfig.getCreatePlageHeureMax())));
 		}
 
 		final var dureePlageMinute = creationPlageHoraireForm.getMinutesFin() - creationPlageHoraireForm.getMinutesDebut();
 		if (dureePlageMinute <= 0) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesFin,
 					LocaleMessageText.of("L'heure de fin de la plage horaire doit être postérieur à l'heure de début"));
-		} else if (dureePlageMinute < CREATE_MIN_DUREE_PLAGE_MINUTE) {
+		} else if (dureePlageMinute < planningServicesConfig.getCreateMinDureePlageMinute()) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit avoir une durée d'au moins " + CREATE_MIN_DUREE_PLAGE_MINUTE + " minutes"));
-		} else if (dureePlageMinute > CREATE_MAX_DUREE_PLAGE_HEURE * 60) {
+					LocaleMessageText.of("La plage horaire doit avoir une durée d'au moins {0} minutes", planningServicesConfig.getCreateMinDureePlageMinute()));
+		} else if (dureePlageMinute > planningServicesConfig.getCreateMaxDureePlageHeure() * 60) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.minutesDebut,
-					LocaleMessageText.of("La plage horaire doit avoir une durée inférieure à " + CREATE_MAX_DUREE_PLAGE_HEURE + " heures"));
+					LocaleMessageText.of("La plage horaire doit avoir une durée inférieure à {0} heures", planningServicesConfig.getCreateMaxDureePlageHeure()));
 		}
 
-		if (creationPlageHoraireForm.getDateLocale().getDayOfWeek() == DayOfWeek.SUNDAY) {
+		if (creationPlageHoraireForm.getDateLocale().getDayOfWeek().getValue() > maxWeekDaysNumber) {
 			uiErrorBuilder.addError(creationPlageHoraireForm, CreationPlageHoraireFormFields.dateLocale,
-					LocaleMessageText.of("Il n'est pas possible de créer une plage le dimanche"));
+					LocaleMessageText.of("Il n'est pas possible de créer une plage sur ce jour de la semaine"));
 		}
 		//---
 
-		final var ageId = checkAuthorizedAgenda(UID.of(Agenda.class, creationPlageHoraireForm.getAgeId()), agendaDisplayRange);
+		final var ageId = checkAuthorizedAgenda(UID.of(Agenda.class, creationPlageHoraireForm.getAgeId()), authorizedAgeUids);
 		final var agenda = agendaDAO.readOneForUpdate(ageId); //ForUpdate pour éviter les doublons
 
+		final var authorizedAgeIds = authorizedAgeUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		final var firstPlageConflict = plageHoraireDAO.getExistsConflictingPlageHoraire(
-				agendaDisplayRange.getAgeIds(),
+				authorizedAgeIds,
 				creationPlageHoraireForm.getDateLocale(),
 				creationPlageHoraireForm.getMinutesDebut(),
 				creationPlageHoraireForm.getMinutesFin());
@@ -237,18 +224,18 @@ public class PlanningServices implements Component {
 				LocaleMessageText.of("La date de fin de la plage de copie doit être postérieur à la date de début"));
 
 		final var dureeDuplicationJours = ChronoUnit.DAYS.between(duplicationSemaineForm.getDateLocaleToDebut(), duplicationSemaineForm.getDateLocaleToFin());
-		if (dureeDuplicationJours > DUPLICATE_MAX_DAYS_PERIODE) {
+		if (dureeDuplicationJours > planningServicesConfig.getDuplicateMaxDaysPeriode()) {
 			uiErrorBuilder.addError(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleToFin,
-					LocaleMessageText.of("Vous ne pouvez pas dupliquer une semaine sur plus de 3 mois"));
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer une semaine sur plus de {0}", getDaysLimitLabel(planningServicesConfig.getDuplicateMaxDaysPeriode(), false)));
 		}
 
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), duplicationSemaineForm.getDateLocaleToDebut());
-		if (decalageJours > DUPLICATE_MAX_DAYS_FROM_NOW) { //abs : on autorise la publication de creneau passé
+		if (decalageJours > planningServicesConfig.getDuplicateMaxDaysFromNow()) { //abs : on autorise la publication de creneau passé
 			uiErrorBuilder.addError(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleToDebut,
-					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus d'1 an"));
-		} else if (Math.abs(decalageJours) > DUPLICATE_MAX_DAYS_FROM_NOW) { //abs : on autorise la publication de creneau passé
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus de {0}", getDaysLimitLabel(planningServicesConfig.getDuplicateMaxDaysFromNow(), false)));
+		} else if (Math.abs(decalageJours) > planningServicesConfig.getDuplicateMaxDaysFromNow()) { //abs : on autorise la publication de creneau passé
 			uiErrorBuilder.addError(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleToDebut,
-					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus d'1 an"));
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus de {0}", getDaysLimitLabel(planningServicesConfig.getDuplicateMaxDaysFromNow(), false)));
 		}
 
 		if (duplicationSemaineForm.getDateLocaleToDebut().isBefore(LocalDate.now())) {
@@ -262,8 +249,12 @@ public class PlanningServices implements Component {
 		uiErrorBuilder.throwUserExceptionIfErrors();
 		/*****/
 
-		//on lock tous les agendas concernés : Attention ça peut locker la table !!
-		ageUids.forEach(ageUid -> agendaDAO.readOneForUpdate(ageUid)); //ForUpdate pour éviter les doublons
+		//on lock tous les agendas existants concernés : Attention ça peut locker la table !!
+		ageUids.forEach(ageUid -> {
+			if ((Long) ageUid.getId() > 0L) {
+				agendaDAO.readOneForUpdate(ageUid);
+			}
+		}); //ForUpdate pour éviter les doublons
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		final var ageIdsArray = ageIds.toArray(Serializable[]::new);
 		final var plageHorairesFrom = plageHoraireDAO.findAll(
@@ -371,11 +362,17 @@ public class PlanningServices implements Component {
 		return agendaDAO.get(ageUid);
 	}
 
+	/*public void saveAgenda(final Agenda agenda) {
+		Assertion.check().isNotNull(agenda.getAgeId());
+		//---
+		agendaDAO.save(agenda);
+	}*/
+
 	public DtList<Agenda> getAgendas(final List<UID<Agenda>> ageUids) {
 		Assertion.check()
 				.isNotNull(ageUids)
 				.isTrue(ageUids.size() > 0, "Aucun agenda à charger")
-				.isTrue(ageUids.size() <= MAX_AGENDA_TO_LOAD, "Too much agenda to load, max {}", MAX_AGENDA_TO_LOAD);
+				.isTrue(ageUids.size() <= PlanningServicesConfig.MAX_AGENDA_TO_LOAD, "Too much agenda to load, max {}", PlanningServicesConfig.MAX_AGENDA_TO_LOAD);
 		//---
 		final Serializable[] ageIds = ageUids.stream().map(UID::getId).toArray(Serializable[]::new);
 		return agendaDAO.findAll(Criterions.in(AgendaFields.ageId, ageIds), DtListState.defaultOf(Agenda.class));
@@ -398,7 +395,7 @@ public class PlanningServices implements Component {
 				.isNotNull(firstDate)
 				.isNotNull(lastDate)
 				.isTrue(ageUids.size() > 0, "Aucun agenda à charger")
-				.isTrue(ageUids.size() <= MAX_AGENDA_TO_LOAD, "Too much agenda to load, max {}", MAX_AGENDA_TO_LOAD);
+				.isTrue(ageUids.size() <= PlanningServicesConfig.MAX_AGENDA_TO_LOAD, "Too much agenda to load, max {}", PlanningServicesConfig.MAX_AGENDA_TO_LOAD);
 		//--
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		return agendaPAO.getPlageHoraireDisplayByAgeIds(ageIds, firstDate, lastDate, Instant.now());
@@ -459,7 +456,7 @@ public class PlanningServices implements Component {
 
 	public DtList<PlageHoraireDisplay> getReservationOrphelines(final List<UID<Agenda>> ageUids, final LocalDate firstDate, final LocalDate lastDate) {
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
-		return agendaPAO.countUnlinkReservationPerXminByAgeId(ageIds, firstDate, lastDate, ORPHAN_RESERVATION_AGG_MINUTES);
+		return agendaPAO.countUnlinkReservationPerXminByAgeId(ageIds, firstDate, lastDate, PlanningServicesConfig.ORPHAN_RESERVATION_AGG_MINUTES);
 	}
 
 	public LocalDate getPremierJourLibrePourDuplication(final AgendaDisplayRange agendaRange) {
@@ -597,9 +594,9 @@ public class PlanningServices implements Component {
 		//On change le status des trancheHoraires non publiées en masse (y compris celles planifiées)
 		final var uiErrorBuilder = new UiErrorBuilder();
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), publicationTrancheHoraireForm.getDateLocaleDebut());
-		if (Math.abs(decalageJours) > PUBLISH_MAX_DAYS_FROM_NOW) { //abs : on autorise la publication de creneau passé
+		if (Math.abs(decalageJours) > planningServicesConfig.getPublishMaxDaysFromNow()) { //abs : on autorise la publication de creneau passé
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleDebut,
-					LocaleMessageText.of("Vous ne pouvez pas publier des créneaux à plus d'1 an"));
+					LocaleMessageText.of("Vous ne pouvez pas publier des créneaux à plus de {0}", getDaysLimitLabel(planningServicesConfig.getPublishMaxDaysFromNow(), false)));
 		} else if (decalageJours < 0) { //on n'autorise pas la publication de creneau passé RDV-154
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleDebut,
 					LocaleMessageText.of("Vous ne pouvez pas publier des créneaux du passé"));
@@ -609,9 +606,9 @@ public class PlanningServices implements Component {
 		if (dureeJours < 0) {//inferieur strictement
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleFin,
 					LocaleMessageText.of("La date de fin de la selection doit être postérieur à la date de début"));
-		} else if (dureeJours > PUBLISH_MAX_DAYS_PERIODE) {
+		} else if (dureeJours > planningServicesConfig.getPublishMaxDaysPeriode()) {
 			uiErrorBuilder.addError(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.dateLocaleFin,
-					LocaleMessageText.of("Vous ne pouvez pas publier plus de 2 mois à la fois"));
+					LocaleMessageText.of("Vous ne pouvez pas publier plus de {0} à la fois", getDaysLimitLabel(planningServicesConfig.getPublishMaxDaysPeriode(), true)));
 		}
 		if (!publicationTrancheHoraireForm.getPublishNow()) {
 			uiErrorBuilder.checkFieldNotNull(publicationTrancheHoraireForm, PublicationTrancheHoraireFormFields.publicationDateLocale,
@@ -630,7 +627,7 @@ public class PlanningServices implements Component {
 
 		Instant datePublication;
 		if (publicationTrancheHoraireForm.getPublishNow()) {
-			datePublication = Instant.now().plusSeconds(PUBLISH_NOW_DELAY_S);
+			datePublication = Instant.now().plusSeconds(planningServicesConfig.getPublishNowDelaySecond());
 		} else {
 
 			final var localTime = LocalTime.ofSecondOfDay(publicationTrancheHoraireForm.getPublicationMinutesDebut() * 60L);
@@ -729,13 +726,14 @@ public class PlanningServices implements Component {
 		return agendaPAO.getDateDisponibleDisplayByAgeIds(ageIds, startDate, endDate, Instant.now());
 	}
 
-	public DtList<TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(final List<UID<Agenda>> ageUids, final LocalDate localDate) {
+	public DtList<TrancheHoraireDisplay> getTrancheHoraireDisplayByDate(final List<UID<Agenda>> ageUids, final LocalDate startDate, final LocalDate endDate) {
 		Assertion.check()
 				.isNotNull(ageUids)
-				.isNotNull(localDate);
+				.isNotNull(startDate)
+				.isNotNull(endDate);
 		//-----
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
-		return agendaPAO.getTrancheHoraireDisplayByDate(ageIds, localDate, Instant.now());
+		return agendaPAO.getTrancheHoraireDisplayByDate(ageIds, startDate, endDate, Instant.now());
 	}
 
 	public void deleteEmptyAgenda(final UID<Agenda> agendaUid) {
@@ -752,18 +750,53 @@ public class PlanningServices implements Component {
 		return agendaPAO.purgePlageHoraireByDateLocale(olderThan);
 	}
 
-	public UID<Agenda> checkAuthorizedAgendaOfPlh(final UID<PlageHoraire> plhUid, final AgendaDisplayRange agenda) {
+	public UID<Agenda> checkAuthorizedAgendaOfPlh(final UID<PlageHoraire> plhUid, final List<UID<Agenda>> authorizedAgeUids) {
 		final var plageHoraire = plageHoraireDAO.get(plhUid);
 		final var ageUid = UID.of(Agenda.class, plageHoraire.getAgeId());
-		return checkAuthorizedAgenda(ageUid, agenda);
+		return checkAuthorizedAgenda(ageUid, authorizedAgeUids);
 	}
 
-	public UID<Agenda> checkAuthorizedAgenda(final UID<Agenda> ageUid, final AgendaDisplayRange agenda) {
+	public UID<Agenda> checkAuthorizedAgenda(final UID<Agenda> ageUid, final List<UID<Agenda>> authorizedAgeUids) {
 		//check ageId in agenda.getAgeIds()
-		if (!agenda.getAgeIds().contains(ageUid.getId())) {
+		if (!authorizedAgeUids.contains(ageUid)) {
 			throw new VSecurityException(LocaleMessageText.of("Vous n'avez pas les droits pour agir sur cet agenda"));
 		}
 		return ageUid;
+	}
+
+	protected final String getMinutesLabel(final int minutesOfDay) {
+		return String.format("%02d:%02d", minutesOfDay / 60, minutesOfDay % 60);
+	}
+
+	protected String getDaysLimitLabel(final int days, final boolean onlyOneLevel) {
+		Assertion.check().isTrue(days > 0, "Can't display less than 1 day");
+		//--
+		final int years = days / 365;
+		final int remainingDaysAfterYears = days % 365;
+		final int months = remainingDaysAfterYears / 30;
+		final int remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+		final int weeks = remainingDaysAfterMonths / 7;
+		final int remainingDaysAfterWeeks = remainingDaysAfterMonths % 7;
+
+		if (years > 0 && (remainingDaysAfterYears == 0 || onlyOneLevel)) {
+			return plurialize(years, "an", "ans");
+		} else if (months > 0 && (remainingDaysAfterMonths == 0 || onlyOneLevel)) {
+			return plurialize(months, "mois", "mois");
+		} else if (weeks > 0 && (remainingDaysAfterWeeks == 0 || onlyOneLevel)) {
+			return plurialize(weeks, "semaine", "semaines");
+		} else if (years > 0) {
+			return plurialize(years, "an", "ans") + " et " + plurialize(months, "mois", "mois");
+		} else if (months > 0) {
+			return plurialize(months, "mois", "mois") + " et " + plurialize(weeks, "semaine", "semaines");
+		} else if (weeks > 0) {
+			return plurialize(weeks, "semaine", "semaines") + " et " + plurialize(remainingDaysAfterWeeks, "jour", "jours");
+		} else {
+			return plurialize(days, "jour", "jours");
+		}
+	}
+
+	private static String plurialize(final int value, final String singular, final String plural) {
+		return value + " " + (value == 1 ? singular : plural);
 	}
 
 }

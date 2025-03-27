@@ -1,4 +1,4 @@
-<th:block th:fragment="agenda-duplicate-week" vu:alias="agenda-duplicate-week" vu:selector="${true}" 
+<th:block th:fragment="agenda-duplicate-week(plage_actions_slot)" vu:alias="agenda-duplicate-week" vu:selector="${true}" 
     th:attr="objectKey=${model.vContext['componentStates'].addComponentState('duplicateWeekModal').addPrimitive('opened', false)}">
 
     <q-dialog th:v-model="componentStates.duplicateWeekModal.opened" >
@@ -22,7 +22,7 @@
                         <vu:date-edit object="duplicationSemaineForm" field="dateLocaleToFin" />
                 </vu:grid>
             </q-card-section>
-            <q-card-section class="flex justify-end">
+            <q-card-section class="flex justify-end" vu:slot="plage_actions_slot">
                 <q-btn color="primary" label="Valider" @click="doDuplicateWeek" :loading="isPendingAction()"></q-btn>
             </q-card-section>
         </q-card>

@@ -17,6 +17,9 @@
  */
 package io.vertigo.audit.impl.trace;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import io.vertigo.audit.trace.Trace;
@@ -29,32 +32,46 @@ import io.vertigo.datamodel.data.model.DtList;
  * @author xdurand
  */
 public final class TraceManagerImpl implements TraceManager {
-	private final TraceStorePlugin auditTraceStorePlugin;
+
+	private final List<TraceStorePlugin> auditTraceStorePlugins;
+	private final Optional<TraceStorePlugin> readAuditTraceStorePluginOpt;
 
 	/**
 	 * Constructor.
 	 * @param auditTraceStorePlugin
 	 */
 	@Inject
-	public TraceManagerImpl(final TraceStorePlugin auditTraceStorePlugin) {
+	public TraceManagerImpl(final List<TraceStorePlugin> auditTraceStorePlugin) {
 		Assertion.check().isNotNull(auditTraceStorePlugin);
 		//---
-		this.auditTraceStorePlugin = auditTraceStorePlugin;
+		auditTraceStorePlugins = auditTraceStorePlugin;
+		readAuditTraceStorePluginOpt = auditTraceStorePlugins.stream()
+				.filter(TraceStorePlugin::isReadSupported)
+				.findFirst();
 	}
 
 	@Override
 	public void addTrace(final Trace auditTrace) {
-		auditTraceStorePlugin.create(auditTrace);
+		auditTraceStorePlugins.stream()
+				.forEachOrdered(auditTraceStorePlugin -> auditTraceStorePlugin.create(auditTrace));
 	}
 
 	@Override
 	public DtList<Trace> findTrace(final TraceCriteria auditTraceCriteria) {
-		return auditTraceStorePlugin.findByCriteria(auditTraceCriteria);
+		Assertion.check().isNotNull(auditTraceCriteria);
+		//---
+		return readAuditTraceStorePluginOpt
+				.orElseThrow(() -> new UnsupportedOperationException("No TraceStorePlugin supporting trace reading was found"))
+				.findByCriteria(auditTraceCriteria);
 	}
 
 	@Override
 	public Trace getTrace(final Long auditTraceId) {
-		return auditTraceStorePlugin.read(auditTraceId);
+		Assertion.check().isNotNull(auditTraceId);
+		//---
+		return readAuditTraceStorePluginOpt
+				.orElseThrow(() -> new UnsupportedOperationException("No TraceStorePlugin supporting trace reading was found"))
+				.read(auditTraceId);
 	}
 
 }

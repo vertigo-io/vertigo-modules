@@ -73,7 +73,7 @@ public class DataBaseInitializer implements Component, Activeable {
 		try (final BufferedReader in = new BufferedReader(new InputStreamReader(resourceManager.resolve(scriptPath).openStream()))) {
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
-				final String adaptedInputLine = inputLine.replaceAll("-- .*", "");//removed comments
+				final String adaptedInputLine = inputLine.replaceAll("-- .*", "");// removed comments
 				if (!"".equals(adaptedInputLine)) {
 					crebaseSql.append(adaptedInputLine).append('\n');
 				}

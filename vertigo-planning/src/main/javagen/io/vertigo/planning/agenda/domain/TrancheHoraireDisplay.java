@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -40,7 +23,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	private Integer nbTotal;
 	private String etatPublication;
 	private java.time.Instant instantPublication;
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Id'.
@@ -59,7 +42,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setTrhId(final Long trhId) {
 		this.trhId = trhId;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date du creneau'.
@@ -78,7 +61,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setDateLocale(final java.time.LocalDate dateLocale) {
 		this.dateLocale = dateLocale;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de début'.
@@ -97,7 +80,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setMinutesDebut(final Integer minutesDebut) {
 		this.minutesDebut = minutesDebut;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Heure de fin'.
@@ -116,7 +99,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setMinutesFin(final Integer minutesFin) {
 		this.minutesFin = minutesFin;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Nombre de guichets'.
@@ -135,7 +118,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setNbGuichet(final Integer nbGuichet) {
 		this.nbGuichet = nbGuichet;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Réservé'.
@@ -154,7 +137,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setNbReserve(final Integer nbReserve) {
 		this.nbReserve = nbReserve;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Réservé et non publié'.
@@ -173,7 +156,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setNbReserveNonPublie(final Integer nbReserveNonPublie) {
 		this.nbReserveNonPublie = nbReserveNonPublie;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Total'.
@@ -192,7 +175,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setNbTotal(final Integer nbTotal) {
 		this.nbTotal = nbTotal;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Publication'.
@@ -211,7 +194,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setEtatPublication(final String etatPublication) {
 		this.etatPublication = etatPublication;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Date publication'.
@@ -230,7 +213,7 @@ public final class TrancheHoraireDisplay implements DataObject {
 	public void setInstantPublication(final java.time.Instant instantPublication) {
 		this.instantPublication = instantPublication;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

@@ -78,28 +78,28 @@
                     </vu:grid>
 				</vu:block>
 			    <vu:block title="Liste des créneaux">
-				    <vu:list list="trancheHoraires" componentId="trancheHorairesList" item_class="q-mb-none q-pa-none" rowsPerPage="250" showMore="true">
+				    <vu:list list="trancheHorairesDetail" componentId="trancheHorairesList" item_class="q-mb-none q-pa-none" rowsPerPage="250" showMore="true">
 	                  <q-item-section side :class="{'text-dark':true, 'tranche-supprimee':(item.nbGuichet == 0)}">
-                          <vu:include-data object="trancheHoraires" field="minutesDebut" />
-                          <vu:include-data object="trancheHoraires" field="minutesFin" />
+                          <vu:include-data object="trancheHorairesDetail" field="minutesDebut" />
+                          <vu:include-data object="trancheHorairesDetail" field="minutesFin" />
                           {{ formatMinutes(item.minutesDebut) }} - {{ formatMinutes(item.minutesFin) }}
                       </q-item-section>
                       <q-item-section align="right">
-                          <vu:include-data object="trancheHoraires" field="nbReserve" />
-                          <vu:include-data object="trancheHoraires" field="nbGuichet" />
+                          <vu:include-data object="trancheHorairesDetail" field="nbReserve" />
+                          <vu:include-data object="trancheHorairesDetail" field="nbGuichet" />
                           <span v-if="item.nbGuichet != 0">{{ item.nbReserve?item.nbReserve:0 }} / {{ item.nbGuichet }} rendez-vous réservé(s)</span>
                           <span v-if="item.nbGuichet == 0 && !item.nbReserve">Créneau supprimé</span>
                           <span v-if="item.nbGuichet == 0 && item.nbReserve">{{ item.nbReserve }} rendez-vous réservé(s) sur créneau supprimé</span>
                       </q-item-section>                              
                       <q-item-section side>
-                           <vu:include-data object="trancheHoraires" field="nbReserveNonPublie" />
+                           <vu:include-data object="trancheHorairesDetail" field="nbReserveNonPublie" />
                            <q-icon name="ri-error-warning-fill" color="negative" v-if="item.nbReserveNonPublie>0"
                                 title="rendez-vous pris sur des créneaux non publiés"></q-icon>
                       </q-item-section>
                       <q-item-section side v-if="item.nbGuichet != 0">
-                           <vu:include-data object="trancheHoraires" field="etatPublication" />
-                           <vu:include-data object="trancheHoraires" field="nbReserve" />
-                           <vu:include-data object="trancheHoraires" field="nbGuichet" />
+                           <vu:include-data object="trancheHorairesDetail" field="etatPublication" />
+                           <vu:include-data object="trancheHorairesDetail" field="nbReserve" />
+                           <vu:include-data object="trancheHorairesDetail" field="nbGuichet" />
                            <q-icon name="ri-checkbox-blank-circle-line" v-if="item.nbReserve == 0 || !item.nbReserve" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
                            <q-icon name="ri-contrast-fill" v-if="item.nbReserve > 0 && item.nbReserve < item.nbGuichet" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
                            <q-icon name="ri-checkbox-blank-circle-fill" v-if="item.nbReserve == item.nbGuichet " :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
@@ -109,7 +109,7 @@
                            <q-icon name="ri-shut-down-line" v-if="item.nbGuichet == 0" color="trh-blocked" title="créneau supprimé" class="q-px-xs" ></q-icon>                                      
                       </q-item-section>
                       <q-item-section side v-if="item.nbGuichet != 0">
-                           <vu:include-data object="trancheHoraires" field="trhId" />
+                           <vu:include-data object="trancheHorairesDetail" field="trhId" />
                            <vu:button v-if="item.nbGuichet != 0" dense flat icon="ri-delete-bin-2-line" title="Supprimer ce créneau" @click="deleteTrancheHoraire(item.trhId)"/>
                      </q-item-section>
 		            </vu:list>

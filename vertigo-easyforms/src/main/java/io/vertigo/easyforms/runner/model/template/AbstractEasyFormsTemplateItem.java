@@ -36,7 +36,7 @@ public abstract class AbstractEasyFormsTemplateItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static enum ItemType {
+	public enum ItemType {
 		STATIC(EasyFormsTemplateItemStatic.class),
 		FIELD(EasyFormsTemplateItemField.class),
 		BLOCK(EasyFormsTemplateItemBlock.class),

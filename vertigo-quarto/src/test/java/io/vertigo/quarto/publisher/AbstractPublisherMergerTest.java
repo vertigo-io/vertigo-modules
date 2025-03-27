@@ -61,6 +61,7 @@ import io.vertigo.quarto.publisher.model.PublisherNode;
  * @author npiedeloup
  */
 public abstract class AbstractPublisherMergerTest {
+
 	private static final boolean KEEP_OUTPUT_FILE = false;
 	//Répertoire de test
 	private static String OUTPUT_PATH = "";
@@ -123,6 +124,64 @@ public abstract class AbstractPublisherMergerTest {
 
 		final URL modelFileURL = resourceManager.resolve(DATA_PACKAGE + "ExempleModel." + getExtension());
 		final VFile result = publisherManager.publish(OUTPUT_PATH + "testFusionSpecialsCharacters." + getExtension(), modelFileURL, publisherData);
+		if (KEEP_OUTPUT_FILE) {
+			save(result);
+		}
+		Assertions.assertNotNull(result);
+	}
+
+	@Test
+	public void testMergerRichText() {
+		final PublisherMock reportData = createTestPublisher();
+
+		final PublisherData publisherData = createPublisherData("PuPublisherMock");
+		PublisherDataUtil.populateData(reportData, publisherData.getRootNode());
+		publisherData.getRootNode().setString("commentaire", "<html>Test : <b>Lorem ipsum odor amet</b>, <i>consectetuer adipiscing elit</i>."
+				+ "<h5>Ridiculus parturient pharetra viverra, nunc orci mauris sollicitudin.</h5>"
+				+ "<h6>Ridiculus parturient pharetra viverra, nunc orci mauris sollicitudin.</h6>"
+				+ "<p style=\"text-align: center;\">Laoreet in scelerisque a volutpat; habitasse habitasse.</p>"
+				+ "<p style=\"text-align: right;\">Massa etiam ridiculus natoque quam in ullamcorper phasellus.</p>"
+				+ "<b><p style=\"text-align: right;\">Bold then right</p></b>"
+				+ "<p style=\"text-align: right;\"><b>Right then Bold.</b></p>"
+				+ "<h5><p style=\"text-align: center;\"><u>Title then center.</u></p></h5>"
+				+ "<p style=\"text-align: center;\"><h5>Center then title.</h5></p>"
+				+ "<b><i>Suspendisse luctus in risus</i>, massa</b> dolor fames.<unsupported> toto </unsupported> bla&nbsp; &nbsp; &nbsp;bla. new line &lt;br/&gt; <br/>new line<br/> new line\n end"
+				+ "</html>");
+
+		final URL modelFileURL = resourceManager.resolve(DATA_PACKAGE + "ExempleModel." + getExtension());
+		final VFile result = publisherManager.publish(OUTPUT_PATH + "testFusionRichText." + getExtension(), modelFileURL, publisherData);
+		if (KEEP_OUTPUT_FILE) {
+			save(result);
+		}
+		Assertions.assertNotNull(result);
+	}
+
+	@Test
+	public void testMergerRichText2() {
+		final PublisherMock reportData = createTestPublisher();
+
+		final PublisherData publisherData = createPublisherData("PuPublisherMock");
+		PublisherDataUtil.populateData(reportData, publisherData.getRootNode());
+		publisherData.getRootNode().setString("commentaire", "<html><p></p>"
+				+ "<div>Je m'assure que je dépends de la préfecture de Versailles : le service est exclusivement réservé au renouvellement de titres gérés par la préfecture : où effectuer mes démarches</div>"
+				+ "<div>Si c'est le cas, je poursuis ma demande en ligne.</div>"
+				+ "<div><br/></div>"
+				+ "<h6>Je constitue mon dossier.</h6>"
+				+ "<div>Ce sont les mêmes documents à fournir que lors de votre 1ère demande, mais ils doivent être mis à jour en fonction de votre situation actuelle.</div>"
+				+ "<div>Les listes de pièces correspondant à votre statut sont consultables sur <a href=\"https://www.service-public.fr/\" target=\"_blank\" rel=\"noopener noreferrer\">service.public.fr</a></div>"
+				+ "<div><b><i><br/></i></b></div>"
+				+ "<div><b><i>Merci de vérifier vos informations</i></b></div>"
+				+ "<div><br/></div>"
+				+ "<div><blockquote>Il est très important de donner une adresse e-mail valide et accessible rapidement car une fois la réservation effectuée en ligne, il faut la confirmer.<br/>Pour confirmer le rendez-vous, un e-mail est envoyé à l’adresse fournie contenant un lien qui servira à valider la réservation dans un délai de 15 min.<br/>La préfecture se réserve le droit d'annuler un rendez-vous. En cas d'annulation, vous recevrez une notification de cette annulation par messagerie.</blockquote></div>"
+				+ "<p></p>"
+				+ "<p></p>"
+				+ "<div>Les informations recueillies au cours de cette procédure visant à l'obtention d'un rendez-vous sont à l'usage exclusif de la préfecture et sont utilisées à des fins de communication.</div>"
+				+ "<div><br/></div>"
+				+ "<p></p>"
+				+ "</html>");
+
+		final URL modelFileURL = resourceManager.resolve(DATA_PACKAGE + "ExempleModel." + getExtension());
+		final VFile result = publisherManager.publish(OUTPUT_PATH + "testFusionRichText." + getExtension(), modelFileURL, publisherData);
 		if (KEEP_OUTPUT_FILE) {
 			save(result);
 		}

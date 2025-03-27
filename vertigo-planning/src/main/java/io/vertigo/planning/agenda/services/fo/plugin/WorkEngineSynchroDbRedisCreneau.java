@@ -27,9 +27,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.analytics.AnalyticsManager;
@@ -48,7 +45,7 @@ public class WorkEngineSynchroDbRedisCreneau implements WorkEngine<List<String>,
 	@Inject
 	private TrancheHoraireDAO trancheHoraireDAO;
 
-	private static final Logger LOG = LogManager.getLogger(WorkEngineSynchroDbRedisCreneau.class);
+	//private static final Logger LOG = LogManager.getLogger(WorkEngineSynchroDbRedisCreneau.class);
 
 	@Override
 	public Boolean process(final List<String> idsTodo) {
@@ -65,7 +62,7 @@ public class WorkEngineSynchroDbRedisCreneau implements WorkEngine<List<String>,
 			trancheHoraires = trancheHoraireDAO.synchroGetTrancheHorairesByAgeIds(new ArrayList<>(agendaNames.keySet()), Instant.now());
 			tx.rollback();
 		}
-		LOG.debug("synchroagenda: ageSize: {}, trhSize: {} : {} ", idsTodo.size(), trancheHoraires.size(), agendaNames.keySet());
+		//LOG.debug("synchroagenda: ageSize: {}, trhSize: {} : {} ", idsTodo.size(), trancheHoraires.size(), agendaNames.keySet());
 		final SynchroDbRedisCreneauHelper synchroDbRedisCreneauHelper = new SynchroDbRedisCreneauHelper();
 		final Map<UID<Agenda>, List<TrancheHoraire>> trancheHorairesPerAgenda = trancheHoraires.stream()
 				.collect(Collectors.groupingBy(trh -> trh.agenda().getUID()));
