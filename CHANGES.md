@@ -1,11 +1,79 @@
 Version history
 ===============
 
-Running 4.3.0
+Running 5.0.0
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-500)
+more to come :)
+
+
+Release 4.3.0 - 2025/03/27
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-420-to-430)
+* [Orchestra] Add default UI (vueJs SPA)
+* [Orchestra] Sort activities
+* **[EasyForms] Use yyyy-mm-dd for date format in vueData**
+* [EasyForms] Better accessibility
+* [EasyForms] make SimpleFieldType open for project's smartType
+* [EasyForms] Add space after static text
+* [EasyForms] Add class to static text for project theming
+* [EasyForms] Don't remove section from data as it is mandatory for displaying fields if condition changes (front side)
+* [EasyForms] Add generic select field (eg used by field parameter)
+* [EasyForms] Robustness and improved UI checking process
+* [EasyForms] Check field parameter constraints
+* [EasyForms] Log on condition parsing error
+* [EasyForms] Fix transaction + update protected values on new files
+* [EasyForms] Restrict accepted uploaded files based on loaded form config
+* [EasyForms] Fix filename check on upload
+* [EasyForms] Fix fileUpload error message & not multiple if 1 elem
+* [EasyForms] Custom error messages on fileupload component cardinality
+* [EasyForms] Customize error messages on cardinality error
+* [EasyForms] Fix language fallback on empty value
+* [EasyForm] Date and error message adaptations
+* [EasyForms] Enforce template order on multi form page
+* [EasyForm] Fix EasyFormsDataDescriptor name if fieldCode is too long
+* [EasyForms] Add function to filter displayed fieldType in admin UI
+* [EasyForm] Fix checkbox label & mandatory flag
+* [easyForms] Update to use new wysiwyg (TipTap)
+* [EasyForms] Configure HTML sanitization as wysiwyg config
+* [EasyForms] Use infoBlock action in richtext editor
+* [EasyForms] Put back default values on hidden fields on edit and in case of error
+* [EasyForms] Don't display hidden sections and fields but display a text if needed
+* [EasyForms] Rules refacto & move to commons
+* [EasyForms] BugFix, add computed field type, better context handling
+* [EasyForm] Change tel regexp better protected against ReDDoS
+* [easyForms] Add tests more tests
+* [Quarto] Add exporter for custom field
+* [Quarto] Added XhtmlEncoder for Docx Merger : support simple html richText (p.text-align, u, b, i, &nbsp;)
+* [Quarto] Publisher merge simple html WIP
+* [Audit] Support multiple audit stores to log and store at same time
+* [Social] Add LinkMobility Sms send plugin
+* [Social] Add LinkMobility `maxSmsPerMinute` parameter
+* **[Social] Rename feature `sms.ovh.ovhRequestSpecializer` to `sms.ovh.requestSpecializer`**
+* [Social] OvhSms add a creditLeftThreshold to inactive plugin when missing credits
+* [Social] Sms Add analytics tag sendPlugin name
+* [Social] JavaxMail plugin developmentMailTo mandatory only in developmentMode
+* [Planning] Change agenda Label limit to 250
+* [Planning] Keep AgendaDisplayRange in Controller (not service)
+* [Planning] Add support of agenda-week readonly mode
+* [Planning] Fix createPage event
+* [Planning] Add parameter for using distributed redis synchro of available creneaux
+* [Planning] Fix domain multipleIds
+* [Planning] Prepare planning doc (README.md)
+* [Planning] externalize some style parameters (use of thymeleaf i18n `#{planning.xxx}`)
+* [Planning] Add params for PlanningServices
+* [Planning] Fix calendar day should be not clickable
+* [Planning] Fix lock only already created agenda
+* [Planning] Add actions slots to popins (plage_actions_slot)
+* **[Planning] Change vueData date format (iso)**
+* [Planning] Add QCalendarDay 4.1.2 (keep 4.0.0-beta16)
+* [modules] Update libs 
+  - web3j 4.12.0 -> 4.13.0
+  - freemarker 2.3.33 -> 2.3.34
+  - elastic transport -> x-pack-transport
+  - rest-assured 5.4.0 -> 5.5.1
+  - poi 5.3.0 -> 5.4.0
   
-more to come :)
 
 Release 4.2.0.1 - Planning - 2024/11/19
 ----------------------
