@@ -4,6 +4,7 @@ Version history
 Running 5.0.0
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-500)
+
 more to come :)
 
 
@@ -29,11 +30,11 @@ Release 4.3.0 - 2025/03/27
 * [EasyForms] Custom error messages on fileupload component cardinality
 * [EasyForms] Customize error messages on cardinality error
 * [EasyForms] Fix language fallback on empty value
-* [EasyForm] Date and error message adaptations
+* [EasyForms] Date and error message adaptations
 * [EasyForms] Enforce template order on multi form page
-* [EasyForm] Fix EasyFormsDataDescriptor name if fieldCode is too long
+* [EasyForms] Fix EasyFormsDataDescriptor name if fieldCode is too long
 * [EasyForms] Add function to filter displayed fieldType in admin UI
-* [EasyForm] Fix checkbox label & mandatory flag
+* [EasyForms] Fix checkbox label & mandatory flag
 * [easyForms] Update to use new wysiwyg (TipTap)
 * [EasyForms] Configure HTML sanitization as wysiwyg config
 * [EasyForms] Use infoBlock action in richtext editor
@@ -67,7 +68,7 @@ Release 4.3.0 - 2025/03/27
 * [Planning] Add actions slots to popins (plage_actions_slot)
 * **[Planning] Change vueData date format (iso)**
 * [Planning] Add QCalendarDay 4.1.2 (keep 4.0.0-beta16)
-* [modules] Update libs 
+* [all] Update libs 
   - web3j 4.12.0 -> 4.13.0
   - freemarker 2.3.33 -> 2.3.34
   - elastic transport -> x-pack-transport
