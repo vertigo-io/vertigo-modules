@@ -78,6 +78,8 @@ public class EasyFormsDesignerServices implements Component {
 	 * @return A list of all field types.
 	 */
 	public DtList<EasyFormsFieldTypeUi> getFieldTypeUiList(final Predicate<EasyFormsFieldTypeDefinition> filter) {
+		Assertion.check().isNotNull(filter);
+		//---
 		return Node.getNode().getDefinitionSpace().getAll(EasyFormsFieldTypeDefinition.class)
 				.stream()
 				.filter(filter)
@@ -125,11 +127,24 @@ public class EasyFormsDesignerServices implements Component {
 	 * @param additionalContext Additional context for the update.
 	 * @param uiMessageStack The UI message stack for the update.
 	 */
-	public void checkUpdateSection(final EasyFormsTemplate easyFormsTemplate, final Integer editIndex, final EasyFormsSectionUi sectionEdit, final DtList<EasyFormsLabelUi> labels,
-			final Map<String, Serializable> additionalContext, final UiMessageStack uiMessageStack) {
+	public void checkUpdateSection(
+			final EasyFormsTemplate easyFormsTemplate,
+			final Integer editIndex,
+			final EasyFormsSectionUi sectionEdit,
+			final DtList<EasyFormsLabelUi> labels,
+			final Map<String, Serializable> additionalContext,
+			final UiMessageStack uiMessageStack) {
+		Assertion.check()
+				.isNotNull(easyFormsTemplate)
+				.isNotNull(editIndex)
+				.isNotNull(sectionEdit)
+				.isNotNull(labels)
+				.isNotNull(additionalContext)
+				.isNotNull(uiMessageStack);
+		//---
 		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
 
-		if (sectionEdit.getCode().equalsIgnoreCase(FORM_INTERNAL_CTX_NAME)) {
+		if (FORM_INTERNAL_CTX_NAME.equalsIgnoreCase(sectionEdit.getCode())) {
 			errorBuilder.addError(sectionEdit, EasyFormsSectionUiFields.code, LocaleMessageText.of(Resources.EfDesignerReservedCode));
 		}
 
@@ -295,6 +310,8 @@ public class EasyFormsDesignerServices implements Component {
 	 * @return The saved EasyForm.
 	 */
 	public EasyForm saveForm(final EasyForm easyForm) {
+		Assertion.check().isNotNull(easyForm);
+		//---
 		return easyFormDAO.save(easyForm);
 	}
 
