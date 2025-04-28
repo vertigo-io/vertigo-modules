@@ -193,7 +193,7 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 
 		@Override
 		public LocaleMessageText getErrorMessage() {
-			return LocaleMessageText.of(Resources.EfUploadAccept, String.join(", ", extensions));
+			return LocaleMessageText.of(Resources.EfUploadAcceptError, String.join(", ", extensions));
 		}
 
 		private boolean isAccepted(final String fileName) {

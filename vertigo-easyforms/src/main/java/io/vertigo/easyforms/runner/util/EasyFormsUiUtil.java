@@ -160,4 +160,35 @@ public final class EasyFormsUiUtil implements Serializable {
 	private EasyFormsRunnerManager getEasyFormsRunnerManager() {
 		return Node.getNode().getComponentSpace().resolve(EasyFormsRunnerManager.class);
 	}
+
+	public String getFileTooltip(final Map<String, Serializable> parameters, final Integer maxItems) {
+		final StringBuilder sb = new StringBuilder();
+		if (parameters.containsKey("accept")) {
+			sb.append(LocaleMessageText.of(() -> "EfUploadAccept", parameters.get("accept")).getDisplay());
+			sb.append(".");
+		}
+		if (maxItems != null) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(LocaleMessageText.of(() -> "EfUploadMaxCount", maxItems, maxItems > 1 ? "s" : "").getDisplay());
+			sb.append(".");
+		}
+		if (parameters.containsKey("maxFileSize")) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(LocaleMessageText.of(() -> "EfUploadMaxFileSize", parameters.get("maxFileSize")).getDisplay());
+			sb.append(".");
+		}
+		if (parameters.containsKey("maxSize")) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(LocaleMessageText.of(() -> "EfUploadMaxSize", parameters.get("maxSize")).getDisplay());
+			sb.append(".");
+		}
+
+		return sb.toString();
+	}
 }

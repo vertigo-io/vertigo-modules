@@ -12,17 +12,13 @@
 					 >
 					<div th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateSection.condition)}"
 					     th:class="${template.useSections ? 'q-card bg-white':''}"> 
-						<div th:if="${template.useSections}" class="q-card__section" >
-							<q-item>
-								<q-item-section>
-								    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
-									<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
-									<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
-									<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
-									<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
-									<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
-								</q-item-section>
-							</q-item>
+						<div th:if="${template.useSections}" class="q-card__section q-py-sm q-px-md column justify-center">
+						    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
+							<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
+							<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
+							<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
+							<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
+							<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
 						</div>
 						<div th:if="${template.useSections}"
 							 class="q-separator q-separator--horizontal"></div>
@@ -30,7 +26,7 @@
 							<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
 								<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
 									<th:block th:if="${templateItem.type == 'STATIC'}">
-				    					<div class="q-mb-lg ef-static-text" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, isI18nLabel)}"></div>
+				    					<div class="q-mb-lg ef-static-text" tabindex="0" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, isI18nLabel)}"></div>
 				    				</th:block>
 				    				<template th:if="${templateItem.type == 'BLOCK'}"
 				    						  th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.condition)}">
@@ -42,7 +38,7 @@
 									                   fieldCode = ${model.efoUiUtil.resolveCodeName(template, templateSection, templateItem)},
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
-									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'$'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
+									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'__'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
 									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, isI18nLabel)},
 									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, isI18nLabel)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
@@ -61,14 +57,26 @@
 													            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" ></vui-ef-map>
 													</vu:label-edit>
 												</div>
-												<div th:case="'EfUicFile'" th:with="ref=|uploader_${object}_${field}--${fieldCode}|">
-													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}" th::ref="|'${ref}_label'|">
+												<div th:case="'EfUicFile'"
+												     th:with="ref=|uploader_${object}_${field}--${fieldCode}|,
+												              fileFieldTooltip=${model.efoUiUtil.getFileTooltip(fieldParameters, templateItem.maxItems)}">
+													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}"
+													               th::ref="|'${ref}_label'|"
+													               th:for="|${fieldId}_input|">
 												        <vu:slot name="after_label_slot">
-															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
-																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+												        	<div class="sr-only">
+																<div vu:text="${fieldTooltip}"/>
+																<div vu:text="${fileFieldTooltip}"/>
+												        	</div>
+															<q-icon th:if="${(fieldTooltip != null && fieldTooltip != '') || (fileFieldTooltip != null && fileFieldTooltip != '')}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px">
+																	<div vu:text="${fieldTooltip}"/>
+																	<div vu:text="${fileFieldTooltip}"/>
+																</q-tooltip>
 															</q-icon>
 												        </vu:slot>
 														<v-file-upload-quasar 
+														    th:input-id="|${fieldId}_input|"
 														    th::ref="|'${ref}'|"
 															class="q-mt-md"
 												            th:url="@{/easyforms/form/upload}" field-name="file"  
@@ -76,7 +84,7 @@
 												            :simple="false" th::multiple="true"
 												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
 												            th:accept="${fieldParameters['accept']}"
-												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAccept(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
+												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAcceptError(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
 												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
 												            th:@update:file-info-uris="|(newFileInfoUris) => {
 												            												  efCheckUploadConstraints('${object}','${field}',
@@ -94,14 +102,17 @@
 	         									   </vu:label-edit>
 												</div>
 												<div th:case="'EfUicRadio'">
-													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}">
+													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}"
+													               role="radiogroup">
 												        <vu:slot name="after_label_slot">
+															<div class="sr-only" vu:text="${fieldTooltip}"/>
 															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
-																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
+																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px">
+																	<div vu:text="${fieldTooltip}"/>
+																</q-tooltip>
 															</q-icon>
 												        </vu:slot>
-												        
-														<q-option-group
+														<q-option-group role=""
 													    	th:v-model="${fieldModel}"
 													    	th:@update:model-value="__${fieldParameters['onChange']}__"
 													    	th::options="${model.efoUiUtil.getDynamicListForField(templateItem)}"
@@ -112,30 +123,17 @@
 													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicCheckbox'">
-													<q-field :label-width="3"
-												             th:label="|${fieldLabel}|"
-												             th:aria-required="${templateItem.isMandatory}"
-												             th::error="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|" 
-												             th::aria-describedby="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex}) ? 'input-${fieldCode}-desc-error' : null|"
-															 th::aria-invalid="|hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})|"
-												             orientation="vertical"
-												             stack-label
-												             borderless
-												             th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|"
-												             bottom-slots
-												             th:classappend="|${templateItem.isMandatory?'v-field_'+'_required':''} v-field__has_after_label|"
-												    >
-														<template v-slot:label slot-scope="props">
-															<span vu:text="${fieldLabel}"/>
-															<span class="v-field__after_label all-pointer-events">
-																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
-																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
-																</q-icon>
-														    </span>
-														</template>
-														<template v-slot:error>
-													        <div th:id="|input-${fieldCode}-desc-error|">{{ <th:block th:text="|getErrorMessage('${object}', '${field}--${fieldCode}', ${rowIndex})|"/> }}</div>
-														</template>
+													<vu:label-edit object="${object}" field="|${field}--${fieldCode}|" label="|${fieldLabel}|" required="${templateItem.isMandatory}"
+													               role="group"
+													               th:@vue:before-mount="|function() { if (!${fieldModel}) { ${fieldModel} = []}}|">
+														<vu:slot name="after_label_slot">
+															<div class="sr-only" vu:text="${fieldTooltip}"/>
+															<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
+																<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px">
+																	<div vu:text="${fieldTooltip}"/>
+																</q-tooltip>
+															</q-icon>
+												        </vu:slot>
 														<q-option-group
 													    	th:v-model="${fieldModel}"
 													    	th:@update:model-value="__${fieldParameters['onChange']}__"
@@ -145,7 +143,7 @@
 													    	color="primary"
 													    	th:attr="__${fieldParameters['otherUiAttrs'] == null ? ',' : fieldParameters['otherUiAttrs']}__"
 													    ></q-option-group>
-													</q-field>
+													</vu:label-edit>
 												</div>
 												<div th:case="'EfUicSelect'"
 													 th:attr="objectKey=${model.vContext['componentStates'].addComponentState(fieldId).addPrimitive('searchValue','')}">
@@ -170,6 +168,7 @@
 														<template v-slot:label>
 															<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
 																<span vu:text="${fieldLabel}" />
+																<div class="sr-only" vu:text="${fieldTooltip}"/>
 																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 																</q-icon>
@@ -209,6 +208,7 @@
 												       	<template v-slot:label>
 															<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
 																<span vu:text="${fieldLabel}" />
+																<div class="sr-only" vu:text="${fieldTooltip}"/>
 																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 																</q-icon>
@@ -231,6 +231,7 @@
 													        <template v-slot:label>
 																<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
 																	<span vu:text="${fieldLabel}" />
+																	<div class="sr-only" vu:text="${fieldTooltip}"/>
 																	<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																		<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 																	</q-icon>
@@ -263,6 +264,7 @@
 														<template v-slot:label>
 															<div class="row items-center all-pointer-events non-selectable" style="display: inline-block;">
 																<span vu:text="${fieldLabel}" />
+																<div class="sr-only" vu:text="${fieldTooltip}"/>
 																<q-icon th:if="${fieldTooltip != null && fieldTooltip != ''}" size="md" name="info" class="q-ml-sm cursor-pointer">
 																	<q-tooltip class="bg-grey-8" anchor="top left" self="bottom left" :delay="300" :offset="[0, 8]" max-width="600px"><div vu:text="${fieldTooltip}"/></q-tooltip>
 																</q-icon>
