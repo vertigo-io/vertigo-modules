@@ -28,6 +28,7 @@ import io.vertigo.easyforms.runner.pack.EasyFormsSmartTypes;
 import io.vertigo.easyforms.runner.pack.provider.FieldTypeDefinitionProvider.FieldTypeEnum;
 import io.vertigo.easyforms.runner.pack.provider.UiComponentDefinitionProvider.UiComponentEnum;
 import io.vertigo.easyforms.runner.pack.provider.uicomponent.RadioCheckUiComponent;
+import io.vertigo.easyforms.runner.pack.provider.uicomponent.SelectUiComponent;
 import io.vertigo.easyforms.runner.suppliers.IEasyFormsFieldTypeDefinitionSupplier;
 import io.vertigo.easyforms.runner.suppliers.IEasyFormsUiComponentDefinitionSupplier;
 
@@ -51,7 +52,8 @@ public class CustomListFieldType implements IEasyFormsFieldTypeDefinitionSupplie
 
 	@Override
 	public Map<String, Object> getUiParams() {
-		return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME);
+		return Map.of(IEasyFormsUiComponentDefinitionSupplier.LIST_SUPPLIER, IEasyFormsUiComponentDefinitionSupplier.CUSTOM_LIST_ARG_NAME,
+				SelectUiComponent.SEARCHABLE, true);
 	}
 
 	@Override

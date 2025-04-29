@@ -1,8 +1,21 @@
 let context = document.currentScript.dataset.context ;
 
+let efLastKey = null;
+document.addEventListener('keydown', (e) => {
+	efLastKey = e.key;
+});
+document.addEventListener('mousedown', (e) => {
+	efLastKey = null;
+});
+	
+
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
 	
+	efIsTabNavigation : function() {
+		return efLastKey === 'Tab';
+	},
+		
 	efRoundOrDefaut : function(value, decimals, defaultValue) {
 		if (!Number.isFinite(value)) {
 			return defaultValue;
