@@ -44,6 +44,13 @@
 										       @click="efDeleteSection(index)" />
 					    		</div>
 							</q-item-section>
+							<q-item-section side th:if="${viewMode == 'read'}">
+								<div class="row col_action no-wrap q-gutter-sm">
+									<vu:button size="md" flat icon="fas fa-eye"
+											   title="#{EfDesignerViewSection}"
+											   @click="efEditSection(index)"/>
+								</div>
+							</q-item-section>
 						</q-item>
 			    	</q-card-section>
 			    	
@@ -152,6 +159,13 @@
 										           @click="efDeleteItem(index, item_index, item_index2)" />
 			    					</div>
 			    				</q-item-section>
+			    				<q-item-section side th:if="${viewMode == 'read'}">
+			    					<div class="row showButtonOnHover col_action no-wrap q-gutter-sm" role="toolbar">
+										<vu:button size="md" flat icon="fas fa-eye"
+												   title="#{EfDesignerViewItem}"
+												   @click="efEditItem(index, item_index, item_index2)"/>
+			    					</div>
+			    				</q-item-section>
 			    			</q-item>
 			    		</q-list>
 			    		<div class="q-pt-md q-gutter-sm" th:if="${viewMode != 'read'}">
@@ -179,12 +193,12 @@
 		</template>
 	</vui-easy-forms>
 		
-	<th:block id="easyFormsModalEditItem" th:if="${viewMode != 'read'}"
+	<th:block id="easyFormsModalEditItem"
 		th:attr="objectKey=${model.vContext['componentStates'].addComponentState('itemModal').addPrimitive('opened', false).addPrimitive('sectionIndex', null).addPrimitive('editIndex', null).addPrimitive('editIndex2', null).addPrimitive('codeModified', null)} ">
 		<vu:include-data object="fieldTypes" field="hasTemplate" />
 		<vu:include-data object="editFieldValidatorTypes" field="*" />
-		<q-dialog th:v-model="componentStates.itemModal.opened" maximized position="right">
-			<q-card class="bg-white" style="width: min(800px, 100vw);">
+		<q-dialog th:v-model="componentStates.itemModal.opened" maximized position="right" th:with="reactive=true">
+			<q-card class="bg-white" style="width: min(800px, 100vw);" v-if="componentStates.itemModal.editIndex != null">
 				<q-toolbar class="bg-primary">
 					<vu:button flat dense v-close-popup icon="keyboard_arrow_left" text-color="white" title="#{EfDesignerClose}"/>
 					<q-toolbar-title vu:text="#{EfDesignerPopupTitle}" class="text-white"></q-toolbar-title>
@@ -194,11 +208,11 @@
 					<template v-if="vueData.editItem.type === 'STATIC'">
 						<vu:grid>
 							<vu:grid-cell>
-								<vu:label-edit th:each="labelUi, stat : ${model.editLabelText}"
+								<vu:label th:each="labelUi, stat : ${model.editLabelText}"
 												object="editLabelText" rowIndex="${stat.index}" field="text" required="${stat.first}"
 												label="${model.util.label('editLabelText.text')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}">
 						                        
-								    <vu:text-editor-edit 
+								    <vu:text-editor 
 								    		object="editLabelText" rowIndex="${stat.index}" field="text"
 								    		autofocus="${stat.first}"
 								    		:toolbar="[['bold','italic','underline'],
@@ -208,17 +222,17 @@
 								    		           ['undo','redo'],
 								    		           ['viewsource']
 								    		          ]"/>
-							    </vu:label-edit>
+							    </vu:label>
 							</vu:grid-cell>
 						</vu:grid>
 					</template>
 					<template v-if="vueData.editItem.type === 'BLOCK'">
 						<vu:grid>
 			                <vu:grid-cell>
-						    	<vu:text-field-edit object="editItem" field="condition" autofocus/>
+						    	<vu:text-field object="editItem" field="condition" autofocus/>
    						    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editItem?.condition_detail?.[0]}}</pre>
 					    	</vu:grid-cell>
-					    	<vu:grid-cell>
+					    	<vu:grid-cell th:if="${viewMode != 'read'}">
 								<div th:text="#{EfDesignerContextDump}"></div>
 						    	<vu:include-data-primitive key="contextTree" />
 						    	<q-tree :nodes="vueData.contextTree.children" node-key="key" dense>
@@ -247,12 +261,12 @@
 										   :disable="vueData.editItem.isSystem === true"
 										   @update:model-value="componentStates.itemModal.codeModified = (vueData.editItem.fieldCode != '')" />
 							<vu:grid-cell>
-							    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
+							    <vu:text-field th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="label"
 						                        label="${model.util.label('editLabelText.label')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"
 						                        required="${stat.first}"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
-								<vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="tooltip"
+								<vu:text-field th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="tooltip"
 						                        label="${model.util.label('editLabelText.tooltip')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
@@ -261,19 +275,20 @@
 								<q-toggle class="q-field" :disable="vueData.editItem.isSystem" v-model="vueData.editItem.isMandatory"
 									th::title="|vueData.editItem.isSystem?`#{EfDesignerRequiredNotModifiable}`:''|"
 									th::aria-title="|vueData.editItem.isSystem?`#{EfDesignerRequiredNotModifiable}`:''|"
-									th:label="${model.util.label('editItem.isMandatory')}"></q-toggle>
+									th:label="${model.util.label('editItem.isMandatory')}"
+									th::disable="${viewMode == 'read'}"></q-toggle>
 								<input type="hidden" name="vContext[editItem][isMandatory]" v-bind:value="vueData.editItem.isMandatory" />
 							</vu:grid-cell>
 							<vu:grid-cell>
 								<vu:include-data object="editItem" field="isList" />
-								<vu:text-field-edit object="editItem" field="defaultValue" v-if="!vueData.editItem.isList"/>
+								<vu:text-field object="editItem" field="defaultValue" v-if="!vueData.editItem.isList"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
 								<vu:include-data object="editItem" field="isList" />
-								<vu:text-field-edit object="editItem" field="maxItems" type="number" v-if="vueData.editItem.isList"/>
+								<vu:text-field object="editItem" field="maxItems" type="number" v-if="vueData.editItem.isList"/>
 							</vu:grid-cell>
 							<vu:grid-cell>
-								<vu:select-multiple-edit v-if="vueData.editFieldValidatorTypes.length>0" object="editItem" field="fieldValidatorSelection" list="editFieldValidatorTypes"
+								<vu:select-multiple v-if="vueData.editFieldValidatorTypes.length>0" object="editItem" field="fieldValidatorSelection" list="editFieldValidatorTypes"
 									valueField="name" labelField="label" popup-content-class="popupDescriptionFieldValidators">
 									<vu:slot name="edit_content_slot">
 										<template v-slot:option="scope">
@@ -285,26 +300,32 @@
 											 </q-item>
 										</template>
 									</vu:slot>
-								</vu:select-multiple-edit>
+								</vu:select-multiple>
 							</vu:grid-cell>
 							<vu:grid-cell>
-								<div th:each="parentFieldType : ${model.fieldTypes}" th:if="${parentFieldType.hasTemplate}" th:v-if="|vueData.editItem.fieldType === '${parentFieldType.name}' && vueData.editItem?.parameters|">
-									<vu:easy-forms object="editItem" field="parameters" template="${model.fieldTypesTemplate['__${parentFieldType.name}__']}" isI18nLabel="true"/>
+								<div th:if="${parentFieldType.hasTemplate && viewMode != 'read'}" th:each="parentFieldType : ${model.fieldTypes}"
+								     th:v-if="|vueData.editItem.fieldType === '${parentFieldType.name}' && vueData.editItem?.parameters|">
+									<vu:easy-forms th:if="${viewMode != 'read'}"
+									               object="editItem" field="parameters" template="${model.fieldTypesTemplate['__${parentFieldType.name}__']}"/>
+								</div>
+								<div th:if="${parentFieldType.hasTemplate && viewMode == 'read'}" th:each="parentFieldType : ${model.fieldTypes}"
+								     th:v-if="|vueData.editItem.fieldType === '${parentFieldType.name}' && vueData.editItem?.parametersRead|">
+									<vu:easy-forms-read-reactive object="editItem" field="parametersRead"/>
 								</div>
 							</vu:grid-cell>
 						</vu:grid>
 					</template>
 				</q-card-section>
-				<q-card-section class="flex justify-end q-mb-xl">
+				<q-card-section class="flex justify-end q-mb-xl" th:if="${viewMode != 'read'}">
 					<q-btn @click="efSaveEditItem" color="primary" th:label="#{EfDesignerSave}" rounded></q-btn>
 				</q-card-section>
 			</q-card>
 		</q-dialog>
 	</th:block>
 	
-	<th:block id="easyFormsModalEditSection" th:if="${viewMode != 'read'}"
+	<th:block id="easyFormsModalEditSection"
 		th:attr="objectKey=${model.vContext['componentStates'].addComponentState('sectionModal').addPrimitive('opened', false).addPrimitive('sectionIndex', null)} ">
-		<q-dialog th:v-model="componentStates.sectionModal.opened" maximized position="right">
+		<q-dialog th:v-model="componentStates.sectionModal.opened" maximized position="right" th:with="reactive=true">
 			<q-card class="bg-white" style="width: min(800px, 100vw);">
 				<q-toolbar class="bg-primary">
 					<vu:button flat dense v-close-popup icon="keyboard_arrow_left" text-color="white" title="#{EfDesignerClose}"/>
@@ -316,16 +337,16 @@
 						<vu:text-field object="editSection" field="code" autofocus
 						               :disable="vueData.editSection.haveSystemField === true" />
 		                <vu:grid-cell>
-						    <vu:text-field-edit th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="longLabel"
+						    <vu:text-field th:each="labelUi, stat : ${model.editLabelText}" object="editLabelText" rowIndex="${stat.index}" field="longLabel"
 						                        label="${model.util.label('editLabelText.longLabel')} + ${stat.size>1 ? ' ('+labelUi.lang+')':''}"
 						                        required="${stat.first}"/>
 						</vu:grid-cell>
 						<vu:grid-cell>
-					    	<vu:text-field-edit object="editSection" field="condition"/>
+					    	<vu:text-field object="editSection" field="condition"/>
 					    	<pre class="text-negative overflow-auto">{{uiMessageStack.objectFieldErrors?.editSection?.condition_detail?.[0]}}</pre>
 				    	</vu:grid-cell>
 
-						<vu:grid-cell>
+						<vu:grid-cell th:if="${viewMode != 'read'}">
 							<div th:text="#{EfDesignerContextDump}"></div>
 					    	<vu:include-data-primitive key="contextTree" />
 					    	<q-tree :nodes="vueData.contextTree.children" node-key="label" dense>
@@ -341,7 +362,7 @@
 			    		</vu:grid-cell>
 					</vu:grid>
 				</q-card-section>
-				<q-card-section class="flex justify-end">
+				<q-card-section class="flex justify-end" th:if="${viewMode != 'read'}">
 					<q-btn @click="efSaveEditSection" color="primary" th:label="#{EfDesignerSave}" rounded></q-btn>
 				</q-card-section>
 			</q-card>

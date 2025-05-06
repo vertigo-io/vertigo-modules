@@ -150,8 +150,8 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 		if (StringUtil.isBlank(value)) {
 			value = labels.get(getSupportedLang().get(0)); // first lang by default
 		}
-		if (value == null) {
-			value = labels.get("i18n");
+		if (value == null && labels.containsKey("i18n")) {
+			value = LocaleMessageText.of(() -> labels.get("i18n")).getDisplay();
 		}
 		return value;
 	}

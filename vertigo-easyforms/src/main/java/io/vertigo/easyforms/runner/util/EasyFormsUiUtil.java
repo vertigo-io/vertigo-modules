@@ -18,7 +18,6 @@
 package io.vertigo.easyforms.runner.util;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
+import io.vertigo.easyforms.runner.model.template.EasyFormsDataRead;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
@@ -75,7 +75,7 @@ public final class EasyFormsUiUtil implements Serializable {
 		return Math.min(int1, int2.intValue());
 	}
 
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
+	public EasyFormsDataRead getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
 		final var object = UiRequestUtil.getCurrentViewContext().get(objectKey);
 		if (row == null && object instanceof final UiObject<?> uiObject) {
 			final EasyFormsData easyForm = uiObject.getTypedValue(field, EasyFormsData.class);
@@ -87,7 +87,7 @@ public final class EasyFormsUiUtil implements Serializable {
 		throw new VSystemException("Unsupported object for easy form data.");
 	}
 
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
+	public EasyFormsDataRead getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
 		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(EasyFormsRunnerServices.class);
 
 		return easyFormsRunnerServices.getEasyFormRead(easyFormsTemplate, easyForm, UiRequestUtil.getCurrentViewContext().asMap(), true);
@@ -146,12 +146,9 @@ public final class EasyFormsUiUtil implements Serializable {
 				.replaceAll("([^!><])=", "$1=="); // = => ==
 	}
 
-	public String resolveLabel(final Map<String, String> labels, final Boolean isI18n) {
+	public String resolveLabel(final Map<String, String> labels) {
 		if (labels == null) {
 			return null;
-		}
-		if (Boolean.TRUE.equals(isI18n)) {
-			return LocaleMessageText.of(() -> labels.get("i18n")).getDisplay();
 		}
 
 		return getEasyFormsRunnerManager().resolveTextForUserlang(labels);

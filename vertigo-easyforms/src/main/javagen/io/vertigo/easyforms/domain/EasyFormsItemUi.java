@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.easyforms.domain;
 
 import io.vertigo.core.lang.Generated;
@@ -39,6 +22,7 @@ public final class EasyFormsItemUi implements DataObject {
 	private Boolean isList;
 	private Integer maxItems;
 	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsDataRead parametersRead;
 	private java.util.List<String> fieldValidatorSelection = new java.util.ArrayList<>();
 	private String condition;
 	
@@ -211,6 +195,25 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setParameters(final io.vertigo.easyforms.runner.model.template.EasyFormsData parameters) {
 		this.parameters = parameters;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Parameters'.
+	 * @return EasyFormsDataRead parametersRead
+	 */
+	@Field(smartType = "STyEfFormDataRead", label = "Parameters")
+	public io.vertigo.easyforms.runner.model.template.EasyFormsDataRead getParametersRead() {
+		return parametersRead;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Parameters'.
+	 * @param parametersRead EasyFormsDataRead
+	 */
+	public void setParametersRead(final io.vertigo.easyforms.runner.model.template.EasyFormsDataRead parametersRead) {
+		this.parametersRead = parametersRead;
 	}
 	
 	/**

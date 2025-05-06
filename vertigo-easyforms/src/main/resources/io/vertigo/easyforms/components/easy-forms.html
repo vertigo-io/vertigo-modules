@@ -1,4 +1,4 @@
-<th:block th:fragment="easy-forms-edit(object, field, rowIndex, template, isI18nLabel, elem_attrs)" 
+<th:block th:fragment="easy-forms-edit(object, field, rowIndex, template, elem_attrs)" 
 	vu:alias="easy-forms" vu:selector="${viewMode=='edit'}"
 	th:assert="${object} != null and ${field} != null and ${template} != null">
 	
@@ -13,12 +13,12 @@
 					<div th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateSection.condition)}"
 					     th:class="${template.useSections ? 'q-card bg-white':''}"> 
 						<div th:if="${template.useSections}" class="q-card__section q-py-sm q-px-md column justify-center">
-						    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 1}"></h1>
-							<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 2}"></h2>
-							<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 3}"></h3>
-							<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 4}"></h4>
-							<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 5}"></h5>
-							<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label, isI18nLabel)}" th:if="${currentBlockLevel == 6}"></h6>
+						    <h1 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label)}" th:if="${currentBlockLevel == 1}"></h1>
+							<h2 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label)}" th:if="${currentBlockLevel == 2}"></h2>
+							<h3 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label)}" th:if="${currentBlockLevel == 3}"></h3>
+							<h4 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label)}" th:if="${currentBlockLevel == 4}"></h4>
+							<h5 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label)}" th:if="${currentBlockLevel == 5}"></h5>
+							<h6 class="text-h6 q-ma-none" vu:text="${model.efoUiUtil.resolveLabel(templateSection.label)}" th:if="${currentBlockLevel == 6}"></h6>
 						</div>
 						<div th:if="${template.useSections}"
 							 class="q-separator q-separator--horizontal"></div>
@@ -26,7 +26,7 @@
 							<div class="row q-col-gutter-md" th:with="itemHolder = ${templateSection}">
 								<th:block th:each="templateItem : ${itemHolder.items}" th:ref="itemListUi">
 									<th:block th:if="${templateItem.type == 'STATIC'}">
-				    					<div class="q-mb-lg ef-static-text" tabindex="0" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text, isI18nLabel)}"></div>
+				    					<div class="q-mb-lg ef-static-text" tabindex="0" th:utext="${model.efoUiUtil.resolveLabel(templateItem.text)}"></div>
 				    				</th:block>
 				    				<template th:if="${templateItem.type == 'BLOCK'}"
 				    						  th:v-if="${model.efoUiUtil.convertConditionToJs(model.util.vueDataKey(object, field, rowIndex), templateItem.condition)}">
@@ -39,8 +39,8 @@
 									                   fieldType = ${model.efoUiUtil.getFieldTypeByName(templateItem.fieldTypeName)},
 									                   fieldParameters = ${model.efoUiUtil.getParametersForField(templateItem)},
 									                   fieldId = ${object}+'_'+${field}+'_'+${rowIndex}+'__'+${template.useSections?templateSection.code+'_':''}+${templateItem.code},
-									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label, isI18nLabel)},
-									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip, isI18nLabel)}">
+									                   fieldLabel = ${model.efoUiUtil.resolveLabel(templateItem.label)},
+									                   fieldTooltip = ${model.efoUiUtil.resolveLabel(templateItem.tooltip)}">
 									    <div th:attr="__${elem_attrs}__" class="col-12" >
 											<div th::class="|{'fr-input-group--error' : hasFieldsError('${object}', '${field}--${fieldCode}', ${rowIndex})}|"
 											      th:switch="${fieldType.uiComponentName}">
@@ -304,7 +304,7 @@
 	<input type="hidden" th::name="${model.util.contextKey(object, field, rowIndex)}" th:v-bind:value="|JSON.stringify(${model.util.vueDataKey(object, field, rowIndex)})|" />
 </th:block>
 
-<th:block th:fragment="easy-forms-read(object, field, rowIndex, template, isI18nLabel, elem_attrs)" 
+<th:block th:fragment="easy-forms-read(object, field, rowIndex, template, elem_attrs)" 
 	vu:alias="easy-forms" vu:selector="${viewMode=='read'}"
 	th:assert="${object} != null and ${field} != null and ${template} != null">
 
@@ -314,17 +314,13 @@
 				 th:class="${template.useSections ? 'q-card bg-white':''}"
 			     th:with="currentBlockLevel=${currentBlockLevel != null ? currentBlockLevel+1 : 1}"
 				 >
-				<div th:if="${template.useSections}" class="q-card__section">
-						<q-item>
-							<q-item-section>
-							    <h1 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 1}"></h1>
-								<h2 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 2}"></h2>
-								<h3 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 3}"></h3>
-								<h4 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 4}"></h4>
-								<h5 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 5}"></h5>
-								<h6 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 6}"></h6>
-							</q-item-section>
-						</q-item>
+				<div th:if="${template.useSections}" class="q-card__section q-py-sm q-px-md column justify-center">
+				    <h1 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 1}"></h1>
+					<h2 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 2}"></h2>
+					<h3 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 3}"></h3>
+					<h4 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 4}"></h4>
+					<h5 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 5}"></h5>
+					<h6 class="text-h6 q-ma-none" vu:text="${sectionEntry.key}" th:if="${currentBlockLevel == 6}"></h6>
 				</div>
 				<div th:if="${template.useSections}"
 						 class="q-separator q-separator--horizontal"></div>
@@ -352,4 +348,18 @@
 			</div>
 	    </div>
     </div>
+</th:block>
+
+<th:block th:fragment="easy-forms-read-reactive(object, field)">
+	<vu:include-data object="${object}" field="${field}"/>
+	<div th:v-for="|(value, label) in ${model.util.vueDataKey(object, field, rowIndex)}?.[null]|">
+		<q-field :label="label" orientation="vertical" stack-label readonly borderless>
+		    <div v-if="Array.isArray(value) && value[0]?.map" class="full-width">
+		    	<vui-ef-map :model-value="value.map(e=>e.map)" :languages="vueData.efoAllLang"
+					            	th:value-label="#{EfUicMap$value}" th:label-Label="#{EfUicMap$label}" readonly></vui-ef-map>
+		    </div>
+			<div v-if="value.label">{{ value.label }}</div>
+			<div v-if="value.urn"><a th::href="|'@{/easyforms/form/upload/download/}' + value.urn|">{{ value.label }}</a></div>
+		</q-field>
+	</div>
 </th:block>

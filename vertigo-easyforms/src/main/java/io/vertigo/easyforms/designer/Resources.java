@@ -40,6 +40,7 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerMoveSectionUp,
 	EfDesignerMoveSectionDown,
 	EfDesignerEditSection,
+	EfDesignerViewSection,
 	EfDesignerDeleteSection,
 
 	EfDesignerSectionDeleted,
@@ -56,6 +57,7 @@ public enum Resources implements LocaleMessageKey {
 	EfDesignerMoveItemUpRight,
 	EfDesignerMoveItemDownRight,
 	EfDesignerEditItem,
+	EfDesignerViewItem,
 	EfDesignerDeleteItem,
 
 	EfDesignerItemDeleted,
