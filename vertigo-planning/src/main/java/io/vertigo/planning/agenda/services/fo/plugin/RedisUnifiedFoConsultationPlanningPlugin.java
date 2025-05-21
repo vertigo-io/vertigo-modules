@@ -85,45 +85,33 @@ public class RedisUnifiedFoConsultationPlanningPlugin extends DbFoConsultationPl
 
 	private static final DateTimeFormatter FORMATTER_LOCAL_DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-	private final RedisConnector redisConnector;
-	private final AgendaDAO agendaDAO;
-	private final Optional<MasterManager> masterManagerOpt;
-	private final boolean useDistributedWork;
+	@Inject
+	private RedisConnector redisConnector;
+	@Inject
+	private AgendaDAO agendaDAO;
+	@Inject
+	private Optional<MasterManager> masterManagerOpt;
+
+	//if synchro is distributed (use Stella MasterManager)
+	@Inject
+	@ParamValue("distributedSynchro")
+	private Optional<Boolean> distributedSynchroOpt;
+	private boolean useDistributedWork = false;
 	//init at start
 	private SynchroDbRedisCreneauHelper synchroDbRedisCreneauHelper;
 
 	private static final int MAX_LOOP = 100;
 
-	/**
-	 * Constructor.
-	 * @param redisConnector Redis connector
-	 * @param agendaDAO Agenda DAO
-	 * @param masterManagerOpt Master manager
-	 * @param distributedSynchroOpt if synchro is distributed (use Stella MasterManager)
-	 */
-	@Inject
-	public RedisUnifiedFoConsultationPlanningPlugin(
-			final RedisConnector redisConnector,
-			final AgendaDAO agendaDAO,
-			final Optional<MasterManager> masterManagerOpt,
-			@ParamValue("distributedSynchro") final Optional<Boolean> distributedSynchroOpt) {
+	@Override
+	public void start() {
 		Assertion.check()
-				.isNotNull(redisConnector)
-				.isNotNull(agendaDAO)
 				.isNotNull(masterManagerOpt)
 				.isNotNull(distributedSynchroOpt)
 				.when(distributedSynchroOpt.orElse(false),
 						() -> Assertion.check().isTrue(masterManagerOpt.isPresent(), "distributedSynchro requires masterManager"));
 		//-----
-		this.redisConnector = redisConnector;
-		this.agendaDAO = agendaDAO;
-		this.masterManagerOpt = masterManagerOpt;
-		useDistributedWork = distributedSynchroOpt.orElse(false);
-	}
-
-	@Override
-	public void start() {
 		synchroDbRedisCreneauHelper = new SynchroDbRedisCreneauHelper();
+		useDistributedWork = distributedSynchroOpt.orElse(false);
 	}
 
 	@Override
