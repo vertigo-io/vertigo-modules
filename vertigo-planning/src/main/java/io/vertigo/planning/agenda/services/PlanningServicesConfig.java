@@ -29,8 +29,8 @@ import io.vertigo.core.param.ParamValue;
 @NotDiscoverable
 public class PlanningServicesConfig implements Component {
 
-	static final int MAX_AGENDA_TO_LOAD = 20;
-	static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
+	public static final int MAX_AGENDA_TO_LOAD = 20;
+	public static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
 
 	private final int createMinDureePlageMinute;
 	private final int createMaxDureePlageHeure;

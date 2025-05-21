@@ -41,7 +41,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 public class AbstractAgendaController extends AbstractVSpringMvcController {
 
 	@Inject
-	private AgendaControllerHelper agendaControllerHelper;
+	protected AgendaControllerHelper agendaControllerHelper;
 
 	/**
 	 * Init context for agenda page.
