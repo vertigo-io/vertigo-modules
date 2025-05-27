@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -40,6 +39,7 @@ import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datamodel.smarttype.SmarttypeResources;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.easyforms.dao.EasyFormDAO;
+import io.vertigo.easyforms.designer.HtmlSanatizerUtil;
 import io.vertigo.easyforms.designer.Resources;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsItemUiFields;
 import io.vertigo.easyforms.domain.DtDefinitions.EasyFormsLabelUiFields;
@@ -66,7 +66,6 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 public class EasyFormsDesignerServices implements Component {
 
 	public static final String FORM_INTERNAL_CTX_NAME = "ctx";
-	private static final Pattern EMPTY_HTML_PATTERN = Pattern.compile("^( |&nbsp;|<br */?>|</?div>)*$");
 
 	@Inject
 	private EasyFormDAO easyFormDAO;
@@ -264,7 +263,7 @@ public class EasyFormsDesignerServices implements Component {
 
 				break;
 			case STATIC:
-				if (StringUtil.isBlank(labels.get(0).getText()) || isHtmlEmpty(labels.get(0).getText())) {
+				if (StringUtil.isBlank(labels.get(0).getText()) || HtmlSanatizerUtil.isHtmlEmpty(labels.get(0).getText())) {
 					errorBuilder.addError(labels.get(0), EasyFormsLabelUiFields.text, LocaleMessageText.of(SmarttypeResources.SMARTTYPE_MISSING_VALUE));
 				}
 				break;
@@ -282,10 +281,6 @@ public class EasyFormsDesignerServices implements Component {
 		}
 
 		errorBuilder.throwUserExceptionIfErrors();
-	}
-
-	private boolean isHtmlEmpty(final String str) {
-		return EMPTY_HTML_PATTERN.matcher(str).matches();
 	}
 
 	/**
