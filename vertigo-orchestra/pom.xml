@@ -89,6 +89,14 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.11.2</version>
+				<configuration>
+					<sourcepath>${project.basedir}/src/main/java;${project.basedir}/src/main/javagen</sourcepath>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
