@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package io.vertigo.easyforms.runner.util;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import io.vertigo.easyforms.runner.EasyFormsRunnerManager;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.AbstractEasyFormsTemplateItem;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
+import io.vertigo.easyforms.runner.model.template.EasyFormsDataRead;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
 import io.vertigo.easyforms.runner.model.template.item.EasyFormsTemplateItemField;
@@ -75,7 +75,7 @@ public final class EasyFormsUiUtil implements Serializable {
 		return Math.min(int1, int2.intValue());
 	}
 
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
+	public EasyFormsDataRead getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final String objectKey, final String field, final String row) {
 		final var object = UiRequestUtil.getCurrentViewContext().get(objectKey);
 		if (row == null && object instanceof final UiObject<?> uiObject) {
 			final EasyFormsData easyForm = uiObject.getTypedValue(field, EasyFormsData.class);
@@ -87,7 +87,7 @@ public final class EasyFormsUiUtil implements Serializable {
 		throw new VSystemException("Unsupported object for easy form data.");
 	}
 
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
+	public EasyFormsDataRead getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm) {
 		final var easyFormsRunnerServices = Node.getNode().getComponentSpace().resolve(EasyFormsRunnerServices.class);
 
 		return easyFormsRunnerServices.getEasyFormRead(easyFormsTemplate, easyForm, UiRequestUtil.getCurrentViewContext().asMap(), true);
@@ -146,12 +146,9 @@ public final class EasyFormsUiUtil implements Serializable {
 				.replaceAll("([^!><])=", "$1=="); // = => ==
 	}
 
-	public String resolveLabel(final Map<String, String> labels, final Boolean isI18n) {
+	public String resolveLabel(final Map<String, String> labels) {
 		if (labels == null) {
 			return null;
-		}
-		if (Boolean.TRUE.equals(isI18n)) {
-			return LocaleMessageText.of(() -> labels.get("i18n")).getDisplay();
 		}
 
 		return getEasyFormsRunnerManager().resolveTextForUserlang(labels);
@@ -159,5 +156,36 @@ public final class EasyFormsUiUtil implements Serializable {
 
 	private EasyFormsRunnerManager getEasyFormsRunnerManager() {
 		return Node.getNode().getComponentSpace().resolve(EasyFormsRunnerManager.class);
+	}
+
+	public String getFileTooltip(final Map<String, Serializable> parameters, final Integer maxItems) {
+		final StringBuilder sb = new StringBuilder();
+		if (parameters.containsKey("accept")) {
+			sb.append(LocaleMessageText.of(() -> "EfUploadAccept", parameters.get("accept")).getDisplay());
+			sb.append(".");
+		}
+		if (maxItems != null) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(LocaleMessageText.of(() -> "EfUploadMaxCount", maxItems, maxItems > 1 ? "s" : "").getDisplay());
+			sb.append(".");
+		}
+		if (parameters.containsKey("maxFileSize")) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(LocaleMessageText.of(() -> "EfUploadMaxFileSize", parameters.get("maxFileSize")).getDisplay());
+			sb.append(".");
+		}
+		if (parameters.containsKey("maxSize")) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(LocaleMessageText.of(() -> "EfUploadMaxSize", parameters.get("maxSize")).getDisplay());
+			sb.append(".");
+		}
+
+		return sb.toString();
 	}
 }

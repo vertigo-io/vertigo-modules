@@ -28,7 +28,7 @@ Utilisé sur un site avec une très forte affluence. Certains agendas disposent 
 <dependency>
    <groupId>io.vertigo</groupId>
    <artifactId>vertigo-planning</artifactId>
-   <version>4.3.0</version>
+   <version>4.3.1</version>
 </dependency>
 ```
 

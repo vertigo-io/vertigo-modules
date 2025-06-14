@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ import io.vertigo.easyforms.runner.model.data.EasyFormsDataDescriptor;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldTypeDefinition;
 import io.vertigo.easyforms.runner.model.definitions.EasyFormsFieldValidatorTypeDefinition;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
+import io.vertigo.easyforms.runner.model.template.EasyFormsDataRead;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateSection;
@@ -510,19 +511,20 @@ public class EasyFormsRunnerServices implements Component {
 	 * @param addEmptyFields Whether to add empty fields.
 	 * @return The read form of the EasyForm. We uses a LinkedHashMap to keep the order of the fields.
 	 */
-	public LinkedHashMap<String, LinkedHashMap<String, Object>> getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final Map<String, Serializable> context,
-			final boolean addEmptyFields) {
-		final var easyFormDisplay = new LinkedHashMap<String, LinkedHashMap<String, Object>>();
+	public EasyFormsDataRead getEasyFormRead(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final Map<String, Serializable> context, final boolean addEmptyFields) {
+		final var easyFormDisplay = new EasyFormsDataRead();
 		final var outOfSections = new LinkedHashSet<>(easyForm.keySet());
 
 		processSections(easyFormsTemplate, easyForm, context, easyFormDisplay, outOfSections, addEmptyFields);
-		processOldSections(easyForm, easyFormDisplay, outOfSections);
+		if (easyFormsTemplate.useSections()) {
+			processOldSections(easyForm, easyFormDisplay, outOfSections);
+		}
 
 		return easyFormDisplay;
 	}
 
 	private void processSections(final EasyFormsTemplate easyFormsTemplate, final EasyFormsData easyForm, final Map<String, Serializable> context,
-			final LinkedHashMap<String, LinkedHashMap<String, Object>> easyFormDisplay, final Set<String> outOfSections, final boolean addEmptyFields) {
+			final EasyFormsDataRead easyFormDisplay, final Set<String> outOfSections, final boolean addEmptyFields) {
 		// We use display order from template
 		for (final EasyFormsTemplateSection section : easyFormsTemplate.getSections()) {
 			outOfSections.remove(section.getCode());
@@ -532,7 +534,7 @@ public class EasyFormsRunnerServices implements Component {
 					continue;
 				}
 			}
-			final var easyFormSectionData = (Map<String, Object>) easyForm.get(section.getCode());
+			final var easyFormSectionData = easyFormsTemplate.useSections() ? (Map<String, Object>) easyForm.get(section.getCode()) : easyForm;
 
 			if (easyFormSectionData != null || addEmptyFields) {
 				final var sectionDisplay = new LinkedHashMap<String, Object>();
@@ -576,11 +578,15 @@ public class EasyFormsRunnerServices implements Component {
 		if (rawValue instanceof final List<?> rawList) {
 			final var displayList = new ArrayList<>(rawList.size());
 			for (final var raw : rawList) {
-				final String displayValue = valueToString(smartType, raw);
-				if (raw instanceof final FileInfoURI fileInfoURI) {
-					displayList.add(getFileObj(displayValue, fileInfoURI));
+				if ("STyEfIMapData".equals(smartType.getName())) {
+					displayList.add(Map.of("map", raw));
 				} else {
-					displayList.add(getStrObj(displayValue));
+					final String displayValue = valueToString(smartType, raw);
+					if (raw instanceof final FileInfoURI fileInfoURI) {
+						displayList.add(getFileObj(displayValue, fileInfoURI));
+					} else {
+						displayList.add(getStrObj(displayValue));
+					}
 				}
 			}
 			sectionDisplay.put(easyFormsRunnerManager.resolveTextForUserlang(field.getLabel()), displayList);
@@ -629,7 +635,7 @@ public class EasyFormsRunnerServices implements Component {
 	}
 
 	private static Map<String, String> getStrObj(final String value) {
-		return Map.of("label", value);
+		return Map.of("label", value == null ? "" : value);
 	}
 
 	private Map<String, String> getFileObj(final String urn, final FileInfoURI fileInfoURI) {

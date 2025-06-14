@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.easyforms.runner.model.adapter.EasyFormsJsonAdapter;
 import io.vertigo.easyforms.runner.model.adapter.EasyFormsMapInputAdapter;
 import io.vertigo.easyforms.runner.model.template.EasyFormsData;
+import io.vertigo.easyforms.runner.model.template.EasyFormsDataRead;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplate;
 import io.vertigo.easyforms.runner.model.template.EasyFormsTemplateFieldValidator;
 import io.vertigo.easyforms.runner.pack.constraint.ConstraintLocalDateMaximum;
@@ -134,8 +135,7 @@ public enum EasyFormsSmartTypes {
 			//vérifie un numéro international avec +XX ou 00XX ou un numéro francais.
 			//Pour l'international seul le prefix 17 est filtré (pas d'autre commencant pas 1), et entre 2 et 13 chiffres après le prefix (la reco UIT-T limite à 15 le total)
 			//pour la france vérifie qu'on a +33 ou 0033 ou 0 + 9 chiffres . peut avoir des () des . ou des espaces. doit finir par 2 chiffres consécutifs
-			arg = "^((?:\\+|00)([17]|[245689]\\d|3[0-24-9]\\d)(?:\\W*\\d){2,13}+\\d)|((((?:\\+|00)33\\W*)|0)[1-9](?:\\W*\\d){7}\\d)$",
-			resourceMsg = "EfInvalidPhoneNumber")
+			arg = "^((?:\\+|00)([17]|[245689]\\d|3[0-24-9]\\d)(?:\\W*\\d){2,13}+\\d)|((((?:\\+|00)33\\W*)|0)[1-9](?:\\W*\\d){7}\\d)$", resourceMsg = "EfInvalidPhoneNumber")
 	@Constraint(clazz = ConstraintStringLength.class, arg = "20")
 	EfTelephone,
 
@@ -165,6 +165,10 @@ public enum EasyFormsSmartTypes {
 	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "sql")
 	@SmartTypeProperty(property = "indexType", value = "text_fr")
 	EfFormData,
+
+	@SmartTypeDefinition(EasyFormsDataRead.class)
+	@Adapter(clazz = EasyFormsJsonAdapter.class, targetBasicType = BasicType.String, type = "ui")
+	EfFormDataRead,
 
 	@SmartTypeDefinition(List.class)
 	@Formatter(clazz = FormatterDefault.class)

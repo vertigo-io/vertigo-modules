@@ -1,8 +1,21 @@
 let context = document.currentScript.dataset.context ;
 
+let efLastKey = null;
+document.addEventListener('keydown', (e) => {
+	efLastKey = e.key;
+});
+document.addEventListener('mousedown', (e) => {
+	efLastKey = null;
+});
+	
+
 VUiExtensions.methods = {
     ...VUiExtensions.methods,
 	
+	efIsTabNavigation : function() {
+		return efLastKey === 'Tab';
+	},
+		
 	efRoundOrDefaut : function(value, decimals, defaultValue) {
 		if (!Number.isFinite(value)) {
 			return defaultValue;
@@ -223,6 +236,7 @@ VUiExtensions.methods = {
         formData.delete('vContext[editItem][type]')//not modifiable
         formData.delete('vContext[editItem][isSystem]')//not modifiable
         formData.delete('vContext[editItem][isList]')//not modifiable
+        formData.delete('vContext[editItem][parametersRead]')//not modifiable
        
         formData.delete('vContext[editItem][parameters]') // specific field, need to be in json format
         formData.append('vContext[editItem][parameters]', JSON.stringify(this.vueData.editItem.parameters));
@@ -313,6 +327,7 @@ window.addEventListener('vui-before-plugins', function(event) {
             languages: { type: Array, default: () => [] },
             valueLabel: { type: String, default: 'Value'},
             labelLabel: { type: String, default: 'Label'},
+			readonly: { type: Boolean, default: false },
         },
         data: function() {
             return {
@@ -320,7 +335,7 @@ window.addEventListener('vui-before-plugins', function(event) {
             }
         },
         template: `
-            <div>
+            <div v-if="!readonly">
                 <div v-for="param in modelValue" class="row q-col-gutter-md">
                     <q-input label-slot stack-label orientation="vertical" class="col-5" :class="!isEmpty(param)?'v-field__required':''"
                             :label="valueLabel"
@@ -336,13 +351,27 @@ window.addEventListener('vui-before-plugins', function(event) {
                     </span>
                 </div>
             </div>
+			<div v-else>
+				<div v-for="param in modelValue" class="row q-col-gutter-md">
+					<q-field :label="valueLabel" orientation="vertical" class="col-5" stack-label readonly borderless>
+					    {{ param.value }}
+					</q-field>
+					<span class="col-7">
+						<q-field v-for="(lang, index) in languages"
+                            :label="labelLabel + (languages.length > 1 ? ' (' + lang + ')' : '')"
+                            orientation="vertical" stack-label readonly borderless>
+                            {{ param.label[lang] }}
+                        </q-field>
+					</span>
+				</div>
+			</div>
         `
         ,
         emits: ["update:modelValue"],
         created: function() {
             if(this.$props.modelValue) {
                 this.$data.internalModel = this.$props.modelValue;
-                if (!this.isLastEmpty(this.$props.modelValue)) {
+                if (!this.$props.readonly && !this.isLastEmpty(this.$props.modelValue)) {
                     this.$data.internalModel.push({label: {}, value: ''});
                 }
             } else {
@@ -353,7 +382,7 @@ window.addEventListener('vui-before-plugins', function(event) {
             modelValue: function(newVal) {
                 if(this.$props.modelValue) {
                     this.$data.internalModel = this.$props.modelValue;
-                    if (!this.isLastEmpty(this.$props.modelValue)) {
+                    if (!this.$props.readonly && !this.isLastEmpty(this.$props.modelValue)) {
                         this.$data.internalModel.push({label: {}, value: ''});
                     }
                 } else {
@@ -362,7 +391,7 @@ window.addEventListener('vui-before-plugins', function(event) {
             },
             internalModel: {
                 handler: function(newVal) {
-                    if (!this.isLastEmpty(this.$data.internalModel)) {
+                    if (!this.$props.readonly && !this.isLastEmpty(this.$data.internalModel)) {
                         this.$data.internalModel.push({label: {}, value: ''});
                     } else {
                         // keep only one empty at the end

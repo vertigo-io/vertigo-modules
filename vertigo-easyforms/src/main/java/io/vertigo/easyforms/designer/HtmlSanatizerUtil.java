@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,21 @@
  */
 package io.vertigo.easyforms.designer;
 
+import java.util.regex.Pattern;
+
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
+import io.vertigo.core.util.StringUtil;
+
 public class HtmlSanatizerUtil {
+
+	private static final Pattern TAGS_AND_NBSP_PATTERN = Pattern.compile("(<[^>]*>|&nbsp;|\u00A0)");
+
+	private HtmlSanatizerUtil() {
+		// Utility class
+	}
 
 	private static final PolicyFactory SANATIZER = Sanitizers.FORMATTING
 			.and(Sanitizers.BLOCKS)
@@ -44,6 +54,15 @@ public class HtmlSanatizerUtil {
 					.toFactory());
 
 	public static String sanatizeHtml(final String in) {
-		return SANATIZER.sanitize(in);
+		final var sanitizedValue = SANATIZER.sanitize(in);
+		if (isHtmlEmpty(sanitizedValue)) {
+			return null;
+		}
+		return sanitizedValue;
+	}
+
+	public static boolean isHtmlEmpty(final String in) {
+		// Detects if the string contains only tags, spaces, or non-breaking spaces
+		return in == null || StringUtil.isBlank(in) || StringUtil.isBlank(TAGS_AND_NBSP_PATTERN.matcher(in).replaceAll(""));
 	}
 }

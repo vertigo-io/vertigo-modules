@@ -38,7 +38,6 @@
 
 <script>
 import router from "./router";
-import * as Quasar from "quasar"
 export default {
   name: "app",
   router,
@@ -50,7 +49,7 @@ export default {
   },
   methods: {
     changeLang: function() {
-      Quasar.lang.set(this.lang == "fr" ? Quasar.lang.fr : Quasar.lang.en);
+      window.Quasar.lang.set(this.lang == "fr" ? window.Quasar.lang.fr : window.Quasar.lang.en);
     },
   },
 };

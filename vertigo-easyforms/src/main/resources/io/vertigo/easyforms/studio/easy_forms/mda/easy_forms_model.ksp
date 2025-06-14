@@ -36,6 +36,7 @@ create DtDefinition DtEasyFormsItemUi {
     field isList 			{domain: DoEfBoolean 				label:"Is list" 				}
     field maxItems 			{domain: DoEfCountStrict			label:"Maximum number of items" }
     field parameters 		{domain: DoEfFormData				label:"Parameters" 				}
+    field parametersRead	{domain: DoEfFormDataRead			label:"Parameters" 				}
     field fieldValidatorSelection 	{domain: DoEfLabel			label:"Validators" 				cardinality:"*"	}
     field condition 		{domain: DoEfLongLabel 				label:"Display condition" 		}				 /* for block items */
 }

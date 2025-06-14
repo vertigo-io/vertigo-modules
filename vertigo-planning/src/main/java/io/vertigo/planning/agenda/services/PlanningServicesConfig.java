@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import io.vertigo.core.param.ParamValue;
 @NotDiscoverable
 public class PlanningServicesConfig implements Component {
 
-	static final int MAX_AGENDA_TO_LOAD = 20;
-	static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
+	public static final int MAX_AGENDA_TO_LOAD = 20;
+	public static final int ORPHAN_RESERVATION_AGG_MINUTES = 30;
 
 	private final int createMinDureePlageMinute;
 	private final int createMaxDureePlageHeure;

@@ -1,9 +1,9 @@
-<th:block th:fragment="agenda-create-plage" vu:alias="agenda-create-plage" vu:selector="${true}" 
+<th:block th:fragment="agenda-create-plage(plage_actions_slot)" vu:alias="agenda-create-plage" vu:selector="${true}" 
     th:attr="objectKey=${model.vContext['componentStates'].addComponentState('createItemModal').addPrimitive('opened', false)}">
     <vu:include-data object="defaultPlageHoraire" field="*" />
     <vu:include-data object="creationPlageHoraireForm" field="dureeCreneau" />
     <q-dialog th:v-model="componentStates.createItemModal.opened" >
-        <q-card class="bg-white v-modal createPlageModal">
+        <q-card class="bg-white createPlageModal">
             <q-toolbar class="bg-primary">
                 <q-toolbar-title class="text-white">Créer une plage horaire</q-toolbar-title>
                 <div class="col-1"></div>
