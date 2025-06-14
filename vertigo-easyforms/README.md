@@ -29,7 +29,7 @@ Add the following dependency in the `pom.xml` file to include the EasyForms modu
 <dependency>
    <groupId>io.vertigo</groupId>
    <artifactId>vertigo-easyforms</artifactId>
-   <version>4.3.0</version>
+   <version>4.3.1</version>
 </dependency>
 ```
 
