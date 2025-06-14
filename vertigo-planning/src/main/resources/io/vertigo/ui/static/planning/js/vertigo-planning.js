@@ -375,7 +375,7 @@ VUiExtensions.methods.onSelectPlageHoraire = function(event) {
             this.$data.componentStates.editedPlageHoraire = event;
             this.httpPostAjax('_loadPlageHoraireDetail', {plhId: event.plhId}, {
                  onSuccess: function() {
-                     this.$data.componentStates.trancheHorairesList.pagination.rowsNumber = this.$data.vueData.trancheHoraires.length;
+                     this.$data.componentStates.trancheHorairesList.pagination.rowsNumber = this.$data.vueData.trancheHorairesDetail.length;
                      this.$data.componentStates.viewItemDrawer.opened = true;
                 }.bind(this)
             })

@@ -9,6 +9,7 @@ import { viteExternalsPlugin } from 'vite-plugin-externals'
 export default defineConfig({
   build: {
     sourcemap: true,
+	minify: true,
     lib: {
       entry: path.resolve(__dirname, 'src/main.js'),
       name: 'VertigoOrchestraUi',
@@ -20,14 +21,16 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
 
-      external: ['vue', 'quasar'],
+      external: ['vue'],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          vue: 'Vue',
-          quasar: 'Quasar'
-        }
+          vue: 'Vue'
+        },
+		 // Pour UMD, assurons-nous que le code est compatible avec le navigateur
+        format: 'umd',
+        name: 'VertigoOrchestraUi'
       }
     }
   },
@@ -38,8 +41,7 @@ export default defineConfig({
   plugins: [
     vue(),
     viteExternalsPlugin({
-      vue: 'Vue',
-      quasar: 'Quasar'
+      vue: 'Vue'
     }),],
   resolve: {
     alias: {

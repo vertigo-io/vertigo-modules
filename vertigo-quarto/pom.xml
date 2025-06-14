@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-modules</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>4.4.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-quarto</artifactId>
@@ -58,13 +58,13 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>5.4.0</version> <!-- pour le plugin XDocReportConverterPlugin -->
+			<version>5.4.1</version> <!-- pour le plugin XDocReportConverterPlugin -->
 			<exclusions>
 				<!-- STAX comes with Java 1.6 -->
 				<exclusion>
@@ -101,7 +101,7 @@
 		<dependency>
 		    <groupId>com.github.miachm.sods</groupId>
 		    <artifactId>SODS</artifactId>
-		    <version>1.6.7</version>
+		    <version>1.6.8</version>
 		</dependency>
 
 		<dependency>

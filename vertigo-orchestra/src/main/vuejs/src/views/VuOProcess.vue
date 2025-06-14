@@ -11,7 +11,7 @@
 
         <q-card class="my-card">
           <q-card-section>
-            <div class="text-h6">{{ $q.lang.vuiOrchestra.orchestra.totalExecutions }}</div>
+            <div class="text-h6">{{ $vui.i18n().vuiOrchestra.orchestra.totalExecutions }}</div>
           </q-card-section>
 
           <q-separator inset></q-separator>
@@ -56,13 +56,13 @@
           </q-card-section>
           <q-separator inset></q-separator>
           <q-card-section v-if="!orchestraUiReadOnly">
-            <q-btn :label="$q.lang.vuiOrchestra.orchestra.executeNow" @click="executeNow(processInfo.definitionId)" color="indigo" class="q-mx-auto" />
+            <q-btn :label="$vui.i18n().vuiOrchestra.orchestra.executeNow" @click="executeNow(processInfo.definitionId)" color="indigo" class="q-mx-auto" />
           </q-card-section>
         </q-card>
 
         <q-card class="my-card q-mt-lg  text-primary" v-if="processInfo.metadatas && Object.keys(processInfo.metadatas).length>0">
           <q-card-section>
-            <div class="text-h6"> {{ $q.lang.vuiOrchestra.orchestra.functionalId }}</div>
+            <div class="text-h6"> {{ $vui.i18n().vuiOrchestra.orchestra.functionalId }}</div>
           </q-card-section>
 
           <q-separator inset></q-separator>
@@ -82,7 +82,7 @@
         <q-card class="my-card q-mt-lg  text-primary">
           <q-card-section>
             <div class="text-h6">
-              {{ $q.lang.vuiOrchestra.orchestra.technicalId }}
+              {{ $vui.i18n().vuiOrchestra.orchestra.technicalId }}
               <q-btn  round color="indigo" icon="edit" class="q-ml-sm" size="sm" @click="editMode.technical = !editMode.technical" v-if="!orchestraUiReadOnly" ></q-btn>
             </div>
           </q-card-section>
@@ -94,42 +94,42 @@
                 <div v-if="editMode.technical">
                   <q-form @submit="onSubmit('technical')">
                     <q-item>
-                      <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.processName }}  </q-item-section>
+                      <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.processName }}  </q-item-section>
                       <q-item-section side> {{ processInfo.definitionId }} </q-item-section>
                     </q-item>
                     <q-item>
-                      <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.cronExpression }}  </q-item-section>
+                      <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.cronExpression }}  </q-item-section>
                       <q-item-section side>
                         <q-input  v-model="form.technical.cronExpression" :dense="true"  placeholder="* * * * * ? *" />
                       </q-item-section>
                     </q-item>
                     <q-item>
-                      <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.active }} </q-item-section>
+                      <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.active }} </q-item-section>
                       <q-item-section side>
                         <div class="q-gutter-sm">
-                          <q-radio size="xs"   v-model="form.technical.active"  val="true" :label="$q.lang.vuiOrchestra.orchestra.yes" />
-                          <q-radio size="xs" v-model="form.technical.active"  val="false" :label="$q.lang.vuiOrchestra.orchestra.no" />
+                          <q-radio size="xs"   v-model="form.technical.active"  val="true" :label="$vui.i18n().vuiOrchestra.orchestra.yes" />
+                          <q-radio size="xs" v-model="form.technical.active"  val="false" :label="$vui.i18n().vuiOrchestra.orchestra.no" />
                         </div>
                       </q-item-section>
                     </q-item>
                     <q-item>
-                      <q-item-section class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.multiExecution }}  </q-item-section>
+                      <q-item-section class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.multiExecution }}  </q-item-section>
                       <q-item-section side>
                         <div class="q-gutter-sm">
-                          <q-radio  size="xs"  v-model="form.technical.multiExecution"  val="true"  :label="$q.lang.vuiOrchestra.orchestra.yes" />
-                          <q-radio  size="xs"  v-model="form.technical.multiExecution"  val="false"  :label="$q.lang.vuiOrchestra.orchestra.no" />
+                          <q-radio  size="xs"  v-model="form.technical.multiExecution"  val="true"  :label="$vui.i18n().vuiOrchestra.orchestra.yes" />
+                          <q-radio  size="xs"  v-model="form.technical.multiExecution"  val="false"  :label="$vui.i18n().vuiOrchestra.orchestra.no" />
                         </div>
                       </q-item-section>
                     </q-item>
                     <q-item>
-                      <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.rescuePeriod }}  </q-item-section>
+                      <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.rescuePeriod }}  </q-item-section>
                       <q-item-section side>
                         <q-input v-model.number="form.technical.rescuePeriod"  type="number" :dense="true" />
                       </q-item-section>
                     </q-item>
                     <div>
                       <q-item>
-                        <q-btn :label="$q.lang.vuiOrchestra.orchestra.submit" type="submit"  color="indigo"  class="q-mx-auto" v-if="!orchestraUiReadOnly"/>
+                        <q-btn :label="$vui.i18n().vuiOrchestra.orchestra.submit" type="submit"  color="indigo"  class="q-mx-auto" v-if="!orchestraUiReadOnly"/>
                       </q-item>
                     </div>
                   </q-form>
@@ -137,26 +137,26 @@
 
                 <div v-else>
                   <q-item>
-                    <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.processName }}  </q-item-section>
+                    <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.processName }}  </q-item-section>
                     <q-item-section side> {{ processInfo.definitionId }} </q-item-section>
                   </q-item>                    
                   <q-item>
-                    <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.cronExpression }}</q-item-section>
+                    <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.cronExpression }}</q-item-section>
                     <q-item-section side> {{ processInfo.triggeringStrategy ? processInfo.triggeringStrategy.cronExpression : "-" }} </q-item-section>
                   </q-item>
                   <q-item>
-                    <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.active }}  </q-item-section>
-                    <q-item-section side> {{ Object.entries(processInfo).length ? processInfo.active ? $q.lang.vuiOrchestra.orchestra.yes : $q.lang.vuiOrchestra.orchestra.no : "-" }}  </q-item-section>
+                    <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.active }}  </q-item-section>
+                    <q-item-section side> {{ Object.entries(processInfo).length ? processInfo.active ? $vui.i18n().vuiOrchestra.orchestra.yes : $vui.i18n().vuiOrchestra.orchestra.no : "-" }}  </q-item-section>
                   </q-item>
                   <q-item>
-                    <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.multiExecution }} </q-item-section>
+                    <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.multiExecution }} </q-item-section>
                     <q-item-section side>
-                      {{ processInfo.triggeringStrategy ? processInfo.triggeringStrategy.multiExecution ? $q.lang.vuiOrchestra.orchestra.yes : $q.lang.vuiOrchestra.orchestra.no  : "-"  }}
+                      {{ processInfo.triggeringStrategy ? processInfo.triggeringStrategy.multiExecution ? $vui.i18n().vuiOrchestra.orchestra.yes : $vui.i18n().vuiOrchestra.orchestra.no  : "-"  }}
                     </q-item-section>
                   </q-item>
 
                   <q-item>
-                    <q-item-section class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.rescuePeriod }} </q-item-section>
+                    <q-item-section class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.rescuePeriod }} </q-item-section>
                     <q-item-section side>
                       <!-- Temps de validité d'une planification = rescuePeriodInSeconds -->
                       {{ processInfo.triggeringStrategy  ? processInfo.triggeringStrategy.rescuePeriodInSeconds : "-"}}
@@ -171,7 +171,7 @@
         <q-card class="my-card q-mt-lg  text-primary ">
           <q-card-section>
             <div class="text-h6">
-              {{ $q.lang.vuiOrchestra.orchestra.settings }}
+              {{ $vui.i18n().vuiOrchestra.orchestra.settings }}
               <q-btn round color="indigo"  icon="edit"  class="q-ml-sm" size="sm" @click="editMode.settings = !editMode.settings" v-if="!orchestraUiReadOnly"></q-btn>
             </div>
           </q-card-section>
@@ -191,7 +191,7 @@
                             :rules="[
                               (val) =>
                                 (val && val.length > 0) ||
-                                $q.lang.vuiOrchestra.orchestra.fieldCannotBeEmpty,
+                                $vui.i18n().vuiOrchestra.orchestra.fieldCannotBeEmpty,
                             ]"
                           />
                         </q-item-section>
@@ -199,7 +199,7 @@
                     </div>
                     <div>
                       <q-item>
-                        <q-btn :label="$q.lang.vuiOrchestra.orchestra.submit" type="submit" color="indigo" class="q-mx-auto" v-if="!orchestraUiReadOnly"/>
+                        <q-btn :label="$vui.i18n().vuiOrchestra.orchestra.submit" type="submit" color="indigo" class="q-mx-auto" v-if="!orchestraUiReadOnly"/>
                       </q-item>
                     </div>
                   </q-form>
@@ -221,12 +221,12 @@
     <template v-slot:after>
       <div class="q-pa-md">
         <div class="text-h4 q-gutter-x-md q-mx-auto row">
-          <div class="col">{{ $q.lang.vuiOrchestra.orchestra.executions }}</div>
+          <div class="col">{{ $vui.i18n().vuiOrchestra.orchestra.executions }}</div>
           <div class="col-auto">
             <q-tabs v-model="filterTab" inline-label class="text-primary q-mx-auto" >
-              <q-tab name="all" icon="list" :label="$q.lang.vuiOrchestra.orchestra.all" @click="updateExecutions('')" ></q-tab>
-              <q-tab name="done" icon="done" :label="$q.lang.vuiOrchestra.orchestra.done" @click="updateExecutions('DONE')" class="text-green" ></q-tab>
-              <q-tab name="error" icon="error" :label="$q.lang.vuiOrchestra.orchestra.error" @click="updateExecutions('ERROR')" class="text-red" ></q-tab>
+              <q-tab name="all" icon="list" :label="$vui.i18n().vuiOrchestra.orchestra.all" @click="updateExecutions('')" ></q-tab>
+              <q-tab name="done" icon="done" :label="$vui.i18n().vuiOrchestra.orchestra.done" @click="updateExecutions('DONE')" class="text-green" ></q-tab>
+              <q-tab name="error" icon="error" :label="$vui.i18n().vuiOrchestra.orchestra.error" @click="updateExecutions('ERROR')" class="text-red" ></q-tab>
             </q-tabs>
           </div>
         </div>
@@ -247,33 +247,33 @@
                     <q-splitter v-model="splitterModelExecutions">
                       <template v-slot:before>
                         <q-tabs v-model="tabs[execution.preId]" vertical class="text-primary" >
-                          <q-tab name="info" :label="$q.lang.vuiOrchestra.orchestra.informations" ></q-tab>
-                          <q-tab name="activities" :label="$q.lang.vuiOrchestra.orchestra.activities" ></q-tab>
-                          <q-tab name="support" :label="$q.lang.vuiOrchestra.orchestra.support" ></q-tab>
+                          <q-tab name="info" :label="$vui.i18n().vuiOrchestra.orchestra.informations" ></q-tab>
+                          <q-tab name="activities" :label="$vui.i18n().vuiOrchestra.orchestra.activities" ></q-tab>
+                          <q-tab name="support" :label="$vui.i18n().vuiOrchestra.orchestra.support" ></q-tab>
                         </q-tabs>
                       </template>
                       <template v-slot:after>
                         <q-tab-panels  v-model="tabs[execution.preId]" animated vertical transition-prev="jump-up"  transition-next="jump-up" >
                           <q-tab-panel name="info">
-                            <div class="text-h5">{{ $q.lang.vuiOrchestra.orchestra.informations }}</div>
+                            <div class="text-h5">{{ $vui.i18n().vuiOrchestra.orchestra.informations }}</div>
                             <q-separator class="q-mt-sm q-mb-md"></q-separator>
                             <div style="max-width: 400px;" class="text-primary">
                               <q-list dense>
                                 <q-item>
                                   <q-item-section>
-                                    <div class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.startTime }} </div>
+                                    <div class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.startTime }} </div>
                                   </q-item-section>
                                   <q-item-section side class="text-primary"> {{ formatDate(execution.beginTime) }} </q-item-section>
                                 </q-item>
                                 <q-item>
                                   <q-item-section>
-                                    <div class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.endTime }} </div>
+                                    <div class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.endTime }} </div>
                                   </q-item-section>
                                   <q-item-section side class="text-primary"> {{ formatDate(execution.endTime) }} </q-item-section>
                                 </q-item>
                                 <q-item>
                                   <q-item-section>
-                                    <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.duration }} </div>
+                                    <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.duration }} </div>
                                   </q-item-section>
                                   <q-item-section side class="text-primary"> {{ execution.executionTime }}s </q-item-section>
                                 </q-item>
@@ -281,7 +281,7 @@
                             </div>
                           </q-tab-panel>
                           <q-tab-panel name="activities">
-                            <div class="text-h5"> {{ $q.lang.vuiOrchestra.orchestra.activities }} </div>
+                            <div class="text-h5"> {{ $vui.i18n().vuiOrchestra.orchestra.activities }} </div>
                             <q-separator class="q-mt-sm q-mb-md"></q-separator>
                             <q-list bordered class="rounded-borders">
                               <div  v-for="activity in activities[execution.preId]" :key="activity.aceId" >
@@ -299,27 +299,27 @@
                                       <div style="max-width: 400px;">
                                         <q-list dense>
                                           <q-item>
-                                            <q-item-section> <div class="text-weight-medium">  {{  $q.lang.vuiOrchestra.orchestra.startTime }} </div> </q-item-section>
+                                            <q-item-section> <div class="text-weight-medium">  {{  $vui.i18n().vuiOrchestra.orchestra.startTime }} </div> </q-item-section>
                                             <q-item-section side class="text-primary"> {{ formatDate(activity.beginTime) }} </q-item-section>
                                           </q-item>
                                           <q-item>
-                                            <q-item-section> <div class="text-weight-medium">  {{  $q.lang.vuiOrchestra.orchestra.endTime }} </div> </q-item-section>
+                                            <q-item-section> <div class="text-weight-medium">  {{  $vui.i18n().vuiOrchestra.orchestra.endTime }} </div> </q-item-section>
                                             <q-item-section side class="text-primary"> {{ formatDate(activity.endTime) }} </q-item-section>
                                           </q-item>
                                           <q-item>
-                                            <q-item-section> <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.duration }} </div> </q-item-section>
+                                            <q-item-section> <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.duration }} </div> </q-item-section>
                                             <q-item-section side class="text-primary"> {{ activity.executionTime }}s </q-item-section>
                                           </q-item>
                                           <q-item v-if="activity.hasLogFile">
-                                            <q-item-section> <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.logFile }} </div> </q-item-section>
+                                            <q-item-section> <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.logFile }} </div> </q-item-section>
                                             <q-item-section side class="text-primary"> 
-                                              <q-btn type="a" icon="description" flat padding="none" :title="$q.lang.vuiOrchestra.orchestra.logFile" :href="apiUrl+'/executions/'+execution.preId+'/activities/'+activity.aceId+'/attachment'"></q-btn>
+                                              <q-btn type="a" icon="description" flat padding="none" :title="$vui.i18n().vuiOrchestra.orchestra.logFile" :href="apiUrl+'/executions/'+execution.preId+'/activities/'+activity.aceId+'/attachment'"></q-btn>
                                             </q-item-section>
                                           </q-item>
                                           <q-item v-if="activity.hasTechnicalLog">
-                                            <q-item-section> <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.technicalLogFile }} </div> </q-item-section>
+                                            <q-item-section> <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.technicalLogFile }} </div> </q-item-section>
                                             <q-item-section side class="text-primary"> 
-                                              <q-btn type="a" icon="description" flat padding="none" :title="$q.lang.vuiOrchestra.orchestra.technicalLogFile" :href="apiUrl+'/executions/'+execution.preId+'/activities/'+activity.aceId+'/logFile'"></q-btn>
+                                              <q-btn type="a" icon="description" flat padding="none" :title="$vui.i18n().vuiOrchestra.orchestra.technicalLogFile" :href="apiUrl+'/executions/'+execution.preId+'/activities/'+activity.aceId+'/logFile'"></q-btn>
                                             </q-item-section>
                                           </q-item>
                                         </q-list>
@@ -332,28 +332,28 @@
                             </q-list>
                           </q-tab-panel>
                           <q-tab-panel name="support" v-if="false">
-                            <div class="text-h5"> {{ $q.lang.vuiOrchestra.orchestra.support }}
+                            <div class="text-h5"> {{ $vui.i18n().vuiOrchestra.orchestra.support }}
                               <q-btn  round color="primary"  icon="edit" class="q-ml-sm" size="sm" v-if="!orchestraUiReadOnly"></q-btn>
                             </div>
                             <q-separator class="q-mt-sm q-mb-md"></q-separator>
                             <div style="max-width: 400px;">
                               <q-list dense>
                                 <q-item v-if="activity.hasLogFile">
-                                  <q-item-section> <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.logFile }} </div> </q-item-section>
+                                  <q-item-section> <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.logFile }} </div> </q-item-section>
                                   <q-item-section side class="text-primary"> 
-                                    <q-btn type="a" icon="description" flat padding="none" :title="$q.lang.vuiOrchestra.orchestra.logFile" :href="apiUrl+'/executions/'+execution.preId+'/activities/'+activity.aceId+'/attachment'"></q-btn>
+                                    <q-btn type="a" icon="description" flat padding="none" :title="$vui.i18n().vuiOrchestra.orchestra.logFile" :href="apiUrl+'/executions/'+execution.preId+'/activities/'+activity.aceId+'/attachment'"></q-btn>
                                   </q-item-section>
                                 </q-item>
                                 <q-item>
-                                  <q-item-section>  <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.support }} </div> </q-item-section>
+                                  <q-item-section>  <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.support }} </div> </q-item-section>
                                   <q-item-section side> To fill ! </q-item-section>
                                 </q-item>
                                 <q-item>
-                                  <q-item-section> <div class="text-weight-medium"> {{ $q.lang.vuiOrchestra.orchestra.supportDate }} </div> </q-item-section>
+                                  <q-item-section> <div class="text-weight-medium"> {{ $vui.i18n().vuiOrchestra.orchestra.supportDate }} </div> </q-item-section>
                                   <q-item-section side> To fill ! </q-item-section>
                                 </q-item>
                                 <q-item>
-                                  <q-item-section> <div class="text-weight-medium">  {{ $q.lang.vuiOrchestra.orchestra.comment }} </div> </q-item-section>
+                                  <q-item-section> <div class="text-weight-medium">  {{ $vui.i18n().vuiOrchestra.orchestra.comment }} </div> </q-item-section>
                                   <q-item-section side> To fill ! </q-item-section>
                                 </q-item>
                               </q-list>
@@ -383,7 +383,6 @@
 </template>
 
 <script>
-import Quasar from "quasar";
 import axios from "axios";
 export default {
   created() {
@@ -411,9 +410,9 @@ export default {
       .catch((err) => {
         console.error(err);
         if (err.response) {
-          this.errorMessage = `${this.$q.lang.vuiOrchestra.orchestra.noProcess}: ${this.$props.processName}`;
+          this.errorMessage = `${this.$vui.i18n().vuiOrchestra.orchestra.noProcess}: ${this.$props.processName}`;
         } else {
-          this.errorMessage = this.$q.lang.vuiOrchestra.orchestra.connectionFailed;
+          this.errorMessage = this.$vui.i18n().vuiOrchestra.orchestra.connectionFailed;
         }
         this.connectionFailure = err.response ? false : true;
       });
@@ -457,9 +456,9 @@ export default {
       // Avoid displaying message when this.connectionFailure == ?
       if (this.errorMessage) {
         if (this.connectionFailure == false) {
-          this.errorMessage = `${this.$q.lang.vuiOrchestra.orchestra.noProcess}: ${this.$props.processName}`;
+          this.errorMessage = `${this.$vui.i18n().vuiOrchestra.orchestra.noProcess}: ${this.$props.processName}`;
         } else if (this.connectionFailure == true) {
-          this.errorMessage = this.$q.lang.vuiOrchestra.orchestra.connectionFailed;
+          this.errorMessage = this.$vui.i18n().vuiOrchestra.orchestra.connectionFailed;
         }
       }
     },
@@ -492,11 +491,11 @@ export default {
     formatDate(unformattedDate) {
       // Date is assumed to be in YYYY-MM-DDTHH:mm... format
       if(unformattedDate) {
-        let timestamp = Quasar.date.extractDate(
+        let timestamp = window.Quasar.date.extractDate(
           unformattedDate.substring(0, 16),
           "YYYY-MM-DDTHH:mm"
         );
-        return Quasar.date.formatDate(timestamp, "DD/MM/YYYY HH:mm");
+        return window.Quasar.date.formatDate(timestamp, "DD/MM/YYYY HH:mm");
       }
       return "";
     },
@@ -505,14 +504,14 @@ export default {
         .post(`${this.apiUrl}/executionsControl/executeNow`, { processName: myProcessName })
         .then((res) => {
           this.$q.notify({
-            message: this.$q.lang.vuiOrchestra.orchestra.executeNowOk,
+            message: this.$vui.i18n().vuiOrchestra.orchestra.executeNowOk,
             color: 'positive'
           });
         })
         .catch((err) => {
           console.error(err);
           this.$q.notify({
-            message: this.$q.lang.vuiOrchestra.orchestra.executeNowErr,
+            message: this.$vui.i18n().vuiOrchestra.orchestra.executeNowErr,
             color: 'negative'
           });
         });
@@ -546,9 +545,9 @@ export default {
         .catch((err) => {
           console.error(err);
           if (err.response) {
-            this.errorMessage = `${this.$q.lang.vuiOrchestra.orchestra.noProcess}: ${this.$props.processName}`;
+            this.errorMessage = `${this.$vui.i18n().vuiOrchestra.orchestra.noProcess}: ${this.$props.processName}`;
           } else {
-            this.errorMessage = this.$q.lang.vuiOrchestra.orchestra.connectionFailed;
+            this.errorMessage = this.$vui.i18n().vuiOrchestra.orchestra.connectionFailed;
           }
           this.connectionFailure = err.response ? false : true;
         });

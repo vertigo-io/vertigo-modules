@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 		return itemUi;
 	}
 
-	private EasyFormsItemUi toItemUi(final AbstractEasyFormsTemplateItem item) {
+	private EasyFormsItemUi toItemUi(final ViewContext viewContext, final AbstractEasyFormsTemplateItem item) {
 		final EasyFormsItemUi itemUi = new EasyFormsItemUi();
 		itemUi.setType(item.getType());
 		if (item instanceof final EasyFormsTemplateItemField field) {
@@ -201,6 +201,12 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			updateItemForType(itemUi);
 
 			itemUi.setParameters(field.getParameters());
+			if (isModeRead()) {
+				final var template = ((Map<String, EasyFormsTemplate>) viewContext.get(fieldTypesTemplateKey.get())).get(field.getFieldTypeName());
+				if (template != null) {
+					itemUi.setParametersRead(new EasyFormsUiUtil().getEasyFormRead(template, field.getParameters()));
+				}
+			}
 			if (field.getValidators() != null) {
 				itemUi.setFieldValidatorSelection(field.getValidators().stream().map(EasyFormsTemplateFieldValidator::getName).toList());
 			}
@@ -605,7 +611,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 			editedItem = ((EasyFormsTemplateItemBlock) editedItem).getItems().get(editIndex2.get());
 		}
 
-		final var editedItemUi = toItemUi(editedItem);
+		final var editedItemUi = toItemUi(viewContext, editedItem);
 		viewContext.publishDto(editItemKey, editedItemUi);
 		loadValidatorsByType(viewContext, easyFormsDesignerServices.getFieldValidatorTypeUiList(), editedItemUi);
 		setItemEditLabelText(viewContext, supportedLang, editedItem);

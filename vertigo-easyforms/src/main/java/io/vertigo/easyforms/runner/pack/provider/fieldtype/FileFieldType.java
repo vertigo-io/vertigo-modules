@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -193,7 +193,7 @@ public class FileFieldType implements IEasyFormsFieldTypeDefinitionSupplier {
 
 		@Override
 		public LocaleMessageText getErrorMessage() {
-			return LocaleMessageText.of(Resources.EfUploadAccept, String.join(", ", extensions));
+			return LocaleMessageText.of(Resources.EfUploadAcceptError, String.join(", ", extensions));
 		}
 
 		private boolean isAccepted(final String fileName) {

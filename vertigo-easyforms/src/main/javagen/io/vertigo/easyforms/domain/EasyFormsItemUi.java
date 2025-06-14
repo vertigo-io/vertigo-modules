@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public final class EasyFormsItemUi implements DataObject {
 	private Boolean isList;
 	private Integer maxItems;
 	private io.vertigo.easyforms.runner.model.template.EasyFormsData parameters;
+	private io.vertigo.easyforms.runner.model.template.EasyFormsDataRead parametersRead;
 	private java.util.List<String> fieldValidatorSelection = new java.util.ArrayList<>();
 	private String condition;
 	
@@ -211,6 +212,25 @@ public final class EasyFormsItemUi implements DataObject {
 	 */
 	public void setParameters(final io.vertigo.easyforms.runner.model.template.EasyFormsData parameters) {
 		this.parameters = parameters;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Parameters'.
+	 * @return EasyFormsDataRead parametersRead
+	 */
+	@Field(smartType = "STyEfFormDataRead", label = "Parameters")
+	public io.vertigo.easyforms.runner.model.template.EasyFormsDataRead getParametersRead() {
+		return parametersRead;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Parameters'.
+	 * @param parametersRead EasyFormsDataRead
+	 */
+	public void setParametersRead(final io.vertigo.easyforms.runner.model.template.EasyFormsDataRead parametersRead) {
+		this.parametersRead = parametersRead;
 	}
 	
 	/**

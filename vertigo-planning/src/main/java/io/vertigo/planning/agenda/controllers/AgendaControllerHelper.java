@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class AgendaControllerHelper implements Component {
 	protected static final ViewContextKey<String> agendaLabelKey = ViewContextKey.of("agendaLabel");
 	public static final ViewContextKey<AgendaDisplay> agendasDisplayKey = ViewContextKey.of("agendasDisplay");
 	protected static final ViewContextKey<DefaultPlageHoraire> defaultPlageHoraire = ViewContextKey.of("defaultPlageHoraire");
-	protected static final ViewContextKey<CreationPlageHoraireForm> creationPlageHoraireFormKey = ViewContextKey.of("creationPlageHoraireForm");
+	public static final ViewContextKey<CreationPlageHoraireForm> creationPlageHoraireFormKey = ViewContextKey.of("creationPlageHoraireForm");
 
 	//publish plage
 	protected static final ViewContextKey<PublicationTrancheHoraireForm> publicationTrancheHoraireFormKey = ViewContextKey.of("publicationTrancheHoraireForm");
@@ -211,7 +211,7 @@ public class AgendaControllerHelper implements Component {
 		return viewContext;
 	}
 
-	protected Map<UID<Agenda>, Integer> getDureeCreneauPerAgenda(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm) {
+	public Map<UID<Agenda>, Integer> getDureeCreneauPerAgenda(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm) {
 		//On applique la duplicationSemaineForm dureeCreneau a tous les agendas
 		return ageUids.stream()
 				.collect(Collectors.toMap(
@@ -275,7 +275,7 @@ public class AgendaControllerHelper implements Component {
 		return loadPlageHoraireDetail(viewContext, agenda, plageHoraireDetail.getPlhId(), uiMessageStack);
 	}
 
-	protected void prepareContextAtDate(final LocalDate showDate, final AgendaDisplayRange agenda, final ViewContext viewContext) {
+	public void prepareContextAtDate(final LocalDate showDate, final AgendaDisplayRange agenda, final ViewContext viewContext) {
 		agenda.setShowDate(showDate);
 		agenda.setFirstDate(toPreviousMonday(showDate));
 		agenda.setLastDate(agenda.getFirstDate().plusDays(agenda.getShowDays() - 1L));
@@ -286,7 +286,7 @@ public class AgendaControllerHelper implements Component {
 		reloadEvents(viewContext, ageUids, agenda.getFirstDate(), agenda.getLastDate());
 	}
 
-	private static PublicationTrancheHoraireForm preparePublicationTrancheHoraireForm(final AgendaDisplayRange agendaRange) {
+	public static PublicationTrancheHoraireForm preparePublicationTrancheHoraireForm(final AgendaDisplayRange agendaRange) {
 		//par defaut non renseigné : il faut regarder l'historique pour proposer par exemple : la semaine prochaine à 8h00
 		final LocalDate today = LocalDate.now();
 		final var publicationTrancheHoraireForm = new PublicationTrancheHoraireForm();
@@ -298,7 +298,7 @@ public class AgendaControllerHelper implements Component {
 		return publicationTrancheHoraireForm;
 	}
 
-	private void reloadEvents(final ViewContext viewContext, final List<UID<Agenda>> ageUids, final LocalDate firstDate, final LocalDate lastDate) {
+	public void reloadEvents(final ViewContext viewContext, final List<UID<Agenda>> ageUids, final LocalDate firstDate, final LocalDate lastDate) {
 		if (viewContext.getBoolean(modeTranchesHoraireKey)) {
 			final var tranchesHoraire = ageUids.isEmpty() ? new DtList<>(TrancheHoraireDisplay.class) : planningServices.getTrancheHoraireDisplayByDate(ageUids, firstDate, lastDate);
 			viewContext.publishDtList(tranchesHoraireKey, tranchesHoraire);
@@ -313,11 +313,11 @@ public class AgendaControllerHelper implements Component {
 		viewContext.publishDtList(reservationOrphelinesKey, reservationOrphelines);
 	}
 
-	private static LocalDate toPreviousMonday(final LocalDate localDate) {
+	public static LocalDate toPreviousMonday(final LocalDate localDate) {
 		return localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 	}
 
-	protected void refreshAgendaDisplay(final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final AgendaDisplayRange agendaDisplayRange) {
+	public void refreshAgendaDisplay(final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final AgendaDisplayRange agendaDisplayRange) {
 		final var ageUids = agendasDisplay.stream().map(a -> UID.of(Agenda.class, a.getAgeId())).toList();
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		agendaDisplayRange.setAgeIds(ageIds);

@@ -7,10 +7,10 @@
             <div vu:slot="agenda_actions_slot" class="row q-gutter-sm">
 				<q-btn color="primary" th:label="#{planning.agendaWeek.createPlageHoraire}" th:icon="#{planning.agendaWeek.createPlageHoraire.icon}" @click="onCreatePlageHoraireDefault"></q-btn>
 				<q-btn color="primary" th:label="#{planning.agendaWeek.duplicateWeek}" th:icon="#{planning.agendaWeek.duplicateWeek.icon}" @click="onDuplicateWeek"></q-btn>
-				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'yyyy-MM-dd') < new Date()" @click="onPublishPlageHoraires"></q-btn>
+				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'YYYY-MM-DD') < new Date()" @click="onPublishPlageHoraires"></q-btn>
             </div>
 		</vu:slot>
-		<div class="row q-col-gutter-md">
+	    <div class="row q-col-gutter-md">
 			<div class="col-12">
 		             <div class="row items-center">
 		              <vu:include-data object="agendaRange" field="showDate" />
@@ -18,8 +18,10 @@
 		                      <q-btn outline dense th:icon="#{planning.agendaWeek.previousWeek.icon}" th:title="#{planning.agendaWeek.previousWeek}" th:@click="|httpPostAjax('@{_semainePrecedente}', {})|"><span class="sr-only" th:text="#{planning.agendaWeek.previousWeek}"></span></q-btn>
 		                      <q-btn outline dense th:icon="#{planning.agendaWeek.nextWeek.icon}" th:title="#{planning.agendaWeek.nextWeek}" th:@click="|httpPostAjax('@{_semaineSuivante}', {})|"><span class="sr-only" th:text="#{planning.agendaWeek.nextWeek}"></span></q-btn>
 		                      <vu:include-data object="agendaRange" field="firstDate" />
+		                      <vu:include-data object="agendaRange" field="firstDate_fmt" />
 		                      <vu:include-data object="agendaRange" field="lastDate" />
-		                      <div><b>Semaine du {{ vueData.agendaRange.firstDate}} au {{ vueData.agendaRange.lastDate}}</b></div>                                
+		                      <vu:include-data object="agendaRange" field="lastDate_fmt" />
+		                      <div><b>Semaine du {{ vueData.agendaRange.firstDate_fmt}} au {{ vueData.agendaRange.lastDate_fmt}}</b></div>                             
 		              </div>
 		              <div class="on-right q-gutter-sm" th:if="#{planning.agendaWeek.showPublicationLegend}">
 		                 <q-chip outline color="grey-7"><q-badge rounded color="trh-nonPublie" class="on-left"></q-badge>Non publié</q-chip>

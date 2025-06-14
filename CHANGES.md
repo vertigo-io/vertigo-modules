@@ -7,6 +7,11 @@ Running 5.0.0
 
 more to come :)
 
+Running 4.3.1
+----------------------
+* [EasyForms] Improved Accessibility
+* [EasyForms] Administration in readonly can now display fields details
+
 
 Release 4.3.0 - 2025/03/27
 ----------------------

@@ -3,8 +3,8 @@
     <div style="width: 1300px;">
       <div class="text-h5 row q-mt-lg">
         <div class="q-mx-auto">
-          {{ $q.lang.vuiOrchestra.orchestra.title.part1 }} {{ startOfWeek }}
-          {{ $q.lang.vuiOrchestra.orchestra.title.part2 }} {{ endOfWeek }}
+          {{ $vui.i18n().vuiOrchestra.orchestra.title.part1 }} {{ startOfWeek }}
+          {{ $vui.i18n().vuiOrchestra.orchestra.title.part2 }} {{ endOfWeek }}
         </div>
       </div>
       <div class="row q-mt-lg">
@@ -12,28 +12,28 @@
           <q-tab
             name="all"
             icon="list"
-            :label="$q.lang.vuiOrchestra.orchestra.all"
+            :label="$vui.i18n().vuiOrchestra.orchestra.all"
             @click="getStatus('A')"
           ></q-tab>
           <!--Status must not be empty nor in lowercase letters. Any uppercase string would do the job as long as it is different than the keywords: SUCCESS, ERROR et MISFIRED -->
           <q-tab
             name="success"
             icon="done"
-            :label="$q.lang.vuiOrchestra.orchestra.success"
+            :label="$vui.i18n().vuiOrchestra.orchestra.success"
             @click="getStatus('SUCCESS')"
             class="text-green"
           ></q-tab>
           <q-tab
             name="error"
             icon="error"
-            :label="$q.lang.vuiOrchestra.orchestra.error"
+            :label="$vui.i18n().vuiOrchestra.orchestra.error"
             @click="getStatus('ERROR')"
             class="text-red"
           ></q-tab>
           <q-tab
             name="misfired"
             icon="timer_off"
-            :label="$q.lang.vuiOrchestra.orchestra.misfired"
+            :label="$vui.i18n().vuiOrchestra.orchestra.misfired"
             @click="getStatus('MISFIRED')"
             class="text-grey"
           ></q-tab>
@@ -44,14 +44,14 @@
           <q-btn
             color="primary"
             icon="navigate_before"
-            :label="$q.lang.vuiOrchestra.orchestra.previousWeek"
+            :label="$vui.i18n().vuiOrchestra.orchestra.previousWeek"
             @click="getWeek(-1)"
           ></q-btn>
           <q-btn round color="primary" icon="today" @click="getWeek(0)"></q-btn>
           <q-btn
             color="primary"
             icon-right="navigate_next"
-            :label="$q.lang.vuiOrchestra.orchestra.nextWeek"
+            :label="$vui.i18n().vuiOrchestra.orchestra.nextWeek"
             @click="getWeek(1)"
           ></q-btn>
         </div>
@@ -108,12 +108,12 @@
           <template v-slot:no-data>
             <div class="full-width row flex-center q-gutter-sm">
               <span v-if="loading">
-                {{ $q.lang.vuiOrchestra.orchestra.loading }} <q-spinner />
+                {{ $vui.i18n().vuiOrchestra.orchestra.loading }} <q-spinner />
               </span>
               <span v-else-if="fail">
-                {{ $q.lang.vuiOrchestra.orchestra.connectionFailed }}
+                {{ $vui.i18n().vuiOrchestra.orchestra.connectionFailed }}
               </span>
-              <span v-else>{{ $q.lang.vuiOrchestra.orchestra.noData }}</span>
+              <span v-else>{{ $vui.i18n().vuiOrchestra.orchestra.noData }}</span>
             </div>
           </template>
         </q-table>
@@ -123,7 +123,6 @@
 </template>
 
 <script>
-import Quasar from "quasar";
 import axios from "axios";
 export default {
   created() {
@@ -132,11 +131,11 @@ export default {
   methods: {
     formatDate(unformattedDate) {
       // Date is assumed to be in YYYY-MM-DDTHH:mm... format
-      let timestamp = Quasar.date.extractDate(
+      let timestamp = window.Quasar.date.extractDate(
         unformattedDate.substring(0, 16),
         "YYYY-MM-DDTHH:mm"
       );
-      return Quasar.date.formatDate(timestamp, "DD/MM/YYYY");
+      return window.Quasar.date.formatDate(timestamp, "DD/MM/YYYY");
     },
     updateData() {
       this.loading = true;
@@ -165,19 +164,19 @@ export default {
         });
     },
     getWeekLimits: function(offset) {
-      let dayInWeek = Quasar.date.addToDate(Date.now(), {
+      let dayInWeek = window.Quasar.date.addToDate(Date.now(), {
         days: offset * 7,
       });
-      let dayOfWeek = Quasar.date.getDayOfWeek(Date.now());
-      let startOfWeek = Quasar.date.subtractFromDate(dayInWeek, {
+      let dayOfWeek = window.Quasar.date.getDayOfWeek(Date.now());
+      let startOfWeek = window.Quasar.date.subtractFromDate(dayInWeek, {
         days: dayOfWeek ? dayOfWeek - 1 : 6,
       });
-      let endOfWeek = Quasar.date.addToDate(dayInWeek, {
+      let endOfWeek = window.Quasar.date.addToDate(dayInWeek, {
         days: dayOfWeek ? 7 - dayOfWeek : 0,
       });
       return {
-        startOfWeek: Quasar.date.formatDate(startOfWeek, "DD/MM/YYYY"),
-        endOfWeek: Quasar.date.formatDate(endOfWeek, "DD/MM/YYYY"),
+        startOfWeek: window.Quasar.date.formatDate(startOfWeek, "DD/MM/YYYY"),
+        endOfWeek: window.Quasar.date.formatDate(endOfWeek, "DD/MM/YYYY"),
       };
     },
     getWeek(week) {
@@ -201,24 +200,24 @@ export default {
       columns: [
         {
           name: "processLabel",
-          label: this.$q.lang.vuiOrchestra.orchestra.processLabel,
+          label: this.$vui.i18n().vuiOrchestra.orchestra.processLabel,
           align: "left",
           field: "processLabel",
         },
         {
           name: "state",
-          label: this.$q.lang.vuiOrchestra.orchestra.state,
+          label: this.$vui.i18n().vuiOrchestra.orchestra.state,
           field: "state",
           align: "center",
         },
         {
           name: "lastExecutionTime",
-          label: this.$q.lang.vuiOrchestra.orchestra.lastExecutionTime,
+          label: this.$vui.i18n().vuiOrchestra.orchestra.lastExecutionTime,
           field: "lastExecutionTime",
         },
         {
           name: "nextExecutionTime",
-          label: this.$q.lang.vuiOrchestra.orchestra.nextExecutionTime,
+          label: this.$vui.i18n().vuiOrchestra.orchestra.nextExecutionTime,
           field: "nextExecutionTime",
         },
       ],
@@ -235,7 +234,7 @@ export default {
   watch: {
     "$q.lang": function() {
       this.columns = this.columns.map((column) => {
-        return { ...column, label: this.$q.lang.vuiOrchestra.orchestra[column.name] };
+        return { ...column, label: this.$vui.i18n().vuiOrchestra.orchestra[column.name] };
       });
     },
   },
