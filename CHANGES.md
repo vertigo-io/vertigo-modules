@@ -7,11 +7,21 @@ Running 5.0.0
 
 more to come :)
 
-Running 4.3.1
+Release 4.3.1 - 2025/06/13
 ----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-431)
 * [EasyForms] Improved Accessibility
 * [EasyForms] Administration in readonly can now display fields details
-
+* [EasyForms] Better handling of empty HTML content
+* [Orchestra] Update UI
+* [Planning] Open method for overriding
+* [Planning] Add param distributedSynchro for use Redis distribution (via stella)
+* [Planning] Fix UI (date format), remove v-modal
+* update libs
+  - rest-assured 5.5.1 -> 5.5.5
+  - poi 5.4.0 -> 5.4.1
+  - sods 1.6.7 -> 1.6.8
+  
 
 Release 4.3.0 - 2025/03/27
 ----------------------
