@@ -223,6 +223,7 @@ VUiExtensions.methods = {
         formData.delete('vContext[editItem][type]')//not modifiable
         formData.delete('vContext[editItem][isSystem]')//not modifiable
         formData.delete('vContext[editItem][isList]')//not modifiable
+        formData.delete('vContext[editItem][parametersRead]')//not modifiable
         
         formData.append('sectionIndex', this.$data.componentStates.itemModal.sectionIndex);
         formData.append('doUpdateCode', !this.$data.componentStates.itemModal.codeModified);
