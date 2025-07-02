@@ -29,6 +29,11 @@ public enum ExportFormat {
 	XLS("application/vnd.ms-excel"),
 
 	/**
+	 * Document Excel (new format).
+	 */
+	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+
+	/**
 	 * Document RTF.
 	 */
 	RTF("text/rtf"),
