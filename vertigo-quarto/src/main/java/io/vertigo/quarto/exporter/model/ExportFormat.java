@@ -26,6 +26,7 @@ public enum ExportFormat {
 	/**
 	 * Document Excel.
 	 */
+	@Deprecated
 	XLS("application/vnd.ms-excel"),
 
 	/**

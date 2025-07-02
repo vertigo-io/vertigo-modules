@@ -30,10 +30,12 @@ import io.vertigo.quarto.exporter.model.ExportFormat;
 import io.vertigo.quarto.impl.exporter.ExporterPlugin;
 
 /**
+ * @deprecated user XLSX exporter plugin instead
  * Plugin d'export Excel.
  *
  * @author pchretien, npiedeloup
  */
+@Deprecated
 public final class XLSExporterPlugin implements ExporterPlugin {
 	private final EntityStoreManager entityStoreManager;
 	private final SmartTypeManager smartTypeManager;

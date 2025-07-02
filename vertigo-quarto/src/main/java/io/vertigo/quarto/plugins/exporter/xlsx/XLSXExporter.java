@@ -38,6 +38,13 @@ import io.vertigo.quarto.exporter.model.ExportField;
 import io.vertigo.quarto.exporter.model.ExportSheet;
 import io.vertigo.quarto.impl.exporter.util.ExporterUtil;
 
+/**
+ *
+ * Export XLSX.
+ * Uses POI.
+ *
+ * @author pchretien, npiedeloup, mlaroche
+ */
 public class XLSXExporter {
 	private static final int MAX_COLUMN_WIDTH = 50;
 
@@ -54,7 +61,8 @@ public class XLSXExporter {
 
 	/**
 	 * Constructor.
-	 * @param storeManager2 Store manager
+	 * @param storeManager Store manager
+	 * @param smartTypeManager SmartType manager
 	 */
 	XLSXExporter(final EntityStoreManager storeManager, final SmartTypeManager smartTypeManager) {
 		Assertion.check()

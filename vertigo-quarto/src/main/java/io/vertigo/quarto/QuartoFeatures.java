@@ -95,6 +95,7 @@ public class QuartoFeatures extends Features<QuartoFeatures> {
 	}
 
 	@Feature("exporter.xls")
+	@Deprecated
 	public QuartoFeatures withXLSExporter() {
 		getModuleConfigBuilder().addPlugin(XLSExporterPlugin.class);
 		return this;
