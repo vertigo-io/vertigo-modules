@@ -7,8 +7,17 @@ Running 5.0.0
 
 more to come :)
 
-Running 4.3.1
+Release 4.3.2 - 2025/07/09
 ----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-431-to-432)
+
+* [EasyForms] Fix "forbidden" error when changing field type in admin
+* [quarto] add xlsx exporter
+* [quarto] mark xls exporter is deprecated
+
+Running 4.3.1 - 2025/06/13
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-431)
 * [EasyForms] Improved Accessibility
 * [EasyForms] Administration in readonly can now display fields details
 
