@@ -7,6 +7,7 @@ Running 5.0.0
 
 more to come :)
 
+
 Release 4.3.2 - 2025/07/09
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-431-to-432)
@@ -15,7 +16,8 @@ Release 4.3.2 - 2025/07/09
 * [quarto] add xlsx exporter
 * [quarto] mark xls exporter is deprecated
 
-Running 4.3.1 - 2025/06/13
+
+Release 4.3.1 - 2025/06/13
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-431)
 * [EasyForms] Improved Accessibility
