@@ -263,20 +263,14 @@ abstract class AbstractOpenOfficeConverterPlugin implements ConverterPlugin, Act
 		//la liste est dans :
 		//OO 3.3 "OpenOffice.org 3\Basis\share\registry\modules\org\openoffice\TypeDetection\Filter\fcfg_writer_filters.xcu"
 		//OO 3.4 "OpenOffice.org 3\Basis\share\registry\writer.xcd"
-		switch (docType) {
-			case PDF:
-				return "writer_pdf_Export";
-			case RTF:
-				return "Rich Text Format";
-			case DOC:
-				return "MS Word 97";
-			case ODT:
-				return "Open Document Format";
-			case TXT:
-				return "Text";
+		return switch (docType) {
+			case PDF -> "writer_pdf_Export";
+			case RTF -> "Rich Text Format";
+			case DOC -> "MS Word 97";
+			case ODT -> "Open Document Format";
+			case TXT -> "Text";
 			//DOCX et CSV non géré
-			default:
-				throw new IllegalArgumentException("Type de document non géré : " + docType);
-		}
+			default -> throw new IllegalArgumentException("Type de document non géré : " + docType);
+		};
 	}
 }

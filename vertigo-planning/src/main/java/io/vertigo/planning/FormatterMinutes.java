@@ -71,14 +71,11 @@ public class FormatterMinutes implements Formatter {
 			} else {
 				minutesOfDay = Integer.parseInt(sValue);
 			}
-			switch (dataType) {
-				case Integer:
-					return minutesOfDay;
-				case Long:
-					return Long.valueOf(minutesOfDay);
-				default:
-					throw new IllegalArgumentException("Type unsupported : " + dataType);
-			}
+			return switch (dataType) {
+				case Integer->minutesOfDay;
+				case Long-> Long.valueOf(minutesOfDay);
+				default->throw new IllegalArgumentException("Type unsupported : " + dataType);
+			};
 		} catch (final NumberFormatException e) {
 			// cas des erreurs sur les formats de nombre
 			throw (FormatterException) new FormatterException(Resources.PLANNING_HOUR_MINUTE_NOT_FORMATTED)

@@ -117,20 +117,14 @@ public final class EasyFormsJsonAdapter<C> implements BasicTypeAdapter<C, String
 
 	private Object resolveObject(final Map<String, Object> entry) {
 		final String key = (String) entry.getOrDefault("_type", entry.get("type"));
-		switch (key) {
-			case "FILE":
-				return FileInfoURI.fromURN(String.valueOf(entry.get("urn")));
-			case "DATE":
-				return UTCDateUtil.parse((String) entry.get("value"));
-			case "LOCAL_DATE":
-				return LocalDate.parse((String) entry.get("value"), DateTimeFormatter.ISO_LOCAL_DATE);
-			case "ZONED_DATE_TIME":
-				return ZonedDateTime.parse((String) entry.get("value"), DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.of("UTC")));
-			case "INSTANT":
-				return UTCDateUtil.parseInstant((String) entry.get("value"));
-			default:
-				throw new IllegalArgumentException("Unsupported type " + key);
-		}
+		return switch (key) {
+			case "FILE"-> FileInfoURI.fromURN(String.valueOf(entry.get("urn")));
+			case "DATE"-> UTCDateUtil.parse((String) entry.get("value"));
+			case "LOCAL_DATE"-> LocalDate.parse((String) entry.get("value"), DateTimeFormatter.ISO_LOCAL_DATE);
+			case "ZONED_DATE_TIME"-> ZonedDateTime.parse((String) entry.get("value"), DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.of("UTC")));
+			case "INSTANT"-> UTCDateUtil.parseInstant((String) entry.get("value"));
+			default->throw new IllegalArgumentException("Unsupported type " + key);
+		};
 	}
 
 	@Override

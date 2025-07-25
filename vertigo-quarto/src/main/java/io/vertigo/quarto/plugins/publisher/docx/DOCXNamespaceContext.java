@@ -32,40 +32,24 @@ public final class DOCXNamespaceContext implements NamespaceContext {
 	/** {@inheritDoc} */
 	@Override
 	public String getNamespaceURI(final String prefix) {
-		switch (prefix) {
-			case "wpc":
-				return "http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas";
-			case "mc":
-				return "http://schemas.openxmlformats.org/markup-compatibility/2006";
-			case "o":
-				return "urn:schemas-microsoft-com:office:office";
-			case "r":
-				return "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-			case "m":
-				return "http://schemas.openxmlformats.org/officeDocument/2006/math";
-			case "v":
-				return "urn:schemas-microsoft-com:vml";
-			case "wp14":
-				return "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing";
-			case "wp":
-				return "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
-			case "w10":
-				return "urn:schemas-microsoft-com:office:word";
-			case "w":
-				return "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
-			case "w14":
-				return "http://schemas.microsoft.com/office/word/2010/wordml";
-			case "wpg":
-				return "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup";
-			case "wpi":
-				return "http://schemas.microsoft.com/office/word/2010/wordprocessingInk";
-			case "wne":
-				return "http://schemas.microsoft.com/office/word/2006/wordml";
-			case "wps":
-				return "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
-			default:
-				return XMLConstants.DEFAULT_NS_PREFIX;
-		}
+		return switch (prefix) {
+			case "wpc" -> "http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas";
+			case "mc" -> "http://schemas.openxmlformats.org/markup-compatibility/2006";
+			case "o" -> "urn:schemas-microsoft-com:office:office";
+			case "r" -> "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+			case "m" -> "http://schemas.openxmlformats.org/officeDocument/2006/math";
+			case "v" -> "urn:schemas-microsoft-com:vml";
+			case "wp14" -> "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing";
+			case "wp" -> "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+			case "w10" -> "urn:schemas-microsoft-com:office:word";
+			case "w" -> "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+			case "w14" -> "http://schemas.microsoft.com/office/word/2010/wordml";
+			case "wpg" -> "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup";
+			case "wpi" -> "http://schemas.microsoft.com/office/word/2010/wordprocessingInk";
+			case "wne" -> "http://schemas.microsoft.com/office/word/2006/wordml";
+			case "wps" -> "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+			default -> XMLConstants.DEFAULT_NS_PREFIX;
+		};
 	}
 
 	/** {@inheritDoc} */
