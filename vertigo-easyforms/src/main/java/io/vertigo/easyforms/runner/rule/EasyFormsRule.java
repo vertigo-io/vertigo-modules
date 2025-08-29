@@ -45,7 +45,7 @@ class EasyFormsRule implements PegRule<PegSolver<String, Object, Boolean>> {
 	@Override
 	public PegResult<PegSolver<String, Object, Boolean>> parse(final String text, final int start) throws PegNoMatchFoundException {
 		final var result = MAIN_RULE.parse(text, start);
-		return new PegResult<>(result.getIndex(), f -> result.getValue().apply(f2 -> f2.apply(f)));
+		return new PegResult<>(result.index(), f -> result.value().apply(f2 -> f2.apply(f)));
 	}
 
 }

@@ -59,7 +59,7 @@ public class EasyFormsRuleParser {
 
 	public static ParseResult<Object> parseCompute(final String s, final EasyFormsData data, final Map<String, Serializable> context) {
 		try {
-			return new ParseResult<>(MAIN_RULE_COMPUTE.parse(s).getValue(), getResolveFunction(buildFullContext(data, context)));
+			return new ParseResult<>(MAIN_RULE_COMPUTE.parse(s).value(), getResolveFunction(buildFullContext(data, context)));
 		} catch (final PegNoMatchFoundException e) {
 			return new ParseResult<>(e);
 		}
@@ -67,7 +67,7 @@ public class EasyFormsRuleParser {
 
 	public static ParseResult<Object> parseComputeTest(final String s, final FormContextDescription context) {
 		try {
-			return new ParseResult<>(MAIN_RULE_COMPUTE.parse(s).getValue(), getTestResolveFunction(context));
+			return new ParseResult<>(MAIN_RULE_COMPUTE.parse(s).value(), getTestResolveFunction(context));
 		} catch (final PegNoMatchFoundException e) {
 			return new ParseResult<>(e);
 		}
@@ -75,7 +75,7 @@ public class EasyFormsRuleParser {
 
 	public static ParseResult<Boolean> parseComparison(final String s, final EasyFormsData data, final Map<String, Serializable> context) {
 		try {
-			return new ParseResult<>(MAIN_RULE_COMPARISON.parse(s).getValue(), getResolveFunction(buildFullContext(data, context)));
+			return new ParseResult<>(MAIN_RULE_COMPARISON.parse(s).value(), getResolveFunction(buildFullContext(data, context)));
 		} catch (final PegNoMatchFoundException e) {
 			return new ParseResult<>(e);
 		}
@@ -83,7 +83,7 @@ public class EasyFormsRuleParser {
 
 	public static ParseResult<Boolean> parseComparisonTest(final String s, final FormContextDescription context) {
 		try {
-			return new ParseResult<>(MAIN_RULE_COMPARISON.parse(s).getValue(), getTestResolveFunction(context));
+			return new ParseResult<>(MAIN_RULE_COMPARISON.parse(s).value(), getTestResolveFunction(context));
 		} catch (final PegNoMatchFoundException e) {
 			return new ParseResult<>(e);
 		}
