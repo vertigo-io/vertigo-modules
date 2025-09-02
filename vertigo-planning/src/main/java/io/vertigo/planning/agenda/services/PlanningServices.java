@@ -331,7 +331,7 @@ public class PlanningServices implements Component {
 
 	private static boolean conflictPlageHoraire(final PlageHoraire plageHoraireFrom, final List<PlageHoraire> plhsPreviousTo) {
 		for (final PlageHoraire plhPreviousTo : plhsPreviousTo) {
-			Assertion.check().isTrue(plageHoraireFrom.getAgeId().equals(plhPreviousTo.getAgeId()), "Les plages comparées ne sont pas sur le même agenda");
+			// Si : elles peuvent être sur des agendas différents (pour dupliquer l'agenda personnel) Assertion.check().isTrue(plageHoraireFrom.getAgeId().equals(plhPreviousTo.getAgeId()), "Les plages comparées ne sont pas sur le même agenda");
 			if (plageHoraireFrom.getMinutesDebut() < plhPreviousTo.getMinutesFin()
 					&& plageHoraireFrom.getMinutesFin() > plhPreviousTo.getMinutesDebut()) {
 				return true;
@@ -404,6 +404,7 @@ public class PlanningServices implements Component {
 	/**
 	 * Détermine les plages horaires par défaut d'un agenda.
 	 * Pour l'instant en dur, plus tard pourrait analyser l'existant.
+	 *
 	 * @param agendaUid uid de l'agenda
 	 * @param minusMonths Nombre de mois à analyser
 	 * @param firstDate Première date de la période à simuler
@@ -658,6 +659,7 @@ public class PlanningServices implements Component {
 	 * Reassocie les creneaux publiés aux ReservationCreneaux existant.
 	 * Utilisé après une publication de plage horaire pour rattacher les réservations préexistantes.
 	 * ou après un import de réservation.
+	 *
 	 * @param ageUid Uid de l'agenda
 	 * @param dateLocaleDebut Date de début
 	 * @param dateLocaleFin Date de fin
