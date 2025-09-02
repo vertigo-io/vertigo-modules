@@ -48,6 +48,7 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param whitelistPrefixesOpt prefixes of phone numbers to accept
 	 * @param maxSmsPerMinute maximum number of SMS to send in a minute (LinkMobility reject if too fast)
 	 * @param linkMobilitySmsWebServiceClient SMS web service client
@@ -73,7 +74,7 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 			acceptAll = false;
 			whitelistPrefixes = Arrays.asList(whitelistPrefixesOpt.get().split(";"))
 					.stream()
-					.map(prefix -> prefix.replaceAll("[\\(\\)\\s\\.\\-]+", "")) //we accept ( ) . - and spaces as separators
+					.map(this::normalizePhoneNumber) //we accept ( ) . - and spaces as separators
 					.toList();
 		} else {
 			acceptAll = true;
@@ -86,7 +87,7 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 	public boolean acceptSms(final Sms sms) {
 		return acceptAll ||
 				sms.receivers().stream()
-						.map(receiver -> receiver.replaceAll("[\\(\\)\\s\\.\\-]+", ""))
+						.map(this::normalizePhoneNumber)
 						.allMatch(receiver -> whitelistPrefixes.stream()
 								.anyMatch(prefix -> {
 									if (receiver.startsWith(prefix)) {
@@ -120,12 +121,23 @@ public class LinkMobilitySmsSendPlugin implements SmsSendPlugin {
 				cost++;
 				sent = true;
 			} else {
-				final String responseMessage = "[" + responseCode.intValue() + "] " + linkMobilitySendingReportMap.getOrDefault("responseMessage", "No message");
+				//we have an error, sometimes it comes from receiver so we need a portion of the phone number to identify it in logs
+				final String maskedReceiver = maskPhoneNumber(receiver);
+				final String responseMessage = "[" + responseCode.intValue() + "] " + linkMobilitySendingReportMap.getOrDefault("responseMessage", "No message") + " (" + maskedReceiver + ")";
 				throw WrappedException.wrap(new IOException(responseMessage));
 			}
 		}
 
 		return new SmsSendingReport(cost, sent);
+	}
+
+	private String normalizePhoneNumber(final String phoneNumber) {
+		return phoneNumber.replaceAll("[\\(\\)\\s\\.\\-]+", ""); //we accept ( ) . - and spaces as separators
+	}
+
+	private String maskPhoneNumber(final String phoneNumber) {
+		final int maskLength = phoneNumber.length() / 2;
+		return phoneNumber.substring(0, maskLength) + phoneNumber.substring(maskLength).replace("/d", "*");
 	}
 
 	private void sleep(final long sleepMs) {
