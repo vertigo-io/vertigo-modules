@@ -60,6 +60,7 @@ Release 4.3.0 - 2025/03/27
 * [EasyForms] BugFix, add computed field type, better context handling
 * [EasyForm] Change tel regexp better protected against ReDDoS
 * [easyForms] Add tests more tests
+* [Ui] Move scripts inclusion to html (`libraries_slot` to head
 * [Quarto] Add exporter for custom field
 * [Quarto] Added XhtmlEncoder for Docx Merger : support simple html richText (p.text-align, u, b, i, &nbsp;)
 * [Quarto] Publisher merge simple html WIP
