@@ -88,7 +88,6 @@
 												            :simple="false" th::multiple="true"
 												            th:max-file-size="${fieldParameters['maxFileSize'] == null ? null : fieldParameters['maxFileSize'] * 1024 * 1024}"
 												            th:accept="${fieldParameters['accept']}"
-												            th:@rejected="|errors => {efAlertRejected(errors, `#{EfUploadAcceptError(${fieldParameters['accept']})}`, `#{EfUploadMaxFileSize(${fieldParameters['maxFileSize']})}`);}|"
 												            th:v-bind:file-info-uris="|vueDataToArray(${fieldModel})|"
 												            th:@update:file-info-uris="|(newFileInfoUris) => {
 												            												  efCheckUploadConstraints('${object}','${field}',

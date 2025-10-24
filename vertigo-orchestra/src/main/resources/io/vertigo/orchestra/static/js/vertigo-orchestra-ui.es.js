@@ -1652,6 +1652,8 @@ function rt(e, t, n) {
     if (g === null) return "";
     if (h.isDate(g))
       return g.toISOString();
+    if (h.isBoolean(g))
+      return g.toString();
     if (!u && h.isBlob(g))
       throw new k("Blob is not supported. Use a Buffer instead.");
     return h.isArrayBuffer(g) || h.isTypedArray(g) ? u && typeof Blob == "function" ? new Blob([g]) : Buffer.from(g) : g;
@@ -2572,7 +2574,7 @@ const Io = async (e) => {
       duplex: "half",
       credentials: O ? l : void 0
     });
-    let R = await fetch(g);
+    let R = await fetch(g, m);
     const A = Ot && (d === "stream" || d === "response");
     if (Ot && (c || A && b)) {
       const B = {};
@@ -2677,7 +2679,7 @@ function fn(e) {
     ), r.response.headers = Z.from(r.response.headers))), Promise.reject(r);
   });
 }
-const Xn = "1.9.0", ot = {};
+const Xn = "1.10.0", ot = {};
 ["object", "boolean", "number", "function", "string", "symbol"].forEach((e, t) => {
   ot[e] = function(r) {
     return typeof r === e || "a" + (t < 1 ? "n " : " ") + e;

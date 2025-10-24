@@ -15,14 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.quarto.plugins.exporter.xls;
+package io.vertigo.quarto.plugins.exporter.xlsx;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.inject.Inject;
 
-import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.quarto.exporter.model.Export;
@@ -30,36 +29,30 @@ import io.vertigo.quarto.exporter.model.ExportFormat;
 import io.vertigo.quarto.impl.exporter.ExporterPlugin;
 
 /**
- * @deprecated user XLSX exporter plugin instead
  * Plugin d'export Excel.
  *
- * @author pchretien, npiedeloup
+ * @author pchretien, npiedeloup, mlaroche
  */
-@Deprecated
-public final class XLSExporterPlugin implements ExporterPlugin {
-	private final EntityStoreManager entityStoreManager;
+public class XLSXExporterPlugin implements ExporterPlugin {
+	private final EntityStoreManager storeManager;
 	private final SmartTypeManager smartTypeManager;
 
 	@Inject
-	public XLSExporterPlugin(
-			final EntityStoreManager entityStoreManager,
-			final SmartTypeManager smartTypeManager) {
-		this.entityStoreManager = entityStoreManager;
+	public XLSXExporterPlugin(final EntityStoreManager storeManager, final SmartTypeManager smartTypeManager) {
+		this.storeManager = storeManager;
 		this.smartTypeManager = smartTypeManager;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void exportData(final Export export, final OutputStream out) throws IOException {
-		new XLSExporter(entityStoreManager, smartTypeManager).exportData(export, out);
+		new XLSXExporter(storeManager, smartTypeManager).exportData(export, out);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean accept(final ExportFormat exportFormat) {
-		Assertion.check().isNotNull(exportFormat);
-		//---
-		return exportFormat == ExportFormat.XLS;
+		return ExportFormat.XLSX.equals(exportFormat);
 	}
 
 }

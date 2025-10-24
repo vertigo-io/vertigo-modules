@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.quarto.plugins.exporter.xls;
+package io.vertigo.quarto.plugins.exporter.xlsx;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,20 +28,19 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
@@ -57,40 +56,42 @@ import io.vertigo.quarto.exporter.model.ExportSheet;
 import io.vertigo.quarto.impl.exporter.util.ExporterUtil;
 
 /**
- * {@link Deprecated} use XLSX exporter instead
- * Export XLS.
+ *
+ * Export XLSX.
  * Uses POI.
  *
- * @author pchretien, npiedeloup
+ * @author pchretien, npiedeloup, mlaroche
  */
-@Deprecated
-final class XLSExporter {
+public class XLSXExporter {
 	private static final int MAX_COLUMN_WIDTH = 50;
 
 	private final Map<DataField, Map<Object, String>> referenceCache = new HashMap<>();
 	private final Map<DataField, Map<Object, String>> denormCache = new HashMap<>();
 
-	private final Map<BasicType, HSSFCellStyle> evenHssfStyleCache = new EnumMap<>(BasicType.class);
-	private final Map<BasicType, HSSFCellStyle> oddHssfStyleCache = new EnumMap<>(BasicType.class);
+	private final Map<BasicType, XSSFCellStyle> evenXssfStyleCache = new EnumMap<>(BasicType.class);
+	private final Map<BasicType, XSSFCellStyle> oddXssfStyleCache = new EnumMap<>(BasicType.class);
 
-	private final EntityStoreManager entityStoreManager;
+	private final EntityStoreManager storeManager;
+
 	private final SmartTypeManager smartTypeManager;
 	private final Map<Class, BasicTypeAdapter> exportAdapters;
 
 	/**
 	 * Constructor.
+	 * @param storeManager Store manager
+	 * @param smartTypeManager SmartType manager
 	 */
-	XLSExporter(final EntityStoreManager entityStoreManager, final SmartTypeManager smartTypeManager) {
+	XLSXExporter(final EntityStoreManager storeManager, final SmartTypeManager smartTypeManager) {
 		Assertion.check()
-				.isNotNull(entityStoreManager)
+				.isNotNull(storeManager)
 				.isNotNull(smartTypeManager);
 		//-----
-		this.entityStoreManager = entityStoreManager;
+		this.storeManager = storeManager;
 		this.smartTypeManager = smartTypeManager;
 		exportAdapters = smartTypeManager.getTypeAdapters("export");
 	}
 
-	private static HSSFCellStyle createHeaderCellStyle(final HSSFWorkbook workbook) {
+	private static XSSFCellStyle createHeaderCellStyle(final XSSFWorkbook workbook) {
 		final var cellStyle = workbook.createCellStyle();
 		final var font = workbook.createFont();
 		font.setFontHeightInPoints((short) 10);
@@ -101,14 +102,14 @@ final class XLSExporter {
 		cellStyle.setBorderTop(BorderStyle.THIN);
 		cellStyle.setBorderLeft(BorderStyle.THIN);
 		cellStyle.setBorderRight(BorderStyle.THIN);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
+		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cellStyle.setFillForegroundColor(HSSFColorPredefined.GREY_40_PERCENT.getIndex());
+		cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 		return cellStyle;
 	}
 
-	private static HSSFCellStyle createRowCellStyle(final HSSFWorkbook workbook, final boolean odd) {
+	private static XSSFCellStyle createRowCellStyle(final XSSFWorkbook workbook, final boolean odd) {
 		final var cellStyle = workbook.createCellStyle();
 		final var font = workbook.createFont();
 		font.setFontHeightInPoints((short) 10);
@@ -120,7 +121,7 @@ final class XLSExporter {
 		cellStyle.setBorderRight(BorderStyle.THIN);
 		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-		cellStyle.setFillForegroundColor(odd ? HSSFColorPredefined.WHITE.getIndex() : HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+		cellStyle.setFillForegroundColor(odd ? IndexedColors.WHITE.getIndex() : IndexedColors.GREY_25_PERCENT.getIndex());
 
 		return cellStyle;
 	}
@@ -133,7 +134,7 @@ final class XLSExporter {
 	 * @param sheet Feuille Excel
 	 * @param forceLandscape Indique si le parametrage force un affichage en paysage
 	 */
-	private void exportData(final ExportSheet parameters, final HSSFWorkbook workbook, final HSSFSheet sheet, final boolean forceLandscape) {
+	private void exportData(final ExportSheet parameters, final XSSFWorkbook workbook, final XSSFSheet sheet, final boolean forceLandscape) {
 		// Column width
 		final Map<Integer, Double> maxWidthPerColumn = new HashMap<>();
 		if (parameters.hasDtObject()) {
@@ -172,61 +173,56 @@ final class XLSExporter {
 		footer.setRight("Page " + HeaderFooter.page() + " / " + HeaderFooter.numPages());
 	}
 
-	private void initHssfStyle(final HSSFWorkbook workbook) {
+	private void initHssfStyle(final XSSFWorkbook workbook) {
+
+		final var df = workbook.createDataFormat();
+
 		// default:
 		final var oddCellStyle = createRowCellStyle(workbook, true);
 		final var evenCellStyle = createRowCellStyle(workbook, true);
-		oddHssfStyleCache.put(BasicType.Boolean, oddCellStyle);
-		oddHssfStyleCache.put(BasicType.String, oddCellStyle);
-		evenHssfStyleCache.put(BasicType.Boolean, evenCellStyle);
-		evenHssfStyleCache.put(BasicType.String, evenCellStyle);
+		oddXssfStyleCache.put(BasicType.Boolean, oddCellStyle);
+		oddXssfStyleCache.put(BasicType.String, oddCellStyle);
+		evenXssfStyleCache.put(BasicType.Boolean, evenCellStyle);
+		evenXssfStyleCache.put(BasicType.String, evenCellStyle);
 
 		// Nombre sans décimal
 		final var oddLongCellStyle = createRowCellStyle(workbook, true);
 		final var evenLongCellStyle = createRowCellStyle(workbook, true);
-		oddLongCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
-		evenLongCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
-		oddHssfStyleCache.put(BasicType.Long, oddLongCellStyle);
-		oddHssfStyleCache.put(BasicType.Integer, oddLongCellStyle);
-		evenHssfStyleCache.put(BasicType.Long, evenLongCellStyle);
-		evenHssfStyleCache.put(BasicType.Integer, evenLongCellStyle);
+		oddLongCellStyle.setDataFormat(df.getFormat("#,##0"));
+		evenLongCellStyle.setDataFormat(df.getFormat("#,##0"));
+		oddXssfStyleCache.put(BasicType.Long, oddLongCellStyle);
+		oddXssfStyleCache.put(BasicType.Integer, oddLongCellStyle);
+		evenXssfStyleCache.put(BasicType.Long, evenLongCellStyle);
+		evenXssfStyleCache.put(BasicType.Integer, evenLongCellStyle);
 
 		// Nombre a décimal
 		final var oddDoubleCellStyle = createRowCellStyle(workbook, true);
 		final var evenDoubleCellStyle = createRowCellStyle(workbook, true);
-		oddDoubleCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.00"));
-		evenDoubleCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0.00"));
-		oddHssfStyleCache.put(BasicType.Double, oddDoubleCellStyle);
-		oddHssfStyleCache.put(BasicType.BigDecimal, oddDoubleCellStyle);
-		evenHssfStyleCache.put(BasicType.Double, evenDoubleCellStyle);
-		evenHssfStyleCache.put(BasicType.BigDecimal, evenDoubleCellStyle);
+		oddDoubleCellStyle.setDataFormat(df.getFormat("#,##0.00"));
+		evenDoubleCellStyle.setDataFormat(df.getFormat("#,##0.00"));
+		oddXssfStyleCache.put(BasicType.Double, oddDoubleCellStyle);
+		oddXssfStyleCache.put(BasicType.BigDecimal, oddDoubleCellStyle);
+		evenXssfStyleCache.put(BasicType.Double, evenDoubleCellStyle);
+		evenXssfStyleCache.put(BasicType.BigDecimal, evenDoubleCellStyle);
 
 		// Date
 		final var oddDateCellStyle = createRowCellStyle(workbook, true);
 		final var evenDateCellStyle = createRowCellStyle(workbook, true);
-		oddDateCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy" /* "m/d/yy h:mm" */));
-		evenDateCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy" /* "m/d/yy h:mm" */));
-		oddHssfStyleCache.put(BasicType.LocalDate, oddDateCellStyle);
-		evenHssfStyleCache.put(BasicType.LocalDate, evenDateCellStyle);
-
-		// Instant
-		final var oddDateTimeCellStyle = createRowCellStyle(workbook, true);
-		final var evenDateTimeCellStyle = createRowCellStyle(workbook, true);
-		oddDateTimeCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
-		evenDateTimeCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
-		oddHssfStyleCache.put(BasicType.Instant, oddDateTimeCellStyle);
-		evenHssfStyleCache.put(BasicType.Instant, evenDateTimeCellStyle);
+		oddDateCellStyle.setDataFormat(df.getFormat("m/d/yy" /* "m/d/yy h:mm" */));
+		evenDateCellStyle.setDataFormat(df.getFormat("m/d/yy" /* "m/d/yy h:mm" */));
+		oddXssfStyleCache.put(BasicType.LocalDate, oddDateCellStyle);
+		evenXssfStyleCache.put(BasicType.LocalDate, evenDateCellStyle);
 
 	}
 
-	private void exportList(final ExportSheet parameters, final HSSFWorkbook workbook, final HSSFSheet sheet, final Map<Integer, Double> maxWidthPerColumn) {
+	private void exportList(final ExportSheet parameters, final XSSFWorkbook workbook, final XSSFSheet sheet, final Map<Integer, Double> maxWidthPerColumn) {
 		// exporte le header
 		final var headerRow = sheet.createRow(0);
 		var cellIndex = 0;
 		for (final ExportField exportColumn : parameters.getExportFields()) {
 			final var cell = headerRow.createCell(cellIndex);
 			final var displayedLabel = exportColumn.getLabel().getDisplay();
-			cell.setCellValue(new HSSFRichTextString(displayedLabel));
+			cell.setCellValue(new XSSFRichTextString(displayedLabel));
 			cell.setCellStyle(createHeaderCellStyle(workbook));
 
 			updateMaxWidthPerColumn(displayedLabel, 1.2, cellIndex, maxWidthPerColumn); // +20% pour les majuscules
@@ -243,8 +239,8 @@ final class XLSExporter {
 			for (final ExportField exportColumn : parameters.getExportFields()) {
 				final var cell = row.createCell(cellIndex);
 
-				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+				value = ExporterUtil.getValue(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				putValueInCell(value, cell, rowIndex % 2 == 0 ? evenXssfStyleCache : oddXssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 
 				cellIndex++;
 			}
@@ -252,7 +248,7 @@ final class XLSExporter {
 		}
 	}
 
-	private void exportObject(final ExportSheet parameters, final HSSFWorkbook workbook, final HSSFSheet sheet, final Map<Integer, Double> maxWidthPerColumn) {
+	private void exportObject(final ExportSheet parameters, final XSSFWorkbook workbook, final XSSFSheet sheet, final Map<Integer, Double> maxWidthPerColumn) {
 		var rowIndex = 0;
 		final var labelCellIndex = 0;
 		final var valueCellIndex = 1;
@@ -263,32 +259,26 @@ final class XLSExporter {
 
 			final var cell = row.createCell(labelCellIndex);
 			final var label = exportColumn.getLabel();
-			cell.setCellValue(new HSSFRichTextString(label.getDisplay()));
+			cell.setCellValue(new XSSFRichTextString(label.getDisplay()));
 			cell.setCellStyle(createHeaderCellStyle(workbook));
 			updateMaxWidthPerColumn(label.getDisplay(), 1.2, labelCellIndex, maxWidthPerColumn); // +20% pour les majuscules
 
 			final var valueCell = row.createCell(valueCellIndex);
-			value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-			putValueInCell(smartTypeManager, value, valueCell, oddHssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+			value = ExporterUtil.getValue(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			putValueInCell(value, valueCell, oddXssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 			rowIndex++;
 		}
 
 	}
 
-	private static void putValueInCell(
-			final SmartTypeManager smartTypeManager,
-			final Object value,
-			final HSSFCell cell,
-			final Map<BasicType, HSSFCellStyle> rowCellStyle,
-			final int cellIndex,
-			final Map<Integer, Double> maxWidthPerColumn,
-			final SmartTypeDefinition smartTypeDefinition) {
+	private void putValueInCell(final Object value, final XSSFCell cell, final Map<BasicType, XSSFCellStyle> rowCellStyle, final int cellIndex, final Map<Integer, Double> maxWidthPerColumn, final SmartTypeDefinition domain) {
 		String stringValueForColumnWidth;
-		cell.setCellStyle(rowCellStyle.get(smartTypeDefinition.getBasicType()));
+		cell.setCellStyle(rowCellStyle.get(domain.getBasicType()));
 		if (value != null) {
 			stringValueForColumnWidth = String.valueOf(value);
+
 			if (value instanceof final String stringValue) {
-				cell.setCellValue(new HSSFRichTextString(stringValue));
+				cell.setCellValue(new XSSFRichTextString(stringValue));
 			} else if (value instanceof final Integer integerValue) {
 				cell.setCellValue(integerValue.doubleValue());
 			} else if (value instanceof final Double dValue) {
@@ -301,7 +291,7 @@ final class XLSExporter {
 				stringValueForColumnWidth = String.valueOf(Math.round(bigDecimalValue.doubleValue() * 100) / 100D);
 			} else if (value instanceof final Boolean bValue) {
 				//cell.setCellValue(bValue.booleanValue() ? "Oui" : "Non");
-				cell.setCellValue(smartTypeManager.valueToString(smartTypeDefinition, bValue));
+				cell.setCellValue(smartTypeManager.valueToString(domain, bValue.booleanValue()));
 			} else if (value instanceof final LocalDate dateValue) {
 				// sans ce style "date" les dates apparaîtraient au format
 				// "nombre"
@@ -313,7 +303,7 @@ final class XLSExporter {
 				stringValueForColumnWidth = "DD/MM/YYYY HH:mm";
 				// ceci ne sert que pour déterminer la taille de la cellule, on a pas besoin de la vrai valeur
 			} else {
-				throw new UnsupportedOperationException("Type " + smartTypeDefinition.getJavaClass() + " not supported by this Excel exporter");
+				throw new UnsupportedOperationException("Type " + domain.getBasicType() + " not supported by this Excel exporter");
 			}
 			updateMaxWidthPerColumn(stringValueForColumnWidth, 1, cellIndex, maxWidthPerColumn); // +20% pour les majuscules
 		}
@@ -338,7 +328,7 @@ final class XLSExporter {
 	void exportData(final Export documentParameters, final OutputStream out) throws IOException {
 		// Workbook
 		final var forceLandscape = Export.Orientation.Landscape == documentParameters.orientation();
-		try (final var workbook = new HSSFWorkbook()) {
+		try (final var workbook = new XSSFWorkbook()) {
 			initHssfStyle(workbook);
 			for (final ExportSheet exportSheet : documentParameters.sheets()) {
 				final var title = exportSheet.getTitle();
