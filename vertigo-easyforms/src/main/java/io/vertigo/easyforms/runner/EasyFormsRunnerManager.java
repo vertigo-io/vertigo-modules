@@ -117,8 +117,6 @@ public final class EasyFormsRunnerManager implements Manager, Activeable {
 		localeManager.add("io.vertigo.easyforms.runner.pack.EfPackResources", EfPackResources.values());
 		localeManager.add("io.vertigo.easyforms.runner.pack.constraint.EfConstraintResources", EfConstraintResources.values());
 		localeManager.add("io.vertigo.easyforms.runner.pack.formatter.EfFormatterResources", EfFormatterResources.values());
-
-		localeManager.add("io.vertigo.easyforms.domain.DtResources", io.vertigo.easyforms.domain.DtResources.values());
 	}
 
 	@Override
