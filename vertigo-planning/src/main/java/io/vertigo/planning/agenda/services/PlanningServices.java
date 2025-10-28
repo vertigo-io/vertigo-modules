@@ -214,7 +214,15 @@ public class PlanningServices implements Component {
 		return trancheHoraire;
 	}
 
-	public void duplicateSemaine(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm, final Map<UID<Agenda>, Integer> dureeTranchePerAgenda) {
+	public void duplicateSemaine(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm, final Map<UID<Agenda>, Integer> dureeTranchePerAgenda,
+			final List<LocalDate> joursFermes) {
+		Assertion.check()
+				.isNotNull(ageUids)
+				.isNotNull(duplicationSemaineForm)
+				.isNotNull(dureeTranchePerAgenda)
+				.isNotNull(joursFermes)
+				.isTrue(!ageUids.isEmpty(), "Au moins un agenda doit être renseigné pour la duplication de semaine");
+
 		//security filter
 		final var uiErrorBuilder = new UiErrorBuilder();
 		uiErrorBuilder.checkFieldDateAfterOrEquals(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleFromDebut, DuplicationSemaineFormFields.dateLocaleFromFin,
@@ -289,8 +297,9 @@ public class PlanningServices implements Component {
 		//final int dureeTrancheMinute = duplicationSemaineForm.getDureeCreneau();
 		for (var d = 0; d < dureeDuplicationJours + 1; ++d) { //+1 => date de fin incluse
 			final var currentCopyDate = duplicationSemaineForm.getDateLocaleToDebut().plusDays(d);
+			final var siFerme = joursFermes.contains(currentCopyDate);
 			final var plageHorairesCopyFrom = mapPlagesHorairesFromPerDayOfWeek.get(currentCopyDate.getDayOfWeek());
-			if (plageHorairesCopyFrom == null || plageHorairesCopyFrom.isEmpty()) {
+			if (siFerme || plageHorairesCopyFrom == null || plageHorairesCopyFrom.isEmpty()) {
 				continue;
 			}
 

@@ -17,6 +17,7 @@
  */
 package io.vertigo.planning.agenda.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import io.vertigo.planning.agenda.domain.AgendaDisplay;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
 import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
+import io.vertigo.planning.agenda.domain.InfoCalendrierDisplay;
 import io.vertigo.planning.agenda.domain.PlageHoraireDisplay;
 import io.vertigo.planning.agenda.domain.PublicationTrancheHoraireForm;
 import io.vertigo.ui.core.ViewContext;
@@ -45,6 +47,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 
 	/**
 	 * Init context for agenda page.
+	 *
 	 * @param viewContext ViewContext
 	 * @param ageUids list of agenda UIDs
 	 * @param weekDaysNumber number of days
@@ -62,6 +65,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 
 	/**
 	 * Init context for agenda page.
+	 *
 	 * @param viewContext ViewContext
 	 * @param ageUids list of agenda UIDs
 	 * @param weekDaysNumber number of days
@@ -73,23 +77,24 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final Integer weekDaysNumber, final CreationPlageHoraireForm creationPlageHoraireForm,
 			final DuplicationSemaineForm duplicationSemaineForm, final boolean modeGuichet, final boolean modeTranchesHoraire) {
 		//---
-		agendaControllerHelper.initContext(getAgendaLabel(), viewContext, agendasDisplay, weekDaysNumber, creationPlageHoraireForm, duplicationSemaineForm, modeGuichet, modeTranchesHoraire);
+		agendaControllerHelper.initContext(getAgendaLabel(), viewContext, agendasDisplay, weekDaysNumber, creationPlageHoraireForm, duplicationSemaineForm, modeGuichet, modeTranchesHoraire,
+				(start, end) -> getInfoCalendrierForRange(viewContext, start, end));
 	}
 
 	@PostMapping("/_reload")
 	public ViewContext reload(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, final UiMessageStack uiMessageStack) {
-		return agendaControllerHelper.reload(viewContext, agenda, plageHoraireDetail, uiMessageStack);
+		return agendaControllerHelper.reload(viewContext, agenda, plageHoraireDetail, (start, end) -> getInfoCalendrierForRange(viewContext, start, end), uiMessageStack);
 	}
 
 	@PostMapping("/_semainePrecedente")
 	public ViewContext semainePrecedente(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
-		return agendaControllerHelper.semainePrecedente(viewContext, agenda);
+		return agendaControllerHelper.semainePrecedente(viewContext, agenda, (start, end) -> getInfoCalendrierForRange(viewContext, start, end));
 	}
 
 	@PostMapping("/_semaineSuivante")
 	public ViewContext semaineSuivante(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
-		return agendaControllerHelper.semaineSuivante(viewContext, agenda);
+		return agendaControllerHelper.semaineSuivante(viewContext, agenda, (start, end) -> getInfoCalendrierForRange(viewContext, start, end));
 	}
 
 	@PostMapping("/_createPlage")
@@ -108,7 +113,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	@PostMapping("/_duplicateSemaine")
 	public ViewContext duplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
-		return agendaControllerHelper.duplicateSemaine(viewContext, agenda, duplicationSemaineForm);
+		return agendaControllerHelper.duplicateSemaine(viewContext, agenda, duplicationSemaineForm, (start, end) -> getInfoCalendrierForRange(viewContext, start, end));
 	}
 
 	@PostMapping("/_publishPlage")
@@ -138,7 +143,20 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	}
 
 	/**
+	 * Overridable method to get info calendrier for a date range.
+	 *
+	 * @param viewContext ViewContext
+	 * @param startDate First date of the range (included)
+	 * @param endDate Last date of the range (included)
+	 * @return List of InfoCalendrierDisplay
+	 */
+	protected DtList<InfoCalendrierDisplay> getInfoCalendrierForRange(final ViewContext viewContext, final LocalDate startDate, final LocalDate endDate) {
+		return new DtList<>(InfoCalendrierDisplay.class);
+	}
+
+	/**
 	 * Overridable label use for agenda selection.
+	 *
 	 * @return label
 	 */
 	protected String getAgendaLabel() {

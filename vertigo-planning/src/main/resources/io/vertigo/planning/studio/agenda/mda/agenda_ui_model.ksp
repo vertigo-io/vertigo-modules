@@ -122,3 +122,12 @@ create DtDefinition DtPublicationRange {
     field dateMax {domain: DoPLocalDate label:"Date de fin" }
     field instantPublication {domain: DoPInstant label: "Date publication"}
 }
+
+create DtDefinition DtInfoCalendrierDisplay {
+    field date 			{domain: DoPLocalDate 	label: "Date de l'information" 				cardinality:"1"}
+    field libelle 		{domain: DoPLabel 		label: "Libellé" 							cardinality:"1"}
+    field infobulle 	{domain: DoPLabel 		label: "Infobulle"}
+    field htmlClass 	{domain: DoPLabel 		label: "Classe pour l'affichage dans l'agenda"}
+    field htmlStyle 	{domain: DoPLabel 		label: "Style pour l'affichage dans l'agenda"}
+    field siFerme 		{domain: DoPBooleen 	label: "Si le jour est considéré comme fermé, on ne dupliquera pas les plages horaires" 	cardinality:"1"}
+}
