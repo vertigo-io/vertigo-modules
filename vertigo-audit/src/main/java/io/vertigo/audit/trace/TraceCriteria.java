@@ -27,33 +27,15 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
  *
  * @author xdurand
  */
-public final class TraceCriteria implements DataObject {
+public record TraceCriteria(
+		String category,
+		String username,
+		Instant startBusinessDate,
+		Instant endBusinessDate,
+		Instant startExecutionDate,
+		Instant endExecutionDate,
+		String itemUrn) implements DataObject {
 	private static final long serialVersionUID = 1L;
-
-	private final String category;
-	private final String username;
-	private final Instant startBusinessDate;
-	private final Instant endBusinessDate;
-	private final Instant startExecutionDate;
-	private final Instant endExecutionDate;
-	private final String itemUrn;
-
-	TraceCriteria(
-			final String category,
-			final String username,
-			final Instant startBusinessDate,
-			final Instant endBusinessDate,
-			final Instant startExecutionDate,
-			final Instant endExecutionDate,
-			final String itemUrn) {
-		this.category = category;
-		this.username = username;
-		this.startBusinessDate = startBusinessDate;
-		this.endBusinessDate = endBusinessDate;
-		this.startExecutionDate = startExecutionDate;
-		this.endExecutionDate = endExecutionDate;
-		this.itemUrn = itemUrn;
-	}
 
 	/**
 	 * Static method factory for AuditTraceCriteriaBuilder
@@ -61,55 +43,6 @@ public final class TraceCriteria implements DataObject {
 	 */
 	public static TraceCriteriaBuilder builder() {
 		return new TraceCriteriaBuilder();
-	}
-
-	/**
-	 * @return the category
-	 */
-	public String getCategory() {
-		return category;
-	}
-
-	/**
-	 * @return the user
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * @return the startBusinessDate
-	 */
-	public Instant getStartBusinessDate() {
-		return startBusinessDate;
-	}
-
-	/**
-	 * @return the endBusinessDate
-	 */
-	public Instant getEndBusinessDate() {
-		return endBusinessDate;
-	}
-
-	/**
-	 * @return the startExecutionDate
-	 */
-	public Instant getStartExecutionDate() {
-		return startExecutionDate;
-	}
-
-	/**
-	 * @return the endExecutionDate
-	 */
-	public Instant getEndExecutionDate() {
-		return endExecutionDate;
-	}
-
-	/**
-	 * @return the item Urn
-	 */
-	public String getItemUrn() {
-		return itemUrn;
 	}
 
 	@Override

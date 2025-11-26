@@ -99,28 +99,28 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 	public DtList<Trace> findByCriteria(final TraceCriteria auditTraceCriteria) {
 		return executeInTransaction(() -> {
 			Criteria<Trace> criteria = Criterions.alwaysTrue();
-			if (!StringUtil.isBlank(auditTraceCriteria.getCategory())) {
-				criteria = criteria.and(Criterions.isEqualTo(() -> "category", auditTraceCriteria.getCategory()));
+			if (!StringUtil.isBlank(auditTraceCriteria.category())) {
+				criteria = criteria.and(Criterions.isEqualTo(() -> "category", auditTraceCriteria.category()));
 			}
-			if (!StringUtil.isBlank(auditTraceCriteria.getUsername())) {
-				criteria = criteria.and(Criterions.isEqualTo(() -> "username", auditTraceCriteria.getUsername()));
+			if (!StringUtil.isBlank(auditTraceCriteria.username())) {
+				criteria = criteria.and(Criterions.isEqualTo(() -> "username", auditTraceCriteria.username()));
 			}
-			if (!StringUtil.isBlank(auditTraceCriteria.getItemUrn())) {
-				criteria = criteria.and(Criterions.isEqualTo(() -> "itemUrn", auditTraceCriteria.getItemUrn()));
-			}
-
-			if (auditTraceCriteria.getStartExecutionDate() != null) {
-				criteria = criteria.and(Criterions.isGreaterThanOrEqualTo(() -> "executionDate", auditTraceCriteria.getStartExecutionDate()));
-			}
-			if (auditTraceCriteria.getEndExecutionDate() != null) {
-				criteria = criteria.and(Criterions.isLessThanOrEqualTo(() -> "executionDate", auditTraceCriteria.getEndExecutionDate()));
+			if (!StringUtil.isBlank(auditTraceCriteria.itemUrn())) {
+				criteria = criteria.and(Criterions.isEqualTo(() -> "itemUrn", auditTraceCriteria.itemUrn()));
 			}
 
-			if (auditTraceCriteria.getStartBusinessDate() != null) {
-				criteria = criteria.and(Criterions.isGreaterThanOrEqualTo(() -> "businessDate", auditTraceCriteria.getStartBusinessDate()));
+			if (auditTraceCriteria.startExecutionDate() != null) {
+				criteria = criteria.and(Criterions.isGreaterThanOrEqualTo(() -> "executionDate", auditTraceCriteria.startExecutionDate()));
 			}
-			if (auditTraceCriteria.getEndBusinessDate() != null) {
-				criteria = criteria.and(Criterions.isLessThanOrEqualTo(() -> "businessDate", auditTraceCriteria.getEndBusinessDate()));
+			if (auditTraceCriteria.endExecutionDate() != null) {
+				criteria = criteria.and(Criterions.isLessThanOrEqualTo(() -> "executionDate", auditTraceCriteria.endExecutionDate()));
+			}
+
+			if (auditTraceCriteria.startBusinessDate() != null) {
+				criteria = criteria.and(Criterions.isGreaterThanOrEqualTo(() -> "businessDate", auditTraceCriteria.startBusinessDate()));
+			}
+			if (auditTraceCriteria.endBusinessDate() != null) {
+				criteria = criteria.and(Criterions.isLessThanOrEqualTo(() -> "businessDate", auditTraceCriteria.endBusinessDate()));
 			}
 			return entityStoreManager.find(traceDtDefinition, criteria, DtListState.defaultOf(Trace.class));
 		});

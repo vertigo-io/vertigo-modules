@@ -17,27 +17,7 @@
  */
 package io.vertigo.audit.ledger;
 
-public final class LedgerCredential {
-
-	private final String password;
-	private final String walletPath;
-
-	public LedgerCredential(final String password, final String walletPath) {
-		this.password = password;
-		this.walletPath = walletPath;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @return the walletPath
-	 */
-	public String getWalletPath() {
-		return walletPath;
-	}
+public record LedgerCredential(
+		String password,
+		String walletPath) {
 }

@@ -76,32 +76,32 @@ public final class MemoryTraceStorePlugin implements TraceStorePlugin {
 	}
 
 	private static boolean matchItem(final TraceCriteria auditTraceCriteria, final Trace auditTrace) {
-		return auditTraceCriteria.getItemUrn() == null
-				|| auditTraceCriteria.getItemUrn().equals(auditTrace.getItemUrn());
+		return auditTraceCriteria.itemUrn() == null
+				|| auditTraceCriteria.itemUrn().equals(auditTrace.getItemUrn());
 	}
 
 	private static boolean matchExecutionDate(final TraceCriteria auditTraceCriteria, final Trace auditTrace) {
-		return auditTraceCriteria.getStartExecutionDate() == null && auditTraceCriteria.getEndExecutionDate() == null
+		return auditTraceCriteria.startExecutionDate() == null && auditTraceCriteria.endExecutionDate() == null
 				|| auditTrace.getExecutionDate() != null
-						&& (auditTraceCriteria.getStartExecutionDate() == null || auditTraceCriteria.getStartExecutionDate().isBefore(auditTrace.getExecutionDate()))
-						&& (auditTraceCriteria.getEndExecutionDate() == null || auditTraceCriteria.getEndExecutionDate().isAfter(auditTrace.getExecutionDate()));
+						&& (auditTraceCriteria.startExecutionDate() == null || auditTraceCriteria.startExecutionDate().isBefore(auditTrace.getExecutionDate()))
+						&& (auditTraceCriteria.endExecutionDate() == null || auditTraceCriteria.endExecutionDate().isAfter(auditTrace.getExecutionDate()));
 	}
 
 	private static boolean matchBusinessDate(final TraceCriteria auditTraceCriteria, final Trace auditTrace) {
-		return auditTraceCriteria.getStartBusinessDate() == null && auditTraceCriteria.getEndBusinessDate() == null
+		return auditTraceCriteria.startBusinessDate() == null && auditTraceCriteria.endBusinessDate() == null
 				|| auditTrace.getBusinessDate() != null
-						&& (auditTraceCriteria.getStartBusinessDate() == null || auditTraceCriteria.getStartBusinessDate().isBefore(auditTrace.getBusinessDate()))
-						&& (auditTraceCriteria.getEndBusinessDate() == null || auditTraceCriteria.getEndBusinessDate().isAfter(auditTrace.getBusinessDate()));
+						&& (auditTraceCriteria.startBusinessDate() == null || auditTraceCriteria.startBusinessDate().isBefore(auditTrace.getBusinessDate()))
+						&& (auditTraceCriteria.endBusinessDate() == null || auditTraceCriteria.endBusinessDate().isAfter(auditTrace.getBusinessDate()));
 	}
 
 	private static boolean matchUser(final TraceCriteria auditTraceCriteria, final Trace auditTrace) {
-		return StringUtil.isBlank(auditTraceCriteria.getUsername())
-				|| auditTraceCriteria.getUsername().equals(auditTrace.getUsername());
+		return StringUtil.isBlank(auditTraceCriteria.username())
+				|| auditTraceCriteria.username().equals(auditTrace.getUsername());
 	}
 
 	private static boolean matchCategory(final TraceCriteria auditTraceCriteria, final Trace auditTrace) {
-		return StringUtil.isBlank(auditTraceCriteria.getCategory())
-				|| auditTraceCriteria.getCategory().equals(auditTrace.getCategory());
+		return StringUtil.isBlank(auditTraceCriteria.category())
+				|| auditTraceCriteria.category().equals(auditTrace.getCategory());
 	}
 
 }
