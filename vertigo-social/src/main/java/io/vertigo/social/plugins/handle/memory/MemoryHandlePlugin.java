@@ -34,8 +34,8 @@ public class MemoryHandlePlugin implements HandlePlugin {
 	@Override
 	public void add(final List<Handle> handles) {
 		handles.forEach(handle -> {
-			handlesPerUid.put(handle.getUid(), handle);
-			handlesPerCode.put(handle.getCode(), handle);
+			handlesPerUid.put(handle.uid(), handle);
+			handlesPerCode.put(handle.code(), handle);
 		});
 	}
 
@@ -45,7 +45,7 @@ public class MemoryHandlePlugin implements HandlePlugin {
 		uids.forEach(uid -> {
 			final Handle handle = handlesPerUid.remove(uid);
 			if (handle != null) {
-				handlesPerCode.remove(handle.getCode());
+				handlesPerCode.remove(handle.code());
 			}
 		});
 	}
@@ -54,7 +54,7 @@ public class MemoryHandlePlugin implements HandlePlugin {
 	@Override
 	public List<Handle> search(final String prefix) {
 		return handlesPerUid.values().stream()
-				.filter(handle -> handle.getCode().startsWith(prefix))
+				.filter(handle -> handle.code().startsWith(prefix))
 				.limit(10)
 				.toList();
 	}

@@ -20,28 +20,13 @@ package io.vertigo.social.handle;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.data.model.UID;
 
-public final class Handle {
+public record Handle(
+		UID uid,
+		String code) {
 
-	private final UID uid;
-	private final String code;
-
-	public Handle(
-			final UID uid,
-			final String code) {
+	public Handle {
 		Assertion.check()
 				.isNotNull(uid)
 				.isNotBlank(code);
-		//---
-		this.uid = uid;
-		this.code = code;
 	}
-
-	public UID getUid() {
-		return uid;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
 }
