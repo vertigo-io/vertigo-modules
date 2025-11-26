@@ -32,7 +32,7 @@ public class TextAreaUiComponent implements IEasyFormsUiComponentDefinitionSuppl
 	@Override
 	public List<AbstractEasyFormsTemplateItem> getUiComponentParams() {
 		return List.of(
-				new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT_STRICT),
+				new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.name(), FieldTypeEnum.COUNT_STRICT),
 				new EasyFormsTemplateItemField(AUTOGROW, FieldTypeEnum.YES_NO));
 	}
 

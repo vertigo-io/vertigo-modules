@@ -45,7 +45,7 @@ public class TextAreaType implements IEasyFormsFieldTypeDefinitionSupplier {
 
 	@Override
 	public List<AbstractEasyFormsTemplateItem> getExposedComponentParams() {
-		return List.of(new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.getName(), FieldTypeEnum.COUNT_STRICT));
+		return List.of(new EasyFormsTemplateItemField(DtProperty.MAX_LENGTH.name(), FieldTypeEnum.COUNT_STRICT));
 	}
 
 	@Override
