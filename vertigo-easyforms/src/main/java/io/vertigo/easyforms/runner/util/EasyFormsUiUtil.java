@@ -60,7 +60,7 @@ public final class EasyFormsUiUtil implements Serializable {
 		if (item instanceof final EasyFormsTemplateItemField field) {
 			final Integer smartTypeMaxLength = Node.getNode().getDefinitionSpace().resolve(getFieldTypeByName(field.getFieldTypeName()).getSmartTypeName(), SmartTypeDefinition.class)
 					.getProperties().getValue(DtProperty.MAX_LENGTH);
-			final Long fieldMaxLength = field.getParameters() == null ? null : (Long) field.getParameters().get(DtProperty.MAX_LENGTH.getName());
+			final Long fieldMaxLength = field.getParameters() == null ? null : (Long) field.getParameters().get(DtProperty.MAX_LENGTH.name());
 			return min(smartTypeMaxLength, fieldMaxLength);
 		}
 		return null;
