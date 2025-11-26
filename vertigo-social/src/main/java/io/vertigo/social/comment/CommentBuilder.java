@@ -59,7 +59,7 @@ public final class CommentBuilder implements Builder<Comment> {
 				.isNotNull(author);
 		//-----
 		myAuthor = author;
-		myAuthorDisplayName = getIdentityManager().getAccount(author).getDisplayName();
+		myAuthorDisplayName = getIdentityManager().getAccount(author).displayName();
 		return this;
 	}
 

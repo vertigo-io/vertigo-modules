@@ -78,7 +78,7 @@ public final class OrchestraFeatures extends Features<OrchestraFeatures> {
 		Assertion.check().isNotBlank(paramName);
 		//---
 		return Stream.of(params)
-				.filter(param -> paramName.equals(param.getName()))
+				.filter(param -> paramName.equals(param.name()))
 				.findFirst()
 				.orElseThrow(() -> new VSystemException("param '{0}' not found in params '{1}' ", paramName, params));
 
