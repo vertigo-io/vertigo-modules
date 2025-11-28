@@ -62,14 +62,14 @@ public class RedisHandlePlugin implements HandlePlugin {
 	public void add(final List<Handle> handles) {
 		try (final Jedis jedis = redisConnector.getClient(REDIS_PREFIX)) {
 			for (final Handle handle : handles) {
-				if (jedis.exists("urn_handle:" + handle.getUid().urn())) {
+				if (jedis.exists("urn_handle:" + handle.uid().urn())) {
 					// if exist we need to clean the index and the reverse index
-					final String code = jedis.hget("urn_handle:" + handle.getUid().urn(), "code");
-					jedis.del("urn_handle:" + handle.getUid().urn());
-					jedis.del("handle:" + code, "urn_handle:" + handle.getUid().urn());
+					final String code = jedis.hget("urn_handle:" + handle.uid().urn(), "code");
+					jedis.del("urn_handle:" + handle.uid().urn());
+					jedis.del("handle:" + code, "urn_handle:" + handle.uid().urn());
 				}
-				jedis.hmset("handle:" + handle.getCode(), toMap(handle));
-				jedis.hmset("urn_handle:" + handle.getUid().urn(), toMap(handle));
+				jedis.hmset("handle:" + handle.code(), toMap(handle));
+				jedis.hmset("urn_handle:" + handle.uid().urn(), toMap(handle));
 			}
 		}
 
@@ -129,8 +129,8 @@ public class RedisHandlePlugin implements HandlePlugin {
 
 	private static Map<String, String> toMap(final Handle handle) {
 		return new MapBuilder<String, String>()
-				.put("urn", handle.getUid().urn())
-				.put("code", handle.getCode())
+				.put("urn", handle.uid().urn())
+				.put("code", handle.code())
 				.build();
 	}
 
