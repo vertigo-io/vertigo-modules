@@ -20,7 +20,7 @@ package io.vertigo.planning.agenda.jobs;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.orchestra.impl.services.execution.AbstractActivityEngine;

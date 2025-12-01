@@ -19,7 +19,7 @@ package io.vertigo.quarto.plugins.exporter.rtf;
 
 import java.io.OutputStream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.lowagie.text.DocumentException;
 

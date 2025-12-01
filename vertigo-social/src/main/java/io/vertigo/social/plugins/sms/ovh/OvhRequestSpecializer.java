@@ -22,7 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.connectors.httpclient.HttpClientConnector;
 import io.vertigo.core.lang.WrappedException;

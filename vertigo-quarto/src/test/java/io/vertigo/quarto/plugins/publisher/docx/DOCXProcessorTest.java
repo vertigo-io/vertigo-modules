@@ -25,7 +25,7 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;

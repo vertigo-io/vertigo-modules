@@ -19,7 +19,7 @@ package io.vertigo.dashboard.webservices;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.dashboard.services.data.DataProvider;

@@ -20,7 +20,7 @@ package io.vertigo.social.plugins.sms.linkmobility;
 import java.util.Base64;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.connectors.httpclient.HttpClientConnector;
 import io.vertigo.core.node.component.Component;

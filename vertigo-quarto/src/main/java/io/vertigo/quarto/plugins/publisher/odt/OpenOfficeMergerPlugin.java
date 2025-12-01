@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.commons.script.ScriptManager;
 import io.vertigo.core.lang.Assertion;

@@ -17,7 +17,7 @@
  */
 package io.vertigo.dashboard.ui;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.connectors.javalin.JavalinConnector;
 import io.vertigo.core.node.Node;

@@ -20,7 +20,7 @@ package io.vertigo.social.impl.comment;
 import java.time.Instant;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.core.lang.Assertion;

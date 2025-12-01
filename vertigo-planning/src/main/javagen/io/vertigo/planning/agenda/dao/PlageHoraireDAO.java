@@ -17,7 +17,7 @@
  */
 package io.vertigo.planning.agenda.dao;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.Optional;
 import io.vertigo.core.lang.Generated;

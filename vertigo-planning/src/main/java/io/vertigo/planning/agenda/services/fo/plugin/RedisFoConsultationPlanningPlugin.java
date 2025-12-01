@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.commons.eventbus.EventBusSubscribed;
 import io.vertigo.commons.transaction.Transactional;

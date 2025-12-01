@@ -17,7 +17,7 @@
  */
 package io.vertigo.orchestra.services.execution;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.node.component.ComponentInitializer;
 import io.vertigo.orchestra.definitions.OrchestraDefinitionManager;

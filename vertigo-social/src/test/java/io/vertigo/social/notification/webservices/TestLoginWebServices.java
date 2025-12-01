@@ -17,7 +17,7 @@
  */
 package io.vertigo.social.notification.webservices;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.account.authentication.AuthenticationManager;
 import io.vertigo.account.impl.authentication.UsernameAuthenticationToken;

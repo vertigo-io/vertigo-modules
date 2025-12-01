@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.connectors.redis.RedisConnector;
 import io.vertigo.core.analytics.AnalyticsManager;

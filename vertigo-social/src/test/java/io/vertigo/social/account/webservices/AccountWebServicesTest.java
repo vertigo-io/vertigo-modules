@@ -17,7 +17,7 @@
  */
 package io.vertigo.social.account.webservices;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.AfterAll;

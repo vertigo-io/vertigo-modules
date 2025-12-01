@@ -20,7 +20,7 @@ package io.vertigo.quarto.plugins.exporter.xls;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;

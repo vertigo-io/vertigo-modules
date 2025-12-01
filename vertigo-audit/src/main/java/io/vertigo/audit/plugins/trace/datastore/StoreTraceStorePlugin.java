@@ -19,7 +19,7 @@ package io.vertigo.audit.plugins.trace.datastore;
 
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.audit.impl.trace.TraceStorePlugin;
 import io.vertigo.audit.trace.Trace;

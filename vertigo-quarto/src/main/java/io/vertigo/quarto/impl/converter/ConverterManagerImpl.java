@@ -17,7 +17,7 @@
  */
 package io.vertigo.quarto.impl.converter;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.datastore.filestore.model.VFile;

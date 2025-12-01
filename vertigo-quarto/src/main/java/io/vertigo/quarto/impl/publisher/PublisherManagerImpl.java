@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.commons.script.ScriptManager;
 import io.vertigo.core.lang.Assertion;

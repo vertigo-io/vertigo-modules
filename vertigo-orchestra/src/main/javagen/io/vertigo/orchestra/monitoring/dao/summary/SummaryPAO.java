@@ -17,7 +17,7 @@
  */
 package io.vertigo.orchestra.monitoring.dao.summary;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;

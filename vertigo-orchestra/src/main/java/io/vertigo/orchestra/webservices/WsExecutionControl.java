@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.orchestra.definitions.OrchestraDefinitionManager;

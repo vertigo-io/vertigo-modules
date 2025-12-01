@@ -20,7 +20,7 @@ package io.vertigo.social.webservices.account;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.account.AccountGroup;
