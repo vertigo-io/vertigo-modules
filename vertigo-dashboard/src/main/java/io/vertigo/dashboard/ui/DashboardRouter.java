@@ -18,7 +18,6 @@
 package io.vertigo.dashboard.ui;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +33,6 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.core.Configurable;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.javalin.Javalin;
 import io.vertigo.core.node.Node;
@@ -68,7 +66,7 @@ public final class DashboardRouter {
 		configuration = new Configuration(Configuration.VERSION_2_3_23);
 		configuration.setTemplateLoader(new ClassTemplateLoader(DashboardRouter.class, "/"));
 		configuration.setClassForTemplateLoading(DashboardRouter.class, "");
-		final BeansWrapperBuilder beansWrapperBuilder = new BeansWrapperBuilder(Configuration.VERSION_2_3_23);
+		final var beansWrapperBuilder = new BeansWrapperBuilder(Configuration.VERSION_2_3_23);
 		beansWrapperBuilder.setSimpleMapWrapper(true);
 		configuration.setObjectWrapper(beansWrapperBuilder.build());
 		try {
@@ -84,17 +82,15 @@ public final class DashboardRouter {
 	 */
 	public void route(final Javalin javalin) {
 
-		javalin.get("/dashboard/static/{fileName}", (ctx) -> {
-			try (InputStream inputStream = DashboardRouter.class.getResource("/static/" + ctx.pathParam("{fileName}")).openStream()) {
+		javalin.unsafe.routes.get("/dashboard/static/{fileName}", ctx -> {
+			try (var inputStream = DashboardRouter.class.getResource("/static/" + ctx.pathParam("{fileName}")).openStream()) {
 				try (final OutputStream output = ctx.res().getOutputStream()) {
 					inputStream.transferTo(output);
 				}
 			}
 		});
 
-		javalin.get("/dashboard/", (ctx) ->
-
-		{
+		javalin.unsafe.routes.get("/dashboard/", ctx -> {
 			final List<String> modules = Arrays.asList("vertigo-commons", "vertigo-dynamo", "vertigo-vega", "vertugo-ui");
 			final Map<String, Object> model = new HashMap<>();
 			model.put("modules", modules);
@@ -102,10 +98,10 @@ public final class DashboardRouter {
 			render(ctx.res(), "templates/home.ftl", model);
 		});
 
-		javalin.get("/dashboard/modules/{moduleName}", (ctx) -> {
-			final String moduleName = ctx.pathParam("{moduleName}");
+		javalin.unsafe.routes.get("/dashboard/modules/{moduleName}", ctx -> {
+			final var moduleName = ctx.pathParam("{moduleName}");
 			final DashboardModuleControler controler = InjectorUtil.newInstance(controlerMap.get(moduleName));
-			final Map<String, Object> model = controler.buildModel(node, moduleName);
+			final var model = controler.buildModel(node, moduleName);
 			model.put("contextName", ctx.contextPath());
 			render(ctx.res(), "templates/" + moduleName + ".ftl", model);
 		});
@@ -116,9 +112,9 @@ public final class DashboardRouter {
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.setContentType("text/html");
 
-		final StringWriter stringWriter = new StringWriter();
+		final var stringWriter = new StringWriter();
 
-		final Template template = configuration.getTemplate(templateName);
+		final var template = configuration.getTemplate(templateName);
 		template.process(model, stringWriter);
 
 		try (OutputStream outputStream = response.getOutputStream()) {
