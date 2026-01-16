@@ -30,6 +30,7 @@ import io.vertigo.orchestra.impl.definitions.ProcessDefinitionStorePlugin;
 
 /**
  * Plugin de gestion des définitions en mémoire dans le DefinitionSpace.
+ * 
  * @author mlaroche
  *
  */
@@ -38,8 +39,9 @@ public class MemoryProcessDefinitionStorePlugin implements ProcessDefinitionStor
 	private final Map<String, ProcessDefinition> processDefinitions = new ConcurrentHashMap<>();
 
 	@Override
-	public void createOrUpdateDefinition(final ProcessDefinition processDefinition) {
+	public ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition) {
 		processDefinitions.put(processDefinition.getName(), processDefinition);
+		return processDefinition;
 	}
 
 	@Override

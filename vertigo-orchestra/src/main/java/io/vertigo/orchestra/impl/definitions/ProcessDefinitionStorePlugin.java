@@ -27,6 +27,7 @@ import io.vertigo.orchestra.definitions.ProcessType;
 
 /**
  * Plugin de gestion des définitions de processus.
+ * 
  * @author mlaroche
  *
  */
@@ -35,10 +36,11 @@ public interface ProcessDefinitionStorePlugin extends Plugin {
 	/**
 	 * @see io.vertigo.orchestra.definitions.OrchestraDefinitionManager#createOrUpdateDefinition(ProcessDefinition)
 	 */
-	void createOrUpdateDefinition(final ProcessDefinition processDefinition);
+	ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition);
 
 	/**
 	 * Retourne si une definition existe
+	 * 
 	 * @param processName le nom du processus
 	 * @return vrai si la definition existe
 	 */
@@ -67,6 +69,7 @@ public interface ProcessDefinitionStorePlugin extends Plugin {
 
 	/**
 	 * Retourne le type de processus géré par le plugin
+	 * 
 	 * @return le type de processus géré
 	 */
 	ProcessType getHandledProcessType();
