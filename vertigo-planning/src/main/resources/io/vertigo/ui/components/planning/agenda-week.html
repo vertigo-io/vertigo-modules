@@ -43,6 +43,7 @@
 		           <vu:include-data object="plagesHoraire" field="nbNonPublie" />
 		           <vu:include-data object="plagesHoraire" field="nbPlanifie" />
 		           <vu:include-data object="plagesHoraire" field="nbPublie" />
+		           <vu:include-data object="infosCalendrier" field="'*'" />
 		           <q-calendar-day ref="calendar"
 			           locale="fr"
 			           hour24-format
@@ -58,6 +59,17 @@
 			           :model-value="toCalendarDate(vueData.agendaRange.firstDate).date"
 			           no-active-date @click-date=""
 			           th:attrappend="'@click-time'=${myHasAuthzAdmin?'onCreatePlageHoraireDateTime($event)':null}">    	   
+		               <template #head-day-event="{ scope: { timestamp } }">
+		                  <template v-for="info in vueData.infosCalendrier">
+		                      <div v-if="timestamp.date===info.date" style="display: flex; justify-content: center; flex-wrap: wrap; padding: 2px;" :class="info.htmlClass">
+		                          <q-badge style="width: 100%; padding: 5px; line-height: 14px" :style="info.htmlStyle" :title="info.infobulle">
+		                              <span class="title q-calendar__ellipsis">
+		                                  {{ info.libelle }}
+		                              </span>
+		                          </q-badge>
+		                      </div>
+		                  </template>
+		               </template>
 		               <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
 		                <template v-for="(event, index) in getEvents(timestamp.date, vueData.plagesHoraire)" :key="event.eventId">
 		                  <div

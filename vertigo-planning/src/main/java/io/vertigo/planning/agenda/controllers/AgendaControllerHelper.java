@@ -28,11 +28,9 @@ import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.node.component.Component;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.planning.agenda.domain.Agenda;
@@ -41,6 +39,7 @@ import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
 import io.vertigo.planning.agenda.domain.DefaultPlageHoraire;
 import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
+import io.vertigo.planning.agenda.domain.InfoCalendrierDisplay;
 import io.vertigo.planning.agenda.domain.PlageHoraire;
 import io.vertigo.planning.agenda.domain.PlageHoraireDisplay;
 import io.vertigo.planning.agenda.domain.PublicationTrancheHoraireForm;
@@ -49,10 +48,14 @@ import io.vertigo.planning.agenda.domain.TrancheHoraireDisplay;
 import io.vertigo.planning.agenda.services.PlanningServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
-import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
-public class AgendaControllerHelper implements Component {
+public class AgendaControllerHelper {
+
+	@FunctionalInterface
+	public static interface InfoCalendrierProvider {
+		DtList<InfoCalendrierDisplay> getInfoCalendrierForRange(final ViewContext viewContext, final LocalDate startDate, final LocalDate endDate);
+	}
 
 	protected static final int NB_JOURS_DUPLICATE = 6;
 	protected static final ViewContextKey<Integer> weekDaysNumberKey = ViewContextKey.of("weekDaysNumber");
@@ -65,6 +68,9 @@ public class AgendaControllerHelper implements Component {
 	protected static final ViewContextKey<PlageHoraireDisplay> reservationOrphelinesKey = ViewContextKey.of("reservationOrphelines");
 
 	protected static final ViewContextKey<TrancheHoraireDisplay> tranchesHoraireKey = ViewContextKey.of("tranchesHoraire");
+
+	//info calendrier
+	protected static final ViewContextKey<InfoCalendrierDisplay> infosCalendrierKey = ViewContextKey.of("infosCalendrier");
 
 	//creation plage
 	protected static final ViewContextKey<String> agendaLabelKey = ViewContextKey.of("agendaLabel");
@@ -85,8 +91,16 @@ public class AgendaControllerHelper implements Component {
 	@Inject
 	private PlanningServices planningServices;
 
+	private final InfoCalendrierProvider infoCalendrierProvider;
+
+	public AgendaControllerHelper(final InfoCalendrierProvider infoCalendrierProvider) {
+		DIInjector.injectMembers(this, Node.getNode().getComponentSpace());
+		this.infoCalendrierProvider = infoCalendrierProvider;
+	}
+
 	/**
 	 * Init context for agenda page.
+	 *
 	 * @param viewContext ViewContext
 	 * @param ageUids list of agenda UIDs
 	 * @param weekDaysNumber number of days
@@ -106,17 +120,25 @@ public class AgendaControllerHelper implements Component {
 
 	/**
 	 * Init context for agenda page.
+	 *
+	 * @param agendaLabel label of the agenda
 	 * @param viewContext ViewContext
-	 * @param ageUids list of agenda UIDs
 	 * @param weekDaysNumber number of days
 	 * @param creationPlageHoraireForm initialized form for creating
 	 * @param duplicationSemaineForm initialized form for duplicating
 	 * @param modeGuichet true if mode guichet
 	 * @param modeTranchesHoraire true if mode tranche horaire (don't show plages)
+	 * @param infoCalendrierProvider function to provide info calendrier on a date range, null if not needed
 	 */
-	public void initContext(final String agendaLabel, final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final Integer weekDaysNumber,
+	public void initContext(
+			final String agendaLabel,
+			final ViewContext viewContext,
+			final DtList<AgendaDisplay> agendasDisplay,
+			final Integer weekDaysNumber,
 			final CreationPlageHoraireForm creationPlageHoraireForm,
-			final DuplicationSemaineForm duplicationSemaineForm, final boolean modeGuichet, final boolean modeTranchesHoraire) {
+			final DuplicationSemaineForm duplicationSemaineForm,
+			final boolean modeGuichet,
+			final boolean modeTranchesHoraire) {
 		//---
 		final var todayDate = LocalDate.now();
 		viewContext.publishRef(modeGuichetKey, modeGuichet);
@@ -134,6 +156,9 @@ public class AgendaControllerHelper implements Component {
 		viewContext.publishRef(weekDaysNumberKey, weekDaysNumber);
 		viewContext.publishRef(weekDaysKey, Arrays.toString(IntStream.concat(IntStream.range(1, weekDaysNumber), IntStream.of(weekDaysNumber == 7 ? 0 : weekDaysNumber)).toArray()));
 
+		// Ajoute les info calendrier
+		prepareInfoCalendrierContext(viewContext, agendaDisplayRange);
+
 		//pour popin creation plage
 		viewContext.publishDto(creationPlageHoraireFormKey, creationPlageHoraireForm);
 		final var defaultPlageHoraires = planningServices.getDefaultPlageHoraireByAgenda(ageUids, todayDate.minusMonths(1), todayDate.plusMonths(3));
@@ -149,31 +174,47 @@ public class AgendaControllerHelper implements Component {
 		viewContext.publishDto(duplicationSemaineFormKey, duplicationSemaineForm);
 	}
 
-	@PostMapping("/_reload")
-	public ViewContext reload(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, final UiMessageStack uiMessageStack) {
+	private void prepareInfoCalendrierContext(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agendaDisplayRange) {
+		viewContext.publishDtList(infosCalendrierKey,
+				infoCalendrierProvider == null ? new DtList<>(InfoCalendrierDisplay.class)
+						: infoCalendrierProvider.getInfoCalendrierForRange(viewContext, agendaDisplayRange.getFirstDate(), agendaDisplayRange.getLastDate()));
+	}
+
+	public ViewContext reload(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final PlageHoraireDisplay plageHoraireDetail,
+			final UiMessageStack uiMessageStack) {
 		prepareContextAtDate(agenda.getShowDate(), agenda, viewContext);
+		prepareInfoCalendrierContext(viewContext, agenda);
 		if (plageHoraireDetail.getPlhId() != null) {
 			loadPlageHoraireDetail(viewContext, agenda, plageHoraireDetail.getPlhId(), uiMessageStack);
 		}
 		return viewContext;
 	}
 
-	@PostMapping("/_semainePrecedente")
-	public ViewContext semainePrecedente(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
+	public ViewContext semainePrecedente(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda) {
 		prepareContextAtDate(agenda.getShowDate().minusWeeks(1), agenda, viewContext);
+		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
-	@PostMapping("/_semaineSuivante")
-	public ViewContext semaineSuivante(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
+	public ViewContext semaineSuivante(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda) {
 		prepareContextAtDate(agenda.getShowDate().plusWeeks(1), agenda, viewContext);
+		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
-	@PostMapping("/_createPlage")
-	public ViewContext createPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@ViewAttribute("creationPlageHoraireForm") final CreationPlageHoraireForm creationPlageHoraireForm) {
+	public ViewContext createPlage(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final CreationPlageHoraireForm creationPlageHoraireForm) {
 		//---
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		planningServices.createPlageHoraire(creationPlageHoraireForm, ageUids, agenda.getShowDays());
@@ -181,9 +222,10 @@ public class AgendaControllerHelper implements Component {
 		return viewContext;
 	}
 
-	@PostMapping("_prepareDuplicateSemaine")
-	public ViewContext prepareDuplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agendaRange,
-			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
+	public ViewContext prepareDuplicateSemaine(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agendaRange,
+			final DuplicationSemaineForm duplicationSemaineForm) {
 		if (viewContext.getUiList(plagesHoraireKey).isEmpty()) {
 			//erreur bloquante
 			throw new VUserException("La semaine que vous souhaitez dupliquer n'a aucune plage horaire");
@@ -202,12 +244,20 @@ public class AgendaControllerHelper implements Component {
 		return viewContext;
 	}
 
-	@PostMapping("/_duplicateSemaine")
-	public ViewContext duplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
+	public ViewContext duplicateSemaine(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final DuplicationSemaineForm duplicationSemaineForm) {
+		final var joursFermes = infoCalendrierProvider.getInfoCalendrierForRange(viewContext, duplicationSemaineForm.getDateLocaleToDebut(), duplicationSemaineForm.getDateLocaleToFin()).stream()
+				.filter(InfoCalendrierDisplay::getSiFerme)
+				.map(InfoCalendrierDisplay::getDate)
+				.distinct()
+				.toList();
+
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
-		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm));
+		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm), joursFermes);
 		prepareContextAtDate(duplicationSemaineForm.getDateLocaleToDebut(), agenda, viewContext);
+		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
@@ -219,9 +269,10 @@ public class AgendaControllerHelper implements Component {
 						ageUid -> duplicationSemaineForm.getDureeCreneau()));
 	}
 
-	@PostMapping("/_publishPlage")
-	public ViewContext publishPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@ViewAttribute("publicationTrancheHoraireForm") final PublicationTrancheHoraireForm publicationTrancheHoraireForm) {
+	public ViewContext publishPlage(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final PublicationTrancheHoraireForm publicationTrancheHoraireForm) {
 
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		planningServices.publishPlageHorairesAndRelinkReservation(ageUids, publicationTrancheHoraireForm);
@@ -230,8 +281,10 @@ public class AgendaControllerHelper implements Component {
 		return viewContext;
 	}
 
-	@PostMapping("/_deletePlage")
-	public ViewContext deletePlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
+	public ViewContext deletePlage(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final Long plhId) {
 		final UID<PlageHoraire> plhUid = UID.of(PlageHoraire.class, plhId);
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		final var ageUid = planningServices.checkAuthorizedAgendaOfPlh(plhUid, ageUids);
@@ -242,8 +295,10 @@ public class AgendaControllerHelper implements Component {
 		return viewContext;
 	}
 
-	@PostMapping("/_loadPlageHoraireDetail")
-	public ViewContext loadPlageHoraireDetail(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId,
+	public ViewContext loadPlageHoraireDetail(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final Long plhId,
 			final UiMessageStack uiMessageStack) {
 		final UID<PlageHoraire> plhUid = UID.of(PlageHoraire.class, plhId);
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
@@ -263,9 +318,12 @@ public class AgendaControllerHelper implements Component {
 		return viewContext;
 	}
 
-	@PostMapping("/_deleteTrancheHoraire")
-	public ViewContext deleteTrancheHoraire(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, @RequestParam("trhId") final Long trhId, final UiMessageStack uiMessageStack) {
+	public ViewContext deleteTrancheHoraire(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final PlageHoraireDisplay plageHoraireDetail,
+			final Long trhId,
+			final UiMessageStack uiMessageStack) {
 		final UID<Agenda> ageUid = UID.of(Agenda.class, plageHoraireDetail.getAgeId());
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		planningServices.checkAuthorizedAgenda(ageUid, ageUids);

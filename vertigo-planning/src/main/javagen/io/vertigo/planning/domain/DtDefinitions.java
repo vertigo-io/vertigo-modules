@@ -54,6 +54,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DefaultPlageHoraire(io.vertigo.planning.agenda.domain.DefaultPlageHoraire.class),
 		/** Objet de données DuplicationSemaineForm. */
 		DuplicationSemaineForm(io.vertigo.planning.agenda.domain.DuplicationSemaineForm.class),
+		/** Objet de données InfoCalendrierDisplay. */
+		InfoCalendrierDisplay(io.vertigo.planning.agenda.domain.InfoCalendrierDisplay.class),
 		/** Objet de données PlageHoraire. */
 		PlageHoraire(io.vertigo.planning.agenda.domain.PlageHoraire.class),
 		/** Objet de données PlageHoraireDisplay. */
@@ -229,6 +231,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dateLocaleToFin,
 		/** Propriété 'Durée en minutes'. */
 		dureeCreneau	}
+
+	/**
+	 * Enumération des champs de InfoCalendrierDisplay.
+	 */
+	public enum InfoCalendrierDisplayFields implements DataFieldName<io.vertigo.planning.agenda.domain.InfoCalendrierDisplay> {
+		/** Propriété 'Date de l'information'. */
+		date,
+		/** Propriété 'Libellé'. */
+		libelle,
+		/** Propriété 'Infobulle'. */
+		infobulle,
+		/** Propriété 'Classe pour l'affichage dans l'agenda'. */
+		htmlClass,
+		/** Propriété 'Style pour l'affichage dans l'agenda'. */
+		htmlStyle,
+		/** Propriété 'Si le jour est considéré comme fermé, on ne dupliquera pas les plages horaires'. */
+		siFerme	}
 
 	/**
 	 * Enumération des champs de PlageHoraire.
