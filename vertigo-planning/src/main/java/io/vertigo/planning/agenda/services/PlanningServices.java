@@ -537,12 +537,25 @@ public class PlanningServices implements Component {
 		return Optional.of(reservationCreneau);
 	}
 
-	public ReservationCreneau reserverCreneauWithOverbooking(final UID<TrancheHoraire> trhUid) {
+	public ReservationCreneau reserverCreneauBO(final UID<TrancheHoraire> trhUid, final boolean siSurbooking) {
 		final var reservationCreneauOpt = reserverCreneau(trhUid);
 		if (reservationCreneauOpt.isPresent()) {
 			return reservationCreneauOpt.get();
 		}
-		final var trancheHoraire = trancheHoraireDAO.get(trhUid);
+		// not published or full booked, so only back office can book
+		// get with a lock on trancheHoraire to avoid concurrency issues
+		final var trancheHoraire = trancheHoraireDAO.getTrancheHoraireWithLock(trhUid.getId());
+		if (!siSurbooking) {
+			final var trhDisplay = getTrancheHoraireDisplayByPlage(trancheHoraire.plageHoraire().getUID())
+					.stream()
+					.filter(t -> t.getTrhId().equals(trhUid.getId()))
+					.findFirst()
+					.orElseThrow();
+			if (trhDisplay.getNbReserve() >= trhDisplay.getNbGuichet()) {
+				throw new VUserException("La tranche horaire est complète, le surbooking n'est pas autorisé pour cette démarche.");
+			}
+		}
+
 		final var reservationCreneau = prepareReservationCreneau(trancheHoraire);
 		reservationCreneauDAO.create(reservationCreneau);
 		return reservationCreneau;

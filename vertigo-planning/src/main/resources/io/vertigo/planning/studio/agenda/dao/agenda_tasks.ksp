@@ -701,6 +701,19 @@ create Task TkBatchInsertTrancheHoraire {
     in dto      {domain : DoDtTrancheHoraire      cardinality:"*"     }
 }
 
+create Task TkGetTrancheHoraireWithLock {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+           SELECT 
+                trh.*
+           FROM TRANCHE_HORAIRE trh
+           WHERE trh.TRH_ID = #trhId#
+           FOR UPDATE
+           "
+    in  trhId       {domain : DoPId                 cardinality: "1" }
+    out creneau     {domain : DoDtTrancheHoraire    cardinality: "1" }
+}
+
 /** 
  * Task liées aux réservations 
 **/
