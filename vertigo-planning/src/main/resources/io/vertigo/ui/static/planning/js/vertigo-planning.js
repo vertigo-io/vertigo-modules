@@ -327,6 +327,19 @@ VUiExtensions.methods.doPublishPlageHoraires = function() {
                 }.bind(this)
             });
         } 
+VUiExtensions.methods.onDuplicateDay= function() {
+			this.$data.vueData.duplicationJourForm = { dateLocaleTo:[] }; // reset form
+			this.$data.componentStates.duplicateDayModal.opened = true;
+        }
+VUiExtensions.methods.doDuplicateDay = function() {
+			let formData = this.vueDataParams(['duplicationJourForm']);
+			this.httpPostAjax('_duplicateJour', formData, {
+			     onSuccess: function() {
+			        this.$q.notify({message: 'Duplication effectuée', type :'positive'});
+			        this.$data.componentStates.duplicateDayModal.opened = false;
+			    }.bind(this)
+			});
+        } 
 VUiExtensions.methods.onDuplicateWeek= function() {
                 this.httpPostAjax('_prepareDuplicateSemaine', {}, {
                  onSuccess: function() {
@@ -339,7 +352,7 @@ VUiExtensions.methods.doDuplicateWeek = function() {
             this.httpPostAjax('_duplicateSemaine', formData, {
                  onSuccess: function() {
                     this.$q.notify({message: 'Duplication effectuée', type :'positive'});
-                    this.$data.componentStates.duplicateWeekModal.opened = false
+                    this.$data.componentStates.duplicateWeekModal.opened = false;
                 }.bind(this)
             });
         } 

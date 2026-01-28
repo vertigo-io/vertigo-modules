@@ -28,6 +28,7 @@ import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.di.DIInjector;
@@ -38,6 +39,7 @@ import io.vertigo.planning.agenda.domain.AgendaDisplay;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
 import io.vertigo.planning.agenda.domain.DefaultPlageHoraire;
+import io.vertigo.planning.agenda.domain.DuplicationJourForm;
 import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
 import io.vertigo.planning.agenda.domain.InfoCalendrierDisplay;
 import io.vertigo.planning.agenda.domain.PlageHoraire;
@@ -85,8 +87,9 @@ public class AgendaControllerHelper {
 	protected static final ViewContextKey<PlageHoraireDisplay> plageHoraireDetailKey = ViewContextKey.of("plageHoraireDetail");
 	protected static final ViewContextKey<TrancheHoraireDisplay> trancheHorairesDetailKey = ViewContextKey.of("trancheHorairesDetail");
 
-	//duplication semaine
+	//duplication
 	protected static final ViewContextKey<DuplicationSemaineForm> duplicationSemaineFormKey = ViewContextKey.of("duplicationSemaineForm");
+	protected static final ViewContextKey<DuplicationJourForm> duplicationJourFormKey = ViewContextKey.of("duplicationJourForm");
 
 	@Inject
 	private PlanningServices planningServices;
@@ -172,6 +175,7 @@ public class AgendaControllerHelper {
 
 		//pour popin duplication
 		viewContext.publishDto(duplicationSemaineFormKey, duplicationSemaineForm);
+		viewContext.publishDto(duplicationJourFormKey, new DuplicationJourForm());
 	}
 
 	private void prepareInfoCalendrierContext(
@@ -248,25 +252,57 @@ public class AgendaControllerHelper {
 			final ViewContext viewContext,
 			final AgendaDisplayRange agenda,
 			final DuplicationSemaineForm duplicationSemaineForm) {
-		final var joursFermes = infoCalendrierProvider.getInfoCalendrierForRange(viewContext, duplicationSemaineForm.getDateLocaleToDebut(), duplicationSemaineForm.getDateLocaleToFin()).stream()
+		final var minDateTo = duplicationSemaineForm.getDateLocaleToDebut().isBefore(duplicationSemaineForm.getDateLocaleToFin())
+				? duplicationSemaineForm.getDateLocaleToDebut()
+				: duplicationSemaineForm.getDateLocaleToFin();
+		final var maxDateTo = duplicationSemaineForm.getDateLocaleToDebut().isAfter(duplicationSemaineForm.getDateLocaleToFin())
+				? duplicationSemaineForm.getDateLocaleToDebut()
+				: duplicationSemaineForm.getDateLocaleToFin();
+		final var joursFermes = infoCalendrierProvider.getInfoCalendrierForRange(viewContext, minDateTo, maxDateTo).stream()
 				.filter(InfoCalendrierDisplay::getSiFerme)
 				.map(InfoCalendrierDisplay::getDate)
 				.distinct()
 				.toList();
 
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
-		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm), joursFermes);
+		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm.getDureeCreneau()), joursFermes);
 		prepareContextAtDate(duplicationSemaineForm.getDateLocaleToDebut(), agenda, viewContext);
 		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
-	public Map<UID<Agenda>, Integer> getDureeCreneauPerAgenda(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm) {
+	public ViewContext duplicateJour(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final DuplicationJourForm duplicationJourForm,
+			final Integer dureeCreneau) {
+		Assertion.check().isTrue(!duplicationJourForm.getDateLocaleTo().isEmpty(), "Au moins un jour cible doit être renseigné pour la duplication de jour.");
+
+		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+
+		final var minDateTo = duplicationJourForm.getDateLocaleTo().stream().min(LocalDate::compareTo).orElseThrow();
+		final var maxDateTo = duplicationJourForm.getDateLocaleTo().stream().max(LocalDate::compareTo).orElseThrow();
+
+		final var joursFermes = infoCalendrierProvider.getInfoCalendrierForRange(viewContext, minDateTo, maxDateTo).stream()
+				.filter(InfoCalendrierDisplay::getSiFerme)
+				.filter(info -> duplicationJourForm.getDateLocaleTo().contains(info.getDate()))
+				.map(InfoCalendrierDisplay::getDate)
+				.distinct()
+				.toList();
+
+		planningServices.duplicateJour(ageUids, duplicationJourForm, getDureeCreneauPerAgenda(ageUids, dureeCreneau), joursFermes);
+
+		prepareContextAtDate(duplicationJourForm.getDateLocaleFrom(), agenda, viewContext);
+		prepareInfoCalendrierContext(viewContext, agenda);
+		return viewContext;
+	}
+
+	public Map<UID<Agenda>, Integer> getDureeCreneauPerAgenda(final List<UID<Agenda>> ageUids, final Integer dureeCreneau) {
 		//On applique la duplicationSemaineForm dureeCreneau a tous les agendas
 		return ageUids.stream()
 				.collect(Collectors.toMap(
 						ageUid -> ageUid,
-						ageUid -> duplicationSemaineForm.getDureeCreneau()));
+						ageUid -> dureeCreneau));
 	}
 
 	public ViewContext publishPlage(

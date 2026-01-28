@@ -52,6 +52,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DateDisponibleDisplay(io.vertigo.planning.agenda.domain.DateDisponibleDisplay.class),
 		/** Objet de données DefaultPlageHoraire. */
 		DefaultPlageHoraire(io.vertigo.planning.agenda.domain.DefaultPlageHoraire.class),
+		/** Objet de données DuplicationJourForm. */
+		DuplicationJourForm(io.vertigo.planning.agenda.domain.DuplicationJourForm.class),
 		/** Objet de données DuplicationSemaineForm. */
 		DuplicationSemaineForm(io.vertigo.planning.agenda.domain.DuplicationSemaineForm.class),
 		/** Objet de données InfoCalendrierDisplay. */
@@ -216,6 +218,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		minutesFin,
 		/** Propriété 'Nombre de guichets'. */
 		nbGuichet	}
+
+	/**
+	 * Enumération des champs de DuplicationJourForm.
+	 */
+	public enum DuplicationJourFormFields implements DataFieldName<io.vertigo.planning.agenda.domain.DuplicationJourForm> {
+		/** Propriété 'Date à dupliquer'. */
+		dateLocaleFrom,
+		/** Propriété 'Jours cible'. */
+		dateLocaleTo	}
 
 	/**
 	 * Enumération des champs de DuplicationSemaineForm.

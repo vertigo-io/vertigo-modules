@@ -1,0 +1,51 @@
+<th:block th:fragment="agenda-duplicate-day(plage_actions_slot)" vu:alias="agenda-duplicate-day" vu:selector="${true}" 
+    th:attr="objectKey=${model.vContext['componentStates'].addComponentState('duplicateDayModal').addPrimitive('opened', false)}">
+
+    <vu:include-data object="duplicationJourForm" field="dateLocaleFrom" modifiable="true"/>
+    <vu:include-data object="duplicationJourForm" field="dateLocaleTo" modifiable="true"/>
+    <q-dialog th:v-model="componentStates.duplicateDayModal.opened" >
+        <q-card class="bg-white duplicateDayModal" >
+            <q-toolbar class="bg-primary">
+                <q-toolbar-title class="text-white">Dupliquer une journée</q-toolbar-title>
+                <div class="col-1"></div>
+                <q-btn flat dense v-close-popup icon="ri-close-line" text-color="white" >Fermer</q-btn>                
+            </q-toolbar>
+            <q-card-section><i>            
+                Sélectionner la journée source et les journées cibles dans la semaine courante.<br/>
+                Les plages horaires ainsi créées seront dans l'état "Non publié".<br/>
+                <br/>
+                S'il a déjà des plages horaires sur la période de destination, elles ne seront pas modifiées.<br/>
+                Seules les nouvelles plages qui n'entrent pas en conflits seront créées.
+            </i>
+            </q-card-section>
+            <q-card-section>
+               <q-list dense >
+                 <q-item>
+                   <q-item-section class="text-bold">Jour</q-item-section>
+                   <q-item-section class="text-bold">Source</q-item-section>
+                   <q-item-section class="text-bold">Cible</q-item-section>
+                 </q-item>
+                 <q-item v-for="jour in getDaysDuplication()" :key="jour.date">
+                   <q-item-section>{{ jour.label }} {{ jour.dateJour }}</q-item-section>
+                   <q-item-section>
+                     <q-radio th:v-model="${model.util.vueDataKey('duplicationJourForm', 'dateLocaleFrom', null)}" :val="jour.date"
+                       :aria-label="'Utiliser ' + jour.label + ' comme jour à copier'"
+                       :title="'Utiliser ' + jour.label + ' comme jour à copier'"
+                       :class="{'hidden' : vueData.plagesHoraire.filter(p => p.dateLocale == jour.date).length == 0}"
+                       @update:model-value="vueData.duplicationJourForm.dateLocaleTo = vueData.duplicationJourForm.dateLocaleTo.filter(d => d !== vueData.duplicationJourForm.dateLocaleFrom)"></q-radio>
+                   </q-item-section>
+                   <q-item-section>
+                     <q-checkbox th:v-model="${model.util.vueDataKey('duplicationJourForm', 'dateLocaleTo', null)}" :val="jour.date"
+                       :aria-label="'Dupliquer vers ' + jour.label"
+                       :title="'Dupliquer vers ' + jour.label"
+                       :class="{'hidden' : vueData.duplicationJourForm.dateLocaleFrom == jour.date || vueData.infosCalendrier.filter(i => i.date == jour.date && i.siFerme).length > 0}"></q-checkbox>
+                   </q-item-section>
+                 </q-item>
+               </q-list>
+            </q-card-section>
+            <q-card-section class="flex justify-end" vu:slot="plage_actions_slot">
+                <q-btn color="primary" label="Valider" @click="doDuplicateDay" :loading="isPendingAction()" :disabled="vueData.duplicationJourForm.dateLocaleFrom == null || vueData.duplicationJourForm.dateLocaleTo.length == 0"></q-btn>
+            </q-card-section>
+        </q-card>
+    </q-dialog>
+</th:block>

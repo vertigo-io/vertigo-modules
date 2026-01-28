@@ -59,6 +59,11 @@ create DtDefinition DtDuplicationSemaineForm {
     field dureeCreneau { domain: DoPMinute label: "Durée en minutes" cardinality:"1" }
 }
 
+create DtDefinition DtDuplicationJourForm {
+    field dateLocaleFrom 	{domain: DoPLocalDate 	label: "Date à dupliquer" 	cardinality:"1"}
+    field dateLocaleTo 		{domain: DoPLocalDate 	label: "Jours cible" 		cardinality:"*"}
+}
+
 create DtDefinition DtPlageHoraireDisplay {
     field plhId {domain: DoPId label:"Id"}
     field ageId {domain: DoPId label:"Agenda"}

@@ -29,6 +29,7 @@ import io.vertigo.planning.agenda.domain.Agenda;
 import io.vertigo.planning.agenda.domain.AgendaDisplay;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
+import io.vertigo.planning.agenda.domain.DuplicationJourForm;
 import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
 import io.vertigo.planning.agenda.domain.InfoCalendrierDisplay;
 import io.vertigo.planning.agenda.domain.PlageHoraireDisplay;
@@ -129,6 +130,16 @@ public abstract class AbstractAgendaController extends AbstractVSpringMvcControl
 			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
 		return agendaControllerHelper.duplicateSemaine(viewContext, agenda, duplicationSemaineForm);
+	}
+
+	@PostMapping("/_duplicateJour")
+	public ViewContext duplicateJour(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@ViewAttribute("duplicationJourForm") final DuplicationJourForm duplicationJourForm,
+			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
+
+		return agendaControllerHelper.duplicateJour(viewContext, agenda, duplicationJourForm, duplicationSemaineForm.getDureeCreneau());
 	}
 
 	@PostMapping("/_publishPlage")
