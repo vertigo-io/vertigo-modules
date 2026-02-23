@@ -96,6 +96,11 @@ public class AgendaControllerHelper {
 
 	private final InfoCalendrierProvider infoCalendrierProvider;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param infoCalendrierProvider function to provide infoCalendrierDisplay on a date range, null if not needed
+	 */
 	public AgendaControllerHelper(final InfoCalendrierProvider infoCalendrierProvider) {
 		DIInjector.injectMembers(this, Node.getNode().getComponentSpace());
 		this.infoCalendrierProvider = infoCalendrierProvider;
@@ -131,7 +136,6 @@ public class AgendaControllerHelper {
 	 * @param duplicationSemaineForm initialized form for duplicating
 	 * @param modeGuichet true if mode guichet
 	 * @param modeTranchesHoraire true if mode tranche horaire (don't show plages)
-	 * @param infoCalendrierProvider function to provide info calendrier on a date range, null if not needed
 	 */
 	public void initContext(
 			final String agendaLabel,
