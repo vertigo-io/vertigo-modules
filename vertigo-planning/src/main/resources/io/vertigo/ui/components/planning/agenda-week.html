@@ -95,7 +95,7 @@
 		                          <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">
 		                            <q-chip color="white" text-color="dark" :class="{'q-pl-none':(event.nbReserveNonPublie>0 || event.nbReserve>event.nbTotal)}" 
 		                                  :title="event.nbReserve + ' rendez-vous réservé(s) sur '+event.nbTotal">
-		                                <q-icon th:name="#{planning.agendaWeek.reserveNonPublie.icon}" size="md" color="negative" v-if="event.nbReserveNonPublie>0"
+		                                <q-icon th:name="#{planning.agendaWeek.reserveNonPublie.icon}" size="sm" color="negative" v-if="event.nbReserveNonPublie>0"
 		                                    th::title="#{planning.agendaWeek.reserveNonPublie}"></q-icon>
 		                                <q-icon th:name="#{planning.agendaWeek.trancheOverbooked.icon}" size="sm" color="trh-publie" v-if="event.nbReserveNonPublie==0 && event.nbReserve>event.nbTotal"
 		                                    th:title="#{planning.agendaWeek.trancheOverbooked}"></q-icon>
