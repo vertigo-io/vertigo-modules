@@ -363,38 +363,46 @@ create Task TkGetTrancheHoraireDisplayByPlhId {
 create Task TkGetDateDisponibleDisplayByAgeIds {  
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
-           select date_Locale,
-                sum(nb_Non_Publie) as nb_Non_Publie,
-                sum(nb_Planifie) as nb_Planifie,
-                sum(nb_Publie) as nb_Publie,
-                sum(nb_Reserve) as nb_Reserve,
-                sum(nb_Total) as nb_Total,
-                min(instant_Publication) as instant_Publication  
-            from (select
-                        plh.date_Locale as date_Locale,
-                        sum(((trh.instant_Publication is null)::int) * trh.nb_Guichet) as nb_Non_Publie,
-                        sum(COALESCE(((trh.instant_Publication > #now#)::int),0) * trh.nb_Guichet) as nb_Planifie,
-                        sum(COALESCE(((trh.instant_Publication <= #now#)::int),0) * trh.nb_Guichet) as nb_Publie,
-                        sum(COALESCE(res.nb_Reserve,0)) as nb_Reserve,
-                        sum(trh.nb_Guichet) as nb_Total,
-                        min(trh.instant_Publication) as instant_Publication              
-                   from plage_horaire plh
-                        join tranche_horaire trh on trh.plh_id = plh.plh_id
-                        left join (
-                           SELECT trh.trh_Id as trh_Id, res.age_id as age_id,
-                             count(1) as nb_Reserve
-	                         FROM reservation_creneau res
-                                  join tranche_horaire trh on trh.age_id = res.age_id
-                                     AND res.date_locale = trh.date_locale
-                                     AND res.minutes_debut >= trh.minutes_Debut
-                                     AND res.minutes_debut < trh.minutes_Fin
-	                         WHERE res.age_id in ( #ageIds.rownum# )
-                             GROUP BY trh.trh_id, res.age_id) as res on res.trh_id = trh.trh_id and res.age_id = plh.age_id
-                   WHERE plh.age_id in ( #ageIds.rownum# )
-                   AND plh.date_locale BETWEEN #startDate# AND #endDate#
-                   GROUP BY plh.date_Locale, plh.nb_Guichet) as sub
-                   GROUP BY date_Locale
-                   ORDER BY date_Locale;
+			WITH res AS (
+			    SELECT
+			        age_id,
+			        date_locale,
+			        minutes_debut,
+			        COUNT(*) AS nb_reserve
+			    FROM reservation_creneau
+			    WHERE age_id in ( #ageIds.rownum# )
+			      AND date_locale BETWEEN #startDate# AND #endDate#
+			    GROUP BY age_id, date_locale, minutes_debut
+			),
+			plage AS (
+			    SELECT
+			        trh.date_locale,
+			        trh.age_id,
+			        trh.minutes_debut,
+			        trh.minutes_fin,
+			        trh.nb_guichet,
+			        trh.instant_publication
+			    FROM tranche_horaire trh
+			    JOIN plage_horaire plh ON plh.plh_id = trh.plh_id
+			    WHERE plh.age_id in ( #ageIds.rownum# )
+			      AND plh.date_locale BETWEEN #startDate# AND #endDate#
+			)
+			SELECT
+			    p.date_locale,
+			    SUM((p.instant_publication IS NULL)::int  * p.nb_guichet) AS nb_non_publie,
+			    SUM((p.instant_publication >  #now#)::int * p.nb_guichet) AS nb_planifie,
+			    SUM((p.instant_publication <= #now#)::int * p.nb_guichet) AS nb_publie,
+			    COALESCE(SUM(r.nb_reserve), 0)                            AS nb_reserve,
+			    SUM(p.nb_guichet)                                         AS nb_total,
+			    MIN(p.instant_publication)                                AS instant_publication
+			FROM plage p
+			LEFT JOIN res r
+			       ON r.age_id = p.age_id
+			      AND r.date_locale = p.date_locale
+			      AND r.minutes_debut >= p.minutes_debut
+			      AND r.minutes_debut <  p.minutes_fin
+			GROUP BY p.date_locale
+			ORDER BY p.date_locale;
            "
     in  ageIds          {domain : DoPId                      cardinality: "*" }
     in  startDate       {domain : DoPLocalDate               cardinality: "1" }

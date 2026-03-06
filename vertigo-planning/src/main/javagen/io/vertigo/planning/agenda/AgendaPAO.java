@@ -1,20 +1,3 @@
-/*
- * vertigo - application development platform
- *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.planning.agenda;
 
 import javax.inject.Inject;
@@ -228,38 +211,46 @@ public final class AgendaPAO implements StoreServices {
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetDateDisponibleDisplayByAgeIds",
 			request = """
-			select date_Locale,
-                sum(nb_Non_Publie) as nb_Non_Publie,
-                sum(nb_Planifie) as nb_Planifie,
-                sum(nb_Publie) as nb_Publie,
-                sum(nb_Reserve) as nb_Reserve,
-                sum(nb_Total) as nb_Total,
-                min(instant_Publication) as instant_Publication  
-            from (select
-                        plh.date_Locale as date_Locale,
-                        sum(((trh.instant_Publication is null)::int) * trh.nb_Guichet) as nb_Non_Publie,
-                        sum(COALESCE(((trh.instant_Publication > #now#)::int),0) * trh.nb_Guichet) as nb_Planifie,
-                        sum(COALESCE(((trh.instant_Publication <= #now#)::int),0) * trh.nb_Guichet) as nb_Publie,
-                        sum(COALESCE(res.nb_Reserve,0)) as nb_Reserve,
-                        sum(trh.nb_Guichet) as nb_Total,
-                        min(trh.instant_Publication) as instant_Publication              
-                   from plage_horaire plh
-                        join tranche_horaire trh on trh.plh_id = plh.plh_id
-                        left join (
-                           SELECT trh.trh_Id as trh_Id, res.age_id as age_id,
-                             count(1) as nb_Reserve
-	                         FROM reservation_creneau res
-                                  join tranche_horaire trh on trh.age_id = res.age_id
-                                     AND res.date_locale = trh.date_locale
-                                     AND res.minutes_debut >= trh.minutes_Debut
-                                     AND res.minutes_debut < trh.minutes_Fin
-	                         WHERE res.age_id in ( #ageIds.rownum# )
-                             GROUP BY trh.trh_id, res.age_id) as res on res.trh_id = trh.trh_id and res.age_id = plh.age_id
-                   WHERE plh.age_id in ( #ageIds.rownum# )
-                   AND plh.date_locale BETWEEN #startDate# AND #endDate#
-                   GROUP BY plh.date_Locale, plh.nb_Guichet) as sub
-                   GROUP BY date_Locale
-                   ORDER BY date_Locale;""",
+			WITH res AS (
+			    SELECT
+			        age_id,
+			        date_locale,
+			        minutes_debut,
+			        COUNT(*) AS nb_reserve
+			    FROM reservation_creneau
+			    WHERE age_id in ( #ageIds.rownum# )
+			      AND date_locale BETWEEN #startDate# AND #endDate#
+			    GROUP BY age_id, date_locale, minutes_debut
+			),
+			plage AS (
+			    SELECT
+			        trh.date_locale,
+			        trh.age_id,
+			        trh.minutes_debut,
+			        trh.minutes_fin,
+			        trh.nb_guichet,
+			        trh.instant_publication
+			    FROM tranche_horaire trh
+			    JOIN plage_horaire plh ON plh.plh_id = trh.plh_id
+			    WHERE plh.age_id in ( #ageIds.rownum# )
+			      AND plh.date_locale BETWEEN #startDate# AND #endDate#
+			)
+			SELECT
+			    p.date_locale,
+			    SUM((p.instant_publication IS NULL)::int  * p.nb_guichet) AS nb_non_publie,
+			    SUM((p.instant_publication >  #now#)::int * p.nb_guichet) AS nb_planifie,
+			    SUM((p.instant_publication <= #now#)::int * p.nb_guichet) AS nb_publie,
+			    COALESCE(SUM(r.nb_reserve), 0)                            AS nb_reserve,
+			    SUM(p.nb_guichet)                                         AS nb_total,
+			    MIN(p.instant_publication)                                AS instant_publication
+			FROM plage p
+			LEFT JOIN res r
+			       ON r.age_id = p.age_id
+			      AND r.date_locale = p.date_locale
+			      AND r.minutes_debut >= p.minutes_debut
+			      AND r.minutes_debut <  p.minutes_fin
+			GROUP BY p.date_locale
+			ORDER BY p.date_locale;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDateDisponibleDisplay", name = "plageHoraires")
 	public io.vertigo.datamodel.data.model.DtList<io.vertigo.planning.agenda.domain.DateDisponibleDisplay> getDateDisponibleDisplayByAgeIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "now", smartType = "STyPInstant") final java.time.Instant now) {
