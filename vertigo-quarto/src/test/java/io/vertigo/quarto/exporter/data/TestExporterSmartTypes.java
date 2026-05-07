@@ -21,8 +21,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 import io.vertigo.basics.formatter.FormatterDefault;
+import io.vertigo.core.lang.BasicType;
+import io.vertigo.datamodel.smarttype.annotations.Adapter;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
+import io.vertigo.quarto.exporter.data.domain.Continent;
 
 public enum TestExporterSmartTypes {
 
@@ -44,5 +47,9 @@ public enum TestExporterSmartTypes {
 
 	@SmartTypeDefinition(Instant.class)
 	@Formatter(clazz = FormatterDefault.class)
-	Instant;
+	Instant,
+
+	@SmartTypeDefinition(Continent.class)
+	@Adapter(clazz = ContientAdapter.class, targetBasicType = BasicType.String, type = "export")
+	DtContinent
 }
