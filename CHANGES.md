@@ -7,6 +7,17 @@ Running 5.0.0
 
 more to come :)
 
+Release 4.4.0 -
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
+
+* [quarto] Use export adapter for complexe objects in ods, xsl & xlsx export
+* [EasyForms] Fix phone regex regression since 4.3.0 for international numbers
+* [Planning] Multiple improvements (week duplication, BO overbooking management, day events, ...)
+* [Orchestra] Return active processDefinition after createOrUpdateDefinition
+* [Social] Enhance LinkMobility SMS plugin, better triage error code vs failure code
+* [Geo][dashboard] Update to ES9
+
 
 Release 4.3.2 - 2025/07/10
 ----------------------
