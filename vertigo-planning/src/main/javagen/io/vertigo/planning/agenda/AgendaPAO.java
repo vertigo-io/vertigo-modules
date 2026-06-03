@@ -109,42 +109,19 @@ public final class AgendaPAO implements StoreServices {
 			name = "TkCreateCreneauOfPublishedTrancheHoraireByAgeIds",
 			request = """
 			WITH missing_count AS (
-                    SELECT trh.trh_id, (trh.nb_guichet-count(cre.cre_id)) missing_Creneau
-                    FROM tranche_horaire trh
-                         left join creneau cre on cre.trh_id = trh.trh_id
-                    WHERE age_id in ( #ageIds.rownum# ) 
-                       AND trh.date_locale BETWEEN #startDate# AND #endDate#
-                       AND instant_publication = #instantPublication#
-                    GROUP BY trh.trh_id, trh.nb_guichet
+                SELECT trh.trh_id, (trh.nb_guichet - count(cre.cre_id)) AS missing_creneau
+                FROM tranche_horaire trh
+                LEFT JOIN creneau cre ON cre.trh_id = trh.trh_id
+                WHERE trh.age_id IN (#ageIds.rownum#)
+                   AND trh.date_locale BETWEEN #startDate# AND #endDate#
+                   AND trh.instant_publication = #instantPublication#
+                GROUP BY trh.trh_id, trh.nb_guichet
+                HAVING trh.nb_guichet - count(cre.cre_id) >= 1  -- Filtrage précoce
             )
-            INSERT INTO creneau (cre_id, trh_id/*, rec_id*/)
-            (SELECT nextval('SEQ_CRENEAU'), trh_id/*, null*/
-                           FROM missing_count WHERE missing_Creneau>= 1
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 2
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 3
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 4
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 5
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 6
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 7
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 8
-            UNION ALL
-            SELECT nextval('SEQ_CRENEAU'), trh_id
-                           FROM missing_count WHERE missing_Creneau>= 9
-            )""",
+            INSERT INTO creneau (cre_id, trh_id)
+            SELECT nextval('SEQ_CRENEAU'), mc.trh_id
+            FROM missing_count mc
+            CROSS JOIN LATERAL generate_series(1, mc.missing_creneau) AS s""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void createCreneauOfPublishedTrancheHoraireByAgeIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "ageIds", smartType = "STyPId") final java.util.List<Long> ageIds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "startDate", smartType = "STyPLocalDate") final java.time.LocalDate startDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "endDate", smartType = "STyPLocalDate") final java.time.LocalDate endDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "instantPublication", smartType = "STyPInstant") final java.time.Instant instantPublication) {
 		final Task task = createTaskBuilder("TkCreateCreneauOfPublishedTrancheHoraireByAgeIds")
