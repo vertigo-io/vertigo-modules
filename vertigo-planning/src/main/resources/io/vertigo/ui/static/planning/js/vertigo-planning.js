@@ -248,6 +248,15 @@ VUiExtensions.methods.formatMinutes= function(minutes) {
 	let heure = '' + (minutes - min) / 60
 	return heure.padStart(2, '0') + ':' + min.padStart(2, '0')
 }
+VUiExtensions.methods.getPlageDureeMinutes = function(form) {
+    if (!form.minutesDebut || !form.minutesFin) return 0;
+    return (parseInt(form.minutesFin.split(':')[0]) * 60 + parseInt(form.minutesFin.split(':')[1]))
+         - (parseInt(form.minutesDebut.split(':')[0]) * 60 + parseInt(form.minutesDebut.split(':')[1]));
+};
+VUiExtensions.methods.hasPlageDureeWarning = function(form) {
+    if (!form.dureeCreneau || form.dureeCreneau <= 0) return false;
+    return this.getPlageDureeMinutes(form) % form.dureeCreneau !== 0;
+};
 VUiExtensions.methods.searchDefaultPlageHoraireForm = function(dateLocale, weekday, minutesOfDay) {            
 	for (var defaultPlageIdx in this.$data.vueData.defaultPlageHoraire) {
 	   let defaultPlage = this.$data.vueData.defaultPlageHoraire[defaultPlageIdx];
