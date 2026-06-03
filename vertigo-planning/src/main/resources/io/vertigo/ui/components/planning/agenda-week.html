@@ -34,6 +34,7 @@
 		           <vu:include-data object="plagesHoraire" field="plhId" />
 		           <vu:include-data object="plagesHoraire" field="ageId" th:if="${!model.modeGuichet}"/>
 		           <vu:include-data object="plagesHoraire" field="dateLocale" />
+		           <vu:include-data object="plagesHoraire" field="dateLocale_fmt" />
 		           <vu:include-data object="plagesHoraire" field="minutesDebut" />
 		           <vu:include-data object="plagesHoraire" field="minutesDebut_fmt" />
 		           <vu:include-data object="plagesHoraire" field="minutesFin" />
@@ -44,6 +45,7 @@
 		           <vu:include-data object="plagesHoraire" field="nbNonPublie" />
 		           <vu:include-data object="plagesHoraire" field="nbPlanifie" />
 		           <vu:include-data object="plagesHoraire" field="nbPublie" />
+		           <vu:include-data object="plagesHoraire" field="nbGuichet" />
 		           <vu:include-data object="infosCalendrier" field="'*'" />
 		           <q-calendar-day ref="calendar"
 			           locale="fr"
@@ -88,6 +90,7 @@
 			                      </q-btn>                    
 		                  	  </div>
 		                      <div class="actions-event">
+		                         <q-btn th:icon="edit" th:title="Modifier" size="md" dense round flat color="black" @click.stop.prevent="onEditPlageHoraire(event)" vu:authz="${myHasAuthzAdmin}"></q-btn>
 		                         <q-btn th:icon="#{planning.agendaWeek.deletePlageHoraire.icon}" th:title="#{planning.agendaWeek.deletePlageHoraire}" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(event)" vu:authz="${myHasAuthzAdmin}"></q-btn>
 		                      </div>
 		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>59}">

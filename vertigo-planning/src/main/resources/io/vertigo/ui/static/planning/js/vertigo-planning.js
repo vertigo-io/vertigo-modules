@@ -1,7 +1,6 @@
 VUiExtensions.methods.fromCalendarTime = function(date) {
     //return date.day+'/'+date.month+'/'+date.year+' '+date.hour+':'+date.minute;
     //2022-01-23T22:22:39.124Z
-    ;
     return date.date + 'T' + date.time + ':00.000Z';
 }
 
@@ -16,8 +15,7 @@ VUiExtensions.methods.toCalendarDate = function(vDate, minutesOfDay) {
     }
     return this.toCalendarDateFmt(vDate, minutesOfDay);
 }
-VUiExtensions.methods.toCalendarDateIso = function(vDate, minutesOfDay) {
-    
+VUiExtensions.methods.toCalendarDateIso = function(vDate, minutesOfDay) {    
     // YYYY-MM-DD hh:mm
     var parts = PARSE_REGEX_ISO.exec(vDate);
     if (!parts) { return null }
@@ -220,179 +218,232 @@ VUiExtensions.methods.getEvents = function(dt, allEvents) {
 
 // Week-Agenda
 VUiExtensions.methods.getNameAsTwoLetters = function (name) {
-  if (!name || typeof name !== 'string') return ''; // Si le nom est invalide, retourner une chaîne vide
-  // Nettoyage du nom : supprime les mots entre parenthèses, normalise les espaces autour des tirets,
-    // et retire tout ce qui n'est pas une lettre ou un chiffre.
-    name = name
-      .replace(/\(.*\)/g, ' ') // Supprime les mots entre parenthèses
-      .replace(/\s*-\s*/g, '-') // Normalise les espaces autour des tirets
-      .replace(/[^a-zA-Z0-9\s-]+/g, '') // Retire tout ce qui n'est pas lettre, chiffre, espace ou tiret
-      .trim(); // Supprime les espaces en début et fin de chaîne
-  
-  if (!name) return ''; // Si le nom est vide après nettoyage
-  // Nettoyer et séparer le nom par le séparateur principal
-  const parts = name.split(/\s+/);
-  if (parts.length > 1) {
-      // Si le nom est composé de plusieurs mots, on prend les initiales du premier et du dernier mot
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  if (name.includes('-')) { // Si le nom est unique, on vérifie s'il contient un tiret
+	if (!name || typeof name !== 'string') return ''; // Si le nom est invalide, retourner une chaîne vide
+	// Nettoyage du nom : supprime les mots entre parenthèses, normalise les espaces autour des tirets,
+	// et retire tout ce qui n'est pas une lettre ou un chiffre.
+	name = name
+	  .replace(/\(.*\)/g, ' ') // Supprime les mots entre parenthèses
+	  .replace(/\s*-\s*/g, '-') // Normalise les espaces autour des tirets
+	  .replace(/[^a-zA-Z0-9\s-]+/g, '') // Retire tout ce qui n'est pas lettre, chiffre, espace ou tiret
+	  .trim(); // Supprime les espaces en début et fin de chaîne
+
+	if (!name) return ''; // Si le nom est vide après nettoyage
+	// Nettoyer et séparer le nom par le séparateur principal
+	const parts = name.split(/\s+/);
+	if (parts.length > 1) {
+	  // Si le nom est composé de plusieurs mots, on prend les initiales du premier et du dernier mot
+	  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+	}
+	if (name.includes('-')) { // Si le nom est unique, on vérifie s'il contient un tiret
 	// Si le nom contient un tiret, séparer par les tirets
 	const subParts = name.split('-');
-    return (subParts[0][0] + subParts[subParts.length - 1][0]).toUpperCase();
-  }
-  // Si c'est un seul mot, prendre les deux premières lettres, la deuxième en minuscule
-  return name.slice(0, 1).toUpperCase() + name.slice(1, 2).toLowerCase();   
+	return (subParts[0][0] + subParts[subParts.length - 1][0]).toUpperCase();
+	}
+	// Si c'est un seul mot, prendre les deux premières lettres, la deuxième en minuscule
+	return name.slice(0, 1).toUpperCase() + name.slice(1, 2).toLowerCase();   
 }
 
 VUiExtensions.methods.formatMinutes= function(minutes) {
-            let min = '' + minutes % 60;
-            let heure = '' + (minutes - min) / 60
-            return heure.padStart(2, '0') + ':' + min.padStart(2, '0')
-        }
+	let min = '' + minutes % 60;
+	let heure = '' + (minutes - min) / 60
+	return heure.padStart(2, '0') + ':' + min.padStart(2, '0')
+}
 VUiExtensions.methods.searchDefaultPlageHoraireForm = function(dateLocale, weekday, minutesOfDay) {            
-            for (var defaultPlageIdx in this.$data.vueData.defaultPlageHoraire) {
-               let defaultPlage = this.$data.vueData.defaultPlageHoraire[defaultPlageIdx];
-               if(defaultPlage.jourDeSemaine === weekday 
-                    && defaultPlage.minutesDebut <= minutesOfDay 
-                    && defaultPlage.minutesFin >= minutesOfDay) {
-                    return { 
-                            'dateLocale' : dateLocale,
-                            'minutesDebut' : this.formatMinutes(defaultPlage.minutesDebut),
-                            'minutesFin' : this.formatMinutes(defaultPlage.minutesFin),
-                            'nbGuichet' : defaultPlage.nbGuichet,
-                            };
-               }
-            }
-            return;
-        }    
+	for (var defaultPlageIdx in this.$data.vueData.defaultPlageHoraire) {
+	   let defaultPlage = this.$data.vueData.defaultPlageHoraire[defaultPlageIdx];
+	   if(defaultPlage.jourDeSemaine === weekday 
+			&& defaultPlage.minutesDebut <= minutesOfDay 
+			&& defaultPlage.minutesFin >= minutesOfDay) {
+			return { 
+					'dateLocale' : dateLocale,
+					'minutesDebut' : this.formatMinutes(defaultPlage.minutesDebut),
+					'minutesFin' : this.formatMinutes(defaultPlage.minutesFin),
+					'nbGuichet' : defaultPlage.nbGuichet,
+					};
+	   }
+	}
+	return;
+}
 VUiExtensions.methods.onCreatePlageHoraireDefault = function() {
-            var plageHoraireForm = this.$data.vueData.creationPlageHoraireForm;
-            let dateTime = this.toCalendarDate(this.$data.vueData.agendaRange.firstDate,0);
-            let day = '' + dateTime.day;
-            let month = '' + dateTime.month;
-            plageHoraireForm.dateLocale = day.padStart(2, '0')+'/'+month.padStart(2, '0')+'/'+dateTime.year
-            
-            var defaultPlage = this.$data.vueData.defaultPlageHoraire[0];
-            plageHoraireForm.minutesDebut = this.formatMinutes(defaultPlage.minutesDebut);
-            plageHoraireForm.minutesFin = this.formatMinutes(defaultPlage.minutesFin);
-            plageHoraireForm.nbGuichet = defaultPlage.nbGuichet;
-            this.$data.componentStates.createItemModal.opened = true;
-        }
+	var plageHoraireForm = this.$data.vueData.creationPlageHoraireForm;
+	let dateTime = this.toCalendarDate(this.$data.vueData.agendaRange.firstDate,0);
+	let day = '' + dateTime.day;
+	let month = '' + dateTime.month;
+	plageHoraireForm.dateLocale = day.padStart(2, '0')+'/'+month.padStart(2, '0')+'/'+dateTime.year
+	
+	var defaultPlage = this.$data.vueData.defaultPlageHoraire[0];
+	plageHoraireForm.minutesDebut = this.formatMinutes(defaultPlage.minutesDebut);
+	plageHoraireForm.minutesFin = this.formatMinutes(defaultPlage.minutesFin);
+	plageHoraireForm.nbGuichet = defaultPlage.nbGuichet;
+	this.$data.componentStates.createItemModal.opened = true;
+}
 VUiExtensions.methods.onCreatePlageHoraireDateTime = function(data) {
-                let dateTime = data.scope.timestamp;
-                let day = '' + dateTime.day;
-                let month = '' + dateTime.month;
-                let minutesOfDay = dateTime.hour*60+dateTime.minute;
-                
-                var plageHoraireForm = this.$data.vueData.creationPlageHoraireForm;
-                plageHoraireForm.dateLocale = day.padStart(2, '0')+'/'+month.padStart(2, '0')+'/'+dateTime.year
-                if(plageHoraireForm.ageId < 0) {
-                    plageHoraireForm.ageId = null;
-                }
-                let dureeCreneau = plageHoraireForm.dureeCreneau;
-                dureeCreneau = dureeCreneau?dureeCreneau:5; //if not set default to 5
-                var mod = minutesOfDay % dureeCreneau;
-                minutesOfDay += mod < (dureeCreneau+1)/2 ? -mod : (dureeCreneau-mod);
-                
-                var defaultPlage = this.searchDefaultPlageHoraireForm(plageHoraireForm.dateLocale, dateTime.weekday, minutesOfDay);
-                if(defaultPlage) {
-                    plageHoraireForm.minutesDebut = defaultPlage.minutesDebut;
-                    plageHoraireForm.minutesFin = defaultPlage.minutesFin;
-                    plageHoraireForm.nbGuichet = defaultPlage.nbGuichet;
-                } else {
-                    plageHoraireForm.minutesDebut = this.formatMinutes(minutesOfDay)
-                    plageHoraireForm.minutesFin = this.formatMinutes(minutesOfDay+240)
-                    plageHoraireForm.nbGuichet = 1;            
-                }
-                this.$data.componentStates.createItemModal.opened = true;
-        } 
+	let dateTime = data.scope.timestamp;
+	let day = '' + dateTime.day;
+	let month = '' + dateTime.month;
+	let minutesOfDay = dateTime.hour*60+dateTime.minute;
+	
+	var plageHoraireForm = this.$data.vueData.creationPlageHoraireForm;
+	plageHoraireForm.dateLocale = day.padStart(2, '0')+'/'+month.padStart(2, '0')+'/'+dateTime.year
+	if(plageHoraireForm.ageId < 0) {
+		plageHoraireForm.ageId = null;
+	}
+	let dureeCreneau = plageHoraireForm.dureeCreneau;
+	dureeCreneau = dureeCreneau?dureeCreneau:5; //if not set default to 5
+	var mod = minutesOfDay % dureeCreneau;
+	minutesOfDay += mod < (dureeCreneau+1)/2 ? -mod : (dureeCreneau-mod);
+	
+	var defaultPlage = this.searchDefaultPlageHoraireForm(plageHoraireForm.dateLocale, dateTime.weekday, minutesOfDay);
+	if(defaultPlage) {
+		plageHoraireForm.minutesDebut = defaultPlage.minutesDebut;
+		plageHoraireForm.minutesFin = defaultPlage.minutesFin;
+		plageHoraireForm.nbGuichet = defaultPlage.nbGuichet;
+	} else {
+		plageHoraireForm.minutesDebut = this.formatMinutes(minutesOfDay)
+		plageHoraireForm.minutesFin = this.formatMinutes(minutesOfDay+240)
+		plageHoraireForm.nbGuichet = 1;            
+	}
+	this.$data.componentStates.createItemModal.opened = true;
+}
+VUiExtensions.methods.onEditPlageHoraire = function(event, modeGuichet) {
+    this.$data.componentStates.editedPlageHoraire = event;
+    let plageHoraireForm = this.$data.vueData.creationPlageHoraireForm;
+	plageHoraireForm.dateLocale = event.dateLocale;
+	plageHoraireForm.dateLocale_fmt = event.dateLocale_fmt;
+    plageHoraireForm.minutesDebut = event.minutesDebut_fmt;
+    plageHoraireForm.minutesFin = event.minutesFin_fmt;
+    plageHoraireForm.nbGuichet = event.nbGuichet;
+    this.$data.componentStates.editItemModal.opened = true;	
+	VUiExtensions.methods.editPlageHoraireCloseActions(event);
+}	
 VUiExtensions.methods.onPublishPlageHoraires = function() {
-                this.$data.vueData.publicationTrancheHoraireForm.publicationMinutesDebut = this.$data.vueData.publicationTrancheHoraireForm.publicationMinutesDebut_fmt;
-                this.$data.componentStates.publishItemModal.opened = true;
-        }
+			this.$data.vueData.publicationTrancheHoraireForm.publicationMinutesDebut = this.$data.vueData.publicationTrancheHoraireForm.publicationMinutesDebut_fmt;
+			this.$data.componentStates.publishItemModal.opened = true;
+	}
 VUiExtensions.methods.doPublishPlageHoraires = function() {
-            let formFull = this.$data.vueData.publicationTrancheHoraireForm;
-            let formData = {
-                'vContext[publicationTrancheHoraireForm][publishNow]': this.$data.componentStates.publishItemModal.selectedTab==='publie',
-                'vContext[publicationTrancheHoraireForm][dateLocaleDebut]': formFull.dateLocaleDebut,
-                'vContext[publicationTrancheHoraireForm][dateLocaleFin]': formFull.dateLocaleFin,
-                'vContext[publicationTrancheHoraireForm][publicationDateLocale]': formFull.publicationDateLocale,
-                'vContext[publicationTrancheHoraireForm][publicationMinutesDebut]': formFull.publicationMinutesDebut,
-            };
-            this.httpPostAjax('_publishPlage', formData, {
-                 onSuccess: function() {
-                    this.$q.notify({message: 'Publication effectuée', type :'positive'});
-                    this.$data.componentStates.publishItemModal.opened = false
-                }.bind(this)
-            });
-        } 
+	let formFull = this.$data.vueData.publicationTrancheHoraireForm;
+	let formData = {
+		'vContext[publicationTrancheHoraireForm][publishNow]': this.$data.componentStates.publishItemModal.selectedTab==='publie',
+		'vContext[publicationTrancheHoraireForm][dateLocaleDebut]': formFull.dateLocaleDebut,
+		'vContext[publicationTrancheHoraireForm][dateLocaleFin]': formFull.dateLocaleFin,
+		'vContext[publicationTrancheHoraireForm][publicationDateLocale]': formFull.publicationDateLocale,
+		'vContext[publicationTrancheHoraireForm][publicationMinutesDebut]': formFull.publicationMinutesDebut,
+	};
+	this.httpPostAjax('_publishPlage', formData, {
+		 onSuccess: function() {
+			this.$q.notify({message: 'Publication effectuée', type :'positive'});
+			this.$data.componentStates.publishItemModal.opened = false
+		}.bind(this)
+	});
+}
+VUiExtensions.methods.getDaysDuplication = function() {
+	let currentDate = new Date(this.$data.vueData.agendaRange.firstDate);
+	const lastDate = new Date(this.$data.vueData.agendaRange.lastDate);
+
+	const result = [];
+	while (currentDate.getTime() <= lastDate.getTime()) {
+		const label = new Intl.DateTimeFormat('fr', { weekday: 'long' }).format(currentDate);
+		result.push({
+			date: currentDate.toISOString().slice(0, 10),
+			dateJour: currentDate.getDate(),
+			label: label
+		});
+		currentDate.setDate(currentDate.getDate() + 1);
+	}
+	return result;
+}
 VUiExtensions.methods.onDuplicateDay= function() {
-			this.$data.vueData.duplicationJourForm = { dateLocaleTo:[] }; // reset form
-			this.$data.componentStates.duplicateDayModal.opened = true;
-        }
+	this.$data.vueData.duplicationJourForm = { dateLocaleTo:[] }; // reset form
+	this.$data.componentStates.duplicateDayModal.opened = true;
+}
 VUiExtensions.methods.doDuplicateDay = function() {
-			let formData = this.vueDataParams(['duplicationJourForm']);
-			this.httpPostAjax('_duplicateJour', formData, {
-			     onSuccess: function() {
-			        this.$q.notify({message: 'Duplication effectuée', type :'positive'});
-			        this.$data.componentStates.duplicateDayModal.opened = false;
-			    }.bind(this)
-			});
-        } 
+	let formData = this.vueDataParams(['duplicationJourForm']);
+	this.httpPostAjax('_duplicateJour', formData, {
+		 onSuccess: function() {
+			this.$q.notify({message: 'Duplication effectuée', type :'positive'});
+			this.$data.componentStates.duplicateDayModal.opened = false;
+		}.bind(this)
+	});
+} 
 VUiExtensions.methods.onDuplicateWeek= function() {
-                this.httpPostAjax('_prepareDuplicateSemaine', {}, {
-                 onSuccess: function() {
-                    this.$data.componentStates.duplicateWeekModal.opened = true;
-                }.bind(this)
-            })
-        }
+		this.httpPostAjax('_prepareDuplicateSemaine', {}, {
+		 onSuccess: function() {
+			this.$data.componentStates.duplicateWeekModal.opened = true;
+		}.bind(this)
+	})
+}
 VUiExtensions.methods.doDuplicateWeek = function() {
-            let formData = this.vueDataParams(['duplicationSemaineForm']);
-            this.httpPostAjax('_duplicateSemaine', formData, {
-                 onSuccess: function() {
-                    this.$q.notify({message: 'Duplication effectuée', type :'positive'});
-                    this.$data.componentStates.duplicateWeekModal.opened = false;
-                }.bind(this)
-            });
-        } 
+	let formData = this.vueDataParams(['duplicationSemaineForm']);
+	this.httpPostAjax('_duplicateSemaine', formData, {
+		 onSuccess: function() {
+			this.$q.notify({message: 'Duplication effectuée', type :'positive'});
+			this.$data.componentStates.duplicateWeekModal.opened = false;
+		}.bind(this)
+	});
+} 
 VUiExtensions.methods.createPlageHoraire = function(event, modeGuichet) {
-            let formData = this.vueDataParams(['creationPlageHoraireForm']);
-            if(!modeGuichet) {
-                formData.delete('vContext[creationPlageHoraireForm][nbGuichet]');
-            }
-            formData.delete('vContext[creationPlageHoraireForm][dureeCreneau]');
-            this.httpPostAjax('_createPlage', formData, {
-                 onSuccess: function() {
-                    this.$q.notify({message: 'Plage horaire créée', type :'positive'});
-                    this.$data.componentStates.createItemModal.opened = false
-                }.bind(this)
-            });
-        }
+	let formData = this.vueDataParams(['creationPlageHoraireForm']);
+	if(!modeGuichet) {
+		formData.delete('vContext[creationPlageHoraireForm][nbGuichet]');
+	}
+	formData.delete('vContext[creationPlageHoraireForm][dureeCreneau]');
+	this.httpPostAjax('_createPlage', formData, {
+		 onSuccess: function() {
+			this.$q.notify({message: 'Plage horaire créée', type :'positive'});
+			this.$data.componentStates.createItemModal.opened = false
+		}.bind(this)
+	});
+}
 VUiExtensions.methods.createPlageHoraireGuichet = function(event) {
-            this.createPlageHoraire(event, true);
-        }
+	this.createPlageHoraire(event, true);
+}
 VUiExtensions.methods.confirmDeletePlageHoraire = function(event) {
-            this.$data.componentStates.editedPlageHoraire = event;
-            this.$data.componentStates.confirmDeleteItemModal.opened = true;
-        }
+	this.$data.componentStates.editedPlageHoraire = event;
+	this.$data.componentStates.confirmDeleteItemModal.opened = true;
+}
 VUiExtensions.methods.deletePlageHoraire = function(plhId) {
-            this.httpPostAjax('_deletePlage', {plhId: plhId}, {
-                 onSuccess: function() {
-                    this.$q.notify({message: 'Plage horaire supprimée', type :'positive'});
-                    this.$data.componentStates.confirmDeleteItemModal.opened = false;
-                }.bind(this)
-            });
-        }
+	this.httpPostAjax('_deletePlage', {plhId: plhId}, {
+		 onSuccess: function() {
+			this.$q.notify({message: 'Plage horaire supprimée', type :'positive'});
+			this.$data.componentStates.confirmDeleteItemModal.opened = false;
+		}.bind(this)
+	});
+}
+VUiExtensions.methods.editPlageHoraire = function(plhId, modeGuichet) {
+    let formData = this.vueDataParams(['creationPlageHoraireForm']);
+    if(!modeGuichet) {
+        formData.delete('vContext[creationPlageHoraireForm][nbGuichet]');
+    }
+    formData.delete('vContext[creationPlageHoraireForm][dureeCreneau]');
+    formData.append('plhId', plhId);
+    this.httpPostAjax('_editPlage', formData, {
+         onSuccess: function() {
+            this.$q.notify({message: 'Plage horaire mise à jour', type :'positive'});
+            this.$data.componentStates.editItemModal.opened = false
+        }.bind(this)
+    });
+}
+VUiExtensions.methods.editPlageHoraireCloseActions = function(event) {
+	if (!VertigoUi?.uiMessageStack) {
+		return;
+	}
+	if (VertigoUi.uiMessageStack.globalErrors) {
+		VertigoUi.uiMessageStack.globalErrors = [];
+	}
+	if (VertigoUi.uiMessageStack?.objectFieldErrors?.creationPlageHoraireForm) {
+		// reset error messages
+		VertigoUi.uiMessageStack.objectFieldErrors.creationPlageHoraireForm = {};
+	}
+}
 VUiExtensions.methods.onSelectPlageHoraire = function(event) {
-            this.$data.componentStates.editedPlageHoraire = event;
-            this.httpPostAjax('_loadPlageHoraireDetail', {plhId: event.plhId}, {
-                 onSuccess: function() {
-                     this.$data.componentStates.trancheHorairesList.pagination.rowsNumber = this.$data.vueData.trancheHorairesDetail.length;
-                     this.$data.componentStates.viewItemDrawer.opened = true;
-                }.bind(this)
-            })
-        }
+	this.$data.componentStates.editedPlageHoraire = event;
+	this.httpPostAjax('_loadPlageHoraireDetail', {plhId: event.plhId}, {
+		 onSuccess: function() {
+			 this.$data.componentStates.trancheHorairesList.pagination.rowsNumber = this.$data.vueData.trancheHorairesDetail.length;
+			 this.$data.componentStates.viewItemDrawer.opened = true;
+		}.bind(this)
+	})
+}
         
 window.addEventListener('vui-before-plugins', function(event) {
 		event.detail.vuiAppInstance.component("QCalendarDay", QCalendarDay.QCalendarDay);
