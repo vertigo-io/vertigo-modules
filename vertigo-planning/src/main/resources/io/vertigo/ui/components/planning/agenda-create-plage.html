@@ -53,19 +53,13 @@
 	                        </template>
 						</vu:slot>
 				    </vu:text-field-edit>
-                    <div class="col-12 q-mt-sm q-mb-sm"
+                    <q-banner class="bg-warning text-warning-inverted q-mt-sm q-mb-sm"
                         v-if="hasPlageDureeWarning(creationPlageHoraireForm)">
-                        <div class="q-card bg-warning text-black">
-                            <div class="q-card-main">
-                                <div class="q-list">
-                                    <div class="q-item">
-                                        <div class="q-item-main">
-                                            <div class="q-item-label">
-                                                {{ 'La dernière tranche sera raccourcie à '
-                                                    + (getPlageDureeMinutes(creationPlageHoraireForm) % creationPlageHoraireForm.dureeCreneau) + ' minutes au lieu de '
-                                                    + creationPlageHoraireForm.dureeCreneau + ', car la durée totale de la plage ne se divise pas exactement.'
-                                                }}
-                                            </div>
+                        {{ 'La dernière tranche sera raccourcie à '
+                            + (getPlageDureeMinutes(creationPlageHoraireForm) % creationPlageHoraireForm.dureeCreneau) + ' minutes au lieu de '
+                            + creationPlageHoraireForm.dureeCreneau + ', car la durée totale de la plage ne se divise pas exactement.'
+                        }}
+                    </q-banner>
                                         </div>
                                     </div>
                                 </div>
