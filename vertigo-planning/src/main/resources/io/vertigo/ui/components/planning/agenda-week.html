@@ -83,7 +83,7 @@
 		                  	  <div class="agendas-event" th:if="${!model.modeGuichet}">
 	 		                  	  <q-btn round size="sm" :color="('agendas-palette-')+(vueData.agendasDisplay.findIndex(ag => ag.ageId === event.ageId)*6%20)" 
 	 		                  	  		 th:icon="${!myEventNameTwoLetters?myEventIconAgenda:''}" 
-	 		                  	  		 th:utext="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName)}}':''}"
+	 		                  	  		 th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName)}}':''}"
 			                             :title="vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName" v-if="!event.eventList || event.eventList.length<=1">			                             
 			                      </q-btn>                    
 		                  	  </div>
@@ -117,7 +117,7 @@
 								          <q-icon th:name="${myMultiEventIconAgenda}"></q-icon>
 								          <q-btn th:v-for="|(subEvent, index) in event.eventList.slice(0, event.eventList.length>${myMaxMultiEventShow}?${myMaxMultiEventShow-1}:event.eventList.length)|"  :key="subEvent.plhId"
 								             dense round size="sm" :color="('agendas-palette-')+(vueData.agendasDisplay.findIndex(ag => ag.ageId === subEvent.ageId)*6%20)" 
-		 		                  	  		 th:utext="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}"
+		 		                  	  		 th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}"
 				                             :title="vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName"
 				                             @click.stop.prevent="onSelectPlageHoraire(subEvent)">			                             
 					                      </q-btn>
@@ -129,7 +129,7 @@
 								          <q-item-section avatar>
 								            <q-avatar size="md" text-color="white" :color="'agendas-palette-' + (vueData.agendasDisplay.findIndex(ag => ag.ageId === subEvent.ageId) * 6 % 20)"
 							                      th:icon="${!myEventNameTwoLetters?myEventIconAgenda:''}" 
- 		                  	  		              th:utext="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}">
+ 		                  	  		              th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}">
 								            </q-avatar>								           
 								          </q-item-section>
 								          <q-item-section>
