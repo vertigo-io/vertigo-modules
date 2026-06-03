@@ -214,7 +214,7 @@ public class PlanningServices implements Component {
 		trancheHoraire.agenda().setUID(plageHoraire.agenda().getUID());
 		trancheHoraire.setDateLocale(plageHoraire.getDateLocale());
 		trancheHoraire.setMinutesDebut(startMinuteOfDay);
-		trancheHoraire.setMinutesFin(startMinuteOfDay + dureeTrancheMinute);
+		trancheHoraire.setMinutesFin(Math.min(startMinuteOfDay + dureeTrancheMinute, plageHoraire.getMinutesFin()));
 		trancheHoraire.setNbGuichet(nbGuichet);
 		return trancheHoraire;
 	}
