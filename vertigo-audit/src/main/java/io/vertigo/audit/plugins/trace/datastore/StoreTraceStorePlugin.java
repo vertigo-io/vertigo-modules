@@ -19,8 +19,6 @@ package io.vertigo.audit.plugins.trace.datastore;
 
 import java.util.function.Supplier;
 
-import jakarta.inject.Inject;
-
 import io.vertigo.audit.impl.trace.TraceStorePlugin;
 import io.vertigo.audit.trace.Trace;
 import io.vertigo.audit.trace.TraceCriteria;
@@ -37,6 +35,7 @@ import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
+import jakarta.inject.Inject;
 
 /**
  * Plugin : transactional => reuse transaction if exists, create if missed
@@ -131,7 +130,7 @@ public final class StoreTraceStorePlugin implements TraceStorePlugin, Activeable
 			return supplier.get();
 		}
 		//Dans le cas ou il n'existe pas de transaction on en crée une.
-		try (final VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+		try (final VTransactionWritable _ = transactionManager.createCurrentTransaction()) {
 			return supplier.get();
 		}
 	}

@@ -52,7 +52,7 @@ public class OrchestraNodeStarter {
 	}
 
 	private static void run(final NodeConfig nodeConfig, final long timeToWait) {
-		try (AutoCloseableNode node = new AutoCloseableNode(nodeConfig)) {
+		try (AutoCloseableNode _ = new AutoCloseableNode(nodeConfig)) {
 			System.out.println("Node started (timout in " + timeToWait / 1000 + "s)");
 			if (timeToWait > 0) {
 				final long startTime = System.currentTimeMillis();
