@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-modules</artifactId>
-		<version>4.3.3-SNAPSHOT</version>
+		<version>4.4.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-dashboard</artifactId>
@@ -121,6 +121,11 @@
 			<groupId>co.elastic.clients</groupId>
 		    <artifactId>elasticsearch-java</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.testcontainers</groupId>
+		    <artifactId>elasticsearch</artifactId>
+			<scope>test</scope> <!-- required by EmbeddedSearchServicesPlugin -->
 		</dependency>
 		<!-- For Rest Webservice testing -->
 		<dependency>
