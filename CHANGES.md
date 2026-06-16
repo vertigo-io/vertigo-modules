@@ -7,16 +7,29 @@ Running 5.0.0
 
 more to come :)
 
-Release 4.4.0 -
+Running 4.4.0 - 2026-06-XX
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
 
-* [quarto] Use export adapter for complexe objects in ods, xsl & xlsx export
+* [Quarto] Fix ods, xls & xlsx export for complex objects (non-basic types) using export adapter
 * [EasyForms] Fix phone regex regression since 4.3.0 for international numbers
-* [Planning] Multiple improvements (week duplication, BO overbooking management, day events, ...)
+* [EasyForms] Use peg utility for flattening solvers
+* [Planning] Add day duplication within a week
+* [Planning] Add BO reservation overbooking toggle
+* [Planning] Add day events display (infoCalendrier)
+* [Planning] Add plage horaire edit modal
+* [Planning] Performance improvement on calendar (TkGetDateDisponibleDisplayByAgeIds)
+* [Planning] Fix duplicate personal agenda (multi-agenda)
 * [Orchestra] Return active processDefinition after createOrUpdateDefinition
 * [Social] Enhance LinkMobility SMS plugin, better triage error code vs failure code
-* [Geo][dashboard] Update to ES9
+* [Social] Refactored phone normalizer
+* [Geo][Dashboard] Update to ES9
+* Update libs
+  - poi 5.4.1 -> 5.5.1
+  - poi-ooxml 5.4.1 -> 5.5.1
+  - owasp-java-html-sanitizer 20240325.1 -> 20260313.1
+  - assertj-core 3.26.0 -> 3.27.7
+  - rest-assured 5.5.5 -> 5.5.7
 
 
 Release 4.3.2 - 2025/07/10
