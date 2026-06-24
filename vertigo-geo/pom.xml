@@ -58,8 +58,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-elasticsearch_7_17-connector</artifactId>
-			<version>${vertigo.version}</version>
-			<optional>true</optional> <!-- ESGeoSearchPlugin -->
+			<optional>true</optional> <!-- RestHighLevelElasticSearchConnector -->
 		</dependency>
 	</dependencies>
 </project>
