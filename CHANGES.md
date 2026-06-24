@@ -30,6 +30,7 @@ Running 4.4.0 - 2026-06-XX
   - owasp-java-html-sanitizer 20240325.1 -> 20260313.1
   - assertj-core 3.26.0 -> 3.27.7
   - rest-assured 5.5.5 -> 5.5.7
+  - SODS 1.6.8 -> 1.7.0
 
 
 Release 4.3.2 - 2025/07/10
