@@ -20,8 +20,6 @@ package io.vertigo.easyforms.runner.pack;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.apache.logging.log4j.core.config.plugins.validation.Constraint;
-
 import io.vertigo.basics.constraint.ConstraintIntegerLength;
 import io.vertigo.basics.constraint.ConstraintNumberMinimum;
 import io.vertigo.basics.constraint.ConstraintRegex;
@@ -32,6 +30,7 @@ import io.vertigo.basics.formatter.FormatterId;
 import io.vertigo.basics.formatter.FormatterString;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.datamodel.smarttype.annotations.Adapter;
+import io.vertigo.datamodel.smarttype.annotations.Constraint;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
