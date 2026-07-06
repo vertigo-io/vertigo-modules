@@ -14,6 +14,7 @@ Running 4.4.0 - 2026-06-XX
 * [Quarto] Fix ods, xls & xlsx export for complex objects (non-basic types) using export adapter
 * [EasyForms] Fix phone regex regression since 4.3.0 for international numbers
 * [EasyForms] Use peg utility for flattening solvers
+* [EasyForms] Increase Email smarttype TLD validation up to 63 characters (RFC 1035)
 * [Planning] Add day duplication within a week
 * [Planning] Add BO reservation overbooking toggle
 * [Planning] Add day events display (infoCalendrier)
@@ -24,6 +25,7 @@ Running 4.4.0 - 2026-06-XX
 * [Social] Enhance LinkMobility SMS plugin, better triage error code vs failure code
 * [Social] Refactored phone normalizer
 * [Geo][Dashboard] Update to ES9
+* [Geo] Use ES 7.17 connector (LTS) and simplify mapping
 * Update libs
   - poi 5.4.1 -> 5.5.1
   - poi-ooxml 5.4.1 -> 5.5.1
