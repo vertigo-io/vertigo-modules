@@ -1,1 +1,102 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">	<modelVersion>4.0.0</modelVersion>	<parent>		<groupId>io.vertigo</groupId>		<artifactId>vertigo-modules</artifactId>		<version>4.4.0</version>	</parent>	<artifactId>vertigo-orchestra</artifactId>	<packaging>jar</packaging>	<name>vertigo-orchestra</name>	<properties>		<sonar.sources>src/main/java</sonar.sources>		<sonar.exclusions>src/main/java/io/vertigo/orchestra/impl/services/schedule/CronExpression*</sonar.exclusions>	</properties>		<dependencyManagement>		<dependencies>			<dependency>				<groupId>io.vertigo</groupId>				<artifactId>vertigo-vega</artifactId>				<version>${vertigo.version}</version>				<type>pom</type>				<scope>import</scope>			</dependency>		</dependencies>	</dependencyManagement>	<dependencies>		<dependency>			<groupId>io.vertigo</groupId>			<artifactId>vertigo-vega</artifactId>			<version>${vertigo.version}</version>		</dependency> 		<!-- Dependencies for tests -->		<dependency>		    <groupId>com.h2database</groupId>		    <artifactId>h2</artifactId>		    <scope>test</scope>		</dependency>		<dependency>			<groupId>com.mchange</groupId>			<artifactId>c3p0</artifactId>			<scope>test</scope>		</dependency>		<dependency>			<groupId>io.rest-assured</groupId>			<artifactId>rest-assured</artifactId>			<version>5.5.7</version>			<scope>test</scope>		</dependency>		<!-- For javalin embedded -->        <dependency>            <groupId>org.eclipse.jetty</groupId>            <artifactId>jetty-server</artifactId>            <scope>test</scope>        </dependency>        <dependency>            <groupId>org.eclipse.jetty</groupId>            <artifactId>jetty-annotations</artifactId>            <scope>test</scope>        </dependency>        <dependency>            <groupId>org.eclipse.jetty.websocket</groupId>            <artifactId>websocket-jetty-server</artifactId>            <scope>test</scope>        </dependency>	</dependencies>	<build>		<plugins>			<plugin>				<groupId>org.codehaus.mojo</groupId>				<artifactId>build-helper-maven-plugin</artifactId>				<version>3.6.1</version>				<executions>					<execution>						<phase>generate-sources</phase>						<goals>							<goal>add-source</goal>						</goals>						<configuration>							<sources>								<source>src/main/javagen</source>							</sources>						</configuration>					</execution>				</executions>			</plugin>			<plugin>				<groupId>org.apache.maven.plugins</groupId>				<artifactId>maven-javadoc-plugin</artifactId>				<version>3.12.0</version>				<configuration>					<sourcepath>${project.basedir}/src/main/java;${project.basedir}/src/main/javagen</sourcepath>				</configuration>			</plugin>		</plugins>	</build></project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.vertigo</groupId>
+		<artifactId>vertigo-modules</artifactId>
+		<version>4.4.0</version>
+	</parent>
+
+	<artifactId>vertigo-orchestra</artifactId>
+	<packaging>jar</packaging>
+	<name>vertigo-orchestra</name>
+
+	<properties>
+		<sonar.sources>src/main/java</sonar.sources>
+		<sonar.exclusions>src/main/java/io/vertigo/orchestra/impl/services/schedule/CronExpression*</sonar.exclusions>
+	</properties>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-vega</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-vega</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency> 
+
+		<!-- Dependencies for tests -->
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>5.5.7</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- For javalin embedded -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-annotations</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/javagen</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version>
+				<configuration>
+					<sourcepath>${project.basedir}/src/main/java;${project.basedir}/src/main/javagen</sourcepath>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
