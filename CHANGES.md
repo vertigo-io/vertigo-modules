@@ -7,21 +7,58 @@ Running 5.0.0
 
 more to come :)
 
+Running 4.4.0 - 2026-06-XX
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
+
+* [Quarto] Fix ods, xls & xlsx export for complex objects (non-basic types) using export adapter
+* [EasyForms] Fix phone regex regression since 4.3.0 for international numbers
+* [EasyForms] Use peg utility for flattening solvers
+* [EasyForms] Increase Email smarttype TLD validation up to 63 characters (RFC 1035)
+* [Planning] Add day duplication within a week
+* [Planning] Add BO reservation overbooking toggle
+* [Planning] Add day events display (infoCalendrier)
+* [Planning] Add plage horaire edit modal
+* [Planning] Performance improvement on calendar (TkGetDateDisponibleDisplayByAgeIds)
+* [Planning] Fix duplicate personal agenda (multi-agenda)
+* [Orchestra] Return active processDefinition after createOrUpdateDefinition
+* [Social] Enhance LinkMobility SMS plugin, better triage error code vs failure code
+* [Social] Refactored phone normalizer
+* [Geo][Dashboard] Update to ES9
+* [Geo] Use ES 7.17 connector (LTS) and simplify mapping
+* Update libs
+  - poi 5.4.1 -> 5.5.1
+  - poi-ooxml 5.4.1 -> 5.5.1
+  - owasp-java-html-sanitizer 20240325.1 -> 20260313.1
+  - assertj-core 3.26.0 -> 3.27.7
+  - rest-assured 5.5.5 -> 5.5.7
+  - SODS 1.6.8 -> 1.7.0
+
+
+Release 4.3.2 - 2025/07/10
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-431-to-432)
+
+* [EasyForms] Fix "forbidden" error when changing field type in admin
+* [quarto] add xlsx exporter
+* [quarto] mark xls exporter is deprecated
+
+
 Release 4.3.1 - 2025/06/13
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-431)
 * [EasyForms] Improved Accessibility
 * [EasyForms] Administration in readonly can now display fields details
 * [EasyForms] Better handling of empty HTML content
-* [Orchestra] Update UI
-* [Planning] Open method for overriding
-* [Planning] Add param distributedSynchro for use Redis distribution (via stella)
 * [Planning] Fix UI (date format), remove v-modal
+* [Planning] Add param distributedSynchro for use Redis distribution (via stella)
+* [Planning] Open method for overriding
+* [Orchestra] Update UI
 * update libs
   - rest-assured 5.5.1 -> 5.5.5
   - poi 5.4.0 -> 5.4.1
   - sods 1.6.7 -> 1.6.8
-  
+
 
 Release 4.3.0 - 2025/03/27
 ----------------------
@@ -59,6 +96,7 @@ Release 4.3.0 - 2025/03/27
 * [EasyForms] BugFix, add computed field type, better context handling
 * [EasyForm] Change tel regexp better protected against ReDDoS
 * [easyForms] Add tests more tests
+* [Ui] Move scripts inclusion to html (`libraries_slot` to head
 * [Quarto] Add exporter for custom field
 * [Quarto] Added XhtmlEncoder for Docx Merger : support simple html richText (p.text-align, u, b, i, &nbsp;)
 * [Quarto] Publisher merge simple html WIP

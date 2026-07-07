@@ -33,6 +33,7 @@ import io.vertigo.quarto.plugins.exporter.ods.ODSExporterPlugin;
 import io.vertigo.quarto.plugins.exporter.pdf.PDFExporterPlugin;
 import io.vertigo.quarto.plugins.exporter.rtf.RTFExporterPlugin;
 import io.vertigo.quarto.plugins.exporter.xls.XLSExporterPlugin;
+import io.vertigo.quarto.plugins.exporter.xlsx.XLSXExporterPlugin;
 import io.vertigo.quarto.plugins.publisher.docx.DOCXMergerPlugin;
 import io.vertigo.quarto.plugins.publisher.odt.OpenOfficeMergerPlugin;
 import io.vertigo.quarto.publisher.PublisherManager;
@@ -94,8 +95,15 @@ public class QuartoFeatures extends Features<QuartoFeatures> {
 	}
 
 	@Feature("exporter.xls")
+	@Deprecated
 	public QuartoFeatures withXLSExporter() {
 		getModuleConfigBuilder().addPlugin(XLSExporterPlugin.class);
+		return this;
+	}
+
+	@Feature("exporter.xlsx")
+	public QuartoFeatures withXLSXExporter() {
+		getModuleConfigBuilder().addPlugin(XLSXExporterPlugin.class);
 		return this;
 	}
 

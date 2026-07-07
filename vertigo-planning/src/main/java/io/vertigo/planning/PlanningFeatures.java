@@ -17,7 +17,6 @@
  */
 package io.vertigo.planning;
 
-import io.vertigo.core.impl.analytics.trace.TraceAspect;
 import io.vertigo.core.node.config.DefinitionProviderConfig;
 import io.vertigo.core.node.config.Features;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
@@ -32,7 +31,6 @@ public class PlanningFeatures extends Features<PlanningFeatures> {
 	@Override
 	protected void buildFeatures() {
 		getModuleConfigBuilder()
-				.addAspect(TraceAspect.class)
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 						.addDefinitionResource("smarttypes", PlanningSmartTypes.class.getName())
 						.addDefinitionResource("dtobjects", DtDefinitions.class.getName())

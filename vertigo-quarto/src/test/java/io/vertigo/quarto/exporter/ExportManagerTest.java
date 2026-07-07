@@ -40,14 +40,12 @@ import io.vertigo.datamodel.DataModelFeatures;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.datastore.DataStoreFeatures;
-import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.QuartoFeatures;
 import io.vertigo.quarto.exporter.data.DtDefinitions.ContinentFields;
 import io.vertigo.quarto.exporter.data.DtDefinitions.CountryFields;
 import io.vertigo.quarto.exporter.data.TestExporterSmartTypes;
 import io.vertigo.quarto.exporter.data.domain.Continent;
 import io.vertigo.quarto.exporter.data.domain.Country;
-import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 
@@ -97,6 +95,7 @@ public final class ExportManagerTest {
 						.withPDFExporter()
 						.withRTFExporter()
 						.withXLSExporter()
+						.withXLSXExporter()
 						.withODSExporter()
 						.build())
 				.addModule(ModuleConfig.builder("myApp")
@@ -113,13 +112,13 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportHandlerCSV() {
-		final DtList<Country> dtc = buildCountries();
+		final var dtc = buildCountries();
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test.csv")
+		final var export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test.csv")
 				.beginSheet(dtc, "famille")
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -132,13 +131,13 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportObject() {
-		final Country china = new Country().setName("china");
+		final var china = new Country().setName("china");
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test2.csv")
+		final var export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test2.csv")
 				.beginSheet(china, "china")
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -147,15 +146,15 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportField() {
-		final Country china = new Country().setName("china");
+		final var china = new Country().setName("china");
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test3.csv")
+		final var export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test3.csv")
 				.beginSheet(china, "china")
 				.addField(CountryFields.name)
 				.endSheet()
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -164,15 +163,15 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportFieldOverrideLabel() {
-		final Country china = new Country().setName("china");
+		final var china = new Country().setName("china");
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test3.csv")
+		final var export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test3.csv")
 				.beginSheet(china, "china")
 				.addField(CountryFields.name, LocaleMessageText.of("test"))
 				.endSheet()
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -181,19 +180,19 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportFieldDenorm() {
-		final DtList<Continent> dtc = buildContinents();
-		final Country germany = new Country()
+		final var dtc = buildContinents();
+		final var germany = new Country()
 				.setId(1L)
 				.setConId(10L)
 				.setName("germany");
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test4.csv")
+		final var export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test4.csv")
 				.beginSheet(germany, "germany")
 				.addField(CountryFields.conId, dtc, ContinentFields.name)
 				.endSheet()
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -203,18 +202,18 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportFieldDenormOverrideLabel() {
-		final DtList<Country> dtc = buildCountries();
-		final Country germany = new Country()
+		final var dtc = buildCountries();
+		final var germany = new Country()
 				.setId(1L)
 				.setName("germany");
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test5.csv")
+		final var export = new ExportBuilder(ExportFormat.CSV, OUTPUT_PATH + "test5.csv")
 				.beginSheet(germany, "country")
 				.addField(CountryFields.id, dtc, CountryFields.name, LocaleMessageText.of("test"))
 				.endSheet()
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -222,20 +221,43 @@ public final class ExportManagerTest {
 	 * Test l'export Excel.
 	 */
 	@Test
-	public void testExportHandlerExcel() {
-		final DtList<Country> countries = buildCountries();
-		final DtList<Continent> contients = buildContinents();
+	public void testExportHandlerXLS() {
+		final var countries = buildCountries();
+		final var contients = buildContinents();
 
-		final Export export = new ExportBuilder(ExportFormat.XLS, OUTPUT_PATH + "test.xls")
+		final var export = new ExportBuilder(ExportFormat.XLS, OUTPUT_PATH + "test.xls")
 				.beginSheet(countries, "countries")
 				.addField(CountryFields.conId, contients, ContinentFields.name)
+				.addField(CountryFields.continent)
 				.addField(CountryFields.active)
 				.addField(CountryFields.localDate)
 				.addField(CountryFields.instant)
 				.endSheet()
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
+		nop(result);
+	}
+
+	/**
+	 * Test l'export Excel.
+	 */
+	@Test
+	public void testExportHandlerXLSX() {
+		final var countries = buildCountries();
+		final var contients = buildContinents();
+
+		final var export = new ExportBuilder(ExportFormat.XLSX, OUTPUT_PATH + "test.xlsx")
+				.beginSheet(countries, "countries")
+				.addField(CountryFields.conId, contients, ContinentFields.name)
+				.addField(CountryFields.continent)
+				.addField(CountryFields.active)
+				.addField(CountryFields.localDate)
+				.addField(CountryFields.instant)
+				.endSheet()
+				.build();
+
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -244,16 +266,16 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportHandlerRTF() {
-		final DtList<Country> dtc = buildCountries();
+		final var dtc = buildCountries();
 
-		final Export export = new ExportBuilder(ExportFormat.RTF, OUTPUT_PATH + "test.rtf")
+		final var export = new ExportBuilder(ExportFormat.RTF, OUTPUT_PATH + "test.rtf")
 				.withAuthor("test")
 				.withTitle("test title")
 				.beginSheet(dtc, "famille")
 				.endSheet()
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -262,15 +284,15 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportHandlerPDF() {
-		final DtList<Country> dtc = buildCountries();
+		final var dtc = buildCountries();
 
-		final Export export = new ExportBuilder(ExportFormat.PDF, OUTPUT_PATH + "test.pdf")
+		final var export = new ExportBuilder(ExportFormat.PDF, OUTPUT_PATH + "test.pdf")
 				.beginSheet(dtc, "famille")
 				.endSheet()
 				.withAuthor("test")
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
@@ -279,25 +301,25 @@ public final class ExportManagerTest {
 	 */
 	@Test
 	public void testExportHandlerODS() {
-		final DtList<Country> dtc = buildCountries();
+		final var dtc = buildCountries();
 
-		final Export export = new ExportBuilder(ExportFormat.ODS, OUTPUT_PATH + "test.ods")
+		final var export = new ExportBuilder(ExportFormat.ODS, OUTPUT_PATH + "test.ods")
 				.beginSheet(dtc, "famille")
 				.endSheet()
 				.withAuthor("test")
 				.build();
 
-		final VFile result = exportManager.createExportFile(export);
+		final var result = exportManager.createExportFile(export);
 		nop(result);
 	}
 
 	private static DtList<Continent> buildContinents() {
-		final Continent europe = new Continent().setId(10L).setName("Europe");
-		final Continent america = new Continent().setId(20L).setName("America");
-		final Continent unknownContinent = new Continent().setId(30L); //no name
-		final Continent asie = new Continent().setId(40L).setName("Asie");
+		final var europe = new Continent().setId(10L).setName("Europe");
+		final var america = new Continent().setId(20L).setName("America");
+		final var unknownContinent = new Continent().setId(30L); //no name
+		final var asie = new Continent().setId(40L).setName("Asie");
 
-		final DtList<Continent> dtc = new DtList<>(Continent.class);
+		final var dtc = new DtList<>(Continent.class);
 		// les index sont données par ordre alpha > null à la fin >
 		dtc.add(america);
 		dtc.add(asie);
@@ -307,12 +329,39 @@ public final class ExportManagerTest {
 	}
 
 	private static DtList<Country> buildCountries() {
-		final Country france = new Country().setId(1L).setConId(10L).setName("France").setActive(true).setLocalDate(LocalDate.of(2018, 10, 15)).setInstant(Instant.now());
-		final Country usa = new Country().setId(2L).setConId(20L).setName("usa").setActive(true).setLocalDate(LocalDate.of(2017, 9, 14)).setInstant(Instant.now().minus(2, ChronoUnit.MINUTES));
-		final Country unknownCountry = new Country().setId(3L).setConId(30L).setActive(false).setLocalDate(LocalDate.of(2016, 8, 13)).setInstant(Instant.now().minus(4, ChronoUnit.MINUTES)); //no name
-		final Country japan = new Country().setId(4L).setConId(40L).setName("japan").setActive(true).setLocalDate(LocalDate.of(2015, 7, 12)).setInstant(Instant.now().minus(6, ChronoUnit.MINUTES));
+		final var france = new Country()
+				.setId(1L)
+				.setConId(10L)
+				.setName("France")
+				.setContinent(new Continent().setId(10L).setName("Europe"))
+				.setActive(true)
+				.setLocalDate(LocalDate.of(2018, 10, 15))
+				.setInstant(Instant.now());
+		final var usa = new Country()
+				.setId(2L)
+				.setConId(20L)
+				.setName("usa")
+				.setContinent(new Continent().setId(20L).setName("America"))
+				.setActive(true)
+				.setLocalDate(LocalDate.of(2017, 9, 14))
+				.setInstant(Instant.now().minus(2, ChronoUnit.MINUTES));
+		final var unknownCountry = new Country()
+				.setId(3L)
+				.setConId(30L)
+				.setContinent(new Continent().setId(30L)) //no name
+				.setActive(false)
+				.setLocalDate(LocalDate.of(2016, 8, 13))
+				.setInstant(Instant.now().minus(4, ChronoUnit.MINUTES)); //no name
+		final var japan = new Country()
+				.setId(4L)
+				.setConId(40L)
+				.setName("japan")
+				.setContinent(new Continent().setId(40L).setName("Asie"))
+				.setActive(true)
+				.setLocalDate(LocalDate.of(2015, 7, 12))
+				.setInstant(Instant.now().minus(6, ChronoUnit.MINUTES));
 
-		final DtList<Country> dtc = new DtList<>(Country.class);
+		final var dtc = new DtList<>(Country.class);
 		// les index sont données par ordre alpha > null à la fin >
 		dtc.add(france);
 		dtc.add(usa);

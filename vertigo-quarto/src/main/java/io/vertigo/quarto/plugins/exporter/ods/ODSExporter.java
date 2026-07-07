@@ -71,6 +71,7 @@ final class ODSExporter {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param storeManager Store manager
 	 */
 	ODSExporter(final EntityStoreManager entityStoreManager, final SmartTypeManager smartTypeManager) {
@@ -175,8 +176,13 @@ final class ODSExporter {
 			Object value;
 			for (final ExportField exportColumn : parameters.getExportFields()) {
 				final Range cell = sheet.getRange(rowIndex, cellIndex);
-				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(smartTypeManager, value, cell, getRowCellStyle(rowIndex % 2 == 0), cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+				final var smartTypeDefinition = exportColumn.getDataField().smartTypeDefinition();
+				if (smartTypeDefinition.getScope().isBasicType()) {
+					value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				} else {
+					value = ExporterUtil.getText(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				}
+				putValueInCell(smartTypeManager, value, cell, getRowCellStyle(rowIndex % 2 == 0), cellIndex, maxWidthPerColumn, smartTypeDefinition);
 
 				cellIndex++;
 			}
@@ -200,8 +206,13 @@ final class ODSExporter {
 			updateMaxWidthPerColumn(label.getDisplay(), 1.2, labelCellIndex, maxWidthPerColumn); // +20% pour les majuscules
 
 			final Range valueCell = sheet.getRange(rowIndex, valueCellIndex);
-			value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-			putValueInCell(smartTypeManager, value, valueCell, getRowCellStyle(false), valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+			final var smartTypeDefinition = exportColumn.getDataField().smartTypeDefinition();
+			if (smartTypeDefinition.getScope().isBasicType()) {
+				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			} else {
+				value = ExporterUtil.getText(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			}
+			putValueInCell(smartTypeManager, value, valueCell, getRowCellStyle(false), valueCellIndex, maxWidthPerColumn, smartTypeDefinition);
 			rowIndex++;
 		}
 

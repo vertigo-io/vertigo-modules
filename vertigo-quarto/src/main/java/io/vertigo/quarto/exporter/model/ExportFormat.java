@@ -26,7 +26,13 @@ public enum ExportFormat {
 	/**
 	 * Document Excel.
 	 */
+	@Deprecated
 	XLS("application/vnd.ms-excel"),
+
+	/**
+	 * Document Excel (new format).
+	 */
+	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
 
 	/**
 	 * Document RTF.

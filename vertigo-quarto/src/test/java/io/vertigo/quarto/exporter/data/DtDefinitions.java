@@ -37,7 +37,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de Famille.
 	 */
 	public enum CountryFields implements DataFieldName {
-		id, conId, name, active, localDate, instant
+		id, conId, name, active, localDate, instant, continent,
 	}
 
 	public enum ContinentFields implements DataFieldName {

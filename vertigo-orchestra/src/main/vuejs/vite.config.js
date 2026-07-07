@@ -15,7 +15,7 @@ export default defineConfig({
       name: 'VertigoOrchestraUi',
       fileName: (format) => `vertigo-orchestra-ui.${format}.js`
     },
-    rollupOptions: {
+    rolldownOptions: {
       // overwrite default .html entry
       input: '/src/main.js',
       // make sure to externalize deps that shouldn't be bundled
@@ -32,6 +32,11 @@ export default defineConfig({
         format: 'umd',
         name: 'VertigoOrchestraUi'
       }
+    }
+  },
+  css: {
+    lightningcss: {
+      errorRecovery: true
     }
   },
   server: { },

@@ -55,18 +55,6 @@ VUiExtensions.methods = {
         this.$data.uiMessageStack.objectFieldErrors[object][field] = errors;
     },
     
-    efAlertRejected(errors, extensionErrorMessage, sizeErrorMessage) {
-        let errorMessages = [];
-        for (let error of errors) {
-            if (error.failedPropValidation === 'accept') {
-                errorMessages.push(extensionErrorMessage);
-            } else if (error.failedPropValidation === 'max-file-size') {
-                errorMessages.push(sizeErrorMessage);
-            }
-        };
-        this.$q.notify(this.uiMessageStackToNotify({globalErrors:errorMessages})[0])
-    },
-    
     efDecodeDate: function (value, format) {
         if (value === Quasar.date.formatDate(Quasar.date.extractDate(value, 'YYYY-MM-DD'), 'YYYY-MM-DD')) {
             return Quasar.date.formatDate(Quasar.date.extractDate(value, 'YYYY-MM-DD'), format);
@@ -223,6 +211,7 @@ VUiExtensions.methods = {
         formData.delete('vContext[editItem][type]')//not modifiable
         formData.delete('vContext[editItem][isSystem]')//not modifiable
         formData.delete('vContext[editItem][isList]')//not modifiable
+        formData.delete('vContext[editItem][parametersRead]')//not modifiable
         
         formData.append('sectionIndex', this.$data.componentStates.itemModal.sectionIndex);
         formData.append('doUpdateCode', !this.$data.componentStates.itemModal.codeModified);

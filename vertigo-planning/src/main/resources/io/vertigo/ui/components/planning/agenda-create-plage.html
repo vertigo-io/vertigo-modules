@@ -53,8 +53,26 @@
 	                        </template>
 						</vu:slot>
 				    </vu:text-field-edit>
+                    <div class="col-12" role="status" aria-live="polite">
+                        <div class="q-card bg-warning text-warning-inverted q-mt-sm q-mb-sm" v-if="hasPlageDureeWarning(creationPlageHoraireForm)">
+                            <div class="q-card-main">
+                                <div class="q-list">
+                                    <div class="q-item">
+                                        <div class="q-item-main">
+                                            <div class="q-item-label">
+                                                {{ 'La dernière tranche sera raccourcie à '
+                                                    + (getPlageDureeMinutes(creationPlageHoraireForm) % creationPlageHoraireForm.dureeCreneau) + ' minutes au lieu de '
+                                                    + creationPlageHoraireForm.dureeCreneau + ', car la durée totale de la plage ne se divise pas exactement.'
+                                                }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <vu:select-edit label="${model.agendaLabel}" object="creationPlageHoraireForm" field="ageId" valueField="ageId" list="agendasDisplay" th:if="${!model.modeGuichet}"/>
-                    <vu:text-field-edit object="creationPlageHoraireForm" field="nbGuichet" mask="#" th:if="${model.modeGuichet}"/>
+                    <vu:text-field-edit object="creationPlageHoraireForm" field="nbGuichet" mask="##" th:if="${model.modeGuichet}"/>
                 </vu:grid>
             </q-card-section>
             <q-card-section class="flex justify-end" vu:slot="plage_actions_slot">

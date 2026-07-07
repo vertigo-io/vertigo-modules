@@ -39,7 +39,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import io.vertigo.commons.codec.CodecManager;
-import io.vertigo.connectors.elasticsearch.RestHighLevelElasticSearchConnector;
+import io.vertigo.connectors.elasticsearch_7_17.RestHighLevelElasticSearchConnector;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.node.component.Activeable;
@@ -126,9 +126,7 @@ public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 							RequestOptions.DEFAULT)
 					.getHits();
 			return Stream.of(searchHits.getHits())
-					.map(hit -> {
-						return (D) codecManager.getCompressedSerializationCodec().decode(codecManager.getBase64Codec().decode((String) hit.getSourceAsMap().get("fullResult")));
-					})
+					.map(hit -> ((D) codecManager.getCompressedSerializationCodec().decode(codecManager.getBase64Codec().decode((String) hit.getSourceAsMap().get("fullResult")))))
 					.collect(VCollectors.toDtList(dtIndexClass));
 		} catch (final IOException e) {
 			throw WrappedException.wrap(e);

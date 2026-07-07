@@ -85,6 +85,30 @@ public final class TrancheHoraireDAO extends DAO<TrancheHoraire, java.lang.Long>
 	}
 
 	/**
+	 * Execute la tache TkGetTrancheHoraireWithLock.
+	 * @param trhId Long
+	 * @return TrancheHoraire creneau
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetTrancheHoraireWithLock",
+			request = """
+			SELECT 
+                trh.*
+           FROM TRANCHE_HORAIRE trh
+           WHERE trh.TRH_ID = #trhId#
+           FOR UPDATE""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraire", name = "creneau")
+	public io.vertigo.planning.agenda.domain.TrancheHoraire getTrancheHoraireWithLock(@io.vertigo.datamodel.task.proxy.TaskInput(name = "trhId", smartType = "STyPId") final Long trhId) {
+		final Task task = createTaskBuilder("TkGetTrancheHoraireWithLock")
+				.addValue("trhId", trhId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetTrancheHorairesDisponibleByAgeIds.
 	 * @param ageIds List de Long
 	 * @param startDate LocalDate

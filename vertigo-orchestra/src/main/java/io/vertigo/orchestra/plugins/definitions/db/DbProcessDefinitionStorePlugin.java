@@ -51,6 +51,7 @@ import io.vertigo.orchestra.services.execution.ActivityEngine;
 
 /**
  * Plugin de gestion des définitions en base de données.
+ * 
  * @author mlaroche
  *
  */
@@ -195,7 +196,7 @@ public class DbProcessDefinitionStorePlugin implements ProcessDefinitionStorePlu
 
 	/** {@inheritDoc} */
 	@Override
-	public void createOrUpdateDefinition(final ProcessDefinition processDefinition) {
+	public ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition) {
 		Assertion.check().isNotNull(processDefinition);
 		// ---
 		final String processName = processDefinition.getName();
@@ -207,11 +208,14 @@ public class DbProcessDefinitionStorePlugin implements ProcessDefinitionStorePlu
 			final ProcessDefinition existingDefinition = getProcessDefinition(processName);
 			if (existingDefinition.getNeedUpdate()) {
 				updateDefinition(processDefinition);
+				return processDefinition;
 			}
-		} else {
-			createDefinition(processDefinition);
+			processDefinition.setId(existingDefinition.getId()); //on mute l'id pour montrer que c'est le même
+			return existingDefinition;
 		}
-
+		//else
+		createDefinition(processDefinition);
+		return processDefinition;
 	}
 
 	private void updateDefinition(final ProcessDefinition processDefinition) {

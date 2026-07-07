@@ -206,8 +206,8 @@ public final class ConstraintPhone implements Constraint<String, String> {
 			// use of \W to handle different types of separators (eg : '(', ')', '.', '-' and space)
 			// must ends with 2 digits without separator
 			regex = prefixes.stream()
-					.map(p -> p.replace("+", "(\\+|00)").replace(" ", "\\W*"))
-					.map(p -> "(" + p + "(\\W*\\d){" + (digitsAfterPrefix - 1) + "}\\d)")
+					.map(p -> p.replace("+", "(\\+|00)").replace(" ", "\\W*+"))
+					.map(p -> "(" + p + "(\\W*+\\d){" + (digitsAfterPrefix - 1) + "}\\d)")
 					.collect(Collectors.joining("|"));
 		}
 

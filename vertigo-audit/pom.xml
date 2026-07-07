@@ -15,8 +15,8 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.web3j</groupId>
-				<artifactId>core</artifactId>
-				<version>4.13.0</version><!-- 4.14.0: jdk21, 5.0.0 : not official -->
+		<artifactId>core</artifactId>
+		<version>4.13.0</version><!-- 4.14.0+ requires JDK21+, frozen for v4 LTS (JDK17) -->
 			</dependency>
 			<dependency>
 				<groupId>io.vertigo</groupId>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.26.0</version>
+			<version>3.27.7</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- Dependencies for tests -->

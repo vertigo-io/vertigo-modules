@@ -125,17 +125,17 @@ public enum EasyFormsSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterString.class, arg = "LOWER")
-	@Constraint(clazz = ConstraintRegex.class, arg = "^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9-]{2,3})+$", resourceMsg = "EfInvalidEmail")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*\\.[a-zA-Z0-9-]{2,63}$", resourceMsg = "EfInvalidEmail")
 	@Constraint(clazz = ConstraintStringLength.class, arg = "80")
 	EfEmail,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterTelephone.class, arg = "0033|+33:+33 #;005|+5:+5## #;006|+6:+6## #;0026|+26:+26# #;0:+33 #;+1:+1 #;+7:+7 #;+:+## #;#")
 	@Constraint(clazz = ConstraintRegex.class,
-			//vérifie un numéro international avec +XX ou 00XX ou un numéro francais.
-			//Pour l'international seul le prefix 17 est filtré (pas d'autre commencant pas 1), et entre 2 et 13 chiffres après le prefix (la reco UIT-T limite à 15 le total)
-			//pour la france vérifie qu'on a +33 ou 0033 ou 0 + 9 chiffres . peut avoir des () des . ou des espaces. doit finir par 2 chiffres consécutifs
-			arg = "^((?:\\+|00)([17]|[245689]\\d|3[0-24-9]\\d)(?:\\W*\\d){2,13}+\\d)|((((?:\\+|00)33\\W*)|0)[1-9](?:\\W*\\d){7}\\d)$", resourceMsg = "EfInvalidPhoneNumber")
+			// Validates international numbers (+XX or 00XX) or French numbers.
+			// International: validates country codes (only 1 and 7 allowed as single digit codes), followed by 2-13 digits (ITU-T limit is 15).
+			// France: checks for +33, 0033, or 0 followed by 9 digits, allowing separators ((), ., spaces). Must end with 2 consecutive digits.
+			arg = "^(?:((?:\\+|00)([17]|[245689]\\d|3[0-24-9]\\d)(?:\\W*+\\d){2,13}\\d)|((((?:\\+|00)33\\W*)|0)[1-9](?:\\W*+\\d){7}\\d))$", resourceMsg = "EfInvalidPhoneNumber")
 	@Constraint(clazz = ConstraintStringLength.class, arg = "20")
 	EfTelephone,
 

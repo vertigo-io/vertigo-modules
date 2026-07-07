@@ -29,7 +29,7 @@
     <q-footer elevated class="bg-grey-8 text-white">
       <q-toolbar>
         <q-toolbar-title class="absolute-center">
-          Copyright &copy; 2020 - 2024
+          Copyright &copy; 2020 - 2026
         </q-toolbar-title>
       </q-toolbar>
     </q-footer>

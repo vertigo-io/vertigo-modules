@@ -115,6 +115,7 @@ public final class DbProcessExecutorPlugin implements ProcessExecutorPlugin, Act
 
 	/**
 	 * Constructeur.
+	 *
 	 * @param nodeManager le gestionnaire de noeud
 	 * @param transactionManager le gestionnaire de transaction
 	 * @param workersCountOpt le nombre de worker du noeud (10 by default)
@@ -361,9 +362,9 @@ public final class DbProcessExecutorPlugin implements ProcessExecutorPlugin, Act
 					((AbstractActivityEngine) activityEngine).getLogger().info(workspaceInLog);
 				}
 				// We try the execution and we keep the result
-				ThreadContext.put("module", "orchestra-worker");
+				ThreadContext.put("module", "orchestra-worker"); // change module for the execution of the activity to distinguish business logs and orchestra logs
 				resultWorkspace = activityEngine.execute(workspace);
-				ThreadContext.put("module", "orchestra");
+				ThreadContext.put("module", "orchestra"); // reset previous module (cleaned outside this method)
 				Assertion.check()
 						.isNotNull(resultWorkspace)
 						.isNotNull(resultWorkspace.getValue("status"), "Le status est obligatoire dans le résultat");

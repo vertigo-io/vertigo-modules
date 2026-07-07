@@ -40,6 +40,7 @@ public class OrchestraDefinitionManagerImpl implements OrchestraDefinitionManage
 
 	/**
 	 * Constructeur du gestionnaire de définitions.
+	 * 
 	 * @param processDefinitionStorePlugins la liste des plugins gérant des définitions de processus
 	 */
 	@Inject
@@ -79,13 +80,13 @@ public class OrchestraDefinitionManagerImpl implements OrchestraDefinitionManage
 
 	/** {@inheritDoc} */
 	@Override
-	public void createOrUpdateDefinition(final ProcessDefinition processDefinition) {
+	public ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition) {
 		Assertion.check().isNotNull(processDefinition);
 		//---
 		final ProcessDefinitionStorePlugin storePlugin = processDefinitionStorePluginsByProcessType.get(processDefinition.getProcessType());
 		Assertion.check().isNotNull(storePlugin, "No plugin found for managing processType {0}", processDefinition.getProcessType());
 		// ---
-		storePlugin.createOrUpdateDefinition(processDefinition);
+		return storePlugin.createOrUpdateDefinition(processDefinition);
 	}
 
 	/** {@inheritDoc} */

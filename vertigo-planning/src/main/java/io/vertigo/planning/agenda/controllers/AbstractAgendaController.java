@@ -17,9 +17,8 @@
  */
 package io.vertigo.planning.agenda.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +29,9 @@ import io.vertigo.planning.agenda.domain.Agenda;
 import io.vertigo.planning.agenda.domain.AgendaDisplay;
 import io.vertigo.planning.agenda.domain.AgendaDisplayRange;
 import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
+import io.vertigo.planning.agenda.domain.DuplicationJourForm;
 import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
+import io.vertigo.planning.agenda.domain.InfoCalendrierDisplay;
 import io.vertigo.planning.agenda.domain.PlageHoraireDisplay;
 import io.vertigo.planning.agenda.domain.PublicationTrancheHoraireForm;
 import io.vertigo.ui.core.ViewContext;
@@ -38,13 +39,13 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
-public class AbstractAgendaController extends AbstractVSpringMvcController {
+public abstract class AbstractAgendaController extends AbstractVSpringMvcController {
 
-	@Inject
-	protected AgendaControllerHelper agendaControllerHelper;
+	protected AgendaControllerHelper agendaControllerHelper = new AgendaControllerHelper(this::getInfoCalendrierForRange);
 
 	/**
 	 * Init context for agenda page.
+	 *
 	 * @param viewContext ViewContext
 	 * @param ageUids list of agenda UIDs
 	 * @param weekDaysNumber number of days
@@ -62,6 +63,7 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 
 	/**
 	 * Init context for agenda page.
+	 *
 	 * @param viewContext ViewContext
 	 * @param ageUids list of agenda UIDs
 	 * @param weekDaysNumber number of days
@@ -70,75 +72,126 @@ public class AbstractAgendaController extends AbstractVSpringMvcController {
 	 * @param modeGuichet true if mode guichet
 	 * @param modeTranchesHoraire true if mode tranche horaire (don't show plages)
 	 */
-	public void initContext(final ViewContext viewContext, final DtList<AgendaDisplay> agendasDisplay, final Integer weekDaysNumber, final CreationPlageHoraireForm creationPlageHoraireForm,
-			final DuplicationSemaineForm duplicationSemaineForm, final boolean modeGuichet, final boolean modeTranchesHoraire) {
+	public void initContext(
+			final ViewContext viewContext,
+			final DtList<AgendaDisplay> agendasDisplay,
+			final Integer weekDaysNumber,
+			final CreationPlageHoraireForm creationPlageHoraireForm,
+			final DuplicationSemaineForm duplicationSemaineForm,
+			final boolean modeGuichet,
+			final boolean modeTranchesHoraire) {
 		//---
 		agendaControllerHelper.initContext(getAgendaLabel(), viewContext, agendasDisplay, weekDaysNumber, creationPlageHoraireForm, duplicationSemaineForm, modeGuichet, modeTranchesHoraire);
 	}
 
 	@PostMapping("/_reload")
-	public ViewContext reload(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail, final UiMessageStack uiMessageStack) {
+	public ViewContext reload(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail,
+			final UiMessageStack uiMessageStack) {
 		return agendaControllerHelper.reload(viewContext, agenda, plageHoraireDetail, uiMessageStack);
 	}
 
 	@PostMapping("/_semainePrecedente")
-	public ViewContext semainePrecedente(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
+	public ViewContext semainePrecedente(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
 		return agendaControllerHelper.semainePrecedente(viewContext, agenda);
 	}
 
 	@PostMapping("/_semaineSuivante")
-	public ViewContext semaineSuivante(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
+	public ViewContext semaineSuivante(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda) {
 		return agendaControllerHelper.semaineSuivante(viewContext, agenda);
 	}
 
 	@PostMapping("/_createPlage")
-	public ViewContext createPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+	public ViewContext createPlage(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("creationPlageHoraireForm") final CreationPlageHoraireForm creationPlageHoraireForm) {
 		//---
 		return agendaControllerHelper.createPlage(viewContext, agenda, creationPlageHoraireForm);
 	}
 
 	@PostMapping("_prepareDuplicateSemaine")
-	public ViewContext prepareDuplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agendaRange,
+	public ViewContext prepareDuplicateSemaine(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agendaRange,
 			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
 		return agendaControllerHelper.prepareDuplicateSemaine(viewContext, agendaRange, duplicationSemaineForm);
 	}
 
 	@PostMapping("/_duplicateSemaine")
-	public ViewContext duplicateSemaine(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+	public ViewContext duplicateSemaine(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
 		return agendaControllerHelper.duplicateSemaine(viewContext, agenda, duplicationSemaineForm);
 	}
 
+	@PostMapping("/_duplicateJour")
+	public ViewContext duplicateJour(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@ViewAttribute("duplicationJourForm") final DuplicationJourForm duplicationJourForm,
+			@ViewAttribute("duplicationSemaineForm") final DuplicationSemaineForm duplicationSemaineForm) {
+
+		return agendaControllerHelper.duplicateJour(viewContext, agenda, duplicationJourForm, duplicationSemaineForm.getDureeCreneau());
+	}
+
 	@PostMapping("/_publishPlage")
-	public ViewContext publishPlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+	public ViewContext publishPlage(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("publicationTrancheHoraireForm") final PublicationTrancheHoraireForm publicationTrancheHoraireForm) {
 		return agendaControllerHelper.publishPlage(viewContext, agenda, publicationTrancheHoraireForm);
 	}
 
 	@PostMapping("/_deletePlage")
-	public ViewContext deletePlage(final ViewContext viewContext, @ViewAttribute("agendaRange") final AgendaDisplayRange agenda, @RequestParam("plhId") final Long plhId) {
+	public ViewContext deletePlage(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@RequestParam("plhId") final Long plhId) {
 		return agendaControllerHelper.deletePlage(viewContext, agenda, plhId);
 	}
 
 	@PostMapping("/_loadPlageHoraireDetail")
-	public ViewContext loadPlageHoraireDetail(final ViewContext viewContext,
+	public ViewContext loadPlageHoraireDetail(
+			final ViewContext viewContext,
 			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
-			@RequestParam("plhId") final Long plhId, final UiMessageStack uiMessageStack) {
+			@RequestParam("plhId") final Long plhId,
+			final UiMessageStack uiMessageStack) {
 		return agendaControllerHelper.loadPlageHoraireDetail(viewContext, agenda, plhId, uiMessageStack);
 	}
 
 	@PostMapping("/_deleteTrancheHoraire")
-	public ViewContext deleteTrancheHoraire(final ViewContext viewContext,
+	public ViewContext deleteTrancheHoraire(
+			final ViewContext viewContext,
 			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
 			@ViewAttribute("plageHoraireDetail") final PlageHoraireDisplay plageHoraireDetail,
-			@RequestParam("trhId") final Long trhId, final UiMessageStack uiMessageStack) {
+			@RequestParam("trhId") final Long trhId,
+			final UiMessageStack uiMessageStack) {
 		return agendaControllerHelper.deleteTrancheHoraire(viewContext, agenda, plageHoraireDetail, trhId, uiMessageStack);
 	}
 
 	/**
+	 * Overridable method to get info calendrier for a date range.
+	 *
+	 * @param viewContext ViewContext
+	 * @param startDate First date of the range (included)
+	 * @param endDate Last date of the range (included)
+	 * @return List of InfoCalendrierDisplay
+	 */
+	protected DtList<InfoCalendrierDisplay> getInfoCalendrierForRange(final ViewContext viewContext, final LocalDate startDate, final LocalDate endDate) {
+		return new DtList<>(InfoCalendrierDisplay.class);
+	}
+
+	/**
 	 * Overridable label use for agenda selection.
+	 *
 	 * @return label
 	 */
 	protected String getAgendaLabel() {
