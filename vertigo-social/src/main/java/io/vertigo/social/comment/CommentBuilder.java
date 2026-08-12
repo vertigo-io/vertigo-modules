@@ -117,12 +117,7 @@ public final class CommentBuilder implements Builder<Comment> {
 	/** {@inheritDoc} */
 	@Override
 	public Comment build() {
-		if (myCreationInstant == null) {
-			myCreationInstant = Instant.now();
-		}
-		if (myUuid == null) {
-			myUuid = UUID.randomUUID();
-		}
+		//uuid and creationDate are defaulted by the Comment compact constructor
 		return new Comment(myUuid, myAuthor, myAuthorDisplayName, myMsg, myCreationInstant, myLastModified);
 	}
 }

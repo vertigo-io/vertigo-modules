@@ -20,8 +20,6 @@ package io.vertigo.planning.agenda.controllers;
 import java.time.LocalDate;
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
