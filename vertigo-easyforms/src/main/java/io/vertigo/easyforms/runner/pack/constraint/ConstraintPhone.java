@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,8 +206,8 @@ public final class ConstraintPhone implements Constraint<String, String> {
 			// use of \W to handle different types of separators (eg : '(', ')', '.', '-' and space)
 			// must ends with 2 digits without separator
 			regex = prefixes.stream()
-					.map(p -> p.replace("+", "(\\+|00)").replace(" ", "\\W*"))
-					.map(p -> "(" + p + "(\\W*\\d){" + (digitsAfterPrefix - 1) + "}\\d)")
+					.map(p -> p.replace("+", "(\\+|00)").replace(" ", "\\W*+"))
+					.map(p -> "(" + p + "(\\W*+\\d){" + (digitsAfterPrefix - 1) + "}\\d)")
 					.collect(Collectors.joining("|"));
 		}
 

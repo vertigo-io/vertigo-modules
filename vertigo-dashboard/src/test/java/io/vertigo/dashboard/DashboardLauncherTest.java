@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,8 +99,8 @@ public class DashboardLauncherTest {
 				.addModule(new CommonsFeatures()
 						.build())
 				.addModule(new ElasticSearchFeatures()
-						.withEmbeddedServer(Param.of("home", "io/vertigo/dashboard/search/indexconfig"))
-						.withRestHL(Param.of("servers.names", "localhost:9200"), Param.of("ssl", "false"))
+						.withEmbeddedServer()
+						.withRest(Param.of("servers.names", "localhost:9200"), Param.of("ssl", "false"))
 						.build())
 				.addModule(new DatabaseFeatures()
 						.withSqlDataBase()
@@ -120,8 +120,8 @@ public class DashboardLauncherTest {
 						.build())
 				.addModule(new DataFactoryFeatures()
 						.withSearch()
-						.withESHL(
-								Param.of("config.file", "io/vertigo/dashboard/search/indexconfig/elasticsearch.yml"),
+						.withESRest(
+								Param.of("config.file", "io/vertigo/dashboard/search/indexconfig/elasticsearch.json"),
 								Param.of("envIndexPrefix", "tuTest"),
 								Param.of("rowsPerQuery", "50"))
 						.build())
@@ -141,6 +141,7 @@ public class DashboardLauncherTest {
 
 	/**
 	 * Start a server for debug purpose.
+	 *
 	 * @param args
 	 * @throws Exception
 	 */

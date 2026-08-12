@@ -106,7 +106,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.6.1</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
@@ -124,7 +124,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.2</version>
+				<version>3.12.0</version>
 				<configuration>
 					<sourcepath>${project.basedir}/src/main/java;${project.basedir}/src/main/javagen</sourcepath>
 				</configuration>

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import io.vertigo.orchestra.definitions.ProcessType;
 
 /**
  * Plugin de gestion des définitions de processus.
+ * 
  * @author mlaroche
  *
  */
@@ -35,10 +36,11 @@ public interface ProcessDefinitionStorePlugin extends Plugin {
 	/**
 	 * @see io.vertigo.orchestra.definitions.OrchestraDefinitionManager#createOrUpdateDefinition(ProcessDefinition)
 	 */
-	void createOrUpdateDefinition(final ProcessDefinition processDefinition);
+	ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition);
 
 	/**
 	 * Retourne si une definition existe
+	 * 
 	 * @param processName le nom du processus
 	 * @return vrai si la definition existe
 	 */
@@ -67,6 +69,7 @@ public interface ProcessDefinitionStorePlugin extends Plugin {
 
 	/**
 	 * Retourne le type de processus géré par le plugin
+	 * 
 	 * @return le type de processus géré
 	 */
 	ProcessType getHandledProcessType();

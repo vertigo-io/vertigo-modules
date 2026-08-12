@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,6 +82,30 @@ public final class TrancheHoraireDAO extends DAO<TrancheHoraire, java.lang.Long>
 				.addValue("dto", dto)
 				.build();
 		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkGetTrancheHoraireWithLock.
+	 * @param trhId Long
+	 * @return TrancheHoraire creneau
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetTrancheHoraireWithLock",
+			request = """
+			SELECT 
+                trh.*
+           FROM TRANCHE_HORAIRE trh
+           WHERE trh.TRH_ID = #trhId#
+           FOR UPDATE""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTrancheHoraire", name = "creneau")
+	public io.vertigo.planning.agenda.domain.TrancheHoraire getTrancheHoraireWithLock(@io.vertigo.datamodel.task.proxy.TaskInput(name = "trhId", smartType = "STyPId") final Long trhId) {
+		final Task task = createTaskBuilder("TkGetTrancheHoraireWithLock")
+				.addValue("trhId", trhId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 	/**

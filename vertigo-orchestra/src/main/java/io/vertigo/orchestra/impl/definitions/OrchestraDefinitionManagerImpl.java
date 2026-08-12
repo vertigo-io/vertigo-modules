@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class OrchestraDefinitionManagerImpl implements OrchestraDefinitionManage
 
 	/**
 	 * Constructeur du gestionnaire de définitions.
+	 * 
 	 * @param processDefinitionStorePlugins la liste des plugins gérant des définitions de processus
 	 */
 	@Inject
@@ -79,13 +80,13 @@ public class OrchestraDefinitionManagerImpl implements OrchestraDefinitionManage
 
 	/** {@inheritDoc} */
 	@Override
-	public void createOrUpdateDefinition(final ProcessDefinition processDefinition) {
+	public ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition) {
 		Assertion.check().isNotNull(processDefinition);
 		//---
 		final ProcessDefinitionStorePlugin storePlugin = processDefinitionStorePluginsByProcessType.get(processDefinition.getProcessType());
 		Assertion.check().isNotNull(storePlugin, "No plugin found for managing processType {0}", processDefinition.getProcessType());
 		// ---
-		storePlugin.createOrUpdateDefinition(processDefinition);
+		return storePlugin.createOrUpdateDefinition(processDefinition);
 	}
 
 	/** {@inheritDoc} */

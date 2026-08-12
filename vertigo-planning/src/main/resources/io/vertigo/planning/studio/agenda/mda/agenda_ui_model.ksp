@@ -59,6 +59,11 @@ create DtDefinition DtDuplicationSemaineForm {
     field dureeCreneau { domain: DoPMinute label: "Durée en minutes" cardinality:"1" }
 }
 
+create DtDefinition DtDuplicationJourForm {
+    field dateLocaleFrom 	{domain: DoPLocalDate 	label: "Date à dupliquer" 	cardinality:"1"}
+    field dateLocaleTo 		{domain: DoPLocalDate 	label: "Jours cible" 		cardinality:"*"}
+}
+
 create DtDefinition DtPlageHoraireDisplay {
     field plhId {domain: DoPId label:"Id"}
     field ageId {domain: DoPId label:"Agenda"}
@@ -121,4 +126,13 @@ create DtDefinition DtPublicationRange {
     field dateMin {domain: DoPLocalDate label:"Date de début" }
     field dateMax {domain: DoPLocalDate label:"Date de fin" }
     field instantPublication {domain: DoPInstant label: "Date publication"}
+}
+
+create DtDefinition DtInfoCalendrierDisplay {
+    field date 			{domain: DoPLocalDate 	label: "Date de l'information" 				cardinality:"1"}
+    field libelle 		{domain: DoPLabel 		label: "Libellé" 							cardinality:"1"}
+    field infobulle 	{domain: DoPLabel 		label: "Infobulle"}
+    field htmlClass 	{domain: DoPLabel 		label: "Classe pour l'affichage dans l'agenda"}
+    field htmlStyle 	{domain: DoPLabel 		label: "Style pour l'affichage dans l'agenda"}
+    field siFerme 		{domain: DoPBooleen 	label: "Si le jour est considéré comme fermé, on ne dupliquera pas les plages horaires" 	cardinality:"1"}
 }

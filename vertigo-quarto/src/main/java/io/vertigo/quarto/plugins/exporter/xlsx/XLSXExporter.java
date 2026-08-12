@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,7 @@ public class XLSXExporter {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param storeManager Store manager
 	 * @param smartTypeManager SmartType manager
 	 */
@@ -239,8 +240,13 @@ public class XLSXExporter {
 			for (final ExportField exportColumn : parameters.getExportFields()) {
 				final var cell = row.createCell(cellIndex);
 
-				value = ExporterUtil.getValue(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(value, cell, rowIndex % 2 == 0 ? evenXssfStyleCache : oddXssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+				final var smartTypeDefinition = exportColumn.getDataField().smartTypeDefinition();
+				if (smartTypeDefinition.getScope().isBasicType()) {
+					value = ExporterUtil.getValue(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				} else {
+					value = ExporterUtil.getText(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				}
+				putValueInCell(value, cell, rowIndex % 2 == 0 ? evenXssfStyleCache : oddXssfStyleCache, cellIndex, maxWidthPerColumn, smartTypeDefinition);
 
 				cellIndex++;
 			}
@@ -264,16 +270,26 @@ public class XLSXExporter {
 			updateMaxWidthPerColumn(label.getDisplay(), 1.2, labelCellIndex, maxWidthPerColumn); // +20% pour les majuscules
 
 			final var valueCell = row.createCell(valueCellIndex);
-			value = ExporterUtil.getValue(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-			putValueInCell(value, valueCell, oddXssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+			final var smartTypeDefinition = exportColumn.getDataField().smartTypeDefinition();
+			if (smartTypeDefinition.getScope().isBasicType()) {
+				value = ExporterUtil.getValue(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			} else {
+				value = ExporterUtil.getText(storeManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			}
+			putValueInCell(value, valueCell, oddXssfStyleCache, valueCellIndex, maxWidthPerColumn, smartTypeDefinition);
 			rowIndex++;
 		}
 
 	}
 
-	private void putValueInCell(final Object value, final XSSFCell cell, final Map<BasicType, XSSFCellStyle> rowCellStyle, final int cellIndex, final Map<Integer, Double> maxWidthPerColumn, final SmartTypeDefinition domain) {
+	private void putValueInCell(final Object value, final XSSFCell cell, final Map<BasicType, XSSFCellStyle> rowCellStyle, final int cellIndex, final Map<Integer, Double> maxWidthPerColumn,
+			final SmartTypeDefinition domain) {
 		String stringValueForColumnWidth;
-		cell.setCellStyle(rowCellStyle.get(domain.getBasicType()));
+		if (domain.getScope().isBasicType()) {
+			cell.setCellStyle(rowCellStyle.get(domain.getBasicType()));
+		} else {
+			cell.setCellStyle(rowCellStyle.get(BasicType.String));
+		}
 		if (value != null) {
 			stringValueForColumnWidth = String.valueOf(value);
 

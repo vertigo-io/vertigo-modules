@@ -1,0 +1,108 @@
+<th:block th:fragment="agenda-edit-plage(plage_actions_slot)" vu:alias="agenda-edit-plage" vu:selector="${true}" 
+    th:attr="objectKey=${model.vContext['componentStates'].addComponentState('editItemModal').addPrimitive('opened', false)},objectKey=${model.vContext['componentStates'].addComponentState('editItemModalValidate').addPrimitive('opened', false)}">
+    <q-dialog v-model="componentStates.editItemModal.opened" @hide="editPlageHoraireCloseActions()">
+        <q-card class="bg-white createPlageModal">
+            <q-toolbar class="bg-primary">
+                <q-toolbar-title class="text-white">Modifier la plage horaire</q-toolbar-title>
+                <div class="col-1"></div>
+                <q-btn flat dense v-close-popup icon="ri-close-line" text-color="white" >Fermer</q-btn>
+                
+            </q-toolbar>
+            <q-card-section class="q-layout-padding">
+                <vu:grid>
+                    <vu:grid-cell col="2">
+                        <vu:text-field-read-reactive object="creationPlageHoraireForm" field="dateLocale"  />
+                    </vu:grid-cell>                            
+                    
+                    <vu:text-field-edit object="creationPlageHoraireForm" field="minutesDebut">
+						<vu:slot name="edit_content_slot">
+	                        <template v-slot:append>
+	                            <q-icon name="access_time" class="cursor-pointer">
+	                                <q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref='datetime_creationPlageHoraireForm_minutesDebut' >
+	                                     <q-time 
+	                                        v-model="vueData.creationPlageHoraireForm.minutesDebut"
+	                                        :landscape="$q.screen.gt.xs"
+	                                        mask="HH:mm"
+	                                        format24h
+	                                        :minute-options="[0, 5,10,15,20,25, 30,35,40, 45,50,55]"
+	                                        @update:model-value="() => $refs.datetime_creationPlageHoraireForm_minutesDebut.hide()"
+	                                        ></q-time> 
+	                                </q-popup-proxy>
+	                            </q-icon>
+	                        </template>
+						</vu:slot>
+                    </vu:text-field-edit>
+                    
+				    <vu:text-field-edit object="creationPlageHoraireForm" field="minutesFin">
+						<vu:slot name="edit_content_slot">
+						    <template v-slot:append>
+	                            <q-icon name="access_time" class="cursor-pointer">
+	                                <q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref='datetime_creationPlageHoraireForm_minutesFin' >
+	                                     <q-time 
+	                                        v-model="vueData.creationPlageHoraireForm.minutesFin"
+	                                        :landscape="$q.screen.gt.xs"
+	                                        mask="HH:mm"
+	                                        format24h
+	                                        :minute-options="[0, 5,10,15,20,25, 30,35,40, 45,50,55]"
+	                                        @update:model-value="() => $refs.datetime_creationPlageHoraireForm_minutesFin.hide()"
+	                                        ></q-time> 
+	                                </q-popup-proxy>
+	                            </q-icon>
+	                        </template>
+						</vu:slot>
+				    </vu:text-field-edit>
+                    <div class="col-12" role="status" aria-live="polite">
+                        <div class="q-card bg-warning text-warning-inverted q-mt-sm q-mb-sm" v-if="hasPlageDureeWarning(creationPlageHoraireForm)">
+                            <div class="q-card-main">
+                                <div class="q-list">
+                                    <div class="q-item">
+                                        <div class="q-item-main">
+                                            <div class="q-item-label">
+                                                {{ 'La dernière tranche sera raccourcie à '
+                                                    + (getPlageDureeMinutes(creationPlageHoraireForm) % creationPlageHoraireForm.dureeCreneau) + ' minutes au lieu de '
+                                                    + creationPlageHoraireForm.dureeCreneau + ', car la durée totale de la plage ne se divise pas exactement.'
+                                                }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <vu:select-edit label="${model.agendaLabel}" object="creationPlageHoraireForm" field="ageId" valueField="ageId" list="agendasDisplay" th:if="${!model.modeGuichet}"/>
+                    <vu:text-field-edit object="creationPlageHoraireForm" field="nbGuichet" mask="##" th:if="${model.modeGuichet}"/>
+                </vu:grid>
+            </q-card-section>
+            <q-card-actions align="right">
+                <q-btn color="primary" label="Annuler" outline v-close-popup ></q-btn>
+                <q-btn color="primary" label="Modifier" @click="componentStates.editItemModalValidate.opened=true"></q-btn>
+			    <q-dialog v-model="componentStates.editItemModalValidate.opened" persistent transition-show="scale" transition-hide="scale">
+			      <!--/* copied from agenda-delete-plage.html */-->
+			      <q-card class="bg-white" style="width: 300px">
+			        <q-toolbar class="bg-primary">
+			            <q-toolbar-title class="text-white">Valider la modification</q-toolbar-title>
+			        </q-toolbar>
+			        <q-card-section class="row items-center">
+			           <span class="q-ml-sm">
+			               <div>
+			               Confirmer-vous la modification de la plage horaire ?<br/>
+			               <b>{{ componentStates.editedPlageHoraire.dateLocale_fmt }} 
+			               de {{ formatMinutes(componentStates.editedPlageHoraire.minutesDebut) }} 
+			               à {{ formatMinutes(componentStates.editedPlageHoraire.minutesFin) }}</b>
+			               </div>
+			               <q-banner inline-actions class="bg-warning q-mt-lg" v-if="componentStates.editedPlageHoraire.nbReserve>0">
+						      Il y a <b>{{componentStates.editedPlageHoraire.nbReserve}}</b> rendez-vous déjà réservé(s) sur cette plage horaire.<br/>
+						      Si vous confirmez la modification de cette plage, les rendez-vous ne seront pas supprimés et resteront visibles sur l'agenda.					      
+						    </q-banner>
+			          </span>
+			        </q-card-section>
+			        <q-card-actions align="right">
+			               <q-btn label="Annuler" color="primary" outline v-close-popup="2" ></q-btn>
+			               <q-btn label="Valider" color="primary" th:@click.stop.prevent="|editPlageHoraire(componentStates.editedPlageHoraire.plhId, ${model.modeGuichet})|" v-close-popup ></q-btn>
+			        </q-card-actions>
+			      </q-card>
+			    </q-dialog>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+</th:block>

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,6 +228,7 @@ public final class ExportManagerTest {
 		final var export = new ExportBuilder(ExportFormat.XLS, OUTPUT_PATH + "test.xls")
 				.beginSheet(countries, "countries")
 				.addField(CountryFields.conId, contients, ContinentFields.name)
+				.addField(CountryFields.continent)
 				.addField(CountryFields.active)
 				.addField(CountryFields.localDate)
 				.addField(CountryFields.instant)
@@ -249,6 +250,7 @@ public final class ExportManagerTest {
 		final var export = new ExportBuilder(ExportFormat.XLSX, OUTPUT_PATH + "test.xlsx")
 				.beginSheet(countries, "countries")
 				.addField(CountryFields.conId, contients, ContinentFields.name)
+				.addField(CountryFields.continent)
 				.addField(CountryFields.active)
 				.addField(CountryFields.localDate)
 				.addField(CountryFields.instant)
@@ -317,7 +319,7 @@ public final class ExportManagerTest {
 		final var unknownContinent = new Continent().setId(30L); //no name
 		final var asie = new Continent().setId(40L).setName("Asie");
 
-		final var dtc = new DtList<Continent>(Continent.class);
+		final var dtc = new DtList<>(Continent.class);
 		// les index sont données par ordre alpha > null à la fin >
 		dtc.add(america);
 		dtc.add(asie);
@@ -327,12 +329,39 @@ public final class ExportManagerTest {
 	}
 
 	private static DtList<Country> buildCountries() {
-		final var france = new Country().setId(1L).setConId(10L).setName("France").setActive(true).setLocalDate(LocalDate.of(2018, 10, 15)).setInstant(Instant.now());
-		final var usa = new Country().setId(2L).setConId(20L).setName("usa").setActive(true).setLocalDate(LocalDate.of(2017, 9, 14)).setInstant(Instant.now().minus(2, ChronoUnit.MINUTES));
-		final var unknownCountry = new Country().setId(3L).setConId(30L).setActive(false).setLocalDate(LocalDate.of(2016, 8, 13)).setInstant(Instant.now().minus(4, ChronoUnit.MINUTES)); //no name
-		final var japan = new Country().setId(4L).setConId(40L).setName("japan").setActive(true).setLocalDate(LocalDate.of(2015, 7, 12)).setInstant(Instant.now().minus(6, ChronoUnit.MINUTES));
+		final var france = new Country()
+				.setId(1L)
+				.setConId(10L)
+				.setName("France")
+				.setContinent(new Continent().setId(10L).setName("Europe"))
+				.setActive(true)
+				.setLocalDate(LocalDate.of(2018, 10, 15))
+				.setInstant(Instant.now());
+		final var usa = new Country()
+				.setId(2L)
+				.setConId(20L)
+				.setName("usa")
+				.setContinent(new Continent().setId(20L).setName("America"))
+				.setActive(true)
+				.setLocalDate(LocalDate.of(2017, 9, 14))
+				.setInstant(Instant.now().minus(2, ChronoUnit.MINUTES));
+		final var unknownCountry = new Country()
+				.setId(3L)
+				.setConId(30L)
+				.setContinent(new Continent().setId(30L)) //no name
+				.setActive(false)
+				.setLocalDate(LocalDate.of(2016, 8, 13))
+				.setInstant(Instant.now().minus(4, ChronoUnit.MINUTES)); //no name
+		final var japan = new Country()
+				.setId(4L)
+				.setConId(40L)
+				.setName("japan")
+				.setContinent(new Continent().setId(40L).setName("Asie"))
+				.setActive(true)
+				.setLocalDate(LocalDate.of(2015, 7, 12))
+				.setInstant(Instant.now().minus(6, ChronoUnit.MINUTES));
 
-		final var dtc = new DtList<Country>(Country.class);
+		final var dtc = new DtList<>(Country.class);
 		// les index sont données par ordre alpha > null à la fin >
 		dtc.add(france);
 		dtc.add(usa);

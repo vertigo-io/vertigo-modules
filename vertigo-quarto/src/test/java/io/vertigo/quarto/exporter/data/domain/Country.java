@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public final class Country implements Entity {
 	private Boolean active;
 	private LocalDate localDate;
 	private Instant instant;
+	private Continent continent;
 
 	@Override
 	public UID getUID() {
@@ -102,6 +103,16 @@ public final class Country implements Entity {
 
 	public Country setInstant(final Instant instant) {
 		this.instant = instant;
+		return this;
+	}
+
+	@Field(smartType = "STyDtContinent", label = "continent")
+	public final Continent getContinent() {
+		return continent;
+	}
+
+	public Country setContinent(final Continent continent) {
+		this.continent = continent;
 		return this;
 	}
 

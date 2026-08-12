@@ -11,22 +11,36 @@
 	<packaging>jar</packaging>
 	<name>vertigo-geo</name>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- Import ES9 versions from vertigo-elasticsearch-connector -->
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-elasticsearch-connector</artifactId>
+				<version>${vertigo.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-datamodel</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
+		<!-- Search -->
+		<dependency>
+			<groupId>co.elastic.clients</groupId>
+			<artifactId>elasticsearch-java</artifactId>
+			<optional>true</optional> <!-- ESGeoSearchPlugin -->
+		</dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-elasticsearch-connector</artifactId>
 			<version>${vertigo.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-		    <groupId>org.elasticsearch.client</groupId>
-		    <artifactId>elasticsearch-rest-high-level-client</artifactId>
-		    <optional>true</optional> <!-- RestHighLevelElasticSearchConnector -->
+			<optional>true</optional> <!-- ESGeoSearchPlugin -->
 		</dependency>
 	</dependencies>
 </project>

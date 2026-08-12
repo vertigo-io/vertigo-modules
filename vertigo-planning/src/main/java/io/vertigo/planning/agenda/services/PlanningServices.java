@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package io.vertigo.planning.agenda.services;
 
 import java.io.Serializable;
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +25,10 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,7 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
@@ -66,6 +69,7 @@ import io.vertigo.planning.agenda.domain.CreationPlageHoraireForm;
 import io.vertigo.planning.agenda.domain.Creneau;
 import io.vertigo.planning.agenda.domain.DateDisponibleDisplay;
 import io.vertigo.planning.agenda.domain.DefaultPlageHoraire;
+import io.vertigo.planning.agenda.domain.DuplicationJourForm;
 import io.vertigo.planning.agenda.domain.DuplicationSemaineForm;
 import io.vertigo.planning.agenda.domain.PlageHoraire;
 import io.vertigo.planning.agenda.domain.PlageHoraireDisplay;
@@ -76,6 +80,7 @@ import io.vertigo.planning.agenda.domain.TrancheHoraireDisplay;
 import io.vertigo.planning.domain.DtDefinitions.AgendaFields;
 import io.vertigo.planning.domain.DtDefinitions.CreationPlageHoraireFormFields;
 import io.vertigo.planning.domain.DtDefinitions.CreneauFields;
+import io.vertigo.planning.domain.DtDefinitions.DuplicationJourFormFields;
 import io.vertigo.planning.domain.DtDefinitions.DuplicationSemaineFormFields;
 import io.vertigo.planning.domain.DtDefinitions.PlageHoraireFields;
 import io.vertigo.planning.domain.DtDefinitions.PublicationTrancheHoraireFormFields;
@@ -209,12 +214,20 @@ public class PlanningServices implements Component {
 		trancheHoraire.agenda().setUID(plageHoraire.agenda().getUID());
 		trancheHoraire.setDateLocale(plageHoraire.getDateLocale());
 		trancheHoraire.setMinutesDebut(startMinuteOfDay);
-		trancheHoraire.setMinutesFin(startMinuteOfDay + dureeTrancheMinute);
+		trancheHoraire.setMinutesFin(Math.min(startMinuteOfDay + dureeTrancheMinute, plageHoraire.getMinutesFin()));
 		trancheHoraire.setNbGuichet(nbGuichet);
 		return trancheHoraire;
 	}
 
-	public void duplicateSemaine(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm, final Map<UID<Agenda>, Integer> dureeTranchePerAgenda) {
+	public void duplicateSemaine(final List<UID<Agenda>> ageUids, final DuplicationSemaineForm duplicationSemaineForm, final Map<UID<Agenda>, Integer> dureeTranchePerAgenda,
+			final List<LocalDate> joursFermes) {
+		Assertion.check()
+				.isNotNull(ageUids)
+				.isNotNull(duplicationSemaineForm)
+				.isNotNull(dureeTranchePerAgenda)
+				.isNotNull(joursFermes)
+				.isTrue(!ageUids.isEmpty(), "Au moins un agenda doit être renseigné pour la duplication de semaine");
+
 		//security filter
 		final var uiErrorBuilder = new UiErrorBuilder();
 		uiErrorBuilder.checkFieldDateAfterOrEquals(duplicationSemaineForm, DuplicationSemaineFormFields.dateLocaleFromDebut, DuplicationSemaineFormFields.dateLocaleFromFin,
@@ -249,6 +262,54 @@ public class PlanningServices implements Component {
 		uiErrorBuilder.throwUserExceptionIfErrors();
 		/*****/
 
+		final var duplicationMap = buildDuplicationMap(duplicationSemaineForm);
+		duplicatePlageHoraires(ageUids, duplicationMap, dureeTranchePerAgenda, joursFermes);
+	}
+
+	public void duplicateJour(final List<UID<Agenda>> ageUids, final DuplicationJourForm duplicationJourForm,
+			final Map<UID<Agenda>, Integer> dureeTranchePerAgenda, final List<LocalDate> joursFermes) {
+		Assertion.check()
+				.isNotNull(ageUids)
+				.isNotNull(duplicationJourForm)
+				.isNotNull(duplicationJourForm.getDateLocaleFrom())
+				.isNotNull(duplicationJourForm.getDateLocaleTo())
+				.isNotNull(dureeTranchePerAgenda)
+				.isNotNull(joursFermes)
+				.isTrue(!ageUids.isEmpty(), "Au moins un agenda doit être renseigné pour la duplication de jour")
+				.isTrue(!duplicationJourForm.getDateLocaleTo().isEmpty(), "Aucune date cible à dupliquer n'a été fournie")
+				.isFalse(duplicationJourForm.getDateLocaleTo().contains(duplicationJourForm.getDateLocaleFrom()),
+						"Le jour source ne doit pas être présent dans les jours cibles");
+
+		final var uiErrorBuilder = new UiErrorBuilder();
+		if (duplicationJourForm.getDateLocaleTo().size() > planningServicesConfig.getDuplicateMaxDaysPeriode()) {
+			uiErrorBuilder.addError(duplicationJourForm, DuplicationJourFormFields.dateLocaleTo,
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer une semaine sur plus de {0}", getDaysLimitLabel(planningServicesConfig.getDuplicateMaxDaysPeriode(), false)));
+		}
+		final var maxDateTo = duplicationJourForm.getDateLocaleTo().stream().max(Comparator.naturalOrder()).orElseThrow();
+		final var decalageSource = ChronoUnit.DAYS.between(LocalDate.now(), maxDateTo);
+		if (Math.abs(decalageSource) > planningServicesConfig.getDuplicateMaxDaysFromNow()) {
+			uiErrorBuilder.addError(duplicationJourForm, DuplicationJourFormFields.dateLocaleFrom,
+					LocaleMessageText.of("Vous ne pouvez pas dupliquer à plus de {0}", getDaysLimitLabel(planningServicesConfig.getDuplicateMaxDaysFromNow(), false)));
+		}
+
+		uiErrorBuilder.throwUserExceptionIfErrors();
+		/*****/
+
+		duplicatePlageHoraires(ageUids, Map.of(duplicationJourForm.getDateLocaleFrom(), duplicationJourForm.getDateLocaleTo()), dureeTranchePerAgenda, joursFermes);
+	}
+
+	private void duplicatePlageHoraires(final List<UID<Agenda>> ageUids, final Map<LocalDate, List<LocalDate>> duplicationMap, final Map<UID<Agenda>, Integer> dureeTranchePerAgenda,
+			final List<LocalDate> joursFermes) {
+		Assertion.check()
+				.isNotNull(ageUids)
+				.isNotNull(duplicationMap)
+				.isNotNull(dureeTranchePerAgenda)
+				.isNotNull(joursFermes)
+				.isTrue(!ageUids.isEmpty(), "Au moins un agenda doit être renseigné pour la duplication");
+		if (duplicationMap.isEmpty()) {
+			throw new VUserException("Aucune date source à dupliquer n'a été fournie");
+		}
+
 		//on lock tous les agendas existants concernés : Attention ça peut locker la table !!
 		ageUids.forEach(ageUid -> {
 			if ((Long) ageUid.getId() > 0L) {
@@ -257,76 +318,126 @@ public class PlanningServices implements Component {
 		}); //ForUpdate pour éviter les doublons
 		final var ageIds = ageUids.stream().map(UID::getId).map(Long.class::cast).toList();
 		final var ageIdsArray = ageIds.toArray(Serializable[]::new);
+
+		final var sourceDates = duplicationMap.keySet();
+		final var targetDates = duplicationMap.values().stream().flatMap(List::stream).toList();
+		if (targetDates.isEmpty()) {
+			throw new VUserException("La période cible ne contient aucune date à dupliquer");
+		}
+		final var minSourceDate = sourceDates.stream().min(Comparator.naturalOrder()).orElseThrow();
+		final var maxSourceDate = sourceDates.stream().max(Comparator.naturalOrder()).orElseThrow();
+		final var minTargetDate = targetDates.stream().min(Comparator.naturalOrder()).orElseThrow();
+		final var maxTargetDate = targetDates.stream().max(Comparator.naturalOrder()).orElseThrow();
+
 		final var plageHorairesFrom = plageHoraireDAO.findAll(
 				Criterions.in(PlageHoraireFields.ageId, ageIdsArray)
-						.and(Criterions.isGreaterThanOrEqualTo(PlageHoraireFields.dateLocale, duplicationSemaineForm.getDateLocaleFromDebut()))
-						.and(Criterions.isLessThanOrEqualTo(PlageHoraireFields.dateLocale, duplicationSemaineForm.getDateLocaleFromFin())),
+						.and(Criterions.isGreaterThanOrEqualTo(PlageHoraireFields.dateLocale, minSourceDate))
+						.and(Criterions.isLessThanOrEqualTo(PlageHoraireFields.dateLocale, maxSourceDate)),
 				DtListState.of(null, 0, PlageHoraireFields.dateLocale.name(), false));
 		if (plageHorairesFrom.isEmpty()) {
 			//erreur bloquante
-			throw new VUserException("La semaine que vous souhaitez dupliquer n'a aucune plage horaire");
+			throw new VUserException("La période source n'a aucune plage horaire");
 		}
-		final var closedTranchesHorairesFrom = trancheHoraireDAO.getTrancheHorairesFermeesByAgeIds(ageIds,
-				duplicationSemaineForm.getDateLocaleFromDebut(), duplicationSemaineForm.getDateLocaleFromFin());
+		final var closedTranchesHorairesFrom = trancheHoraireDAO.getTrancheHorairesFermeesByAgeIds(ageIds, minSourceDate, maxSourceDate);
 
 		final var previousPlageHorairesTo = plageHoraireDAO.findAll(
 				Criterions.in(PlageHoraireFields.ageId, ageIdsArray)
-						.and(Criterions.isGreaterThanOrEqualTo(PlageHoraireFields.dateLocale, duplicationSemaineForm.getDateLocaleToDebut()))
-						.and(Criterions.isLessThanOrEqualTo(PlageHoraireFields.dateLocale, duplicationSemaineForm.getDateLocaleToFin())),
+						.and(Criterions.isGreaterThanOrEqualTo(PlageHoraireFields.dateLocale, minTargetDate))
+						.and(Criterions.isLessThanOrEqualTo(PlageHoraireFields.dateLocale, maxTargetDate)),
 				DtListState.of(null, 0, PlageHoraireFields.dateLocale.name(), false));
 
-		final Map<DayOfWeek, List<PlageHoraire>> mapPlagesHorairesFromPerDayOfWeek = plageHorairesFrom.stream()
-				.collect(Collectors.groupingBy(plh -> plh.getDateLocale().getDayOfWeek()));
+		final List<Tuple<PlageHoraire, List<TrancheHoraire>>> plageHorairesToCreate = resolvePlageHoraireToCreate(duplicationMap, joursFermes,
+				plageHorairesFrom, closedTranchesHorairesFrom, previousPlageHorairesTo);
 
-		final Map<LocalDate, List<PlageHoraire>> mapPreviousPlagesHorairesToPerLocalDate = previousPlageHorairesTo.stream()
-				.collect(Collectors.groupingBy((Function<? super PlageHoraire, ? extends LocalDate>) PlageHoraire::getDateLocale));
-
-		final Map<DayOfWeek, List<TrancheHoraire>> mapClosedTranchesHorairesFromPerDayOfWeek = closedTranchesHorairesFrom.stream()
-				.collect(Collectors.groupingBy(trh -> trh.getDateLocale().getDayOfWeek()));
-
-		final var plageHorairesToCreate = new DtList<>(PlageHoraire.class);
-		final var trancheHoraires = new DtList<>(TrancheHoraire.class);
-		//final int dureeTrancheMinute = duplicationSemaineForm.getDureeCreneau();
-		for (var d = 0; d < dureeDuplicationJours + 1; ++d) { //+1 => date de fin incluse
-			final var currentCopyDate = duplicationSemaineForm.getDateLocaleToDebut().plusDays(d);
-			final var plageHorairesCopyFrom = mapPlagesHorairesFromPerDayOfWeek.get(currentCopyDate.getDayOfWeek());
-			if (plageHorairesCopyFrom == null || plageHorairesCopyFrom.isEmpty()) {
-				continue;
-			}
-
-			final var plageHorairesPreviousTo = mapPreviousPlagesHorairesToPerLocalDate.get(currentCopyDate);
-			for (final PlageHoraire plageHoraireFrom : plageHorairesCopyFrom) {
-				//on vérifie qu'il n'y a pas de conflit
-				if (plageHorairesPreviousTo != null
-						&& !plageHorairesPreviousTo.isEmpty()
-						&& conflictPlageHoraire(plageHoraireFrom, plageHorairesPreviousTo)) {
-					continue;
-				}
-				//sinon on crée la plage
-				final var plageHoraire = new PlageHoraire();
-				plageHoraire.agenda().setUID(plageHoraireFrom.agenda().getUID());
-				plageHoraire.setDateLocale(currentCopyDate);
-				plageHoraire.setMinutesDebut(plageHoraireFrom.getMinutesDebut());
-				plageHoraire.setMinutesFin(plageHoraireFrom.getMinutesFin());
-				plageHoraire.setNbGuichet(plageHoraireFrom.getNbGuichet());
-				plageHorairesToCreate.add(plageHoraire);
-
-				//(les tranches seront mis à jour après l'insert pour pouvoir récupérer la PK générée)
-			}
-		}
 		//le batch ne marche pas car l'id n'est pas setté
 		//on le fait quand meme en dernier pour locker moins longtemps
 		//Creation des tranches horaires associées
-		for (final PlageHoraire plageHoraire : plageHorairesToCreate) {
+		final var trancheHorairesToCreate = new DtList<>(TrancheHoraire.class);
+		for (final var plageHoraireContext : plageHorairesToCreate) {
+			final var plageHoraire = plageHoraireContext.val1();
 			plageHoraireDAO.save(plageHoraire);
 			//cette fois l'id de la plage existe et peut être associée dans la FK des tranches
 			//RDV-351 : il faut vérifier les tranches supprimées
 			final Integer dureeCreneauAgenda = dureeTranchePerAgenda.get(plageHoraire.agenda().getUID());
 			Assertion.check().isNotNull(dureeCreneauAgenda, "La durée de créneau n'est pas définie pour l'agenda {0}", plageHoraire.agenda().getUID());
-			trancheHoraires.addAll(createTrancheHoraires(plageHoraire, dureeCreneauAgenda,
-					mapClosedTranchesHorairesFromPerDayOfWeek.getOrDefault(plageHoraire.getDateLocale().getDayOfWeek(), Collections.emptyList())));
+			trancheHorairesToCreate.addAll(createTrancheHoraires(plageHoraire, dureeCreneauAgenda, plageHoraireContext.val2()));
 		}
-		trancheHoraireDAO.batchInsertTrancheHoraire(trancheHoraires);
+		trancheHoraireDAO.batchInsertTrancheHoraire(trancheHorairesToCreate);
+	}
+
+	/**
+	 * Resolve the plageHoraire to create skipping the joursFermes and conflicts with previousPlageHorairesTo.
+	 *
+	 * @return Tuple of PlageHoraire and closed TrancheHoraire (to recreate closed ones upon duplication)
+	 */
+	private static List<Tuple<PlageHoraire, List<TrancheHoraire>>> resolvePlageHoraireToCreate(final Map<LocalDate, List<LocalDate>> duplicationMap, final List<LocalDate> joursFermes,
+			final DtList<PlageHoraire> plageHorairesFrom,
+			final DtList<TrancheHoraire> closedTranchesHorairesFrom, final DtList<PlageHoraire> previousPlageHorairesTo) {
+		final List<Tuple<PlageHoraire, List<TrancheHoraire>>> plageHorairesToCreate = new ArrayList<>(); // Tuple of PlageHoraire and closed TrancheHoraire (to recreate closed ones upon duplication)
+
+		final Map<LocalDate, List<PlageHoraire>> mapPlagesHorairesFromPerDate = plageHorairesFrom.stream()
+				.collect(Collectors.groupingBy(PlageHoraire::getDateLocale));
+
+		final Map<LocalDate, List<TrancheHoraire>> mapClosedTranchesHorairesFromPerDate = closedTranchesHorairesFrom.stream()
+				.collect(Collectors.groupingBy(TrancheHoraire::getDateLocale));
+
+		final Map<LocalDate, List<PlageHoraire>> mapPreviousPlagesHorairesToPerLocalDate = previousPlageHorairesTo.stream()
+				.collect(Collectors.groupingBy((Function<? super PlageHoraire, ? extends LocalDate>) PlageHoraire::getDateLocale)); // cast ?
+
+		duplicationMap.forEach((sourceDate, targetDatesForSource) -> {
+			final var plageHorairesCopyFrom = mapPlagesHorairesFromPerDate.get(sourceDate);
+			if (plageHorairesCopyFrom == null || plageHorairesCopyFrom.isEmpty()) {
+				return;
+			}
+			final var closedTranchesFrom = mapClosedTranchesHorairesFromPerDate.getOrDefault(sourceDate, Collections.emptyList());
+			targetDatesForSource.stream()
+					.filter(targetDate -> !joursFermes.contains(targetDate))
+					.forEach(targetDate -> {
+						final var plageHorairesPreviousTo = mapPreviousPlagesHorairesToPerLocalDate.get(targetDate);
+						for (final PlageHoraire plageHoraireFrom : plageHorairesCopyFrom) {
+							//on vérifie qu'il n'y a pas de conflit
+							if (plageHorairesPreviousTo != null
+									&& !plageHorairesPreviousTo.isEmpty()
+									&& conflictPlageHoraire(plageHoraireFrom, plageHorairesPreviousTo)) {
+								continue;
+							}
+							//sinon on crée la plage
+							final var plageHoraire = new PlageHoraire();
+							plageHoraire.agenda().setUID(plageHoraireFrom.agenda().getUID());
+							plageHoraire.setDateLocale(targetDate);
+							plageHoraire.setMinutesDebut(plageHoraireFrom.getMinutesDebut());
+							plageHoraire.setMinutesFin(plageHoraireFrom.getMinutesFin());
+							plageHoraire.setNbGuichet(plageHoraireFrom.getNbGuichet());
+							plageHorairesToCreate.add(Tuple.of(plageHoraire, closedTranchesFrom));
+							//(les tranches seront mis à jour après l'insert pour pouvoir récupérer la PK générée)
+						}
+					});
+		});
+
+		return plageHorairesToCreate;
+	}
+
+	private static Map<LocalDate, List<LocalDate>> buildDuplicationMap(final DuplicationSemaineForm duplicationSemaineForm) {
+		final var sourceDates = getInclusiveDatesRange(duplicationSemaineForm.getDateLocaleFromDebut(), duplicationSemaineForm.getDateLocaleFromFin());
+		final var targetDates = getInclusiveDatesRange(duplicationSemaineForm.getDateLocaleToDebut(), duplicationSemaineForm.getDateLocaleToFin());
+
+		final Map<LocalDate, List<LocalDate>> duplicationMap = new HashMap<>();
+		for (final LocalDate sourceDate : sourceDates) {
+			final var matchingTargets = targetDates.stream()
+					.filter(targetDate -> targetDate.getDayOfWeek().equals(sourceDate.getDayOfWeek()))
+					.toList();
+			if (!matchingTargets.isEmpty()) {
+				duplicationMap.put(sourceDate, matchingTargets);
+			}
+		}
+		return duplicationMap;
+	}
+
+	private static List<LocalDate> getInclusiveDatesRange(final LocalDate start, final LocalDate end) {
+		final var days = ChronoUnit.DAYS.between(start, end);
+		return IntStream.rangeClosed(0, (int) days)
+				.mapToObj(start::plusDays)
+				.toList();
 	}
 
 	private static boolean conflictPlageHoraire(final PlageHoraire plageHoraireFrom, final List<PlageHoraire> plhsPreviousTo) {
@@ -528,12 +639,25 @@ public class PlanningServices implements Component {
 		return Optional.of(reservationCreneau);
 	}
 
-	public ReservationCreneau reserverCreneauWithOverbooking(final UID<TrancheHoraire> trhUid) {
+	public ReservationCreneau reserverCreneauBO(final UID<TrancheHoraire> trhUid, final boolean siSurbooking) {
 		final var reservationCreneauOpt = reserverCreneau(trhUid);
 		if (reservationCreneauOpt.isPresent()) {
 			return reservationCreneauOpt.get();
 		}
-		final var trancheHoraire = trancheHoraireDAO.get(trhUid);
+		// not published or full booked, so only back office can book
+		// get with a lock on trancheHoraire to avoid concurrency issues
+		final var trancheHoraire = trancheHoraireDAO.getTrancheHoraireWithLock(trhUid.getId());
+		if (!siSurbooking) {
+			final var trhDisplay = getTrancheHoraireDisplayByPlage(trancheHoraire.plageHoraire().getUID())
+					.stream()
+					.filter(t -> t.getTrhId().equals(trhUid.getId()))
+					.findFirst()
+					.orElseThrow();
+			if (trhDisplay.getNbReserve() >= trhDisplay.getNbGuichet()) {
+				throw new VUserException("La tranche horaire est complète, le surbooking n'est pas autorisé pour cette démarche.");
+			}
+		}
+
 		final var reservationCreneau = prepareReservationCreneau(trancheHoraire);
 		reservationCreneauDAO.create(reservationCreneau);
 		return reservationCreneau;

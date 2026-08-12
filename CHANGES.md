@@ -3,9 +3,41 @@ Version history
 
 Running 5.0.0
 ----------------------
-[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-500)
+[Migration help](https://github.com/vertigo-io/vertigo-core/wiki/Vertigo-Migration-Guide#from-44x-to-500)
+
+* **[Geo] Migrate ESGeoSearchPlugin to ElasticSearch 9** (new `elasticsearch-java` client, uses `RestElasticSearchConnector`) : ES 7 support is dropped in vertigo 5.0
+* **[All] Switch dependency injection annotations from `javax.inject` to `jakarta.inject`**
+* [All] Migration Jetty 11 -> 12, Javalin 6 -> 7, Spring 6 -> 7
 
 more to come :)
+
+
+Release 4.4.0 - 2026/07/09
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
+
+* [Quarto] Fix ods, xls & xlsx export for complex objects (non-basic types) using export adapter
+* [EasyForms] Fix phone regex regression since 4.3.0 for international numbers
+* [EasyForms] Use peg utility for flattening solvers
+* [EasyForms] Increase Email smarttype TLD validation up to 63 characters (RFC 1035)
+* [Planning] Add day duplication within a week
+* [Planning] Add BO reservation overbooking toggle
+* [Planning] Add day events display (infoCalendrier)
+* [Planning] Add plage horaire edit modal
+* [Planning] Performance improvement on calendar (TkGetDateDisponibleDisplayByAgeIds)
+* [Planning] Fix duplicate personal agenda (multi-agenda)
+* [Orchestra] Return active processDefinition after createOrUpdateDefinition
+* [Social] Enhance LinkMobility SMS plugin, better triage error code vs failure code
+* [Social] Refactored phone normalizer
+* [Geo][Dashboard] Update to ES9
+* [Geo] Use ES 7.17 connector (LTS) and simplify mapping
+* Update libs
+  - poi 5.4.1 -> 5.5.1
+  - poi-ooxml 5.4.1 -> 5.5.1
+  - owasp-java-html-sanitizer 20240325.1 -> 20260313.1
+  - assertj-core 3.26.0 -> 3.27.7
+  - rest-assured 5.5.5 -> 5.5.7
+  - SODS 1.6.8 -> 1.7.0
 
 
 Release 4.3.2 - 2025/07/10
@@ -22,6 +54,15 @@ Release 4.3.1 - 2025/06/13
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-431)
 * [EasyForms] Improved Accessibility
 * [EasyForms] Administration in readonly can now display fields details
+* [EasyForms] Better handling of empty HTML content
+* [Planning] Fix UI (date format), remove v-modal
+* [Planning] Add param distributedSynchro for use Redis distribution (via stella)
+* [Planning] Open method for overriding
+* [Orchestra] Update UI
+* update libs
+  - rest-assured 5.5.1 -> 5.5.5
+  - poi 5.4.0 -> 5.4.1
+  - sods 1.6.7 -> 1.6.8
 
 
 Release 4.3.0 - 2025/03/27
@@ -1097,7 +1138,7 @@ Release 1.1.1 - 2018/04/27
 * [quarto] fix creation of final doc (medias etc...) (docx)
 * [quarto] fix new paragraphs on line breaks (docx)
 * [orchestra] fix params in memoryImpl
-* [dashboard] some minor additions (bêta)
+* [dashboard] some minor additions (b+�ta)
 * [struts2] Added multiple file upload support
 * [struts2] Alternative Struts2 multipart request parser for servlet 3
 * [struts2] Added hash on sessionId to secure them
@@ -1148,7 +1189,7 @@ Release 1.1.0 - 2017/12/07
 * [all] Migrated Log4j to Log4j2
 * [all] Updated versions (gson, hibernate, junit) : gson 2.8.1 to 2.8.2, hibernate 5.2.10 to 5.2.11, junit 5.0.0-M4 to 5.0.1
 * __[all] Execution error with jdk 1.8_51 should use more recent version__
-* [dashboard] added module dashboard (bêta)
+* [dashboard] added module dashboard (b+�ta)
 * [struts2] Added multiple file upload support 
 * [quarto] Fixed #12 (LocalDate and DateTime) 
 * [all] Updated versions (javax.mail, lucene, selenium) : javaxmail 15.6 to 1.6.0, lucene 5.5.4 to 6.6.1
@@ -1251,7 +1292,7 @@ __In Bold__ : Potential compatibility problems
 *	[studio] Added TS generator
 * [persona] deprecated module (use accoount for new projects)
 *	[tempo] _remove module_ (use vertigo-mail and vertigo-orchestra extensions)
-*	[all] Updated dependencies versions  …
+*	[all] Updated dependencies versions  �Ǫ
  org.codehaus.janino janino 2.7.8 -> 3.0.7
  net.sf.ehcache ehcache 2.10.3 -> 2.10.4
  org.slf4j slf4j-api 1.7.22 -> 1.7.25
@@ -1332,7 +1373,7 @@ __Warning : You must use 0.9.4a version of Studio module !!__
 * [Core] Component discovery in features
 * [Core] Changed boot config managment (features, added plugins, ...) redundancy__
 * [Core] Fixed #80 : We check file exists and canRead before accept this plugin
-* [Core] Updated cglib » cglib-nodep from 3.2.2 to 3.2.4
+* [Core] Updated cglib -+ cglib-nodep from 3.2.2 to 3.2.4
 * [Core] Added notepad++ coloration config
 * [Core] Changed tests Junit4 Assert to JUnit5 Assertions
 * [Core] Simple ParamManager API
@@ -2040,3 +2081,4 @@ The most notable changes in Vertigo 0.2.0 over previous releases are:
 Release 0.1.0 - 2014/01/14
 --------------------------
   * First release
+

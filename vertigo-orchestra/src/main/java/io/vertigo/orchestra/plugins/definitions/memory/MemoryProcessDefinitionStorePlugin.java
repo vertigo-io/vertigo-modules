@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import io.vertigo.orchestra.impl.definitions.ProcessDefinitionStorePlugin;
 
 /**
  * Plugin de gestion des définitions en mémoire dans le DefinitionSpace.
+ * 
  * @author mlaroche
  *
  */
@@ -38,8 +39,9 @@ public class MemoryProcessDefinitionStorePlugin implements ProcessDefinitionStor
 	private final Map<String, ProcessDefinition> processDefinitions = new ConcurrentHashMap<>();
 
 	@Override
-	public void createOrUpdateDefinition(final ProcessDefinition processDefinition) {
+	public ProcessDefinition createOrUpdateDefinition(final ProcessDefinition processDefinition) {
 		processDefinitions.put(processDefinition.getName(), processDefinition);
+		return processDefinition;
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de Famille.
 	 */
 	public enum CountryFields implements DataFieldName {
-		id, conId, name, active, localDate, instant
+		id, conId, name, active, localDate, instant, continent,
 	}
 
 	public enum ContinentFields implements DataFieldName {

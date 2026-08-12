@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,7 @@ final class XLSExporter {
 	/**
 	 * Constructor.
 	 */
+	@Deprecated
 	XLSExporter(final EntityStoreManager entityStoreManager, final SmartTypeManager smartTypeManager) {
 		Assertion.check()
 				.isNotNull(entityStoreManager)
@@ -243,8 +244,13 @@ final class XLSExporter {
 			for (final ExportField exportColumn : parameters.getExportFields()) {
 				final var cell = row.createCell(cellIndex);
 
-				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
-				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
+				final var smartTypeDefinition = exportColumn.getDataField().smartTypeDefinition();
+				if (smartTypeDefinition.getScope().isBasicType()) {
+					value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				} else {
+					value = ExporterUtil.getText(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+				}
+				putValueInCell(smartTypeManager, value, cell, rowIndex % 2 == 0 ? evenHssfStyleCache : oddHssfStyleCache, cellIndex, maxWidthPerColumn, smartTypeDefinition);
 
 				cellIndex++;
 			}
@@ -268,7 +274,12 @@ final class XLSExporter {
 			updateMaxWidthPerColumn(label.getDisplay(), 1.2, labelCellIndex, maxWidthPerColumn); // +20% pour les majuscules
 
 			final var valueCell = row.createCell(valueCellIndex);
-			value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			final var smartTypeDefinition = exportColumn.getDataField().smartTypeDefinition();
+			if (smartTypeDefinition.getScope().isBasicType()) {
+				value = ExporterUtil.getValue(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			} else {
+				value = ExporterUtil.getText(entityStoreManager, smartTypeManager, exportAdapters, referenceCache, denormCache, dto, exportColumn);
+			}
 			putValueInCell(smartTypeManager, value, valueCell, oddHssfStyleCache, valueCellIndex, maxWidthPerColumn, exportColumn.getDataField().smartTypeDefinition());
 			rowIndex++;
 		}
@@ -284,7 +295,11 @@ final class XLSExporter {
 			final Map<Integer, Double> maxWidthPerColumn,
 			final SmartTypeDefinition smartTypeDefinition) {
 		String stringValueForColumnWidth;
-		cell.setCellStyle(rowCellStyle.get(smartTypeDefinition.getBasicType()));
+		if (smartTypeDefinition.getScope().isBasicType()) {
+			cell.setCellStyle(rowCellStyle.get(smartTypeDefinition.getBasicType()));
+		} else {
+			cell.setCellStyle(rowCellStyle.get(BasicType.String));
+		}
 		if (value != null) {
 			stringValueForColumnWidth = String.valueOf(value);
 			if (value instanceof final String stringValue) {
@@ -335,6 +350,7 @@ final class XLSExporter {
 	 * @param out Flux de sortie
 	 * @throws IOException Io exception
 	 */
+	@Deprecated
 	void exportData(final Export documentParameters, final OutputStream out) throws IOException {
 		// Workbook
 		final var forceLandscape = Export.Orientation.Landscape == documentParameters.orientation();

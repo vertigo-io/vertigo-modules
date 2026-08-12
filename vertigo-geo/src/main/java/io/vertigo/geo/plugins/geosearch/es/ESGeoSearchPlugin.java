@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,45 +20,33 @@ package io.vertigo.geo.plugins.geosearch.es;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import jakarta.inject.Inject;
-
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.geo.GeoPoint;
-import org.elasticsearch.core.TimeValue;
-import org.elasticsearch.index.query.GeoBoundingBoxQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.HealthStatus;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import io.vertigo.commons.codec.CodecManager;
-import io.vertigo.connectors.elasticsearch.RestHighLevelElasticSearchConnector;
+import io.vertigo.connectors.elasticsearch.RestElasticSearchConnector;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.param.ParamValue;
-import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.VCollectors;
-import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.geo.geocoder.GeoLocation;
 import io.vertigo.geo.impl.geosearch.GeoSearchPlugin;
+import jakarta.inject.Inject;
 
 public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 
-	private final RestHighLevelElasticSearchConnector elasticSearchConnector;
+	private final RestElasticSearchConnector elasticSearchConnector;
 
-	private RestHighLevelClient esClient;
+	private ElasticsearchClient esClient;
 	private final String envIndexPrefix;
 	private final CodecManager codecManager;
 
@@ -66,16 +54,13 @@ public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 	public ESGeoSearchPlugin(
 			@ParamValue("envIndexPrefix") final String envIndexPrefix,
 			@ParamValue("connectorName") final Optional<String> connectorNameOpt,
-			final List<RestHighLevelElasticSearchConnector> elasticSearchConnectors,
-			final CodecManager codecManager,
-			final SmartTypeManager smartTypeManager,
-			final ResourceManager resourceManager) {
+			final List<RestElasticSearchConnector> elasticSearchConnectors,
+			final CodecManager codecManager) {
 		Assertion.check()
 				.isNotBlank(envIndexPrefix)
 				.isNotNull(elasticSearchConnectors)
 				.isFalse(elasticSearchConnectors.isEmpty(), "At least one ElasticSearchConnector espected");
 		//-----
-		//------
 		this.envIndexPrefix = envIndexPrefix;
 		final String connectorName = connectorNameOpt.orElse("main");
 		elasticSearchConnector = elasticSearchConnectors.stream()
@@ -113,22 +98,19 @@ public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 			final Class<D> dtIndexClass,
 			final DataFieldName<D> fieldName,
 			final Integer maxRows) {
-		final GeoBoundingBoxQueryBuilder geoBoundingBoxQueryBuilder = QueryBuilders.geoBoundingBoxQuery(fieldName.name())
-				.setCorners(new GeoPoint(topLeft.getLatitude(), topLeft.getLongitude()), new GeoPoint(bottomRight.getLatitude(), bottomRight.getLongitude()));
 		try {
-			final SearchHits searchHits = esClient
-					.search(new SearchRequest(obtainIndexName(indexName))
-							.searchType(SearchType.QUERY_THEN_FETCH)
-							.source(new SearchSourceBuilder()
-									.query(geoBoundingBoxQueryBuilder)
-									.fetchSource(new String[] { "fullResult" }, null)
-									.size(maxRows)),
-							RequestOptions.DEFAULT)
-					.getHits();
-			return Stream.of(searchHits.getHits())
-					.map(hit -> {
-						return (D) codecManager.getCompressedSerializationCodec().decode(codecManager.getBase64Codec().decode((String) hit.getSourceAsMap().get("fullResult")));
-					})
+			// On précise Map.class car on veut récupérer le JSON brut sous forme de Map
+			final SearchResponse<Map> searchResponse = esClient.search(s -> s
+					.index(obtainIndexName(indexName))
+					.size(maxRows)
+					.query(q -> q.geoBoundingBox(g -> g
+							.field(fieldName.name())
+							.boundingBox(bb -> bb.tlbr(tlbr -> tlbr
+									.topLeft(loc -> loc.latlon(ll -> ll.lat(topLeft.getLatitude()).lon(topLeft.getLongitude())))
+									.bottomRight(loc -> loc.latlon(ll -> ll.lat(bottomRight.getLatitude()).lon(bottomRight.getLongitude())))))))
+					.source(src -> src.filter(f -> f.includes("fullResult"))), Map.class);
+			return searchResponse.hits().hits().stream()
+					.map(hit -> ((D) codecManager.getCompressedSerializationCodec().decode(codecManager.getBase64Codec().decode((String) hit.source().get("fullResult")))))
 					.collect(VCollectors.toDtList(dtIndexClass));
 		} catch (final IOException e) {
 			throw WrappedException.wrap(e);
@@ -138,13 +120,11 @@ public final class ESGeoSearchPlugin implements GeoSearchPlugin, Activeable {
 
 	private void waitForYellowStatus() {
 		try {
-			final ClusterHealthRequest request = new ClusterHealthRequest();
-			request.timeout(TimeValue.timeValueSeconds(30));
-			request.waitForYellowStatus();
-
-			final ClusterHealthResponse response = esClient.cluster().health(request, RequestOptions.DEFAULT);
+			final var response = esClient.cluster().health(b -> b
+					.timeout(t -> t.time("30s"))
+					.waitForStatus(HealthStatus.Yellow));
 			//-----
-			Assertion.check().isFalse(response.isTimedOut(), "ElasticSearch cluster waiting yellow status Timedout");
+			Assertion.check().isFalse(response.timedOut(), "ElasticSearch cluster waiting yellow status Timedout");
 		} catch (final IOException e) {
 			throw WrappedException.wrap(e, "Error on waitForYellowStatus");
 		}

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2026, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,8 +80,8 @@ public enum PlanningSmartTypes {
 
 	@SmartTypeDefinition(Integer.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "1", msg = "Le nombre de guichets doit être un nombre compris entre 1 et 9")
-	@Constraint(clazz = ConstraintNumberMaximum.class, arg = "9", msg = "Le nombre de guichets doit être un nombre compris entre 1 et 9")
+	@Constraint(clazz = ConstraintNumberMinimum.class, arg = "1", msg = "Le nombre de guichets doit être un nombre compris entre 1 et 12")
+	@Constraint(clazz = ConstraintNumberMaximum.class, arg = "12", msg = "Le nombre de guichets doit être un nombre compris entre 1 et 12")
 	PNbGuichet,
 
 	@SmartTypeDefinition(Boolean.class)
