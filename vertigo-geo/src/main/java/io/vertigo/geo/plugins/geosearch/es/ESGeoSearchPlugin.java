@@ -26,7 +26,6 @@ import java.util.Optional;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.HealthStatus;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.search.Hit;
 import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.connectors.elasticsearch.RestElasticSearchConnector;
 import io.vertigo.core.lang.Assertion;
