@@ -36,7 +36,7 @@
 		<connection>scm:git:https://github.com/vertigo-io/vertigo-modules.git</connection>
 		<developerConnection>scm:git:https://github.com/vertigo-io/vertigo-modules.git</developerConnection>
 		<url>scm:git:https://github.com/vertigo-io/vertigo-modules.git</url>
-		<tag>vertigo-4.4.0</tag>
+		<tag>vertigo-4.4.1-SNAPSHOT</tag>
 	</scm>
 
 	<profiles>
