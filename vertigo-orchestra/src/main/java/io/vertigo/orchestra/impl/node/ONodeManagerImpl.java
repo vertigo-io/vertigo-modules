@@ -56,9 +56,11 @@ public class ONodeManagerImpl implements ONodeManager {
 		node.setHeartbeat(lastHeartBeatTime);
 		if (existingNode.isPresent()) {
 			nodeDAO.update(node);
+			LOGGER.info("Node [{}] re-registered, nodId: {}", nodeName, node.getNodId());
 		} else {
 			node.setName(nodeName);
 			nodeDAO.create(node);
+			LOGGER.info("Node [{}] registered, nodId: {}", nodeName, node.getNodId());
 		}
 		return node.getNodId();
 
