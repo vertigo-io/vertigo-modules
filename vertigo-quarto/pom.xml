@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-modules</artifactId>
-		<version>4.4.0</version>
+		<version>4.4.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-quarto</artifactId>
@@ -18,8 +18,8 @@
 			<artifactId>itext</artifactId>
 			<version>2.1.7</version> <!-- iText 5+ is AGPL/Commercial, frozen on lowagie LGPL -->
 			<exclusions>
-				<!-- BouncyCastle est utilisé pour ouvrir les pdf sécurisés Donc non 
-					utilisé pour les générations. -->
+				<!-- BouncyCastle est utilis├® pour ouvrir les pdf s├®curis├®s Donc non 
+					utilis├® pour les g├®n├®rations. -->
 				<exclusion>
 					<groupId>bouncycastle</groupId>
 					<artifactId>bcmail-jdk14</artifactId>

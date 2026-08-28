@@ -503,7 +503,8 @@ public final class DbProcessExecutorPlugin implements ProcessExecutorPlugin, Act
 			final OActivityExecution bddActivityExecution = activityExecutionDAO.get(activityExecution.getAceId());
 			if (!ExecutionState.RUNNING.name().equals(bddActivityExecution.getEstCd())) {
 				//we check activityExecution already executed (should not occur)
-				LOGGER.error("Error in activity state, activity excution " + activityExecution.getActId() + " is already terminated, current node " + nodId + " stop process");
+				LOGGER.error("Error in activity state, activity execution {} is already terminated (state: [{}]), current node {} stop process",
+						activityExecution.getAceId(), bddActivityExecution.getEstCd(), nodId);
 			} else {
 				endActivity(activityExecution);
 				final Optional<OActivity> nextActivity = activityDAO.getNextActivityByActId(activityExecution.getActId());
@@ -689,9 +690,9 @@ public final class DbProcessExecutorPlugin implements ProcessExecutorPlugin, Act
 	}
 
 	private void handleDeadNodeProcesses() {
+		// We wait two heartbeat to be sure that the node is dead
+		final Instant maxDate = Instant.now().minusSeconds(2L * executionPeriodSeconds);
 		try (final VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			// We wait two heartbeat to be sure that the node is dead
-			final Instant maxDate = Instant.now().minusSeconds(2L * executionPeriodSeconds);
 			executionPAO.handleProcessesOfDeadNodes(maxDate);
 			transaction.commit();
 		}
