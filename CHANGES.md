@@ -8,6 +8,11 @@ Running 5.0.0
 more to come :)
 
 
+Running 4.5.0-SNAPSHOT - 2026-12-XX
+----------------------
+more to come :)
+
+
 Release 4.4.1 - 2026/08/28
 ----------------------
 * [Orchestra] Improve logging for node registration and executor : INFO log on node registration, parameterized error log with activityExecution id, state and node id, documented dead-node cutoff computation
