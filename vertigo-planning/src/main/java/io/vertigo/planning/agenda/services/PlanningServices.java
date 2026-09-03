@@ -117,6 +117,13 @@ public class PlanningServices implements Component {
 	}
 
 	public PlageHoraire createPlageHoraire(final CreationPlageHoraireForm creationPlageHoraireForm, final List<UID<Agenda>> authorizedAgeUids, final int maxWeekDaysNumber) {
+		Assertion.check()
+				.isNotNull(creationPlageHoraireForm)
+				.isNotNull(authorizedAgeUids)
+				.isNotNull(creationPlageHoraireForm.getDureeCreneau(), "La durée de créneau doit être renseignée")
+				.isTrue(creationPlageHoraireForm.getDureeCreneau() > 0, "La durée de créneau doit être strictement positive (reçu : {0})",
+						creationPlageHoraireForm.getDureeCreneau());
+		//---
 		/** Contrôles User */
 		final var uiErrorBuilder = new UiErrorBuilder();
 		final var decalageJours = ChronoUnit.DAYS.between(LocalDate.now(), creationPlageHoraireForm.getDateLocale());
@@ -194,6 +201,12 @@ public class PlanningServices implements Component {
 	}
 
 	private static DtList<TrancheHoraire> createTrancheHoraires(final PlageHoraire plageHoraire, final int dureeTrancheMinute, final List<TrancheHoraire> closedTranchesHoraires) {
+		//the loop below increments by dureeTrancheMinute : a zero or negative step would never terminate
+		Assertion.check()
+				.isNotNull(plageHoraire)
+				.isNotNull(closedTranchesHoraires)
+				.isTrue(dureeTrancheMinute > 0, "La durée d'une tranche horaire doit être strictement positive (reçu : {0})", dureeTrancheMinute);
+		//---
 		final var trancheHoraires = new DtList<>(TrancheHoraire.class);
 		for (int i = plageHoraire.getMinutesDebut(); i < plageHoraire.getMinutesFin(); i += dureeTrancheMinute) {
 			boolean isClosed = false;
@@ -359,7 +372,10 @@ public class PlanningServices implements Component {
 			//cette fois l'id de la plage existe et peut être associée dans la FK des tranches
 			//RDV-351 : il faut vérifier les tranches supprimées
 			final Integer dureeCreneauAgenda = dureeTranchePerAgenda.get(plageHoraire.agenda().getUID());
-			Assertion.check().isNotNull(dureeCreneauAgenda, "La durée de créneau n'est pas définie pour l'agenda {0}", plageHoraire.agenda().getUID());
+			Assertion.check()
+					.isNotNull(dureeCreneauAgenda, "La durée de créneau n'est pas définie pour l'agenda {0}", plageHoraire.agenda().getUID())
+					.isTrue(dureeCreneauAgenda > 0, "La durée de créneau de l'agenda {0} doit être strictement positive (reçu : {1})", plageHoraire.agenda().getUID(),
+							dureeCreneauAgenda);
 			trancheHorairesToCreate.addAll(createTrancheHoraires(plageHoraire, dureeCreneauAgenda, plageHoraireContext.val2()));
 		}
 		trancheHoraireDAO.batchInsertTrancheHoraire(trancheHorairesToCreate);
