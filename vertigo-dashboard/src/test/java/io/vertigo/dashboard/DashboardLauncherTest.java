@@ -52,6 +52,7 @@ import io.vertigo.datastore.entitystore.metrics.EntityMetricsProvider;
 import io.vertigo.vega.VegaFeatures;
 
 public class DashboardLauncherTest {
+	private static final String REDIS_HOST = System.getenv("REDIS_HOST") != null ? System.getenv("REDIS_HOST") : "docker-vertigo.part.klee.lan.net";
 
 	private static AutoCloseableNode node;
 
@@ -82,7 +83,7 @@ public class DashboardLauncherTest {
 						.build())
 				.addModule(new RedisFeatures()
 						.withJedis(
-								Param.of("host", "docker-vertigo.part.klee.lan.net"),
+								Param.of("host", REDIS_HOST),
 								Param.of("port", "6379"),
 								Param.of("ssl", "false"),
 								Param.of("database", "0"))

@@ -41,7 +41,7 @@ public final class MyNodeConfig {
 	public static final int WS_PORT = 8088;
 
 	private static NodeConfigBuilder createNodeConfigBuilder(final boolean redis) {
-		final String redisHost = "docker-vertigo.part.klee.lan.net";
+		final String redisHost = System.getenv("REDIS_HOST") != null ? System.getenv("REDIS_HOST") : "docker-vertigo.part.klee.lan.net";
 		final String redisPort = "6379";
 		final String redisDatabase = "0";
 

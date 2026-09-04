@@ -51,6 +51,7 @@ import io.vertigo.quarto.converter.ConverterManager;
  * @author npiedeloup
  */
 public final class RemoteConverterManagerTest {
+	private static final String UNO_HOST = System.getenv("UNO_HOST") != null ? System.getenv("UNO_HOST") : "docker-vertigo.part.klee.lan.net";
 	/** Logger. */
 	private final Logger log = LogManager.getLogger(getClass());
 
@@ -82,7 +83,7 @@ public final class RemoteConverterManagerTest {
 				.addModule(new QuartoFeatures()
 						.withConverter()
 						.withRemoteOpenOfficeConverter(
-								Param.of("unohost", "docker-vertigo.part.klee.lan.net"),
+								Param.of("unohost", UNO_HOST),
 								Param.of("unoport", "8997"),
 								Param.of("convertTimeoutSeconds", "45"))
 						.build())
