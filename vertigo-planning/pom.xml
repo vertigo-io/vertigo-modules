@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-orchestra</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 			<optional>true</optional>
 		</dependency>
 
