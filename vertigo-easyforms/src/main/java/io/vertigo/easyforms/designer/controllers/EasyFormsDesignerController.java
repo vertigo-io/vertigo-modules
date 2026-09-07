@@ -729,7 +729,7 @@ public final class EasyFormsDesignerController extends AbstractVSpringMvcControl
 
 	protected String computeDefaultFieldCode(final EasyFormsTemplateSection section, final EasyFormsItemUi editedField) {
 		final var prefixFieldCode = StringUtil.first2LowerCase(editedField.getFieldType().substring(5));
-		final var pattern = Pattern.compile("^" + prefixFieldCode + "[0-9]*$");
+		final var pattern = Pattern.compile("^" + Pattern.quote(prefixFieldCode) + "[0-9]*$");
 
 		final Optional<Integer> lastMatchingOpt = section.getAllFields().stream()
 				.filter(f -> pattern.matcher(f.getCode()).matches())
