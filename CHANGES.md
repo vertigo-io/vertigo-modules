@@ -8,6 +8,17 @@ Running 5.0.0
 more to come :)
 
 
+Release 4.4.1-1 - 2026/09/07
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-440-to-441)
+
+* [Planning] Fix plage popin js error and restyle the duration warning
+* [Planning] Enforce strict positive value for dureeTrancheMinute
+* [EasyForms] Fix possible ReDoS (escape prefixFieldCode in regex)
+* [Test] External test service hosts configurable via env vars
+* __Only vertigo-planning is republished as 4.4.1-1__ (all other artifacts remain 4.4.1 : Maven Central is immutable, relocation not possible). If you are on 4.4.1: use vertigo-planning version 4.4.1-1 (io.vertigo:vertigo-planning:4.4.1-1).
+
+
 Release 4.4.1 - 2026/08/28
 ----------------------
 * [Orchestra] Improve logging for node registration and executor : INFO log on node registration, parameterized error log with activityExecution id, state and node id, documented dead-node cutoff computation
