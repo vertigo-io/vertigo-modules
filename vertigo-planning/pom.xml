@@ -10,6 +10,7 @@
 
 
 	<artifactId>vertigo-planning</artifactId>
+	<version>4.4.1-1</version>
 	<packaging>jar</packaging>
 	<name>vertigo-planning</name>
 
