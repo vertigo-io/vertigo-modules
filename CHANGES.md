@@ -13,6 +13,17 @@ Running 4.5.0-SNAPSHOT - 2026-12-XX
 more to come :)
 
 
+Release 4.4.1-1 - 2026/09/07
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-440-to-441)
+
+* [Planning] Fix plage popin js error and restyle the duration warning
+* [Planning] Enforce strict positive value for dureeTrancheMinute
+* [EasyForms] Fix possible ReDoS (escape prefixFieldCode in regex)
+* [Test] External test service hosts configurable via env vars
+* __Only vertigo-planning is republished as 4.4.1-1__ (all other artifacts remain 4.4.1 : Maven Central is immutable, relocation not possible). If you are on 4.4.1: use vertigo-planning version 4.4.1-1 (io.vertigo:vertigo-planning:4.4.1-1).
+
+
 Release 4.4.1 - 2026/08/28
 ----------------------
 * [Orchestra] Improve logging for node registration and executor : INFO log on node registration, parameterized error log with activityExecution id, state and node id, documented dead-node cutoff computation
@@ -1144,7 +1155,7 @@ Release 1.1.1 - 2018/04/27
 * [quarto] fix creation of final doc (medias etc...) (docx)
 * [quarto] fix new paragraphs on line breaks (docx)
 * [orchestra] fix params in memoryImpl
-* [dashboard] some minor additions (b+¬ta)
+* [dashboard] some minor additions (bÃªta)
 * [struts2] Added multiple file upload support
 * [struts2] Alternative Struts2 multipart request parser for servlet 3
 * [struts2] Added hash on sessionId to secure them
@@ -1195,7 +1206,7 @@ Release 1.1.0 - 2017/12/07
 * [all] Migrated Log4j to Log4j2
 * [all] Updated versions (gson, hibernate, junit) : gson 2.8.1 to 2.8.2, hibernate 5.2.10 to 5.2.11, junit 5.0.0-M4 to 5.0.1
 * __[all] Execution error with jdk 1.8_51 should use more recent version__
-* [dashboard] added module dashboard (b+¬ta)
+* [dashboard] added module dashboard (bÃªta)
 * [struts2] Added multiple file upload support 
 * [quarto] Fixed #12 (LocalDate and DateTime) 
 * [all] Updated versions (javax.mail, lucene, selenium) : javaxmail 15.6 to 1.6.0, lucene 5.5.4 to 6.6.1
@@ -1298,7 +1309,7 @@ __In Bold__ : Potential compatibility problems
 *	[studio] Added TS generator
 * [persona] deprecated module (use accoount for new projects)
 *	[tempo] _remove module_ (use vertigo-mail and vertigo-orchestra extensions)
-*	[all] Updated dependencies versions  ÔÇª
+*	[all] Updated dependencies versions  â†’
  org.codehaus.janino janino 2.7.8 -> 3.0.7
  net.sf.ehcache ehcache 2.10.3 -> 2.10.4
  org.slf4j slf4j-api 1.7.22 -> 1.7.25
