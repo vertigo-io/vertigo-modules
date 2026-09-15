@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.inject.Inject;
-
 import io.vertigo.commons.eventbus.EventBusSubscribed;
 import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
@@ -46,6 +44,7 @@ import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.entitystore.StoreEvent;
 import io.vertigo.social.handle.Handle;
 import io.vertigo.social.handle.HandleManager;
+import jakarta.inject.Inject;
 
 public final class HandleManagerImpl implements HandleManager, Activeable {
 
@@ -108,7 +107,7 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 						case CREATE:
 
 							final DtList<Entity> entities;
-							try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+							try (VTransactionWritable _ = transactionManager.createCurrentTransaction()) {
 								//we need to make better than this...
 								entities = entityStoreManager.find(dataDefinition, Criterions.in(() -> dataDefinition.getIdField().get().name(), uids.toArray()), DtListState.of(null));
 							}
@@ -184,7 +183,7 @@ public final class HandleManagerImpl implements HandleManager, Activeable {
 
 		do {
 			final List<Entity> entities;
-			try (final VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+			try (final VTransactionWritable _ = transactionManager.createCurrentTransaction()) {
 				final Criteria criteria = lastId != null ? Criterions.isGreaterThan(() -> idFieldName, lastId) : Criterions.alwaysTrue();
 				final DtListState dtListState = DtListState.of(CHUNK_SIZE, 0, idFieldName, false);
 				entities = entityStoreManager.find(dataDefinition, criteria, dtListState);
