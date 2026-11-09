@@ -83,6 +83,9 @@
 						      Il y a <b>{{componentStates.editedPlageHoraire.nbReserve}}</b> rendez-vous déjà réservé(s) sur cette plage horaire.<br/>
 						      Si vous confirmez la modification de cette plage, les rendez-vous ne seront pas supprimés et resteront visibles sur l'agenda.					      
 						    </q-banner>
+			               <q-banner inline-actions class="bg-warning q-mt-lg" v-if="(componentStates.editedPlageHoraire.nbPublie || 0) + (componentStates.editedPlageHoraire.nbPlanifie || 0) > 0">
+						      La plage horaire modifiée ne sera plus publiée : vérifiez-la, puis publiez-la à nouveau.
+						    </q-banner>
 			          </span>
 			        </q-card-section>
 			        <q-card-actions align="right">

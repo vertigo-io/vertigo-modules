@@ -10,6 +10,8 @@ more to come :)
 
 Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
+* [Planning] Add plage horaire edit (route `_editPlage`, `PlanningServices.updatePlageHoraire`) : the plage is deleted and created again on the same date, unpublished : the agent checks it then publishes it again, which links back its reservations
+* [Planning] Fix plage horaire edit modal : keep the agenda of the edited plage (personal agendas mode)
 * [Planning] Add SQL indexes and unique constraints (CRENEAU.REC_ID ; PLAGE_HORAIRE date, start and agenda) : `planning_create_init_4.5.0.sql`, and `planning_update_4.5.0.sql` for existing databases
 
 more to come :)

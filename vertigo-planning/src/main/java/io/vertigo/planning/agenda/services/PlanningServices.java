@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -473,6 +474,39 @@ public class PlanningServices implements Component {
 		//--
 		agendaDAO.readOneForUpdate(agendaUid); //ForUpdate pour éviter les doublons
 		agendaPAO.deletePlageHoraireCascadeByPlhId((Long) plageHoraireUid.getId());
+	}
+
+	/**
+	 * Update a plage horaire on the same date : it is deleted and created again with the form values (start, end, nbGuichet, agenda).
+	 * The new plage is not published : its reservations are kept and are linked to creneaux again by the next publication.
+	 *
+	 * @param plageHoraireUid Plage horaire to update
+	 * @param creationPlageHoraireForm New values of the plage horaire
+	 * @param authorizedAgeUids Agendas authorized for the user
+	 * @param maxWeekDaysNumber Number of days displayed per week
+	 * @return New plage horaire
+	 */
+	public PlageHoraire updatePlageHoraire(final UID<PlageHoraire> plageHoraireUid, final CreationPlageHoraireForm creationPlageHoraireForm, final List<UID<Agenda>> authorizedAgeUids,
+			final int maxWeekDaysNumber) {
+		Assertion.check()
+				.isNotNull(plageHoraireUid)
+				.isNotNull(creationPlageHoraireForm)
+				.isNotNull(authorizedAgeUids);
+		//---
+		final var ageUid = checkAuthorizedAgendaOfPlh(plageHoraireUid, authorizedAgeUids);
+		final var plageHoraire = plageHoraireDAO.get(plageHoraireUid);
+		if (!plageHoraire.getDateLocale().equals(creationPlageHoraireForm.getDateLocale())) {
+			throw new VUserException("Vous ne pouvez pas modifier la date de la plage horaire. Veuillez supprimer la plage horaire et en recréer une nouvelle à la bonne date");
+		}
+		if (Objects.equals(plageHoraire.getMinutesDebut(), creationPlageHoraireForm.getMinutesDebut())
+				&& Objects.equals(plageHoraire.getMinutesFin(), creationPlageHoraireForm.getMinutesFin())
+				&& Objects.equals(plageHoraire.getNbGuichet(), creationPlageHoraireForm.getNbGuichet())
+				&& Objects.equals(plageHoraire.getAgeId(), creationPlageHoraireForm.getAgeId())) {
+			throw new VUserException("Vous n'avez pas modifié les caractéristiques de la plage horaire");
+		}
+		//---
+		deletePlageHoraireCascade(ageUid, plageHoraireUid);
+		return createPlageHoraire(creationPlageHoraireForm, authorizedAgeUids, maxWeekDaysNumber);
 	}
 
 	public void closeTrancheHoraire(final UID<Agenda> agendaUid, final UID<TrancheHoraire> trancheHoraireUid) {

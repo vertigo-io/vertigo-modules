@@ -335,6 +335,19 @@ public class AgendaControllerHelper {
 		return viewContext;
 	}
 
+	public ViewContext editPlage(
+			final ViewContext viewContext,
+			final AgendaDisplayRange agenda,
+			final Long plhId,
+			final CreationPlageHoraireForm creationPlageHoraireForm) {
+		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
+		//---
+		planningServices.updatePlageHoraire(UID.of(PlageHoraire.class, plhId), creationPlageHoraireForm, ageUids, agenda.getShowDays());
+
+		prepareContextAtDate(agenda.getShowDate(), agenda, viewContext);
+		return viewContext;
+	}
+
 	public ViewContext loadPlageHoraireDetail(
 			final ViewContext viewContext,
 			final AgendaDisplayRange agenda,

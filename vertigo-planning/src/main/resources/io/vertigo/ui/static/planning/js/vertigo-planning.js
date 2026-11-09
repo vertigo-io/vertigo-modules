@@ -322,6 +322,9 @@ VUiExtensions.methods.onEditPlageHoraire = function(event, modeGuichet) {
     plageHoraireForm.minutesDebut = event.minutesDebut_fmt;
     plageHoraireForm.minutesFin = event.minutesFin_fmt;
     plageHoraireForm.nbGuichet = event.nbGuichet;
+    if (event.ageId) {
+        plageHoraireForm.ageId = event.ageId; // keep the agenda of the edited plage (select of the personal agendas mode)
+    }
     this.$data.componentStates.editItemModal.opened = true;	
 	VUiExtensions.methods.editPlageHoraireCloseActions(event);
 }	
