@@ -10,6 +10,8 @@ more to come :)
 
 Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
+* [Planning] Add SQL indexes and unique constraints (CRENEAU.REC_ID ; PLAGE_HORAIRE date, start and agenda) : `planning_create_init_4.5.0.sql`, and `planning_update_4.5.0.sql` for existing databases
+
 more to come :)
 
 
