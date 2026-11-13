@@ -10,9 +10,11 @@ more to come :)
 
 Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
-* [Planning] Add plage horaire edit (route `_editPlage`, `PlanningServices.updatePlageHoraire`) : the plage is deleted and created again on the same date, unpublished : the agent checks it then publishes it again, which links back its reservations
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-441-to-450)
+
+* [Planning] Add plage horaire edit : `_editPlage` route in `AbstractAgendaController` and `PlanningServices.updatePlageHoraire` ; the plage is recreated on the same date, unpublished : the agent checks it and publishes it again, which links back its reservations ; the date and the agenda of the plage can't be changed (a project controller already mapping `_editPlage` must override `editPlage`, see migration guide)
 * [Planning] Fix plage horaire edit modal : keep the agenda of the edited plage (personal agendas mode)
-* [Planning] Add SQL indexes and unique constraints (CRENEAU.REC_ID ; PLAGE_HORAIRE date, start and agenda) : `planning_create_init_4.5.0.sql`, and `planning_update_4.5.0.sql` for existing databases
+* [Planning] Add SQL unique constraints (a reservation occupies a single creneau ; one plage per agenda, date and start time) and consultation indexes : `planning_create_init_4.5.0.sql` for new databases, `planning_update_4.5.0.sql` for existing ones (check duplicates first, see migration guide)
 
 more to come :)
 
