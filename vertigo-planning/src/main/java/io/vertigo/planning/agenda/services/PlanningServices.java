@@ -498,10 +498,13 @@ public class PlanningServices implements Component {
 		if (!plageHoraire.getDateLocale().equals(creationPlageHoraireForm.getDateLocale())) {
 			throw new VUserException("Vous ne pouvez pas modifier la date de la plage horaire. Veuillez supprimer la plage horaire et en recréer une nouvelle à la bonne date");
 		}
+		if (!plageHoraire.getAgeId().equals(creationPlageHoraireForm.getAgeId())) {
+			//the reservations stay on their agenda : they would never be linked to the new plage
+			throw new VUserException("Vous ne pouvez pas modifier l'agenda de la plage horaire. Veuillez supprimer la plage horaire et en recréer une nouvelle sur le bon agenda");
+		}
 		if (Objects.equals(plageHoraire.getMinutesDebut(), creationPlageHoraireForm.getMinutesDebut())
 				&& Objects.equals(plageHoraire.getMinutesFin(), creationPlageHoraireForm.getMinutesFin())
-				&& Objects.equals(plageHoraire.getNbGuichet(), creationPlageHoraireForm.getNbGuichet())
-				&& Objects.equals(plageHoraire.getAgeId(), creationPlageHoraireForm.getAgeId())) {
+				&& Objects.equals(plageHoraire.getNbGuichet(), creationPlageHoraireForm.getNbGuichet())) {
 			throw new VUserException("Vous n'avez pas modifié les caractéristiques de la plage horaire");
 		}
 		//---
