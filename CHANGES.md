@@ -15,6 +15,7 @@ Running 4.5.0-SNAPSHOT - 2026-12-XX
 * [Planning] Add plage horaire edit : `_editPlage` route in `AbstractAgendaController` and `PlanningServices.updatePlageHoraire` ; the plage is recreated on the same date, unpublished : the agent checks it and publishes it again, which links back its reservations ; the date and the agenda of the plage can't be changed (a project controller already mapping `_editPlage` must override `editPlage`, see migration guide)
 * [Planning] Fix plage horaire edit modal : keep the agenda of the edited plage (personal agendas mode)
 * [Planning] Add SQL unique constraints (a reservation occupies a single creneau ; one plage per agenda, date and start time) and consultation indexes : `planning_create_init_4.5.0.sql` for new databases, `planning_update_4.5.0.sql` for existing ones (check duplicates first, see migration guide)
+* [Orchestra] Fix the Orchestra UI broken since 4.4.0 : it failed to load in the browser (`process is not defined`), the UMD bundle kept `process.env.NODE_ENV` references since its Vite 8 build. Projects shipping their own copy of `vertigo-orchestra-ui.umd.js` must replace it
 
 more to come :)
 
