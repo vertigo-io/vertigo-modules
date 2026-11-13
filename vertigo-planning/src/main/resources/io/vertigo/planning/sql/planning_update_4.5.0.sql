@@ -6,13 +6,15 @@
 -- Adding the unique constraints fails if the data already contains duplicates. Check them first :
 --   select REC_ID, count(*) from CRENEAU where REC_ID is not null group by REC_ID having count(*) > 1;
 --   select AGE_ID, DATE_LOCALE, MINUTES_DEBUT, count(*) from PLAGE_HORAIRE group by AGE_ID, DATE_LOCALE, MINUTES_DEBUT having count(*) > 1;
+-- The script is rerunnable (each run rebuilds the unique constraints : lock on CRENEAU and PLAGE_HORAIRE).
 
 -- a reservation occupies at most one creneau (the unique constraint also indexes REC_ID)
-drop index IF EXISTS A_RESERVATION_CRENEAU_CRENEAU_RESERVATION_CRENEAU_FK;
 alter table CRENEAU
 	drop constraint IF EXISTS A_RESERVATION_CRENEAU_CRENEAU_RESERVATION_CRENEAU_UNIQUE_FK;
 alter table CRENEAU
 	add constraint A_RESERVATION_CRENEAU_CRENEAU_RESERVATION_CRENEAU_UNIQUE_FK unique (REC_ID);
+-- the former REC_ID index is dropped only once the unique constraint indexes it
+drop index IF EXISTS A_RESERVATION_CRENEAU_CRENEAU_RESERVATION_CRENEAU_FK;
 
 -- two plages of an agenda never start at the same time on the same day
 alter table PLAGE_HORAIRE
