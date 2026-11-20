@@ -12,6 +12,7 @@ Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-441-to-450)
 
+* [Social] Fix the publication of a comment by the webservice (`POST /api/comments`) : error 500 since Gson 2.10 (Vertigo 3.5.0), the comment is now built with its server-side uuid and creation date, and the returned comment is the stored one (its uuid was another one) ; `CommentManager.publish` refuses a comment already published (it was stored again, with another uuid) ; `CommentPlugin.get` returns an `Optional`, empty if not published
 * [Planning] Add plage horaire edit : `_editPlage` route in `AbstractAgendaController` and `PlanningServices.updatePlageHoraire` ; the plage is recreated on the same date, unpublished : the agent checks it and publishes it again, which links back its reservations ; the date and the agenda of the plage can't be changed (a project controller already mapping `_editPlage` must override `editPlage`, see migration guide)
 * [Planning] Fix plage horaire edit modal : keep the agenda of the edited plage (personal agendas mode)
 * [Planning] Add SQL unique constraints (a reservation occupies a single creneau ; one plage per agenda, date and start time) and consultation indexes : `planning_create_init_4.5.0.sql` for new databases, `planning_update_4.5.0.sql` for existing ones (check duplicates first, see migration guide)

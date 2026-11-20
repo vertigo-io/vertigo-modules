@@ -77,14 +77,33 @@ public class CommentManagerTest {
 
 	@Test
 	public void testComments() {
-		final Comment comment = Comment.builder()
-				.withAuthor(accountURI1)
-				.withMsg("Tu as bien fait de partir, Arthur Rimbaud! Tes dix-huit ans réfractaires à l'amitié, à la malveillance, à la sottise des poètes de Paris ainsi qu'au ronronnement d'abeille stérile de ta famille ardennaise un peu folle, tu as bien fait de les éparpiller aux vents du large..")
-				.build();
+		//one Comment per publication
 		for (int i = 0; i < 10; i++) {
-			commentServices.publish(accountURI1, comment, keyConcept1Uri);
+			commentServices.publish(accountURI1, newComment(), keyConcept1Uri);
 		}
 
 		Assertions.assertEquals(10, commentServices.getComments(keyConcept1Uri).size());
+	}
+
+	@Test
+	public void testCommentPublishedOnce() {
+		//a published comment is changed by update, not published again (here or on another key concept)
+		final Comment comment = newComment();
+		commentServices.publish(accountURI1, comment, keyConcept1Uri);
+		Assertions.assertThrows(Exception.class, () -> commentServices.publish(accountURI1, comment, keyConcept1Uri));
+		Assertions.assertEquals(1, commentServices.getComments(keyConcept1Uri).size());
+	}
+
+	@Test
+	public void testUpdateNotPublished() {
+		final Exception exception = Assertions.assertThrows(Exception.class, () -> commentServices.update(accountURI1, newComment()));
+		Assertions.assertTrue(exception.getMessage().contains("not published"), exception.getMessage());
+	}
+
+	private Comment newComment() {
+		return Comment.builder()
+				.withAuthor(accountURI1)
+				.withMsg("Tu as bien fait de partir, Arthur Rimbaud! Tes dix-huit ans réfractaires à l'amitié, à la malveillance, à la sottise des poètes de Paris ainsi qu'au ronronnement d'abeille stérile de ta famille ardennaise un peu folle, tu as bien fait de les éparpiller aux vents du large..")
+				.build();
 	}
 }
