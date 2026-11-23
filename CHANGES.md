@@ -32,7 +32,8 @@ Running 4.5.0-SNAPSHOT - 2026-12-XX
   - freemarker 2.3.34 -> 2.3.35
   - owasp-java-html-sanitizer 20260313.1 -> 20261110.1
   - SODS 1.7.0 -> 1.10.1
-  - orchestra-ui : vue 3.5.39 -> 3.5.45, axios 1.18.1 -> 1.21.1, vue-router 4.5.1 -> 4.6.5, core-js 3.44.0 -> 3.51.0, quasar 2.21.1 -> 2.35.4 (build only, the UI uses the Quasar of vertigo-ui), vite 8.1.3 -> 8.3.8
+  - xdocreport 2.1.0 -> 2.2.0
+  - orchestra-ui : vue 3.5.39 -> 3.5.46, axios 1.18.1 -> 1.21.1, vue-router 4.5.1 -> 4.6.5, core-js 3.44.0 -> 3.51.0, quasar 2.21.1 -> 2.35.6 (build only, the UI uses the Quasar of vertigo-ui), vite 8.1.3 -> 8.3.8
 
 more to come :)
 
