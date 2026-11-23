@@ -7,7 +7,7 @@
 	    <vu:slot name="actions_slot" >
             <div vu:slot="agenda_actions_slot" class="row q-gutter-sm">
 				<q-btn color="primary" th:label="#{planning.agendaWeek.createPlageHoraire}" th:icon="#{planning.agendaWeek.createPlageHoraire.icon}" @click="onCreatePlageHoraireDefault"></q-btn>
-				<q-btn color="primary" th:label="#{planning.agendaWeek.duplicateDay}" th:icon="#{planning.agendaWeek.duplicateWeek.icon}" @click="onDuplicateDay" :disabled="vueData.plagesHoraire.length == 0"></q-btn>
+				<q-btn color="primary" th:label="#{planning.agendaWeek.duplicateDay}" th:icon="#{planning.agendaWeek.duplicateDay.icon}" @click="onDuplicateDay" :disabled="vueData.plagesHoraire.length == 0"></q-btn>
 				<q-btn color="primary" th:label="#{planning.agendaWeek.duplicateWeek}" th:icon="#{planning.agendaWeek.duplicateWeek.icon}" @click="onDuplicateWeek" :disabled="vueData.plagesHoraire.length == 0"></q-btn>
 				<q-btn color="primary" th:label="#{planning.agendaWeek.publishPlageHoraire}" th:icon="#{planning.agendaWeek.publishPlageHoraire.icon}" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'YYYY-MM-DD') < new Date()" @click="onPublishPlageHoraires"></q-btn>
             </div>
@@ -128,7 +128,7 @@
 			                  	  	  		th::aria-label="|vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName + (${myEventNameTwoLetters} ? ' (' + getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName) + ')' : '')|"
 			                  	  	  		@click.stop.prevent="onSelectPlageHoraire(subEvent)">
 			                  	  	  	</q-btn>
-			                  	  	  	<q-btn th:icon="#{planning.agendaWeek.listOtherAgenda.icon}" title="Voir plus d'agenda" aria-label="Voir plus d'agenda" aria-haspopup="dialog" size="sm" dense round color="grey-7" th:v-if="|event.eventList.length>${myMaxMultiEventShow}|"></q-btn>
+			                  	  	  	<q-btn th:icon="#{planning.agendaWeek.listOtherAgenda.icon}" th:title="#{planning.agendaWeek.listOtherAgenda}" th:aria-label="#{planning.agendaWeek.listOtherAgenda}" aria-haspopup="dialog" size="sm" dense round color="grey-7" th:v-if="|event.eventList.length>${myMaxMultiEventShow}|"></q-btn>
 			                  	  	  </div>
 		                  	  	  	<q-menu role="dialog" :aria-label="'Cette plage assemble '+event.eventList.length+' agendas'">
 		                  	  	  		<q-list>

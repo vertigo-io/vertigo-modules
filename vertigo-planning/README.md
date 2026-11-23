@@ -95,12 +95,16 @@ resources:
 
 ## Ajout des messages resource
 
-Dans votre `XxxVSpringWebConfig`, on ajout la ressource au `MessageSource` Spring.
+Dans votre `XxxVSpringWebConfig`, on ajoute la ressource du module dans un `MessageSource` parent de celui du projet : Spring cherche une clé dans les ressources du projet, puis dans le parent. Le projet peut ainsi redéfinir les clés `planning.*` (libellés, icônes) dans ses propres ressources, quel que soit leur ordre.
 ```Java
 public static MessageSource getMessageSource() {
+	final ResourceBundleMessageSource vertigoMessageSource = new ResourceBundleMessageSource();
+	vertigoMessageSource.addBasenames("io/vertigo/ui/components/planning/planning");
+	vertigoMessageSource.setDefaultEncoding("UTF-8");
 	final ResourceBundleMessageSource customMessageSource = new ResourceBundleMessageSource();
+	customMessageSource.setParentMessageSource(vertigoMessageSource); // the messages of the project are looked up first
         ...
-	customMessageSource.addBasenames("io/vertigo/ui/components/planning/planning");
+	customMessageSource.addBasenames("com/mycompany/myapp/i18n/messages");
 	...
 	return customMessageSource;
 }
@@ -126,6 +130,17 @@ __Compléments javascript__
 	<script th:src="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.1.2/QCalendarDay.umd.min.js}"></script>
 	<script th:src="@{/vertigo-ui/static/planning/js/vertigo-planning.js?t=__${appBuildTime}__}"></script>
 </section>	
+```
+
+___Note:___ _Les icônes des composants sont des icônes Material, connues de Quasar, déclarées dans `planning.properties` (les clés `planning.*.icon`) : un projet en change en redéfinissant ces clés dans ses messages. Pour une autre bibliothèque, le projet la charge et la déclare à Quasar ; par exemple Remix Icon (`ri-...`) :_
+```Javascript
+window.addEventListener('vui-before-plugins', function() {
+	Quasar.iconSet.iconMapFn = function(iconName) {
+		if (iconName.startsWith('ri-')) {
+			return { cls: iconName, content: ' ' };
+		}
+	};
+});
 ```
 
 Composants VertigoUi 

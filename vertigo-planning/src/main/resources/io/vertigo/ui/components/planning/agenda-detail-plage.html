@@ -60,7 +60,7 @@
                         <vu:include-data-primitive key="canCreateReservation" />
                         <q-field label="Réservations" orientation="vertical" stack-label readonly borderless >
                             {{vueData.plageHoraireDetail.nbReserve}} rendez-vous réservé(s) sur {{vueData.plageHoraireDetail.nbTotal}} proposés.
-                            <q-icon  v-if="vueData.plageHoraireDetail.nbReserveNonPublie>0" name="ri-error-warning-fill" size="sm" color="negative"
+                            <q-icon  v-if="vueData.plageHoraireDetail.nbReserveNonPublie>0" th:name="#{planning.detailPlage.reserveNonPublie.icon}" size="sm" color="negative"
                                title="rendez-vous réservé(s) sur des créneaux non publiés"></q-icon>
                         </q-field>
                    </vu:grid-cell>
@@ -93,24 +93,24 @@
                       </q-item-section>                              
                       <q-item-section side>
                            <vu:include-data object="trancheHorairesDetail" field="nbReserveNonPublie" />
-                           <q-icon name="ri-error-warning-fill" color="negative" v-if="item.nbReserveNonPublie>0"
+                           <q-icon th:name="#{planning.detailPlage.reserveNonPublie.icon}" color="negative" v-if="item.nbReserveNonPublie>0"
                                 title="rendez-vous pris sur des créneaux non publiés"></q-icon>
                       </q-item-section>
                       <q-item-section side v-if="item.nbGuichet != 0">
                            <vu:include-data object="trancheHorairesDetail" field="etatPublication" />
                            <vu:include-data object="trancheHorairesDetail" field="nbReserve" />
                            <vu:include-data object="trancheHorairesDetail" field="nbGuichet" />
-                           <q-icon name="ri-checkbox-blank-circle-line" v-if="item.nbReserve == 0 || !item.nbReserve" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
-                           <q-icon name="ri-contrast-fill" v-if="item.nbReserve > 0 && item.nbReserve < item.nbGuichet" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
-                           <q-icon name="ri-checkbox-blank-circle-fill" v-if="item.nbReserve == item.nbGuichet " :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
-                           <q-icon name="ri-share-circle-fill" v-if="item.nbReserve > item.nbGuichet" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>                                      
+                           <q-icon th:name="#{planning.detailPlage.trancheEmpty.icon}" v-if="item.nbReserve == 0 || !item.nbReserve" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
+                           <q-icon th:name="#{planning.detailPlage.trancheSome.icon}" v-if="item.nbReserve > 0 && item.nbReserve < item.nbGuichet" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
+                           <q-icon th:name="#{planning.detailPlage.trancheFull.icon}" v-if="item.nbReserve == item.nbGuichet " :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>
+                           <q-icon th:name="#{planning.detailPlage.trancheOverbooked.icon}" v-if="item.nbReserve > item.nbGuichet" :color="'trh-'+item.etatPublication" :title="item.etatPublication" ></q-icon>                                      
                       </q-item-section>
                       <q-item-section side v-if="item.nbGuichet == 0">
-                           <q-icon name="ri-shut-down-line" v-if="item.nbGuichet == 0" color="trh-blocked" title="créneau supprimé" class="q-px-xs" ></q-icon>                                      
+                           <q-icon th:name="#{planning.detailPlage.trancheSupprimee.icon}" v-if="item.nbGuichet == 0" color="trh-blocked" title="créneau supprimé" class="q-px-xs" ></q-icon>                                      
                       </q-item-section>
                       <q-item-section side v-if="item.nbGuichet != 0">
                            <vu:include-data object="trancheHorairesDetail" field="trhId" />
-                           <vu:button v-if="item.nbGuichet != 0 && componentStates.agendaWeek?.hasAuthzAdmin !== false" dense flat icon="ri-delete-bin-2-line" title="Supprimer ce créneau" @click="deleteTrancheHoraire(item.trhId)"/>
+                           <vu:button v-if="item.nbGuichet != 0 && componentStates.agendaWeek?.hasAuthzAdmin !== false" dense flat icon="#{planning.detailPlage.deleteTranche.icon}" title="Supprimer ce créneau" @click="deleteTrancheHoraire(item.trhId)"/>
                      </q-item-section>
 		            </vu:list>
 	            </vu:block>
