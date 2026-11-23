@@ -1,10 +1,10 @@
 <th:block th:fragment="agenda-detail-plage(plage_actions_slot)" vu:alias="agenda-detail-plage" vu:selector="${true}" 
  th:attr="objectKey=${model.vContext['componentStates'].addComponentState('viewItemDrawer').addPrimitive('opened', false)}">
-    <q-dialog v-model="componentStates.viewItemDrawer.opened" maximized position="right" >
+    <q-dialog v-model="componentStates.viewItemDrawer.opened" maximized position="right" aria-labelledby="agenda-detail-plage-title">
        <q-card class="bg-white v-modal detailPlageModal">
             <q-toolbar class="bg-primary">
-                  <q-btn flat round dense v-close-popup icon="keyboard_arrow_left" text-color="white" ></q-btn>
-                  <q-toolbar-title class="text-white"><vu:include-data object="plageHoraireDetail" field="dateLocale_fmt" />
+                  <q-btn flat round dense v-close-popup icon="keyboard_arrow_left" text-color="white" title="Fermer" aria-label="Fermer"></q-btn>
+                  <q-toolbar-title id="agenda-detail-plage-title" class="text-white"><vu:include-data object="plageHoraireDetail" field="dateLocale_fmt" />
                        <vu:include-data object="plageHoraireDetail" field="minutesDebut" />
                        <vu:include-data object="plageHoraireDetail" field="minutesFin" />
                        Plage horaire                          

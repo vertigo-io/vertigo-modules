@@ -86,7 +86,8 @@
 	 		                  	  <q-btn round size="sm" :color="('agendas-palette-')+(vueData.agendasDisplay.findIndex(ag => ag.ageId === event.ageId)*6%20)" 
 	 		                  	  		 th:icon="${!myEventNameTwoLetters?myEventIconAgenda:''}" 
 	 		                  	  		 th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName)}}':''}"
-			                             :title="vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName" v-if="!event.eventList || event.eventList.length<=1">			                             
+			                             :title="vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName"
+			                             th::aria-label="|vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName + (${myEventNameTwoLetters} ? ' (' + getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === event.ageId).displayName) + ')' : '')|" v-if="!event.eventList || event.eventList.length<=1">
 			                      </q-btn>                    
 		                  	  </div>
 		                      <div class="actions-event">
@@ -94,7 +95,8 @@
 		                         <q-btn th:icon="#{planning.agendaWeek.deletePlageHoraire.icon}" th:title="#{planning.agendaWeek.deletePlageHoraire}" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(event)" vu:authz="${myHasAuthzAdmin}"></q-btn>
 		                      </div>
 		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>59}">
-		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
+		                          <!--/* mode guichet : no agenda button, the hours open the plage with the keyboard (a button inheriting the text style of the label) */-->
+		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}"><button type="button" th:if="${model.modeGuichet}" class="q-focusable relative-position"><span class="q-focus-helper q-focus-helper--rounded" aria-hidden="true"></span><span class="sr-only">Ouvrir la plage de </span>{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</button><th:block th:unless="${model.modeGuichet}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</th:block></div>
 		                          <div class="text-center" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">
 		                            <q-chip color="white" text-color="dark" :class="{'q-pl-none':(event.nbReserveNonPublie>0 || event.nbReserve>event.nbTotal)}" 
 		                                  :title="event.nbReserve + ' rendez-vous réservé(s) sur '+event.nbTotal">
@@ -114,52 +116,53 @@
 		                    v-if="event.eventList && event.eventList.length>1"
 		                  > 
 		                  	  <div class="agendas-event" th:if="${!model.modeGuichet}">
-		                  	  	  <q-btn text-color="grey-7" color="white" rounded size="md" padding="xs sm" :title="'Cette plage assemble '+event.eventList.length+' agendas'">
-			                  	  	   <span class="sr-only">Cette plage assemble {{event.eventList.length}} agendas</span>
-                           			   <div class="row no-wrap q-gutter-xs">
-								          <q-icon th:name="${myMultiEventIconAgenda}"></q-icon>
-								          <q-btn th:v-for="|(subEvent, index) in event.eventList.slice(0, event.eventList.length>${myMaxMultiEventShow}?${myMaxMultiEventShow-1}:event.eventList.length)|"  :key="subEvent.plhId"
-								             dense round size="sm" :color="('agendas-palette-')+(vueData.agendasDisplay.findIndex(ag => ag.ageId === subEvent.ageId)*6%20)" 
-		 		                  	  		 th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}"
-				                             :title="vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName"
-				                             @click.stop.prevent="onSelectPlageHoraire(subEvent)">			                             
-					                      </q-btn>
-			                        	 <q-btn th:icon="#{planning.agendaWeek.listOtherAgenda.icon}" title="Voir plus d'agenda" size="sm" dense round color="grey-7" th:v-if="|event.eventList.length>${myMaxMultiEventShow}|"></q-btn>			                        	     
-								        </div>
-								       <q-menu >
-								      	<q-item clickable v-for="(subEvent, index) in event.eventList"  :key="subEvent.plhId" 
-								        	@click.stop.prevent="onSelectPlageHoraire(subEvent)">
-								          <q-item-section avatar>
-								            <q-avatar size="md" text-color="white" :color="'agendas-palette-' + (vueData.agendasDisplay.findIndex(ag => ag.ageId === subEvent.ageId) * 6 % 20)"
-							                      th:icon="${!myEventNameTwoLetters?myEventIconAgenda:''}" 
- 		                  	  		              th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}">
-								            </q-avatar>								           
-								          </q-item-section>
-								          <q-item-section>
-								          	 <div class="col">
-								            {{vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName}}
-								            <q-item-label caption>
-								            	{{ subEvent.minutesDebut_fmt }} - {{ subEvent.minutesFin_fmt }}
-								            	<q-badge rounded :color="plageStateColor(subEvent).class" :title="plageStateColor(subEvent).label">{{plageStateColor(subEvent).miniLabel}}</q-badge>
-		                 					</q-item-label>
-								            </div>								            
-								          </q-item-section>
-								          <q-item-section side>
-								            <q-chip color="white" text-color="dark" :class="{'q-pl-none':(subEvent.nbReserveNonPublie>0 || subEvent.nbReserve>event.nbTotal)}" 
-				                                  :title="subEvent.nbReserve + ' rendez-vous réservé(s) sur '+subEvent.nbTotal">
-				                                <q-icon th:name="#{planning.agendaWeek.reserveNonPublie.icon}" size="md" color="negative" v-if="subEvent.nbReserveNonPublie>0"
-				                                    :title="subEvent.nbReserveNonPublie + ' rendez-vous réservé(s) sur des créneaux non publiés'"></q-icon>
-				                                <q-icon th:name="#{planning.agendaWeek.trancheOverbooked.icon}" size="sm" color="trh-publie" v-if="subEvent.nbReserveNonPublie==0 && subEvent.nbReserve>subEvent.nbTotal"
-				                                    th:title="#{planning.agendaWeek.trancheOverbooked}"></q-icon>
-				                                    <b>{{subEvent.nbReserve}}</b>/{{subEvent.nbTotal}}
-				                            </q-chip>
-								          </q-item-section>
-								          <q-item-section side>
-								            <q-btn th:icon="#{planning.agendaWeek.deletePlageHoraire.icon}" th:title="#{planning.agendaWeek.deletePlageHoraire}" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(subEvent)" vu:authz="${myHasAuthzAdmin}"></q-btn>
-								          </q-item-section>
-								        </q-item>
-								      </q-list>
-								    </q-btn>                     
+		                  	  	  <!--/* the cell opens the menu (mouse, touch) ; the keyboard opens it with the multi-agendas button : no button in a button */-->
+		                  	  	  <div class="bg-white text-grey-7 shadow-2 q-px-sm q-py-xs cursor-pointer" style="border-radius: 28px">
+			                  	  	  <div class="row no-wrap items-center q-gutter-xs">
+			                  	  	  	<q-btn th:icon="${myMultiEventIconAgenda}" flat round dense padding="none" size="md" aria-haspopup="dialog" :aria-label="'Cette plage assemble '+event.eventList.length+' agendas'" :title="'Cette plage assemble '+event.eventList.length+' agendas'"></q-btn>
+			                  	  	  	<q-btn th:v-for="|(subEvent, index) in event.eventList.slice(0, event.eventList.length>${myMaxMultiEventShow}?${myMaxMultiEventShow-1}:event.eventList.length)|"  :key="subEvent.plhId"
+			                  	  	  		dense round size="sm" :color="('agendas-palette-')+(vueData.agendasDisplay.findIndex(ag => ag.ageId === subEvent.ageId)*6%20)"
+			                  	  	  		th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}"
+			                  	  	  		:title="vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName"
+			                  	  	  		th::aria-label="|vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName + (${myEventNameTwoLetters} ? ' (' + getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName) + ')' : '')|"
+			                  	  	  		@click.stop.prevent="onSelectPlageHoraire(subEvent)">
+			                  	  	  	</q-btn>
+			                  	  	  	<q-btn th:icon="#{planning.agendaWeek.listOtherAgenda.icon}" title="Voir plus d'agenda" aria-label="Voir plus d'agenda" aria-haspopup="dialog" size="sm" dense round color="grey-7" th:v-if="|event.eventList.length>${myMaxMultiEventShow}|"></q-btn>
+			                  	  	  </div>
+		                  	  	  	<q-menu role="dialog" :aria-label="'Cette plage assemble '+event.eventList.length+' agendas'">
+		                  	  	  		<q-list>
+		                  	  	  			<!--/* a list item : the line opens the plage with the mouse, its button (the agenda name) with the keyboard ; the delete button aside */-->
+		                  	  	  			<q-item v-for="(subEvent, index) in event.eventList" :key="subEvent.plhId">
+		                  	  	  				<q-item-section class="cursor-pointer" @click="onSelectPlageHoraire(subEvent)">
+		                  	  	  					<div class="row no-wrap items-center full-width text-dark text-body1">
+		                  	  	  						<q-avatar aria-hidden="true" size="md" text-color="white" :color="'agendas-palette-' + (vueData.agendasDisplay.findIndex(ag => ag.ageId === subEvent.ageId) * 6 % 20)"
+		                  	  	  							th:icon="${!myEventNameTwoLetters?myEventIconAgenda:''}"
+		                  	  	  							th:text="${myEventNameTwoLetters?'{{getNameAsTwoLetters(vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName)}}':''}">
+		                  	  	  						</q-avatar>
+		                  	  	  						<div class="col text-left q-ml-lg">
+		                  	  	  							<q-btn flat no-caps align="left" padding="none" class="block text-body1 text-weight-regular" @click.stop.prevent="onSelectPlageHoraire(subEvent)"><span class="sr-only">Ouvrir la plage de </span>{{vueData.agendasDisplay.find(ag => ag.ageId === subEvent.ageId).displayName}}<span class="sr-only"> {{ subEvent.minutesDebut_fmt }} - {{ subEvent.minutesFin_fmt }}</span></q-btn>
+		                  	  	  							<q-item-label caption>
+		                  	  	  								{{ subEvent.minutesDebut_fmt }} - {{ subEvent.minutesFin_fmt }}
+		                  	  	  								<q-badge rounded :color="plageStateColor(subEvent).class" :title="plageStateColor(subEvent).label">{{plageStateColor(subEvent).miniLabel}}</q-badge>
+		                  	  	  							</q-item-label>
+		                  	  	  						</div>
+		                  	  	  						<q-chip class="q-ml-md" color="white" text-color="dark" :class="{'q-pl-none':(subEvent.nbReserveNonPublie>0 || subEvent.nbReserve>event.nbTotal)}"
+		                  	  	  							:title="subEvent.nbReserve + ' rendez-vous réservé(s) sur '+subEvent.nbTotal">
+		                  	  	  							<q-icon th:name="#{planning.agendaWeek.reserveNonPublie.icon}" size="md" color="negative" v-if="subEvent.nbReserveNonPublie>0"
+		                  	  	  								:title="subEvent.nbReserveNonPublie + ' rendez-vous réservé(s) sur des créneaux non publiés'"></q-icon>
+		                  	  	  							<q-icon th:name="#{planning.agendaWeek.trancheOverbooked.icon}" size="sm" color="trh-publie" v-if="subEvent.nbReserveNonPublie==0 && subEvent.nbReserve>subEvent.nbTotal"
+		                  	  	  								th:title="#{planning.agendaWeek.trancheOverbooked}"></q-icon>
+		                  	  	  							<b>{{subEvent.nbReserve}}</b>/{{subEvent.nbTotal}}
+		                  	  	  						</q-chip>
+		                  	  	  					</div>
+		                  	  	  				</q-item-section>
+		                  	  	  				<q-item-section side>
+		                  	  	  					<q-btn th:icon="#{planning.agendaWeek.deletePlageHoraire.icon}" th:title="#{planning.agendaWeek.deletePlageHoraire}" size="md" dense round flat color="black" @click.stop.prevent="confirmDeletePlageHoraire(subEvent)" vu:authz="${myHasAuthzAdmin}"></q-btn>
+		                  	  	  				</q-item-section>
+		                  	  	  			</q-item>
+		                  	  	  		</q-list>
+		                  	  	  	</q-menu>
+		                  	  	  </div>
 		                  	  </div>
 		                      <div class="row col-12 self-center items-center " :class="{'justify-center':(event.minutesFin - event.minutesDebut)>59}">
 		                          <div class="text-center plage-label" :class="{'col-12':(event.minutesFin - event.minutesDebut)>59}">{{ event.minutesDebut_fmt }} - {{ event.minutesFin_fmt }}</div>
