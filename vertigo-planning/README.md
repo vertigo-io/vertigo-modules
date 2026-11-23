@@ -135,7 +135,7 @@ Composants VertigoUi
   - `eventIconAgenda` : Icon dans la plage (défaut : `event`)
   - `multiEventIconAgenda` : Icon d'agenda multiple dans la plage (défaut : `calendar_month`)
   - `maxMultiEventShow` : Nombre maximum d'agenda présenté avant liste (défaut : 3)
-  - `hasAuthzAdmin` : Si droit d'admin de l'agenda (défaut : true)
+  - `hasAuthzAdmin` : Si droit d'admin de l'agenda (défaut : true) ; sans ce droit, le détail d'une plage ne propose pas non plus la suppression d'un créneau (affichage seulement : les routes restent à sécuriser dans le contrôleur du projet)
 
 - `agenda-create-plage` : Composant de modale création de plage horaire
   - `plage_actions_slot` : Slot des boutons du composant (défaut: creation si guichet, creation si agenda personnel)

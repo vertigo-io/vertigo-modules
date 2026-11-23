@@ -110,7 +110,7 @@
                       </q-item-section>
                       <q-item-section side v-if="item.nbGuichet != 0">
                            <vu:include-data object="trancheHorairesDetail" field="trhId" />
-                           <vu:button v-if="item.nbGuichet != 0" dense flat icon="ri-delete-bin-2-line" title="Supprimer ce créneau" @click="deleteTrancheHoraire(item.trhId)"/>
+                           <vu:button v-if="item.nbGuichet != 0 && componentStates.agendaWeek?.hasAuthzAdmin !== false" dense flat icon="ri-delete-bin-2-line" title="Supprimer ce créneau" @click="deleteTrancheHoraire(item.trhId)"/>
                      </q-item-section>
 		            </vu:list>
 	            </vu:block>

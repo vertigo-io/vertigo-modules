@@ -1,7 +1,8 @@
 <th:block th:fragment="agenda-week(agenda_actions_slot, agenda_tranchesHoraire_slot, agenda_reservationOrphelines_slot, eventNameTwoLetters, eventIconAgenda, multiEventIconAgenda, maxMultiEventShow, hasAuthzAdmin)" vu:alias="agenda-week" vu:selector="${true}"
 	      th:with="myEventNameTwoLetters=${eventNameTwoLetters?:false}, myEventIconAgenda=${eventIconAgenda?:'event'}, myMultiEventIconAgenda=${multiEventIconAgenda?:'calendar_month'}, 
 	      myMaxMultiEventShow=${maxMultiEventShow?:3}, myHasAuthzAdmin=${hasAuthzAdmin?:true}"
-			th:attr="objectKey=${model.vContext['componentStates'].addComponentState('editedPlageHoraire')}">
+			th:attr="objectKey=${model.vContext['componentStates'].addComponentState('editedPlageHoraire')},
+			         agendaWeekKey=${model.vContext['componentStates'].addComponentState('agendaWeek').addPrimitive('hasAuthzAdmin', myHasAuthzAdmin)}">
 	<vu:block data-shape="rounded" id="agenda" title="Agenda">
 	    <vu:slot name="actions_slot" >
             <div vu:slot="agenda_actions_slot" class="row q-gutter-sm">

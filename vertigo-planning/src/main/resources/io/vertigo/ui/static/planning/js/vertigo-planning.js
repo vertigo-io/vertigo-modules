@@ -422,6 +422,16 @@ VUiExtensions.methods.deletePlageHoraire = function(plhId) {
 		}.bind(this)
 	});
 }
+// the button 'Supprimer ce créneau' of vu:agenda-detail-plage ; a project may give its own : loaded before or after, it is the one used
+if (!VUiExtensions.methods.deleteTrancheHoraire) {
+	VUiExtensions.methods.deleteTrancheHoraire = function(trhId) {
+		this.httpPostAjax('_deleteTrancheHoraire', {trhId: trhId}, {
+			onSuccess: function() {
+				this.$q.notify({message: 'Tranche horaire supprimée', type :'positive'});
+			}.bind(this)
+		});
+	}
+}
 VUiExtensions.methods.editPlageHoraire = function(plhId, modeGuichet) {
     let formData = this.vueDataParams(['creationPlageHoraireForm']);
     if(!modeGuichet) {
