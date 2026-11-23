@@ -146,7 +146,8 @@ VUiExtensions.methods.getEvents = function(dt, allEvents) {
 
                         return start1.date != end2.date && start2.date != end1.date && (
                             QCalendarDay.isBetweenDates(start1, start2, end2, true) ||
-                            QCalendarDay.isBetweenDates(end1, start2, end2, true)
+                            QCalendarDay.isBetweenDates(end1, start2, end2, true) ||
+                            QCalendarDay.isBetweenDates(start2, start1, end1, true) // the placed plage inside the new one
                         );
                     }
                     return false;
