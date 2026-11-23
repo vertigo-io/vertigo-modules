@@ -473,6 +473,8 @@ public class PlanningServices implements Component {
 				.isNotNull(plageHoraireUid);
 		//--
 		agendaDAO.readOneForUpdate(agendaUid); //ForUpdate pour éviter les doublons
+		final var plageHoraire = plageHoraireDAO.get(plageHoraireUid);
+		checkAuthorizedAgenda(UID.of(Agenda.class, plageHoraire.getAgeId()), List.of(agendaUid));
 		agendaPAO.deletePlageHoraireCascadeByPlhId((Long) plageHoraireUid.getId());
 	}
 
@@ -517,6 +519,8 @@ public class PlanningServices implements Component {
 				.isNotNull(trancheHoraireUid);
 		//--
 		agendaDAO.readOneForUpdate(agendaUid); //ForUpdate pour éviter les doublons
+		final var trancheHoraire = trancheHoraireDAO.get(trancheHoraireUid);
+		checkAuthorizedAgenda(UID.of(Agenda.class, trancheHoraire.getAgeId()), List.of(agendaUid));
 		agendaPAO.closeTrancheHoraireByTrhId(List.of((Long) trancheHoraireUid.getId()));
 	}
 
