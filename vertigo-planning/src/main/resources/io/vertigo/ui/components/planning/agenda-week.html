@@ -194,9 +194,9 @@
 		                    class="my-event q-pa-xs row justify-center text-dark"
 		                    :class="badgeClasses(event, 'body')"
 		                    :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
-		                    @click.stop.prevent="onSelectPlageHoraire(event)"
-		                    
+		                    @click.stop.prevent
 		                  >
+		                  	<!--/* no action on a tranche : it doesn't know its plage (a project needing one replaces this slot) ; the click stays stopped, not a creation of plage */-->
 		                  	<div class="row col-12 self-center items-center" :class="{'justify-center':(event.minutesFin - event.minutesDebut)>29}">
 		                          <div class="agendas-event">
 			                          <q-icon th:name="#{planning.agendaWeek.trancheEmpty.icon}" v-if="event.nbReserve == 0 || !event.nbReserve" :color="'trh-'+event.etatPublication" :title="event.etatPublication" ></q-icon>
