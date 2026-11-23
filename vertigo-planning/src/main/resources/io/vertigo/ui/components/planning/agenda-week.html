@@ -147,7 +147,7 @@
 		                  	  	  								<q-badge rounded :color="plageStateColor(subEvent).class" :title="plageStateColor(subEvent).label">{{plageStateColor(subEvent).miniLabel}}</q-badge>
 		                  	  	  							</q-item-label>
 		                  	  	  						</div>
-		                  	  	  						<q-chip class="q-ml-md" color="white" text-color="dark" :class="{'q-pl-none':(subEvent.nbReserveNonPublie>0 || subEvent.nbReserve>event.nbTotal)}"
+		                  	  	  						<q-chip class="q-ml-md" color="white" text-color="dark" :class="{'q-pl-none':(subEvent.nbReserveNonPublie>0 || subEvent.nbReserve>subEvent.nbTotal)}"
 		                  	  	  							:title="subEvent.nbReserve + ' rendez-vous réservé(s) sur '+subEvent.nbTotal">
 		                  	  	  							<q-icon th:name="#{planning.agendaWeek.reserveNonPublie.icon}" size="md" color="negative" v-if="subEvent.nbReserveNonPublie>0"
 		                  	  	  								:title="subEvent.nbReserveNonPublie + ' rendez-vous réservé(s) sur des créneaux non publiés'"></q-icon>
