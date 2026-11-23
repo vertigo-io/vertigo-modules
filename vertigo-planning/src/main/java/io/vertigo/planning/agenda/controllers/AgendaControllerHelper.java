@@ -158,13 +158,10 @@ public class AgendaControllerHelper {
 		agendaDisplayRange.setShowDays(weekDaysNumber);
 		agendaDisplayRange.setMondayLock(true);
 
-		//prépare le agendaDisplayRange, reload les creneaux et prepare la popin publish plage
-		prepareContextAtDate(todayDate, agendaDisplayRange, viewContext);
 		viewContext.publishRef(weekDaysNumberKey, weekDaysNumber);
 		viewContext.publishRef(weekDaysKey, Arrays.toString(IntStream.concat(IntStream.range(1, weekDaysNumber), IntStream.of(weekDaysNumber == 7 ? 0 : weekDaysNumber)).toArray()));
-
-		// Ajoute les info calendrier
-		prepareInfoCalendrierContext(viewContext, agendaDisplayRange);
+		//prépare le agendaDisplayRange, reload les creneaux et les infos calendrier, et prepare la popin publish plage
+		prepareContextAtDate(todayDate, agendaDisplayRange, viewContext);
 
 		//pour popin creation plage
 		viewContext.publishDto(creationPlageHoraireFormKey, creationPlageHoraireForm);
@@ -185,9 +182,13 @@ public class AgendaControllerHelper {
 	private void prepareInfoCalendrierContext(
 			final ViewContext viewContext,
 			final AgendaDisplayRange agendaDisplayRange) {
-		viewContext.publishDtList(infosCalendrierKey,
-				infoCalendrierProvider == null ? new DtList<>(InfoCalendrierDisplay.class)
-						: infoCalendrierProvider.getInfoCalendrierForRange(viewContext, agendaDisplayRange.getFirstDate(), agendaDisplayRange.getLastDate()));
+		viewContext.publishDtList(infosCalendrierKey, getInfosCalendrier(viewContext, agendaDisplayRange.getFirstDate(), agendaDisplayRange.getLastDate()));
+	}
+
+	// the infos of the calendar on a range, none without provider
+	private DtList<InfoCalendrierDisplay> getInfosCalendrier(final ViewContext viewContext, final LocalDate startDate, final LocalDate endDate) {
+		return infoCalendrierProvider == null ? new DtList<>(InfoCalendrierDisplay.class)
+				: infoCalendrierProvider.getInfoCalendrierForRange(viewContext, startDate, endDate);
 	}
 
 	public ViewContext reload(
@@ -196,7 +197,6 @@ public class AgendaControllerHelper {
 			final PlageHoraireDisplay plageHoraireDetail,
 			final UiMessageStack uiMessageStack) {
 		prepareContextAtDate(agenda.getShowDate(), agenda, viewContext);
-		prepareInfoCalendrierContext(viewContext, agenda);
 		if (plageHoraireDetail.getPlhId() != null) {
 			loadPlageHoraireDetail(viewContext, agenda, plageHoraireDetail.getPlhId(), uiMessageStack);
 		}
@@ -207,7 +207,6 @@ public class AgendaControllerHelper {
 			final ViewContext viewContext,
 			final AgendaDisplayRange agenda) {
 		prepareContextAtDate(agenda.getShowDate().minusWeeks(1), agenda, viewContext);
-		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
@@ -215,7 +214,6 @@ public class AgendaControllerHelper {
 			final ViewContext viewContext,
 			final AgendaDisplayRange agenda) {
 		prepareContextAtDate(agenda.getShowDate().plusWeeks(1), agenda, viewContext);
-		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
@@ -262,7 +260,7 @@ public class AgendaControllerHelper {
 		final var maxDateTo = duplicationSemaineForm.getDateLocaleToDebut().isAfter(duplicationSemaineForm.getDateLocaleToFin())
 				? duplicationSemaineForm.getDateLocaleToDebut()
 				: duplicationSemaineForm.getDateLocaleToFin();
-		final var joursFermes = infoCalendrierProvider.getInfoCalendrierForRange(viewContext, minDateTo, maxDateTo).stream()
+		final var joursFermes = getInfosCalendrier(viewContext, minDateTo, maxDateTo).stream()
 				.filter(InfoCalendrierDisplay::getSiFerme)
 				.map(InfoCalendrierDisplay::getDate)
 				.distinct()
@@ -271,7 +269,6 @@ public class AgendaControllerHelper {
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		planningServices.duplicateSemaine(ageUids, duplicationSemaineForm, getDureeCreneauPerAgenda(ageUids, duplicationSemaineForm.getDureeCreneau()), joursFermes);
 		prepareContextAtDate(duplicationSemaineForm.getDateLocaleToDebut(), agenda, viewContext);
-		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
@@ -287,7 +284,7 @@ public class AgendaControllerHelper {
 		final var minDateTo = duplicationJourForm.getDateLocaleTo().stream().min(LocalDate::compareTo).orElseThrow();
 		final var maxDateTo = duplicationJourForm.getDateLocaleTo().stream().max(LocalDate::compareTo).orElseThrow();
 
-		final var joursFermes = infoCalendrierProvider.getInfoCalendrierForRange(viewContext, minDateTo, maxDateTo).stream()
+		final var joursFermes = getInfosCalendrier(viewContext, minDateTo, maxDateTo).stream()
 				.filter(InfoCalendrierDisplay::getSiFerme)
 				.filter(info -> duplicationJourForm.getDateLocaleTo().contains(info.getDate()))
 				.map(InfoCalendrierDisplay::getDate)
@@ -297,7 +294,6 @@ public class AgendaControllerHelper {
 		planningServices.duplicateJour(ageUids, duplicationJourForm, getDureeCreneauPerAgenda(ageUids, dureeCreneau), joursFermes);
 
 		prepareContextAtDate(duplicationJourForm.getDateLocaleFrom(), agenda, viewContext);
-		prepareInfoCalendrierContext(viewContext, agenda);
 		return viewContext;
 	}
 
@@ -395,6 +391,8 @@ public class AgendaControllerHelper {
 
 		final List<UID<Agenda>> ageUids = agenda.getAgeIds().stream().map(ageId -> UID.of(Agenda.class, ageId)).toList();
 		reloadEvents(viewContext, ageUids, agenda.getFirstDate(), agenda.getLastDate());
+		// the infos of the calendar of the week shown (closed days...) : any move of the agenda gives them
+		prepareInfoCalendrierContext(viewContext, agenda);
 	}
 
 	public static PublicationTrancheHoraireForm preparePublicationTrancheHoraireForm(final AgendaDisplayRange agendaRange) {
