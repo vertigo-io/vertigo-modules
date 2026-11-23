@@ -81,6 +81,28 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- UI tests : demo webapp (embedded Jetty, PostgreSQL) and Playwright -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.playwright</groupId>
+			<artifactId>playwright</artifactId>
+			<version>1.65.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
