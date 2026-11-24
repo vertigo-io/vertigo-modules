@@ -111,8 +111,8 @@ public final class PlanningPagesTest extends AbstractPlanningUiTest {
 		// the reservations of the tranche (2 interviews on monday morning)
 		assertThat(mondayTranches.first()).containsText("1 / 1");
 		assertThat(mondayTranches.nth(2)).containsText("0 / 1");
-		// the state of a tranche : a full disc when full, an empty circle when free (a Material icon : its name is its text ;
-		// an unknown name is written in the icon font, out of the cell)
+		// the state of a tranche : a full disc when full, an empty circle when free.
+		// It is a Material icon, its name is its text : an unknown name would be written in the icon font, out of the cell
 		assertThat(mondayTranches.first().locator(".agendas-event .q-icon")).hasText(Pattern.compile("^circle$"));
 		assertThat(mondayTranches.nth(2).locator(".agendas-event .q-icon")).hasText(Pattern.compile("^radio_button_unchecked$"));
 	}
