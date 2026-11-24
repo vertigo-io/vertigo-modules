@@ -35,8 +35,6 @@ Release 4.5.0 - 2026/11/24
   - xdocreport 2.1.0 -> 2.2.0
   - orchestra-ui : vue 3.5.39 -> 3.5.46, axios 1.18.1 -> 1.21.1, vue-router 4.5.1 -> 4.6.5, core-js 3.44.0 -> 3.51.0, quasar 2.21.1 -> 2.35.6 (build only, the UI uses the Quasar of vertigo-ui), vite 8.1.3 -> 8.3.8
 
-more to come :)
-
 
 Release 4.4.1-1 - 2026/09/07
 ----------------------
