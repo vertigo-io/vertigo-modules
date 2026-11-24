@@ -147,6 +147,32 @@ public final class CommentWebServicesTest {
 	}
 
 	@Test
+	public void testPublishedCommentUuid() {
+		final Comment newComment = Comment.builder()
+				.withAuthor(account1Uri)
+				.withMsg("Published once")
+				.build();
+
+		//the comment returned by the publication is the stored one : its uuid can be used to edit it
+		final String publishedUuid = RestAssured.given().filter(sessionFilter)
+				.body(commentToMap(newComment))
+				.expect()
+				.statusCode(HttpStatus.SC_OK)
+				.log().ifError()
+				.when()
+				.post("/x/comment/api/comments?concept=" + CONCEPT_KEY_NAME + "&id=" + keyConcept1Uri.getId())
+				.body().path("uuid");
+
+		RestAssured.given().filter(sessionFilter)
+				.expect()
+				.body("uuid", Matchers.hasItem(publishedUuid))
+				.statusCode(HttpStatus.SC_OK)
+				.log().ifError()
+				.when()
+				.get("/x/comment/api/comments?concept=" + CONCEPT_KEY_NAME + "&id=" + keyConcept1Uri.getId());
+	}
+
+	@Test
 	public void testEditComment() {
 		final Comment newComment = Comment.builder()
 				.withAuthor(account1Uri)

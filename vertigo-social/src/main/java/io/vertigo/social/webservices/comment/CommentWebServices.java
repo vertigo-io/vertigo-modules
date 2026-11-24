@@ -83,7 +83,7 @@ public final class CommentWebServices implements WebServices {
 	 * @param id KeyConcept id
 	 */
 	@POST("/api/comments")
-	public Comment publishComment(@ExcludedFields("uuid") final Comment comment, @QueryParam("concept") final String keyConcept, @QueryParam("id") final String id) {
+	public Comment publishComment(@ExcludedFields({ "uuid", "creationDate", "lastModified" }) final Comment comment, @QueryParam("concept") final String keyConcept, @QueryParam("id") final String id) {
 		final UID<KeyConcept> keyConceptURI = readKeyConceptURI(keyConcept, id);
 		commentServices.publish(getLoggedAccountURI(), comment, keyConceptURI);
 		return comment;

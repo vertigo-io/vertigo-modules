@@ -146,7 +146,8 @@ VUiExtensions.methods.getEvents = function(dt, allEvents) {
 
                         return start1.date != end2.date && start2.date != end1.date && (
                             QCalendarDay.isBetweenDates(start1, start2, end2, true) ||
-                            QCalendarDay.isBetweenDates(end1, start2, end2, true)
+                            QCalendarDay.isBetweenDates(end1, start2, end2, true) ||
+                            QCalendarDay.isBetweenDates(start2, start1, end1, true) // the placed plage inside the new one
                         );
                     }
                     return false;
@@ -322,6 +323,9 @@ VUiExtensions.methods.onEditPlageHoraire = function(event, modeGuichet) {
     plageHoraireForm.minutesDebut = event.minutesDebut_fmt;
     plageHoraireForm.minutesFin = event.minutesFin_fmt;
     plageHoraireForm.nbGuichet = event.nbGuichet;
+    if (event.ageId) {
+        plageHoraireForm.ageId = event.ageId; // keep the agenda of the edited plage (select of the personal agendas mode)
+    }
     this.$data.componentStates.editItemModal.opened = true;	
 	VUiExtensions.methods.editPlageHoraireCloseActions(event);
 }	
@@ -417,6 +421,16 @@ VUiExtensions.methods.deletePlageHoraire = function(plhId) {
 			this.$data.componentStates.confirmDeleteItemModal.opened = false;
 		}.bind(this)
 	});
+}
+// the button 'Supprimer ce créneau' of vu:agenda-detail-plage ; a project may give its own : loaded before or after, it is the one used
+if (!VUiExtensions.methods.deleteTrancheHoraire) {
+	VUiExtensions.methods.deleteTrancheHoraire = function(trhId) {
+		this.httpPostAjax('_deleteTrancheHoraire', {trhId: trhId}, {
+			onSuccess: function() {
+				this.$q.notify({message: 'Tranche horaire supprimée', type :'positive'});
+			}.bind(this)
+		});
+	}
 }
 VUiExtensions.methods.editPlageHoraire = function(plhId, modeGuichet) {
     let formData = this.vueDataParams(['creationPlageHoraireForm']);

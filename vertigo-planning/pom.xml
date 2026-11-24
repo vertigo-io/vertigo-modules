@@ -5,12 +5,11 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-modules</artifactId>
-		<version>4.4.1</version>
+		<version>4.5.0-SNAPSHOT</version>
 	</parent>
 
 
 	<artifactId>vertigo-planning</artifactId>
-	<version>4.4.1-1</version>
 	<packaging>jar</packaging>
 	<name>vertigo-planning</name>
 
@@ -78,10 +77,32 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-orchestra</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 
+		<!-- UI tests : demo webapp (embedded Jetty, PostgreSQL) and Playwright -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-annotations</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.playwright</groupId>
+			<artifactId>playwright</artifactId>
+			<version>1.65.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -100,7 +121,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.6.1</version>
+				<version>3.8.0</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>

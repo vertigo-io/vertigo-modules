@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import io.vertigo.datamodel.data.model.KeyConcept;
@@ -53,8 +54,8 @@ public final class MemoryCommentPlugin implements CommentPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public synchronized Comment get(final UUID uuid) {
-		return map.get(uuid);
+	public synchronized Optional<Comment> get(final UUID uuid) {
+		return Optional.ofNullable(map.get(uuid));
 	}
 
 	/** {@inheritDoc} */
@@ -62,7 +63,7 @@ public final class MemoryCommentPlugin implements CommentPlugin {
 	public synchronized <S extends KeyConcept> List<Comment> getComments(final UID<S> uid) {
 		return commentsMap.getOrDefault(uid, Collections.emptyList())
 				.stream()
-				.map(this::get)
+				.map(map::get)
 				.toList();
 	}
 }

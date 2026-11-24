@@ -95,12 +95,16 @@ resources:
 
 ## Ajout des messages resource
 
-Dans votre `XxxVSpringWebConfig`, on ajout la ressource au `MessageSource` Spring.
+Dans votre `XxxVSpringWebConfig`, on ajoute la ressource du module dans un `MessageSource` parent de celui du projet : Spring cherche une clé dans les ressources du projet, puis dans le parent. Le projet peut ainsi redéfinir les clés `planning.*` (libellés, icônes) dans ses propres ressources, quel que soit leur ordre.
 ```Java
 public static MessageSource getMessageSource() {
+	final ResourceBundleMessageSource vertigoMessageSource = new ResourceBundleMessageSource();
+	vertigoMessageSource.addBasenames("io/vertigo/ui/components/planning/planning");
+	vertigoMessageSource.setDefaultEncoding("UTF-8");
 	final ResourceBundleMessageSource customMessageSource = new ResourceBundleMessageSource();
+	customMessageSource.setParentMessageSource(vertigoMessageSource); // the messages of the project are looked up first
         ...
-	customMessageSource.addBasenames("io/vertigo/ui/components/planning/planning");
+	customMessageSource.addBasenames("com/mycompany/myapp/i18n/messages");
 	...
 	return customMessageSource;
 }
@@ -128,6 +132,17 @@ __Compléments javascript__
 </section>	
 ```
 
+___Note:___ _Les icônes des composants sont des icônes Material, connues de Quasar, déclarées dans `planning.properties` (les clés `planning.*.icon`) : un projet en change en redéfinissant ces clés dans ses messages. Pour une autre bibliothèque, le projet la charge et la déclare à Quasar ; par exemple Remix Icon (`ri-...`) :_
+```Javascript
+window.addEventListener('vui-before-plugins', function() {
+	Quasar.iconSet.iconMapFn = function(iconName) {
+		if (iconName.startsWith('ri-')) {
+			return { cls: iconName, content: ' ' };
+		}
+	};
+});
+```
+
 Composants VertigoUi 
 - `agenda-week` : Composant calendrier complet, à poser pleine page
   - `agenda_actions_slot` : Slot des boutons du composant (défaut: creation de plage, duplication de semaine, publication)
@@ -135,7 +150,7 @@ Composants VertigoUi
   - `eventIconAgenda` : Icon dans la plage (défaut : `event`)
   - `multiEventIconAgenda` : Icon d'agenda multiple dans la plage (défaut : `calendar_month`)
   - `maxMultiEventShow` : Nombre maximum d'agenda présenté avant liste (défaut : 3)
-  - `hasAuthzAdmin` : Si droit d'admin de l'agenda (défaut : true)
+  - `hasAuthzAdmin` : Si droit d'admin de l'agenda (défaut : true) ; sans ce droit, le détail d'une plage ne propose pas non plus la suppression d'un créneau (affichage seulement : les routes restent à sécuriser dans le contrôleur du projet)
 
 - `agenda-create-plage` : Composant de modale création de plage horaire
   - `plage_actions_slot` : Slot des boutons du composant (défaut: creation si guichet, creation si agenda personnel)
@@ -154,11 +169,11 @@ Composants VertigoUi
 
 Exemple
 ```HTML
-<vu:agenda-week eventIconAgenda="ri-folder-fill" hasAuthzAdmin="${authz.hasAuthorization('Demarche$agendaPersonel')}">
+<vu:agenda-week eventIconAgenda="folder" hasAuthzAdmin="${authz.hasAuthorization('Demarche$agendaPersonel')}">
 	<vu:slot name="agenda_actions_slot">
-		<vu:button icon="ri-add-line" label="#{demarche.bo.demarche.agenda.action.create-plage-horaire}" @click="onCreatePlageHoraireDefault" vu:authz="Demarche$agendaPersonel" /> 
-		<vu:button icon="ri-file-copy-line" label="#{demarche.bo.demarche.agenda.action.duplicate-week}" @click="onDuplicateWeek" vu:authz="Demarche$agendaPersonel"/>
-		<vu:button icon="ri-gallery-upload-line" label="#{demarche.bo.demarche.agenda.action.manage-publication}" @click="onPublishPlageHoraires" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'yyyy-MM-dd') < new Date()" vu:authz="Demarche$agendaPersonel"/>
+		<vu:button icon="add" label="#{demarche.bo.demarche.agenda.action.create-plage-horaire}" @click="onCreatePlageHoraireDefault" vu:authz="Demarche$agendaPersonel" /> 
+		<vu:button icon="content_copy" label="#{demarche.bo.demarche.agenda.action.duplicate-week}" @click="onDuplicateWeek" vu:authz="Demarche$agendaPersonel"/>
+		<vu:button icon="event_available" label="#{demarche.bo.demarche.agenda.action.manage-publication}" @click="onPublishPlageHoraires" :disabled="Quasar.date.extractDate(vueData.agendaRange.lastDate, 'YYYY-MM-DD') < new Date()" vu:authz="Demarche$agendaPersonel"/>
 	</vu:slot>
 </vu:agenda-week>
 <vu:agenda-create-plage/>
@@ -182,6 +197,7 @@ __Controlleur__
 Votre controlleur hérite du AbstractAgendaController.
 Vous devez positionner la sécurité et le préfix des routes de votre page.
 Vous pouvez compléter le context pour les autres éléments de votre page, et appeller le initContext du parent pour initialiser le context nécessaire au module.
+Le composant `vu:agenda-detail-plage` lit la clé `canCreateReservation` du context : publiez-la dans le context de la page (un `Boolean`, `false` si la page ne propose pas la prise de rendez-vous), avec `viewContext.publishRef(ViewContextKey.of("canCreateReservation"), ...)`.
 
 	
 ## Contenu 
@@ -190,10 +206,12 @@ Vous pouvez compléter le context pour les autres éléments de votre page, et a
 **TODO** lien vertigo-docs : https://github.com/vertigo-io/vertigo-modules/blob/master/vertigo-planning/src/main/javagen/mermaid/mermaid-io-vertigo-planning.html
 
 ### Sql
- - planning_create_init_4.3.0.sql : pour la création de la base de données initiale
+ - planning_create_init_4.5.0.sql : pour la création de la base de données initiale
+ - planning_update_4.5.0.sql : pour la mise à jour d'une base existante vers 4.5.0 (voir le guide de migration)
  
 _ previous version _
 Si besoin :
+ - planning_create_init_4.3.0.sql : pour la création de la base de données initiale en 4.3.0
  - planning_create_init_4.2.0.sql : pour la création de la base de données initiale en 4.2.0
  - planning_update_4.2.0.1.sql : pour la mise à jour vers 4.2.0.1
  
@@ -212,7 +230,7 @@ Fournit les actions standards :
  - `POST ~/_publishPlage(agendaRange,publicationTrancheHoraireForm)` : Publie les plages horaires des agendas la semaine de l'agenda en fonction du formulaire envoyé
  - `POST ~/_deletePlage(agendaRange,plhId)` : Supprime la plage horaire identifiée
  - `POST ~/_loadPlageHoraireDetail(agendaRange,plhId)` : Charge les données de la popin de détail de la plage horaire
- - `POST ~/_deleteTrancheHoraire(agendaRange,trhId)` : Supprime la tranche horaire identifiée
+ - `POST ~/_deleteTrancheHoraire(agendaRange,plageHoraireDetail,trhId)` : Supprime la tranche horaire identifiée et recharge le détail de la plage
 	 
 
 ### services

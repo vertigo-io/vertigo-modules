@@ -173,6 +173,17 @@
     color: var(--q-dark);
 }
 
+/* mode guichet : the hours of a plage, a button for the keyboard looking as the label ; the padding gives room to the focus, the margin takes it back */
+.plage-label > button {
+    background: none;
+    border: 0;
+    padding: 0 4px;
+    margin: 0 -4px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
 .tranche-supprimee {
     text-decoration: line-through;
 }

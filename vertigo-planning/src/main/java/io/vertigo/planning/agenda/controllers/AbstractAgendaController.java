@@ -158,6 +158,16 @@ public abstract class AbstractAgendaController extends AbstractVSpringMvcControl
 		return agendaControllerHelper.deletePlage(viewContext, agenda, plhId);
 	}
 
+	@PostMapping("/_editPlage")
+	public ViewContext editPlage(
+			final ViewContext viewContext,
+			@ViewAttribute("agendaRange") final AgendaDisplayRange agenda,
+			@RequestParam("plhId") final Long plhId,
+			@ViewAttribute("creationPlageHoraireForm") final CreationPlageHoraireForm creationPlageHoraireForm,
+			final UiMessageStack uiMessageStack) {
+		return agendaControllerHelper.editPlage(viewContext, agenda, plhId, creationPlageHoraireForm);
+	}
+
 	@PostMapping("/_loadPlageHoraireDetail")
 	public ViewContext loadPlageHoraireDetail(
 			final ViewContext viewContext,

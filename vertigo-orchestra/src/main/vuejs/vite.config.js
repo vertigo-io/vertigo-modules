@@ -41,7 +41,8 @@ export default defineConfig({
   },
   server: { },
   define: {
-    "process.env": process.env
+    // library mode keeps process.env.NODE_ENV (left to the consumer bundler) : this UMD runs directly in the browser, where process is not defined
+    "process.env.NODE_ENV": JSON.stringify("production")
   },
   plugins: [
     vue(),

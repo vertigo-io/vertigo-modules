@@ -18,6 +18,7 @@
 package io.vertigo.social.impl.comment;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import io.vertigo.core.node.component.Plugin;
@@ -40,9 +41,9 @@ public interface CommentPlugin extends Plugin {
 	/**
 	 * Gets the comment by its uuid. 
 	 * @param uuid the uuid of the comment
-	 * @return the comment
+	 * @return the comment, empty if not published
 	 */
-	Comment get(UUID uuid);
+	Optional<Comment> get(UUID uuid);
 
 	/**
 	 * Lists the comments as a key concerned is concerned

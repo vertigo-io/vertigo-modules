@@ -36,12 +36,17 @@ public record Comment(
 		Instant lastModified) {
 
 	public Comment {
+		//uuid and creationDate are defaulted when absent : allows building a new Comment without them (e.g. json deserialization with server-side generated uuid)
+		if (uuid == null) {
+			uuid = UUID.randomUUID();
+		}
+		if (creationDate == null) {
+			creationDate = Instant.now();
+		}
 		Assertion.check()
-				.isNotNull(uuid)
 				.isNotNull(author)
 				.isNotBlank(authorDisplayName)
-				.isNotBlank(msg)
-				.isNotNull(creationDate);
+				.isNotBlank(msg);
 		//lastModified is nullable
 	}
 

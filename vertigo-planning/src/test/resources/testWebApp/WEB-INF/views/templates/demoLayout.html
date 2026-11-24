@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:vu="https://vertigo.io/thymeleaf/vertigo-ui"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<vu:head-meta/>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title layout:title-pattern="$CONTENT_TITLE - Démo planning">Démo planning</title>
+
+	<!--/* planning : see the README of vertigo-planning */-->
+	<link th:href="@{/vertigo-ui/static/planning/css/vertigo-planning.css}" rel="stylesheet" type="text/css"/>
+	<link th:href="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.1.2/index.min.css}" rel="stylesheet" type="text/css"/>
+	<script th:src="@{/vertigo-ui/static/js/vertigo-ui-extensions.js}"></script>
+	<script th:src="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/npm/@quasar/quasar-ui-qcalendar@4.1.2/QCalendarDay.umd.min.js}"></script>
+	<script th:src="@{/vertigo-ui/static/planning/js/vertigo-planning.js}"></script>
+</head>
+<body>
+<vu:page>
+	<q-layout view="hHh lpR fFf">
+		<q-header elevated class="bg-primary text-white">
+			<q-toolbar>
+				<q-toolbar-title>Démo planning : cabinet médical, laboratoire, entretiens</q-toolbar-title>
+				<nav aria-label="Pages de la démo">
+					<q-btn flat no-caps label="Agenda du Dr Martin" th:href="@{/cabinet/medecin/}" type="a"></q-btn>
+					<q-btn flat no-caps label="Planning du cabinet (édition)" th:href="@{/cabinet/}" type="a"></q-btn>
+					<q-btn flat no-caps label="Planning du cabinet (lecture seule)" th:href="@{/cabinet/secretariat/}" type="a"></q-btn>
+					<q-btn flat no-caps label="Laboratoire" th:href="@{/laboratoire/}" type="a"></q-btn>
+					<q-btn flat no-caps label="Entretiens" th:href="@{/entretiens/}" type="a"></q-btn>
+				</nav>
+			</q-toolbar>
+		</q-header>
+		<q-page-container>
+			<q-page padding>
+				<h1 class="text-h5 q-mt-none" layout:fragment="page-title">Démo planning</h1>
+				<th:block layout:fragment="content"></th:block>
+			</q-page>
+		</q-page-container>
+	</q-layout>
+</vu:page>
+</body>
+</html>

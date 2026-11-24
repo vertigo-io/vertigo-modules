@@ -19,6 +19,7 @@ package io.vertigo.social.impl.comment;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -52,9 +53,12 @@ public final class CommentManagerImpl implements CommentManager {
 		Assertion.check()
 				.isNotNull(comment)
 				.isNotNull(keyConceptUri);
+		Assertion.check().isFalse(commentsPlugin.get(comment.uuid()).isPresent(), "The comment {0} is already published : use update", comment.uuid());
 		//-----
-		final Instant creationDate = Instant.now();
+		//the uuid and the creation date of the given comment are kept : the webservice returns this comment
+		final Instant creationDate = comment.creationDate();
 		final Comment savedComment = Comment.builder()
+				.withUuid(comment.uuid())
 				.withAuthor(accountURI)
 				.withCreationDate(creationDate)
 				.withLastModified(creationDate)
@@ -76,7 +80,9 @@ public final class CommentManagerImpl implements CommentManager {
 	public void update(final UID<Account> accountURI, final Comment comment) {
 		Assertion.check().isNotNull(comment);
 		//-----
-		final Comment originalComment = commentsPlugin.get(comment.uuid());
+		final Optional<Comment> publishedComment = commentsPlugin.get(comment.uuid());
+		Assertion.check().isTrue(publishedComment.isPresent(), "The comment {0} is not published", comment.uuid());
+		final Comment originalComment = publishedComment.get();
 		final boolean authorized = accountURI.equals(comment.author()) && originalComment.author().equals(comment.author());
 		Assertion.check().isTrue(authorized, "The comment editing is only available for the comment's author.");
 

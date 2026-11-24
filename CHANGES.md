@@ -8,6 +8,36 @@ Running 5.0.0
 more to come :)
 
 
+Running 4.5.0-SNAPSHOT - 2026-12-XX
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-441-to-450)
+
+* [Social] Fix the publication of a comment by the webservice (`POST /api/comments`) : error 500 since Gson 2.10 (Vertigo 3.5.0), the comment is now built with its server-side uuid and creation date, and the returned comment is the stored one (its uuid was another one) ; `CommentManager.publish` refuses a comment already published (it was stored again, with another uuid) ; `CommentPlugin.get` returns an `Optional`, empty if not published
+* [Planning] Add plage horaire edit : `_editPlage` route in `AbstractAgendaController` and `PlanningServices.updatePlageHoraire` ; the plage is recreated on the same date, unpublished : the agent checks it and publishes it again, which links back its reservations ; the date and the agenda of the plage can't be changed (a project controller already mapping `_editPlage` must override `editPlage`, see migration guide)
+* [Planning] Fix plage horaire edit modal : keep the agenda of the edited plage (personal agendas mode)
+* [Planning] Accessibility (RGAA) of `vu:agenda-week` and `vu:agenda-detail-plage` : a plage assembling several agendas no longer nests a button in a button (its cell opens the menu, with a button for the keyboard ; each line of the menu opens its plage, with an open button and a delete button ; the unbalanced menu markup is fixed) ; in mode guichet the hours of a plage are a button, to open it with the keyboard, styled by the new rule `.plage-label > button` of `vertigo-planning.css` (see migration guide), the click on the plage is unchanged ; accessible names of the agenda buttons (the agenda name then the initials shown in two letters mode) and of the lines of the menu, the dialog of `vu:agenda-detail-plage` named with its title and its back button « Fermer »
+* [Planning] Fix `vu:agenda-week` : a plage containing a plage of another agenda is assembled with it, whatever their order (`getEvents`)
+* [Planning] `vu:agenda-detail-plage`, deletion of a slot : `vertigo-planning.js` gives `deleteTrancheHoraire` (a project function with the same name is kept) ; the button is hidden when `vu:agenda-week` is read only (`hasAuthzAdmin` false)
+* [Planning] `vu:agenda-week`, mode tranches horaires : no action on a click on a tranche of the default slot (it asked, in error, the detail of a plage it doesn't know)
+* [Planning] Fix the padding of an overbooked agenda in the menu of a plage assembling several agendas
+* [Planning] README : the key `canCreateReservation` read by `vu:agenda-detail-plage`, the 4.5.0 scripts in the Sql section, the date mask of the example fixed
+* [Planning] Fix `vu:agenda-week` : the infos of the calendar (closed days) follow the week shown after any move of the agenda (a creation or a publication in another week...), `AgendaControllerHelper.prepareContextAtDate` gives them ; the duplications no longer fail without a provider of infos
+* [Planning] The icons of the dialogs and of the plage detail are declared in `planning.properties` (`planning.modal.close.icon`, `planning.detailPlage.*.icon`), Material icons by default as the calendar ones : the components no longer need Remix Icon (see migration guide) ; fix the icons of the state of a tranche (mode tranches horaires) : `radio_button_unchecked` for a free tranche, `circle` for a full one (the full one was an unknown icon name, written out of the cell) ; `vu:agenda-week` reads the icon of the day duplication (`planning.agendaWeek.duplicateDay.icon`, it used the one of the week duplication) and the name of the button showing the other agendas (`planning.agendaWeek.listOtherAgenda`) ; README : the messages of the module in a parent `MessageSource` (the keys of the project win, whatever the order of its basenames)
+* [Planning] UI tests (Playwright) on a demo of the components, run on demand (`PLANNING_UI_TEST_JDBC_URL`), with a `main` to start the demo by hand
+* [Planning] Fix `PlanningServices.closeTrancheHoraire` and `deletePlageHoraireCascade` : additional checks
+* [Planning] Add SQL unique constraints (a reservation occupies a single creneau ; one plage per agenda, date and start time) and consultation indexes : `planning_create_init_4.5.0.sql` for new databases, `planning_update_4.5.0.sql` for existing ones (check duplicates first, see migration guide)
+* [Orchestra] Fix the Orchestra UI broken since 4.4.0 : it failed to load in the browser (`process is not defined`), the UMD bundle kept `process.env.NODE_ENV` references since its Vite 8 build. Projects shipping their own copy of `vertigo-orchestra-ui.umd.js` must replace it
+* [Orchestra] The Orchestra UI is now served by vertigo-ui : its files moved in the jar from `io/vertigo/orchestra/static/` to `io/vertigo/ui/static/orchestra/`, load them from `/vertigo-ui/static/orchestra/` (`js/vertigo-orchestra-ui.umd.js`, `js/vertigo-orchestra-ui.js`, `js/vertigo-orchestra-ui.css` ; the `.umd.js` and the `.css` are written by `npm run build-lib`) instead of a project copy. Its webservices are still enabled by the `orchestra.webapi` feature
+* Update libs
+  - freemarker 2.3.34 -> 2.3.35
+  - owasp-java-html-sanitizer 20260313.1 -> 20261110.1
+  - SODS 1.7.0 -> 1.10.1
+  - xdocreport 2.1.0 -> 2.2.0
+  - orchestra-ui : vue 3.5.39 -> 3.5.46, axios 1.18.1 -> 1.21.1, vue-router 4.5.1 -> 4.6.5, core-js 3.44.0 -> 3.51.0, quasar 2.21.1 -> 2.35.6 (build only, the UI uses the Quasar of vertigo-ui), vite 8.1.3 -> 8.3.8
+
+more to come :)
+
+
 Release 4.4.1-1 - 2026/09/07
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-440-to-441)

@@ -95,9 +95,10 @@ public final class RedisCommentPlugin implements CommentPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public Comment get(final UUID uuid) {
+	public Optional<Comment> get(final UUID uuid) {
 		try (final Jedis jedis = redisConnector.getClient(REDIS_PREFIX)) {
-			return fromMap(jedis.hgetAll("comment:" + uuid));
+			final Map<String, String> data = jedis.hgetAll("comment:" + uuid);
+			return data.isEmpty() ? Optional.empty() : Optional.of(fromMap(data));
 		}
 	}
 

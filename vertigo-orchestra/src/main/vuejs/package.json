@@ -5,7 +5,7 @@
     "dev": "vite --port 3000",
     "build": "vite build",
     "preview": "vite preview --port 5050",
-    "build-lib": "vite build && cp dist/vertigo-orchestra-ui.* ../resources/io/vertigo/orchestra/static/js/",
+    "build-lib": "vite build && cp dist/vertigo-orchestra-ui.* ../resources/io/vertigo/ui/static/orchestra/js/",
     "test": "vitest run"
   },
   "dependencies": {

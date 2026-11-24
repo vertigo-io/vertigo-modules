@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:vu="https://vertigo.io/thymeleaf/vertigo-ui"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/demoLayout}">
+<head>
+	<title>Agenda du Dr Anne Martin</title>
+</head>
+<body>
+	<h1 class="text-h5 q-mt-none" layout:fragment="page-title">Agenda du Dr Anne Martin</h1>
+	<th:block layout:fragment="content">
+		<vu:agenda-week eventIconAgenda="person"></vu:agenda-week>
+		<vu:agenda-create-plage/>
+		<vu:agenda-edit-plage/>
+		<vu:agenda-detail-plage/>
+		<vu:agenda-delete-plage/>
+		<vu:agenda-publish-plage/>
+		<vu:agenda-duplicate-week/>
+		<vu:agenda-duplicate-day/>
+	</th:block>
+</body>
+</html>
